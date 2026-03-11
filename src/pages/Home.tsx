@@ -50,15 +50,56 @@ export function Home() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 space-y-16">
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="text-center py-12 space-y-4">
-        <img src="/logo.png" alt="Galavant" className="h-44 w-44 mx-auto" />
-        <h1 className="text-5xl md:text-6xl font-black tracking-tight">
-          <span className="text-m2e-accent-dark">Galavant</span>
-        </h1>
-        <p className="text-m2e-text-secondary text-lg font-medium">Walk to Earn on Bitcoin</p>
-        <p className="text-m2e-text-muted text-sm max-w-md mx-auto">
-          Grab your balance bike, walk to earn SAT points, mint NFTs, and trade on-chain &mdash; all on Bitcoin L1 via OPNet.
-        </p>
+      <div className="relative w-full h-[600px] rounded-xl overflow-hidden pixel-shadow border-2 border-m2e-border group">
+        <img 
+          src="/assets/landing/galavant-hero.png" 
+          alt="Galavant Hero" 
+          className="absolute inset-0 w-full h-full object-cover pixel-render"
+        />
+        {/* Gradient Overlay - Bottom Half Only */}
+        <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
+        
+        <div className="absolute inset-0 flex flex-col items-center justify-end text-center p-6 pb-8">
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-[4px_4px_0_rgba(0,0,0,1)] tracking-wider">
+            WALK. EARN. CONQUER.
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-2xl drop-shadow-[2px_2px_0_rgba(0,0,0,1)] font-bold">
+            The first Walk-to-Earn game with balance bikes on Bitcoin via OPNet.
+          </p>
+          <div className="flex gap-4">
+            <Link 
+              to="/market" 
+              className="pixel-btn pixel-btn-primary text-xl px-8 py-4 hover:scale-105 transition-transform"
+            >
+              Start Riding
+            </Link>
+            <Link 
+              to="/gameplay" 
+              className="pixel-btn pixel-btn-secondary text-xl px-8 py-4 hover:scale-105 transition-transform bg-white text-m2e-text border-white"
+            >
+              Guide
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Features ─────────────────────────────────────────── */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <FeatureCard 
+          title="Earn" 
+          description="Walk, jog, or run to earn SAT tokens. The more you move, the more you earn."
+          icon={Coins}
+        />
+        <FeatureCard 
+          title="Ride" 
+          description="Equip your bike and explore the world. Upgrade your gear to maximize efficiency."
+          icon={SpeedFast}
+        />
+        <FeatureCard 
+          title="Trade" 
+          description="Buy, sell, and trade bikes and parts on the marketplace. Build your empire."
+          icon={Store}
+        />
       </section>
 
       {/* ── Global Stats ─────────────────────────────────────── */}
@@ -287,6 +328,18 @@ export function Home() {
       {selectedNftId && (
         <NftDetailModal nftId={selectedNftId} onClose={() => setSelectedNftId(null)} />
       )}
+    </div>
+  );
+}
+
+function FeatureCard({ title, description, icon: Icon }: { title: string; description: string; icon: React.ComponentType<any> }) {
+  return (
+    <div className="bg-m2e-card-alt border-2 border-m2e-border rounded-xl p-6 flex flex-col items-center text-center pixel-shadow hover:bg-m2e-card transition-colors group">
+      <div className="w-24 h-24 mb-4 bg-m2e-bg rounded-full flex items-center justify-center border-2 border-m2e-border overflow-hidden pixel-shadow-sm group-hover:scale-110 transition-transform">
+        <Icon className="w-12 h-12 text-m2e-accent" />
+      </div>
+      <h3 className="text-2xl font-black text-m2e-text mb-2 uppercase tracking-tight">{title}</h3>
+      <p className="text-m2e-text-secondary font-bold text-sm leading-relaxed">{description}</p>
     </div>
   );
 }

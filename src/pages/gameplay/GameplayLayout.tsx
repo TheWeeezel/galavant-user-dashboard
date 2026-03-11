@@ -11,10 +11,10 @@ export function GameplayLayout() {
       {/* Mobile toggle */}
       <button
         onClick={() => setSidebarOpen((v) => !v)}
-        className="lg:hidden fixed bottom-4 right-4 z-50 pixel-btn pixel-btn-primary p-3 shadow-lg"
+        className="hidden max-lg:inline-flex fixed bottom-4 right-4 z-[60] items-center justify-center bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark p-4 rounded-full shadow-lg"
         aria-label="Toggle guide menu"
       >
-        {sidebarOpen ? <Cancel className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        {sidebarOpen ? <Cancel className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
       </button>
 
       {/* Mobile overlay backdrop */}

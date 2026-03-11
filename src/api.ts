@@ -67,7 +67,7 @@ export interface NftsResponse {
 export interface LeaderboardEntry {
   rank: number;
   userId: string;
-  displayName: string | null;
+  nickname: string | null;
   avatarUrl: string | null;
   value: number;
 }

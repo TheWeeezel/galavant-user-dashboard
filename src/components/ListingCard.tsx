@@ -23,6 +23,9 @@ function resolveImageUrl(listing: MarketplaceListing): string | null {
   if (listing.itemType === 'bike' && listing.item?.type) {
     return `${config.apiUrl}/art/bases/bike-${listing.item.type.toLowerCase()}.png`;
   }
+  if (listing.itemType === 'part' && listing.item?.type && listing.item?.level) {
+    return `${config.apiUrl}/art/bases/part-${listing.item.type.toLowerCase()}-lv${listing.item.level}.png`;
+  }
   return null;
 }
 

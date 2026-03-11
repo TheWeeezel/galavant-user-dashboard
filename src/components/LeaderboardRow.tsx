@@ -23,7 +23,7 @@ export function LeaderboardRow({ entry, metric }: LeaderboardRowProps) {
 
       {/* Name */}
       <span className="flex-1 font-bold text-sm truncate">
-        {entry.displayName ?? 'Anonymous'}
+        {entry.nickname ?? 'Anonymous'}
       </span>
 
       {/* Value */}
