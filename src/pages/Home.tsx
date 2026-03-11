@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -29,6 +29,27 @@ function formatSat(n: number): string {
   return n.toLocaleString();
 }
 
+import { FloatingAsset } from '../components/FloatingAsset';
+
+const FLOATING_ASSETS = [
+  '/assets/floating/gem-luck.png',
+  '/assets/floating/tool-earning.png',
+  '/assets/floating/gem-durability.png',
+  '/assets/floating/tool-recovery.png',
+  '/assets/floating/gem-earning.png',
+  '/assets/floating/tool-luck.png',
+];
+
+interface FloatingItem {
+  id: number;
+  src: string;
+  top: number;
+  left: number;
+  size: number;
+  delay: number;
+  duration: number;
+}
+
 export function Home() {
   const [selectedNftId, setSelectedNftId] = useState<string | null>(null);
   const [lbMetric, setLbMetric] = useState<LeaderboardMetric>('distance');
@@ -47,15 +68,57 @@ export function Home() {
     retry: false,
   });
 
+  // Generate random floating items on mount
+  const floatingItems = useMemo(() => {
+    const items: FloatingItem[] = [];
+    const count = 6; // Reduced count to prevent duplicates (since we have 6 unique assets)
+    
+    // Shuffle the assets array to get unique random items
+    const shuffledAssets = [...FLOATING_ASSETS].sort(() => Math.random() - 0.5);
+    
+    for (let i = 0; i < count; i++) {
+      // Distribute evenly across the page height
+      // 5% to 95% range
+      const top = 5 + (i * (90 / count)) + (Math.random() * 5); 
+
+      items.push({
+        id: i,
+        src: shuffledAssets[i], // Use unique asset from shuffled array
+        top,
+        left: Math.random() * 90 + 5, // 5-95% width
+        size: Math.floor(Math.random() * 40) + 60, // 60-100px
+        delay: Math.random() * 5,
+        duration: Math.random() * 4 + 6, // 6-10s
+      });
+    }
+    return items;
+  }, []);
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 space-y-16">
+    <div className="mx-auto max-w-7xl px-4 py-8 space-y-16 relative">
+      {/* ── Floating Game Assets (Global) ────────────────────── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-50 h-full">
+        {floatingItems.map((item) => (
+          <FloatingAsset
+            key={item.id}
+            src={item.src}
+            size={item.size}
+            initialTop={item.top}
+            initialLeft={item.left}
+            delay={item.delay}
+            duration={item.duration}
+          />
+        ))}
+      </div>
+
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <div className="relative w-full h-[600px] rounded-xl overflow-hidden pixel-shadow border-2 border-m2e-border group">
+      <div className="relative w-full h-[600px] rounded-xl overflow-hidden pixel-shadow border-2 border-m2e-border group z-10">
         <img 
           src="/assets/landing/galavant-hero.png" 
           alt="Galavant Hero" 
           className="absolute inset-0 w-full h-full object-cover pixel-render"
         />
+        
         {/* Gradient Overlay - Bottom Half Only */}
         <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
         

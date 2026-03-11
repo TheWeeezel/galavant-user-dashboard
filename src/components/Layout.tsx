@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router';
 import { Home, ShoppingCart, BookOpen, Menu, Cancel } from 'pixelarticons/react';
+import { MusicPlayer } from './MusicPlayer';
 
 export function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -65,12 +66,15 @@ export function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t-2 border-m2e-border bg-m2e-card py-6 mt-8">
+      <footer className="border-t-2 border-m2e-border bg-m2e-card py-6 mt-8 pb-20">
         <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-m2e-text-muted font-bold uppercase tracking-wide">
           <span>Powered by OPNet on Bitcoin</span>
           <span>Walk to Earn &mdash; Walk. Earn. Own.</span>
         </div>
       </footer>
+
+      {/* Music Player */}
+      <MusicPlayer />
     </div>
   );
 }
