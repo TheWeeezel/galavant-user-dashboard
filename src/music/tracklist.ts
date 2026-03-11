@@ -25,4 +25,10 @@ export const tracklist: Track[] = [
     artist: 'FTL: Faster Than Light OST — Ben Prunty',
     credit: 'YouTube: Frostythefiremage',
   },
+  {
+    src: '/music/track-04.mp3',
+    title: 'Opening',
+    artist: 'Pokemon Red/Blue OST — Junichi Masuda',
+    credit: 'YouTube: pokemonmusicmaster',
+  },
 ];
