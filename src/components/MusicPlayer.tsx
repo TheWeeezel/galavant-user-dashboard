@@ -114,14 +114,18 @@ export function MusicPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const play = useCallback((idx?: number) => {
-    const i = idx ?? 0;
-    setTrackIdx(i);
+  // When trackIdx changes, load and play the new track
+  const isFirstMount = useRef(true);
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return; // initial mount is handled by the autoplay effect
+    }
     const audio = audioRef.current;
     if (!audio) return;
-    audio.src = tracklist[i].src;
+    audio.load();
     audio.play().then(() => setPlaying(true)).catch(() => {});
-  }, []);
+  }, [trackIdx]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -133,15 +137,8 @@ export function MusicPlayer() {
     }
   };
 
-  const prev = () => {
-    const i = (trackIdx - 1 + tracklist.length) % tracklist.length;
-    play(i);
-  };
-
-  const next = () => {
-    const i = (trackIdx + 1) % tracklist.length;
-    play(i);
-  };
+  const prev = () => setTrackIdx((i) => (i - 1 + tracklist.length) % tracklist.length);
+  const next = () => setTrackIdx((i) => (i + 1) % tracklist.length);
 
   const seek = (e: React.MouseEvent<HTMLDivElement>) => {
     const audio = audioRef.current;
@@ -181,7 +178,7 @@ export function MusicPlayer() {
             {tracklist.map((t, i) => (
               <button
                 key={t.src}
-                onClick={() => play(i)}
+                onClick={() => setTrackIdx(i)}
                 className={`w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-m2e-border-light transition-colors ${
                   i === trackIdx ? 'bg-m2e-card-alt text-m2e-accent' : 'text-m2e-text-secondary'
                 }`}
