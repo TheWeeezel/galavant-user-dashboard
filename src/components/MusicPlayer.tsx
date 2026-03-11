@@ -79,23 +79,39 @@ export function MusicPlayer() {
     if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
-  // Auto-start on mount: wait for first user interaction then play
+  // Auto-start: play muted (allowed by all browsers), unmute on first interaction
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const tryPlay = () => {
-      audio.play().then(() => setPlaying(true)).catch(() => {
-        // Browser blocked autoplay — wait for any click then retry
-        const onClick = () => {
-          audio.play().then(() => setPlaying(true)).catch(() => {});
-          document.removeEventListener('click', onClick);
-        };
-        document.addEventListener('click', onClick);
-      });
-    };
+    // Try unmuted first
+    audio.volume = volume;
+    audio.play().then(() => setPlaying(true)).catch(() => {
+      // Blocked — start muted (browsers always allow this)
+      audio.muted = true;
+      audio.play().then(() => setPlaying(true)).catch(() => {});
+    });
 
-    tryPlay();
+    // On any user interaction, unmute
+    const unmute = () => {
+      if (audio.muted) {
+        audio.muted = false;
+        audio.volume = volume;
+      }
+      document.removeEventListener('click', unmute);
+      document.removeEventListener('keydown', unmute);
+      document.removeEventListener('scroll', unmute);
+    };
+    document.addEventListener('click', unmute);
+    document.addEventListener('keydown', unmute);
+    document.addEventListener('scroll', unmute);
+
+    return () => {
+      document.removeEventListener('click', unmute);
+      document.removeEventListener('keydown', unmute);
+      document.removeEventListener('scroll', unmute);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const play = useCallback((idx?: number) => {
