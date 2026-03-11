@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+@theme {
+  --color-m2e-bg: #F0EBE0;
+  --color-m2e-bg-alt: #E8E2D4;
+  --color-m2e-card: #FEFCF7;
+  --color-m2e-card-alt: #F5F1E8;
+  --color-m2e-surface: #FFFFFF;
+  --color-m2e-border: #C4B89C;
+  --color-m2e-border-light: #D9D0BE;
+  --color-m2e-border-dark: #A89880;
+  --color-m2e-border-focus: #3D3228;
+  --color-m2e-text: #2C2420;
+  --color-m2e-text-secondary: #6B5C4D;
+  --color-m2e-text-muted: #A89880;
+  --color-m2e-accent: #E8811A;
+  --color-m2e-accent-dark: #CC6E10;
+  --color-m2e-success: #3BA55D;
+  --color-m2e-danger: #CC3333;
+  --color-m2e-warning: #D4920A;
+  --color-m2e-info: #4488CC;
+  --color-m2e-shadow: #C4B89C;
+  --color-m2e-text-on-accent: #FFFFFF;
+
+  /* pixel theme variables */
+  --border-width-pixel: 2px;
+  --border-width-pixel-thick: 4px;
+  --radius-pixel: 4px;
+  --radius-pixel-md: 8px;
+
+  /* Attribute colors */
+  --color-m2e-earning: #DD8800;
+  --color-m2e-luck: #00AA44;
+  --color-m2e-recovery: #CC1155;
+  --color-m2e-durability: #0099DD;
+
+  /* Rarity colors */
+  --color-m2e-common: #8A8A8A;
+  --color-m2e-uncommon: #3BA55D;
+  --color-m2e-rare: #4488CC;
+  --color-m2e-epic: #8855BB;
+  --color-m2e-legendary: #D4920A;
+}
+
+body {
+  background-color: var(--color-m2e-bg);
+  color: var(--color-m2e-text);
+  font-family: "Pixelify Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-weight: 700;
+}
+
+/* Base Pixel Utilities */
+.pixel-border {
+  border-width: var(--border-width-pixel);
+  border-style: solid;
+  border-radius: var(--radius-pixel);
+}
+
+.pixel-border-md {
+  border-width: var(--border-width-pixel);
+  border-style: solid;
+  border-radius: var(--radius-pixel-md);
+}
+
+.pixel-shadow {
+  box-shadow: 4px 4px 0px 0px var(--color-m2e-shadow);
+}
+
+.pixel-shadow-sm {
+  box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow);
+}
+
+.pixel-icon-btn {
+  @apply flex items-center justify-center rounded-sm transition-colors;
+}
+
+/* Button & Card variants to emulate the app's 3D look */
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: var(--radius-pixel);
+  border-style: solid;
+  border-width: var(--border-width-pixel);
+  border-bottom-width: calc(var(--border-width-pixel) + 3px);
+  box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow);
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.1s ease;
+  cursor: pointer;
+}
+
+.pixel-btn:active {
+  opacity: 0.7; /* Matches activeOpacity={0.7} in React Native */
+}
+
+.pixel-btn-primary {
+  background-color: var(--color-m2e-accent);
+  color: var(--color-m2e-text-on-accent);
+  border-color: var(--color-m2e-accent-dark);
+  border-top-color: rgba(255, 255, 255, 0.25);
+}
+
+.pixel-btn-secondary {
+  background-color: var(--color-m2e-card-alt);
+  color: var(--color-m2e-text);
+  border-color: var(--color-m2e-border);
+  border-top-color: rgba(255, 255, 255, 0.4); /* Matches slight shine on top */
+}
+
+.pixel-btn-outline {
+  background-color: transparent;
+  color: var(--color-m2e-accent);
+  border-color: var(--color-m2e-accent);
+}
+.pixel-btn-outline:hover {
+  background-color: rgba(255, 77, 0, 0.1);
+}
+
+.pixel-btn-danger {
+  background-color: var(--color-m2e-danger);
+  color: var(--color-m2e-text-on-accent);
+  border-color: #991F1F;
+  border-top-color: rgba(255, 255, 255, 0.2);
+}
+
+.pixel-card {
+  background-color: var(--color-m2e-card);
+  border-radius: var(--radius-pixel-md);
+  border-style: solid;
+  border-width: var(--border-width-pixel);
+  border-bottom-width: calc(var(--border-width-pixel) + 2px);
+  border-color: var(--color-m2e-border);
+  border-top-color: var(--color-m2e-border-light);
+  box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow);
+}
+
+.pixel-badge-common {
+  background-color: rgba(169, 177, 214, 0.2); /* common + 20% */
+  color: var(--color-m2e-common);
+  border-color: var(--color-m2e-common);
+}
+.pixel-badge-uncommon {
+  background-color: rgba(0, 255, 102, 0.2);
+  color: var(--color-m2e-uncommon);
+  border-color: var(--color-m2e-uncommon);
+}
+.pixel-badge-rare {
+  background-color: rgba(0, 240, 255, 0.2);
+  color: var(--color-m2e-rare);
+  border-color: var(--color-m2e-rare);
+}
+.pixel-badge-epic {
+  background-color: rgba(177, 0, 255, 0.2);
+  color: var(--color-m2e-epic);
+  border-color: var(--color-m2e-epic);
+}
+.pixel-badge-legendary {
+  background-color: rgba(255, 230, 0, 0.2);
+  color: var(--color-m2e-legendary);
+  border-color: var(--color-m2e-legendary);
+}
+
+.pixel-render {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
