@@ -60,6 +60,38 @@ export function Changelog() {
         <div className="text-red-400 text-sm">Failed to load changelog</div>
       ) : data ? (
         <>
+          {/* Download Section */}
+          <div className="pixel-card p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <Download className="w-7 h-7 text-m2e-accent" />
+              <h2 className="text-xl font-black tracking-tight">Download Galavant</h2>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {data.versions[0]?.apkUrl && (
+                <a
+                  href={data.versions[0].apkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-sm font-bold"
+                >
+                  <Download className="w-4 h-4" />
+                  Download for Android
+                </a>
+              )}
+              {data.testflightUrl && (
+                <a
+                  href={data.testflightUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pixel-btn pixel-btn-secondary inline-flex items-center gap-2 text-sm font-bold"
+                >
+                  <Smartphone className="w-4 h-4" />
+                  Download for iOS
+                </a>
+              )}
+            </div>
+          </div>
+
           {/* Timeline */}
           <div className="relative space-y-6">
             {/* Vertical line */}

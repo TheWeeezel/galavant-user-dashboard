@@ -5,6 +5,7 @@ import {
   Users, MapPin, Coins, Image, Zap,
   Store, ShoppingCart, Trophy, SpeedFast,
   Heart, Scale, Chart, Fire,
+  Download, Smartphone, Login, Gift, Human,
 } from 'pixelarticons/react';
 import { fetchStats, fetchNfts, fetchLeaderboard, fetchMarketplace } from '../api';
 import { StatCard } from '../components/StatCard';
@@ -45,6 +46,18 @@ const FLOATING_ASSETS = [
   '/assets/floating/tool-luck.png',
 ];
 
+const ONBOARDING_STEPS = [
+  { icon: Download, title: 'Download', description: 'Get the app on iOS or Android' },
+  { icon: Login, title: 'Sign In', description: 'Create your account and wallet' },
+  { icon: Gift, title: 'Free NFT', description: 'Claim your starter balance bike' },
+  { icon: Human, title: 'Start Walking', description: 'Move to earn SAT tokens' },
+];
+
+interface ChangelogData {
+  testflightUrl: string;
+  versions: { version: string; date: string; title: string; apkUrl?: string; changes: { type: string; text: string }[] }[];
+}
+
 interface FloatingItem {
   id: number;
   src: string;
@@ -60,6 +73,11 @@ export function Home() {
   const [lbMetric, setLbMetric] = useState<LeaderboardMetric>('distance');
   const [lbPeriod, setLbPeriod] = useState<LeaderboardPeriod>('all_time');
   const [mpSort, setMpSort] = useState<MarketplaceSort>('newest');
+
+  const changelog = useQuery<ChangelogData>({
+    queryKey: ['changelog'],
+    queryFn: () => fetch('/changelog.json').then(r => r.json()),
+  });
 
   const stats = useQuery({ queryKey: ['stats'], queryFn: fetchStats });
   const nfts = useQuery({ queryKey: ['nfts'], queryFn: () => fetchNfts(1, 12) });
@@ -168,6 +186,52 @@ export function Home() {
           description="Buy, sell, and trade bikes and parts on the marketplace. Build your empire."
           icon={Store}
         />
+      </section>
+
+      {/* ── Ready to Start ──────────────────────────────────── */}
+      <section className="space-y-8 text-center">
+        <div>
+          <h2 className="text-3xl font-black tracking-tight mb-2">Ready to Start the Game?</h2>
+          <p className="text-m2e-text-secondary font-bold text-sm">Download Galavant and start earning today.</p>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-4">
+          {changelog.data?.testflightUrl && (
+            <a
+              href={changelog.data.testflightUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-base font-bold px-6 py-3"
+            >
+              <Smartphone className="w-5 h-5" />
+              Get it on iOS
+            </a>
+          )}
+          {changelog.data?.versions[0]?.apkUrl && (
+            <a
+              href={changelog.data.versions[0].apkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pixel-btn pixel-btn-secondary inline-flex items-center gap-2 text-base font-bold px-6 py-3"
+            >
+              <Download className="w-5 h-5" />
+              Get it on Android
+            </a>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+          {ONBOARDING_STEPS.map((step, i) => (
+            <div key={step.title} className="flex flex-col items-center gap-3">
+              <div className="w-16 h-16 rounded-full bg-m2e-accent/15 border-2 border-m2e-accent flex items-center justify-center">
+                <step.icon className="w-8 h-8 text-m2e-accent" />
+              </div>
+              <div className="text-xs font-black text-m2e-text-muted uppercase tracking-widest">Step {i + 1}</div>
+              <div className="text-lg font-black text-m2e-text">{step.title}</div>
+              <p className="text-sm text-m2e-text-secondary font-bold">{step.description}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* ── Global Stats ─────────────────────────────────────── */}
