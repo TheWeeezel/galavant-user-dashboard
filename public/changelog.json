@@ -1,0 +1,52 @@
+{
+  "testflightUrl": "https://testflight.apple.com/join/PLACEHOLDER",
+  "versions": [
+    {
+      "version": "0.0.3",
+      "date": "2026-03-12",
+      "title": "Staking, Swaps & Breeding",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-user-dashboard/releases/download/v0.0.3/galavant.apk",
+      "changes": [
+        { "type": "feature", "text": "SAT staking with milestone tiers (Iron to Legend)" },
+        { "type": "feature", "text": "SAT/BTC swap via NativeSwap integration" },
+        { "type": "feature", "text": "Bike and part breeding system" },
+        { "type": "feature", "text": "Equipment upgrade system" },
+        { "type": "feature", "text": "Earning bonuses from streak, holding ratio & staking" },
+        { "type": "feature", "text": "Changelog page on customer dashboard" },
+        { "type": "improvement", "text": "Dark mode support across all app screens" },
+        { "type": "improvement", "text": "Loyalty streak tracking with tier badges" },
+        { "type": "fix", "text": "Energy recovery timer accuracy" }
+      ]
+    },
+    {
+      "version": "0.0.2",
+      "date": "2026-02-25",
+      "title": "Marketplace & Conversions",
+      "changes": [
+        { "type": "feature", "text": "Marketplace for buying and selling bikes & parts" },
+        { "type": "feature", "text": "SAT Points to SAT Token conversion" },
+        { "type": "feature", "text": "Mystery box drops from activities" },
+        { "type": "feature", "text": "Toolbox opening with random rewards" },
+        { "type": "feature", "text": "Leaderboard rankings" },
+        { "type": "improvement", "text": "Renamed entities: Sneakers to Bikes, Gems to Parts" },
+        { "type": "improvement", "text": "Google account linking for cross-device sign-in" },
+        { "type": "fix", "text": "Wallet balance display rounding" }
+      ]
+    },
+    {
+      "version": "0.0.1",
+      "date": "2026-02-15",
+      "title": "Initial Release",
+      "changes": [
+        { "type": "feature", "text": "Bike-to-earn activity tracking with GPS" },
+        { "type": "feature", "text": "Bike inventory with quality tiers" },
+        { "type": "feature", "text": "Part socketing for earning boosts" },
+        { "type": "feature", "text": "Energy system with daily recovery" },
+        { "type": "feature", "text": "SAT Points earning from rides" },
+        { "type": "feature", "text": "Wallet generation and OPNet integration" },
+        { "type": "feature", "text": "Bike leveling system" },
+        { "type": "feature", "text": "Profile with lifetime stats" }
+      ]
+    }
+  ]
+}

@@ -8,6 +8,11 @@ import {
 } from 'pixelarticons/react';
 import { fetchStats, fetchNfts, fetchLeaderboard, fetchMarketplace } from '../api';
 import { StatCard } from '../components/StatCard';
+
+function formatDistance(meters: number): string {
+  if (meters < 1000) return `${Math.round(meters)} m`;
+  return `${(meters / 1000).toFixed(2)} km`;
+}
 import { NftCard } from '../components/NftCard';
 import { NftDetailModal } from '../components/NftDetailModal';
 import { LeaderboardRow } from '../components/LeaderboardRow';
@@ -180,11 +185,11 @@ export function Home() {
           return (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <StatCard icon={Users} label="Walkers" value={(d.totalUsers ?? 0).toLocaleString()} />
-              <StatCard icon={MapPin} label="Total Distance" value={`${((d.totalDistance ?? 0) / 1000).toFixed(0)} km`} />
+              <StatCard icon={MapPin} label="Total Distance" value={formatDistance(d.totalDistance ?? 0)} />
               <StatCard icon={Coins} label="SAT Earned" value={formatSat(d.totalSatEarned ?? 0)} />
               <StatCard icon={Zap} label="Activities" value={(d.totalActivities ?? 0).toLocaleString()} />
               <StatCard icon={Image} label="Minted NFTs" value={(d.totalMintedNfts ?? 0).toLocaleString()} />
-              <StatCard icon={SpeedFast} label="Avg Walk" value={avgWalk > 0 ? `${(avgWalk / 1000).toFixed(1)} km` : '—'} />
+              <StatCard icon={SpeedFast} label="Avg Walk" value={avgWalk > 0 ? formatDistance(avgWalk) : '—'} />
               <StatCard icon={Trophy} label="Items Sold" value={sold.toLocaleString()} />
               <StatCard icon={Fire} label="Volume Traded" value={vol > 0 ? `${formatSat(vol)} SAT` : '—'} />
             </div>

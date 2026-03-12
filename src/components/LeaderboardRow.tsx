@@ -1,5 +1,10 @@
 import type { LeaderboardEntry } from '../api';
 
+function formatDistance(meters: number): string {
+  if (meters < 1000) return `${Math.round(meters)} m`;
+  return `${(meters / 1000).toFixed(2)} km`;
+}
+
 const medals: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
 
 interface LeaderboardRowProps {
@@ -11,7 +16,7 @@ export function LeaderboardRow({ entry, metric }: LeaderboardRowProps) {
   const medal = medals[entry.rank];
   const formattedValue =
     metric === 'distance'
-      ? `${(entry.value / 1000).toFixed(1)} km`
+      ? formatDistance(entry.value)
       : `${entry.value.toLocaleString()} SAT`;
 
   return (

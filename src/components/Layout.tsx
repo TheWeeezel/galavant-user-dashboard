@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Outlet, Link } from 'react-router';
-import { Home, ShoppingCart, BookOpen, Menu, Cancel } from 'pixelarticons/react';
+import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel } from 'pixelarticons/react';
 import { MusicPlayer } from './MusicPlayer';
 
 export function Layout() {
@@ -10,6 +10,7 @@ export function Layout() {
     { href: '/', label: 'Home', icon: Home },
     { href: '/gameplay', label: 'Guide', icon: BookOpen },
     { href: '/market', label: 'Market', icon: ShoppingCart },
+    { href: '/changelog', label: 'Updates', icon: Notes },
   ] as const;
 
   return (
