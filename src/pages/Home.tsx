@@ -91,12 +91,12 @@ export function Home() {
             The first Walk-to-Earn game with balance bikes on Bitcoin via OPNet.
           </p>
           <div className="flex gap-4">
-            <Link 
-              to="/market" 
+            <a
+              href="#ready-to-start"
               className="pixel-btn pixel-btn-primary text-xl px-8 py-4 hover:scale-105 transition-transform"
             >
               Start Riding
-            </Link>
+            </a>
             <Link 
               to="/gameplay" 
               className="pixel-btn pixel-btn-secondary text-xl px-8 py-4 hover:scale-105 transition-transform bg-white text-m2e-text border-white"
