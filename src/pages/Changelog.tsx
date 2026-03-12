@@ -44,15 +44,17 @@ export function Changelog() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-3xl py-8 space-y-8">
+    <div className="mx-auto max-w-3xl py-12 space-y-10">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <Notes className="w-8 h-8 text-m2e-accent" />
-        <h1 className="text-3xl font-black tracking-tight">Changelog</h1>
+      <div className="space-y-3">
+        <div className="flex items-center gap-4">
+          <Notes className="w-10 h-10 text-m2e-accent" />
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight uppercase">Changelog</h1>
+        </div>
+        <p className="text-m2e-text-secondary text-lg font-medium">
+          All notable updates to Galavant. Each version includes new features, improvements, and bug fixes.
+        </p>
       </div>
-      <p className="text-m2e-text-secondary text-sm">
-        All notable updates to Galavant. Each version includes new features, improvements, and bug fixes.
-      </p>
 
       {loading ? (
         <div className="text-m2e-text-muted text-sm">Loading changelog...</div>

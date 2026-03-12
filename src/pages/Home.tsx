@@ -118,7 +118,7 @@ export function Home() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 space-y-16 relative">
+    <div className="mx-auto max-w-7xl px-4 py-12 space-y-24 relative">
       {/* ── Floating Game Assets (Global) ────────────────────── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-50 h-full">
         {floatingItems.map((item) => (
@@ -145,11 +145,11 @@ export function Home() {
         {/* Gradient Overlay - Bottom Half Only */}
         <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
         
-        <div className="absolute inset-0 flex flex-col items-center justify-end text-center p-6 pb-8">
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-[4px_4px_0_rgba(0,0,0,1)] tracking-wider">
+        <div className="absolute inset-0 flex flex-col items-center justify-end text-center p-6 pb-12">
+          <h1 className="text-5xl md:text-7xl font-black text-white mb-6 drop-shadow-[4px_4px_0_rgba(0,0,0,1)] tracking-wider uppercase">
             WALK. EARN. CONQUER.
           </h1>
-          <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-2xl drop-shadow-[2px_2px_0_rgba(0,0,0,1)] font-bold">
+          <p className="text-xl md:text-3xl text-gray-200 mb-10 max-w-3xl drop-shadow-[2px_2px_0_rgba(0,0,0,1)] font-bold leading-relaxed">
             The first Walk-to-Earn game with balance bikes on Bitcoin via OPNet.
           </p>
           <div className="flex gap-4">
@@ -170,7 +170,7 @@ export function Home() {
       </div>
 
       {/* ── Features ─────────────────────────────────────────── */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
         <FeatureCard 
           title="Earn" 
           description="Walk, jog, or run to earn SAT tokens. The more you move, the more you earn."
@@ -189,13 +189,13 @@ export function Home() {
       </section>
 
       {/* ── Ready to Start ──────────────────────────────────── */}
-      <section className="space-y-8 text-center">
-        <div>
-          <h2 className="text-3xl font-black tracking-tight mb-2">Ready to Start the Game?</h2>
-          <p className="text-m2e-text-secondary font-bold text-sm">Download Galavant and start earning today.</p>
+      <section className="space-y-12 text-center py-8">
+        <div className="space-y-3">
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-m2e-text">Ready to Start the Game?</h2>
+          <p className="text-m2e-text-secondary font-bold text-lg md:text-xl max-w-2xl mx-auto">Download Galavant and start earning today.</p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-6">
           {changelog.data?.testflightUrl && (
             <a
               href={changelog.data.testflightUrl}
@@ -220,23 +220,26 @@ export function Home() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 text-center mt-16">
           {ONBOARDING_STEPS.map((step, i) => (
-            <div key={step.title} className="flex flex-col items-center gap-3">
-              <div className="w-16 h-16 rounded-full bg-m2e-accent/15 border-2 border-m2e-accent flex items-center justify-center">
-                <step.icon className="w-8 h-8 text-m2e-accent" />
+            <div key={step.title} className="flex flex-col items-center gap-4">
+              <div className="w-20 h-20 rounded-full bg-m2e-accent/15 border-4 border-m2e-accent flex items-center justify-center pixel-shadow-sm mb-2">
+                <step.icon className="w-10 h-10 text-m2e-accent" />
               </div>
-              <div className="text-xs font-black text-m2e-text-muted uppercase tracking-widest">Step {i + 1}</div>
-              <div className="text-lg font-black text-m2e-text">{step.title}</div>
-              <p className="text-sm text-m2e-text-secondary font-bold">{step.description}</p>
+              <div className="text-sm font-black text-m2e-text-muted uppercase tracking-widest">Step {i + 1}</div>
+              <div className="text-2xl font-black text-m2e-text">{step.title}</div>
+              <p className="text-base text-m2e-text-secondary font-bold leading-relaxed">{step.description}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── Global Stats ─────────────────────────────────────── */}
-      <section className="space-y-6">
-        <h2 className="text-2xl font-black tracking-tight">Global Stats</h2>
+      <section className="space-y-10">
+        <div className="space-y-2">
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-m2e-text uppercase">Global Stats</h2>
+          <p className="text-lg text-m2e-text-secondary font-bold">The current state of the Galavant ecosystem.</p>
+        </div>
         {stats.isLoading ? (
           <div className="text-m2e-text-muted text-sm">Loading stats...</div>
         ) : stats.error ? (
@@ -263,9 +266,12 @@ export function Home() {
 
       {/* ── Economy & Marketplace Overview ─────────────────────── */}
       {stats.data && stats.data.economyHealthScore != null && (
-        <section className="space-y-6">
-          <h2 className="text-2xl font-black tracking-tight">Economy & Marketplace</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <section className="space-y-10">
+          <div className="space-y-2">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-m2e-text uppercase">Economy & Marketplace</h2>
+            <p className="text-lg text-m2e-text-secondary font-bold">Live market conditions and economy health.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Economy Health */}
             <div className="pixel-card p-5 space-y-3">
               <div className="flex items-center gap-3">
@@ -319,33 +325,36 @@ export function Home() {
       )}
 
       {/* ── Marketplace Listings ────────────────────────────────── */}
-      <section className="space-y-6">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-black tracking-tight flex items-center gap-2">
-              <ShoppingCart className="w-7 h-7 text-m2e-accent" />
+      <section className="space-y-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-2">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-m2e-text uppercase flex items-center gap-3">
+              <ShoppingCart className="w-10 h-10 text-m2e-accent" />
               Marketplace
             </h2>
-            <Link to="/market" className="px-3 py-1 text-xs font-black uppercase tracking-wider pixel-btn pixel-btn-secondary">
+            <p className="text-lg text-m2e-text-secondary font-bold">Latest bikes and tools for sale.</p>
+          </div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex gap-2 bg-m2e-card p-1 rounded-lg border border-m2e-border">
+              {([
+                ['newest', 'Newest'],
+                ['price_asc', 'Cheapest'],
+                ['price_desc', 'Priciest'],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setMpSort(key)}
+                  className={`px-4 py-2 pixel-btn text-sm font-bold ${
+                    mpSort === key ? 'pixel-btn-primary' : 'pixel-btn-secondary border-transparent bg-transparent hover:bg-m2e-card-alt'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <Link to="/market" className="px-6 py-3 text-sm font-black uppercase tracking-wider pixel-btn pixel-btn-secondary whitespace-nowrap">
               View All
             </Link>
-          </div>
-          <div className="flex gap-2">
-            {([
-              ['newest', 'Newest'],
-              ['price_asc', 'Cheapest'],
-              ['price_desc', 'Priciest'],
-            ] as const).map(([key, label]) => (
-              <button
-                key={key}
-                onClick={() => setMpSort(key)}
-                className={`px-4 py-2 pixel-btn text-xs ${
-                  mpSort === key ? 'pixel-btn-primary' : 'pixel-btn-secondary'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -379,8 +388,11 @@ export function Home() {
       </section>
 
       {/* ── Minted NFTs Gallery ──────────────────────────────── */}
-      <section className="space-y-6">
-        <h2 className="text-2xl font-black tracking-tight">Minted Balance Bikes</h2>
+      <section className="space-y-10">
+        <div className="space-y-2">
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-m2e-text uppercase">Minted Balance Bikes</h2>
+          <p className="text-lg text-m2e-text-secondary font-bold">Recently minted bikes by the community.</p>
+        </div>
         {nfts.isLoading ? (
           <div className="text-m2e-text-muted text-sm">Loading NFTs...</div>
         ) : nfts.error ? (
@@ -397,46 +409,51 @@ export function Home() {
       </section>
 
       {/* ── Leaderboard ──────────────────────────────────────── */}
-      <section className="space-y-6">
-        <h2 className="text-2xl font-black tracking-tight flex items-center gap-2">
-          <Chart className="w-7 h-7 text-m2e-accent" />
-          Leaderboard
-        </h2>
-
-        {/* Controls */}
-        <div className="flex flex-wrap gap-3">
-          {/* Metric toggle */}
-          <div className="flex gap-2">
-            {(['distance', 'earnings'] as const).map((m) => (
-              <button
-                key={m}
-                onClick={() => setLbMetric(m)}
-                className={`px-4 py-2 pixel-btn ${
-                  lbMetric === m ? 'pixel-btn-primary' : 'pixel-btn-secondary'
-                }`}
-              >
-                {m}
-              </button>
-            ))}
+      <section className="space-y-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-2">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-m2e-text uppercase flex items-center gap-3">
+              <Chart className="w-10 h-10 text-m2e-accent" />
+              Leaderboard
+            </h2>
+            <p className="text-lg text-m2e-text-secondary font-bold">Top performers in the Galavant ecosystem.</p>
           </div>
 
-          {/* Period toggle */}
-          <div className="flex gap-2">
-            {([
-              ['daily', 'Daily'],
-              ['weekly', 'Weekly'],
-              ['all_time', 'All Time'],
-            ] as const).map(([key, label]) => (
-              <button
-                key={key}
-                onClick={() => setLbPeriod(key)}
-                className={`px-4 py-2 pixel-btn ${
-                  lbPeriod === key ? 'pixel-btn-primary' : 'pixel-btn-secondary'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+          {/* Controls */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Metric toggle */}
+            <div className="flex bg-m2e-card p-1 rounded-lg border border-m2e-border">
+              {(['distance', 'earnings'] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setLbMetric(m)}
+                  className={`px-4 py-2 pixel-btn text-sm font-bold capitalize ${
+                    lbMetric === m ? 'pixel-btn-primary' : 'pixel-btn-secondary border-transparent bg-transparent hover:bg-m2e-card-alt'
+                  }`}
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
+
+            {/* Period toggle */}
+            <div className="flex bg-m2e-card p-1 rounded-lg border border-m2e-border">
+              {([
+                ['daily', 'Daily'],
+                ['weekly', 'Weekly'],
+                ['all_time', 'All Time'],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setLbPeriod(key)}
+                  className={`px-4 py-2 pixel-btn text-sm font-bold ${
+                    lbPeriod === key ? 'pixel-btn-primary' : 'pixel-btn-secondary border-transparent bg-transparent hover:bg-m2e-card-alt'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 

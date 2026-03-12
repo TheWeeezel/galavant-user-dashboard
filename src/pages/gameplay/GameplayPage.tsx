@@ -6,7 +6,7 @@ function renderBlock(block: ContentBlock, i: number) {
   switch (block.type) {
     case 'paragraph':
       return (
-        <p key={i} className="text-m2e-text-secondary font-medium leading-relaxed">
+        <p key={i} className="text-lg text-m2e-text-secondary font-medium leading-relaxed">
           {block.text}
         </p>
       );
@@ -14,17 +14,17 @@ function renderBlock(block: ContentBlock, i: number) {
       return (
         <h2
           key={i}
-          className="text-lg font-black uppercase tracking-wide text-m2e-text border-b-2 border-m2e-accent/40 pb-1 mt-6"
+          className="text-2xl md:text-3xl font-black uppercase tracking-wide text-m2e-text border-b-2 border-m2e-accent/40 pb-2 mt-10 mb-4"
         >
           {block.text}
         </h2>
       );
     case 'list':
       return (
-        <ul key={i} className="space-y-1.5 pl-1">
+        <ul key={i} className="space-y-3 pl-2">
           {block.items.map((item, j) => (
-            <li key={j} className="flex gap-2 text-m2e-text-secondary font-medium leading-relaxed">
-              <span className="text-m2e-accent shrink-0 mt-0.5">&#9656;</span>
+            <li key={j} className="flex gap-3 text-lg text-m2e-text-secondary font-medium leading-relaxed">
+              <span className="text-m2e-accent shrink-0 mt-1">&#9656;</span>
               <span>{item}</span>
             </li>
           ))}
@@ -34,24 +34,24 @@ function renderBlock(block: ContentBlock, i: number) {
       return (
         <div
           key={i}
-          className="pixel-card border-m2e-accent/60 bg-m2e-accent/5 px-4 py-3 text-sm"
+          className="pixel-card border-m2e-accent/60 bg-m2e-accent/5 px-6 py-4 my-6 text-base"
         >
-          <span className="font-black text-m2e-accent uppercase tracking-wider text-xs">
+          <span className="font-black text-m2e-accent uppercase tracking-wider text-sm block mb-1">
             Tip:
-          </span>{' '}
-          <span className="text-m2e-text-secondary font-medium">{block.text}</span>
+          </span>
+          <span className="text-m2e-text-secondary font-medium leading-relaxed">{block.text}</span>
         </div>
       );
     case 'table':
       return (
-        <div key={i} className="overflow-x-auto">
-          <table className="w-full text-sm border-2 border-m2e-border">
+        <div key={i} className="overflow-x-auto my-6">
+          <table className="w-full text-base border-2 border-m2e-border">
             <thead>
               <tr className="bg-m2e-card-alt">
                 {block.headers.map((h, j) => (
                   <th
                     key={j}
-                    className="px-3 py-2 text-left font-black uppercase tracking-wider text-m2e-text text-xs border-b-2 border-m2e-border"
+                    className="px-4 py-3 text-left font-black uppercase tracking-wider text-m2e-text text-sm border-b-2 border-m2e-border"
                   >
                     {h}
                   </th>
@@ -64,7 +64,7 @@ function renderBlock(block: ContentBlock, i: number) {
                   {row.map((cell, ci) => (
                     <td
                       key={ci}
-                      className="px-3 py-2 text-m2e-text-secondary font-medium border-b border-m2e-border/50"
+                      className="px-4 py-3 text-m2e-text-secondary font-medium border-b border-m2e-border/50"
                     >
                       {cell}
                     </td>
@@ -123,12 +123,12 @@ export function GameplayPage() {
       </div>
 
       {/* Title */}
-      <h1 className="text-3xl font-black tracking-tight text-m2e-text mb-6">
+      <h1 className="text-4xl md:text-5xl font-black tracking-tight text-m2e-text mb-8">
         {current.page.title}
       </h1>
 
       {/* Content */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {current.page.content.map((block, i) => renderBlock(block, i))}
       </div>
 

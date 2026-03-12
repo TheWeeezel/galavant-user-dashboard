@@ -114,14 +114,14 @@ export function Marketplace() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+    <div className="mx-auto max-w-7xl px-4 py-12 space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link to="/" className="p-2 pixel-btn pixel-btn-secondary">
-          <ChevronLeft className="w-5 h-5" />
+      <div className="flex items-center gap-6 mb-8">
+        <Link to="/" className="p-3 pixel-btn pixel-btn-secondary">
+          <ChevronLeft className="w-6 h-6" />
         </Link>
-        <h1 className="text-3xl font-black tracking-tight flex items-center gap-2">
-          <ShoppingCart className="w-8 h-8 text-m2e-accent" />
+        <h1 className="text-4xl md:text-5xl font-black tracking-tight flex items-center gap-3">
+          <ShoppingCart className="w-10 h-10 text-m2e-accent" />
           MARKETPLACE
         </h1>
       </div>
