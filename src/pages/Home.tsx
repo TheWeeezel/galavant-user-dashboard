@@ -100,8 +100,7 @@ export function Home() {
     const shuffledAssets = [...FLOATING_ASSETS].sort(() => Math.random() - 0.5);
     
     for (let i = 0; i < count; i++) {
-      // Distribute evenly across the page height
-      // 5% to 95% range
+      // Distribute evenly across the hero height (0-100%)
       const top = 5 + (i * (90 / count)) + (Math.random() * 5); 
 
       items.push({
@@ -119,29 +118,6 @@ export function Home() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 space-y-24 relative">
-      {/* ── Floating Game Assets (Global) ────────────────────── */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-50 h-full">
-        {floatingItems.map((item) => (
-          <div
-            key={item.id}
-            className="absolute"
-            style={{
-              top: `${item.top}%`,
-              left: `${item.left}%`,
-            }}
-          >
-            <FloatingAsset
-              src={item.src}
-              size={item.size}
-              initialTop={0}
-              initialLeft={0}
-              delay={item.delay}
-              duration={item.duration}
-            />
-          </div>
-        ))}
-      </div>
-
       {/* ── Hero ─────────────────────────────────────────────── */}
       <div className="relative w-full h-[600px] rounded-xl overflow-hidden pixel-shadow border-2 border-m2e-border group z-10">
         <img 
@@ -149,6 +125,21 @@ export function Home() {
           alt="Galavant Hero" 
           className="absolute inset-0 w-full h-full object-cover pixel-render"
         />
+        
+        {/* Floating Game Assets (Hero Only) */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-50 h-full">
+          {floatingItems.map((item) => (
+            <FloatingAsset
+              key={item.id}
+              src={item.src}
+              size={item.size}
+              initialTop={item.top}
+              initialLeft={item.left}
+              delay={item.delay}
+              duration={item.duration}
+            />
+          ))}
+        </div>
         
         {/* Gradient Overlay - Bottom Half Only */}
         <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
