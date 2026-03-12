@@ -122,15 +122,23 @@ export function Home() {
       {/* ── Floating Game Assets (Global) ────────────────────── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-50 h-full">
         {floatingItems.map((item) => (
-          <FloatingAsset
+          <div
             key={item.id}
-            src={item.src}
-            size={item.size}
-            initialTop={item.top}
-            initialLeft={item.left}
-            delay={item.delay}
-            duration={item.duration}
-          />
+            className="absolute"
+            style={{
+              top: `${item.top}%`,
+              left: `${item.left}%`,
+            }}
+          >
+            <FloatingAsset
+              src={item.src}
+              size={item.size}
+              initialTop={0}
+              initialLeft={0}
+              delay={item.delay}
+              duration={item.duration}
+            />
+          </div>
         ))}
       </div>
 
