@@ -42,6 +42,10 @@
   --color-m2e-legendary: #D4920A;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--color-m2e-bg);
   color: var(--color-m2e-text);

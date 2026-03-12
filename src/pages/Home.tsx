@@ -152,12 +152,12 @@ export function Home() {
             The first Walk-to-Earn game with balance bikes on Bitcoin via OPNet.
           </p>
           <div className="flex gap-4">
-            <Link 
-              to="/market" 
+            <a
+              href="#ready-to-start"
               className="pixel-btn pixel-btn-primary text-xl px-8 py-4 hover:scale-105 transition-transform"
             >
-              Start Riding
-            </Link>
+              Start Walking
+            </a>
             <Link 
               to="/gameplay" 
               className="pixel-btn pixel-btn-secondary text-xl px-8 py-4 hover:scale-105 transition-transform bg-white text-m2e-text border-white"
@@ -188,7 +188,7 @@ export function Home() {
       </section>
 
       {/* ── Ready to Start ──────────────────────────────────── */}
-      <section className="space-y-12 text-center py-8">
+      <section id="ready-to-start" className="scroll-mt-24 space-y-12 text-center py-8">
         <div className="space-y-3">
           <h2 className="text-4xl md:text-5xl font-black tracking-tight text-m2e-text">Ready to Start the Game?</h2>
           <p className="text-m2e-text-secondary font-bold text-lg md:text-xl max-w-2xl mx-auto">Download Galavant and start earning today.</p>
@@ -211,7 +211,7 @@ export function Home() {
               href={changelog.data.versions[0].apkUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="pixel-btn pixel-btn-secondary inline-flex items-center gap-2 text-base font-bold px-6 py-3"
+              className="pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-base font-bold px-6 py-3"
             >
               <Download className="w-5 h-5" />
               Get it on Android
