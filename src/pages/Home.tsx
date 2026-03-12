@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -35,17 +35,6 @@ function formatSat(n: number): string {
   return n.toLocaleString();
 }
 
-import { FloatingAsset } from '../components/FloatingAsset';
-
-const FLOATING_ASSETS = [
-  '/assets/floating/gem-luck.png',
-  '/assets/floating/tool-earning.png',
-  '/assets/floating/gem-durability.png',
-  '/assets/floating/tool-recovery.png',
-  '/assets/floating/gem-earning.png',
-  '/assets/floating/tool-luck.png',
-];
-
 const ONBOARDING_STEPS = [
   { icon: Download, title: 'Download', description: 'Get the app on iOS or Android' },
   { icon: Login, title: 'Sign In', description: 'Create your account and wallet' },
@@ -56,16 +45,6 @@ const ONBOARDING_STEPS = [
 interface ChangelogData {
   testflightUrl: string;
   versions: { version: string; date: string; title: string; apkUrl?: string; changes: { type: string; text: string }[] }[];
-}
-
-interface FloatingItem {
-  id: number;
-  src: string;
-  top: number;
-  left: number;
-  size: number;
-  delay: number;
-  duration: number;
 }
 
 export function Home() {
@@ -91,31 +70,6 @@ export function Home() {
     retry: false,
   });
 
-  // Generate random floating items on mount
-  const floatingItems = useMemo(() => {
-    const items: FloatingItem[] = [];
-    const count = 6; // Reduced count to prevent duplicates (since we have 6 unique assets)
-    
-    // Shuffle the assets array to get unique random items
-    const shuffledAssets = [...FLOATING_ASSETS].sort(() => Math.random() - 0.5);
-    
-    for (let i = 0; i < count; i++) {
-      // Distribute evenly across the hero height (0-100%)
-      const top = 5 + (i * (90 / count)) + (Math.random() * 5); 
-
-      items.push({
-        id: i,
-        src: shuffledAssets[i], // Use unique asset from shuffled array
-        top,
-        left: Math.random() * 90 + 5, // 5-95% width
-        size: Math.floor(Math.random() * 40) + 60, // 60-100px
-        delay: Math.random() * 5,
-        duration: Math.random() * 4 + 6, // 6-10s
-      });
-    }
-    return items;
-  }, []);
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 space-y-24 relative">
       {/* ── Hero ─────────────────────────────────────────────── */}
@@ -125,21 +79,6 @@ export function Home() {
           alt="Galavant Hero" 
           className="absolute inset-0 w-full h-full object-cover pixel-render"
         />
-        
-        {/* Floating Game Assets (Hero Only) */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-50 h-full">
-          {floatingItems.map((item) => (
-            <FloatingAsset
-              key={item.id}
-              src={item.src}
-              size={item.size}
-              initialTop={item.top}
-              initialLeft={item.left}
-              delay={item.delay}
-              duration={item.duration}
-            />
-          ))}
-        </div>
         
         {/* Gradient Overlay - Bottom Half Only */}
         <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
@@ -152,12 +91,12 @@ export function Home() {
             The first Walk-to-Earn game with balance bikes on Bitcoin via OPNet.
           </p>
           <div className="flex gap-4">
-            <a
-              href="#ready-to-start"
+            <Link 
+              to="/market" 
               className="pixel-btn pixel-btn-primary text-xl px-8 py-4 hover:scale-105 transition-transform"
             >
-              Start Walking
-            </a>
+              Start Riding
+            </Link>
             <Link 
               to="/gameplay" 
               className="pixel-btn pixel-btn-secondary text-xl px-8 py-4 hover:scale-105 transition-transform bg-white text-m2e-text border-white"
