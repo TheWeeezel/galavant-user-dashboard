@@ -1,10 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, Link } from 'react-router';
-import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel } from 'pixelarticons/react';
+import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login } from 'pixelarticons/react';
 import { MusicPlayer } from './MusicPlayer';
+import { LoginModal } from './LoginModal';
+import { useAuth } from '../contexts/AuthContext';
+import { useWalletAuth } from '../hooks/useWalletAuth';
 
 export function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const { isAuthenticated, user } = useAuth();
+
+  // Auto-close login modal when auth succeeds (e.g. wallet connect)
+  useEffect(() => {
+    if (isAuthenticated) setShowLogin(false);
+  }, [isAuthenticated]);
+
+  // Bridge wallet connect events to auth
+  const { error: walletAuthError } = useWalletAuth();
 
   const navLinks = [
     { href: '/', label: 'Home', icon: Home },
@@ -31,6 +44,20 @@ export function Layout() {
                 {label}
               </Link>
             ))}
+            {isAuthenticated ? (
+              <Link to="/profile" className="flex items-center gap-2 bg-m2e-accent/10 border-2 border-m2e-accent text-m2e-accent px-3 py-2 rounded-md hover:bg-m2e-accent/20 transition-colors">
+                <Human className="w-5 h-5" />
+                {user?.nickname ?? 'Profile'}
+              </Link>
+            ) : (
+              <button
+                onClick={() => setShowLogin(true)}
+                className="flex items-center gap-2 bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark px-3 py-2 rounded-md hover:opacity-90 transition-opacity cursor-pointer"
+              >
+                <Login className="w-5 h-5" />
+                Login
+              </button>
+            )}
           </nav>
 
           {/* Mobile hamburger */}
@@ -57,9 +84,29 @@ export function Layout() {
                 {label}
               </Link>
             ))}
+            {isAuthenticated ? (
+              <Link
+                to="/profile"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 bg-m2e-accent/10 border-2 border-m2e-accent text-m2e-accent px-4 py-3 rounded-md hover:bg-m2e-accent/20 transition-colors w-full"
+              >
+                <Human className="w-5 h-5" />
+                {user?.nickname ?? 'Profile'}
+              </Link>
+            ) : (
+              <button
+                onClick={() => { setMenuOpen(false); setShowLogin(true); }}
+                className="flex items-center gap-3 bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark px-4 py-3 rounded-md hover:opacity-90 transition-opacity cursor-pointer w-full"
+              >
+                <Login className="w-5 h-5" />
+                Login
+              </button>
+            )}
           </nav>
         )}
       </header>
+
+      <LoginModal open={showLogin} onClose={() => setShowLogin(false)} walletError={walletAuthError} />
 
       {/* Content */}
       <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">

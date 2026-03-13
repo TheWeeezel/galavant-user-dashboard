@@ -1,7 +1,27 @@
 import { config } from './config';
 
+// --- Auth token management ---
+let _authToken: string | null = null;
+
+export function setAuthToken(token: string | null) {
+  _authToken = token;
+}
+
 async function fetchJson<T>(path: string): Promise<T> {
   const res = await fetch(`${config.apiUrl}${path}`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+async function fetchAuthJson<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...((options.headers as Record<string, string>) ?? {}),
+  };
+  if (_authToken) {
+    headers['Authorization'] = `Bearer ${_authToken}`;
+  }
+  const res = await fetch(`${config.apiUrl}${path}`, { ...options, headers });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
@@ -150,4 +170,110 @@ export function fetchMarketplace(filters: MarketplaceFilters = {}) {
   if (filters.minPrice !== undefined) params.set('minPrice', String(filters.minPrice));
   if (filters.maxPrice !== undefined) params.set('maxPrice', String(filters.maxPrice));
   return fetchJson<MarketplaceResponse>(`/explorer/marketplace?${params}`);
+}
+
+// --- Authenticated API types & functions ---
+
+export interface UserProfile {
+  id: string;
+  walletAddress: string;
+  nickname: string;
+  avatarUrl: string | null;
+  email: string | null;
+  authProvider: string;
+  displayName: string | null;
+  totalDistance: number;
+  totalSatEarned: number;
+  totalActivities: number;
+  hasGoogleLinked: boolean;
+  linkedEmail: string | null;
+  createdAt: string;
+}
+
+export interface AuthConnectResult {
+  token: string;
+  user: UserProfile;
+}
+
+export type GoogleAuthResult =
+  | { status: 'authenticated'; token: string; user: UserProfile; walletAddress: string }
+  | { status: 'needs_wallet'; googleClaimToken: string; googleEmail: string; googleDisplayName: string };
+
+export interface SpendingWallet {
+  pointsBalance: number;
+  totalConverted: number;
+}
+
+export interface UserBike {
+  id: string;
+  tokenId: number | null;
+  type: string;
+  quality: string;
+  level: number;
+  baseEarning: number;
+  baseLuck: number;
+  baseRecovery: number;
+  baseDurability: number;
+  addedEarning: number;
+  addedLuck: number;
+  addedRecovery: number;
+  addedDurability: number;
+  partSockets: PartSocket[];
+  imageUrl: string | null;
+  isEquipped: boolean;
+  durability: number;
+  hp: number;
+}
+
+export interface UserPart {
+  id: string;
+  type: string;
+  level: number;
+  socketedInBike: string | null;
+  socketSlot: number | null;
+}
+
+export interface ReferralStats {
+  referralCode: string;
+  pending: number;
+  completed: number;
+  totalEarned: number;
+}
+
+export function connectWallet(walletAddress: string, publicKey?: string, mldsaPublicKey?: string) {
+  return fetchAuthJson<AuthConnectResult>('/auth/connect', {
+    method: 'POST',
+    body: JSON.stringify({ walletAddress, publicKey, mldsaPublicKey }),
+  });
+}
+
+export function googleAuth(idToken: string) {
+  return fetchAuthJson<GoogleAuthResult>('/auth/google', {
+    method: 'POST',
+    body: JSON.stringify({ idToken }),
+  });
+}
+
+export function fetchMe() {
+  return fetchAuthJson<UserProfile>('/auth/me');
+}
+
+export function fetchSpendingWallet() {
+  return fetchAuthJson<SpendingWallet>('/wallet/spending');
+}
+
+export function fetchUserBikes() {
+  return fetchAuthJson<UserBike[]>('/bikes');
+}
+
+export function fetchUserParts() {
+  return fetchAuthJson<UserPart[]>('/parts/inventory');
+}
+
+export function fetchReferralCode() {
+  return fetchAuthJson<{ referralCode: string }>('/referrals/code');
+}
+
+export function fetchReferralStats() {
+  return fetchAuthJson<ReferralStats>('/referrals/stats');
 }

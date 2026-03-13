@@ -120,7 +120,7 @@ export function Marketplace() {
         <Link to="/" className="p-3 pixel-btn pixel-btn-secondary">
           <ChevronLeft className="w-6 h-6" />
         </Link>
-        <h1 className="text-4xl md:text-5xl font-black tracking-tight flex items-center gap-3">
+        <h1 className="text-4xl md:text-5xl font-black tracking-wide flex items-center gap-3">
           <ShoppingCart className="w-10 h-10 text-m2e-accent" />
           MARKETPLACE
         </h1>

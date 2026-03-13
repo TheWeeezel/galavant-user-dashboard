@@ -173,7 +173,7 @@ export function MusicPlayer() {
         {expanded && (
           <div className="bg-m2e-card border-t-2 border-x-2 border-m2e-border mx-auto max-w-7xl rounded-t-lg shadow-lg max-h-64 overflow-y-auto">
             <div className="px-4 py-3 border-b border-m2e-border">
-              <h3 className="text-xs uppercase tracking-widest text-m2e-accent">Galavant Radio</h3>
+              <h3 className="text-base uppercase tracking-wide text-m2e-accent">Galavant Radio</h3>
             </div>
             {tracklist.map((t, i) => (
               <button
@@ -183,16 +183,16 @@ export function MusicPlayer() {
                   i === trackIdx ? 'bg-m2e-card-alt text-m2e-accent' : 'text-m2e-text-secondary'
                 }`}
               >
-                <span className="text-xs font-mono w-6 text-center">{i + 1}</span>
+                <span className="text-sm font-mono w-6 text-center">{i + 1}</span>
                 <MusicIcon className="w-4 h-4 shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-bold truncate">{t.title}</div>
-                  <div className="text-xs text-m2e-text-muted truncate">
+                  <div className="text-base font-bold truncate">{t.title}</div>
+                  <div className="text-sm text-m2e-text-muted truncate">
                     {t.artist} &middot; {t.credit}
                   </div>
                 </div>
                 {i === trackIdx && playing && (
-                  <span className="text-xs text-m2e-accent animate-pulse">Playing</span>
+                  <span className="text-sm text-m2e-accent animate-pulse">Playing</span>
                 )}
               </button>
             ))}
@@ -255,8 +255,8 @@ export function MusicPlayer() {
               <div className="flex items-center gap-2">
                 <MusicIcon className="w-4 h-4 text-m2e-accent shrink-0" />
                 <div className="min-w-0">
-                  <div className="text-sm font-bold truncate">{track.title}</div>
-                  <div className="text-[10px] text-m2e-text-muted truncate">
+                  <div className="text-base font-bold truncate">{track.title}</div>
+                  <div className="text-xs text-m2e-text-muted truncate">
                     {track.artist} &middot; {track.credit}
                   </div>
                 </div>
@@ -265,7 +265,7 @@ export function MusicPlayer() {
 
             {/* Time */}
             {duration > 0 && (
-              <span className="text-[10px] text-m2e-text-muted font-mono hidden sm:block">
+              <span className="text-xs text-m2e-text-muted font-mono hidden sm:block">
                 {fmt(progress)} / {fmt(duration)}
               </span>
             )}

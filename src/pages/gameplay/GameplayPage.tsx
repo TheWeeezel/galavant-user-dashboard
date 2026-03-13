@@ -6,7 +6,7 @@ function renderBlock(block: ContentBlock, i: number) {
   switch (block.type) {
     case 'paragraph':
       return (
-        <p key={i} className="text-lg text-m2e-text-secondary font-medium leading-relaxed">
+        <p key={i} className="text-xl text-m2e-text-secondary leading-relaxed">
           {block.text}
         </p>
       );
@@ -23,7 +23,7 @@ function renderBlock(block: ContentBlock, i: number) {
       return (
         <ul key={i} className="space-y-3 pl-2">
           {block.items.map((item, j) => (
-            <li key={j} className="flex gap-3 text-lg text-m2e-text-secondary font-medium leading-relaxed">
+            <li key={j} className="flex gap-3 text-xl text-m2e-text-secondary leading-relaxed">
               <span className="text-m2e-accent shrink-0 mt-1">&#9656;</span>
               <span>{item}</span>
             </li>
@@ -123,7 +123,7 @@ export function GameplayPage() {
       </div>
 
       {/* Title */}
-      <h1 className="text-4xl md:text-5xl font-black tracking-tight text-m2e-text mb-8">
+      <h1 className="text-4xl md:text-5xl font-black tracking-wide text-m2e-text mb-8">
         {current.page.title}
       </h1>
 

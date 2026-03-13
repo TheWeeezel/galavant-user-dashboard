@@ -10,11 +10,14 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@btc-vision/walletconnect": "^1.9.12",
+    "@react-oauth/google": "^0.13.4",
     "@tailwindcss/vite": "^4.0.0",
     "@tanstack/react-query": "^5.62.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.0",
+    "buffer": "^6.0.3",
     "framer-motion": "^12.35.2",
     "pixelarticons": "^2.0.2",
     "react": "19.1.0",
