@@ -1,9 +1,5 @@
 import type { LeaderboardEntry } from '../api';
-
-function formatDistance(meters: number): string {
-  if (meters < 1000) return `${Math.round(meters)} m`;
-  return `${(meters / 1000).toFixed(2)} km`;
-}
+import { formatDistance } from '../utils/format';
 
 const medals: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
 

@@ -1,25 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Notes, Zap, Debug, Redo, Download, Smartphone } from 'pixelarticons/react';
-
-type ChangeType = 'feature' | 'fix' | 'improvement';
-
-interface ChangeEntry {
-  type: ChangeType;
-  text: string;
-}
-
-interface VersionEntry {
-  version: string;
-  date: string;
-  title: string;
-  apkUrl?: string;
-  changes: ChangeEntry[];
-}
-
-interface ChangelogData {
-  testflightUrl: string;
-  versions: VersionEntry[];
-}
+import type { ChangeType, ChangelogData } from '../types/changelog';
 
 const CHANGE_CONFIG: Record<ChangeType, { label: string; color: string; bg: string; Icon: React.ComponentType<any> }> = {
   feature: { label: 'NEW', color: 'text-m2e-success', bg: 'bg-m2e-success/15', Icon: Zap },
@@ -49,9 +30,9 @@ export function Changelog() {
       <div className="space-y-3">
         <div className="flex items-center gap-4">
           <Notes className="w-10 h-10 text-m2e-accent" />
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight uppercase">Changelog</h1>
+          <h1 className="text-4xl md:text-5xl font-black tracking-wide uppercase">Changelog</h1>
         </div>
-        <p className="text-m2e-text-secondary text-lg font-medium">
+        <p className="text-m2e-text-secondary text-xl">
           All notable updates to Galavant. Each version includes new features, improvements, and bug fixes.
         </p>
       </div>
@@ -66,7 +47,7 @@ export function Changelog() {
           <div className="pixel-card p-6 space-y-4">
             <div className="flex items-center gap-3">
               <Download className="w-7 h-7 text-m2e-accent" />
-              <h2 className="text-xl font-black tracking-tight">Download Galavant</h2>
+              <h2 className="text-xl font-black tracking-wide">Download Galavant</h2>
             </div>
             <div className="flex flex-wrap gap-3">
               {data.versions[0]?.apkUrl && (
@@ -172,7 +153,7 @@ export function Changelog() {
                             <config.Icon className="w-3 h-3" />
                             {config.label}
                           </span>
-                          <span className="text-sm text-m2e-text-secondary leading-relaxed">
+                          <span className="text-lg text-m2e-text-secondary leading-relaxed">
                             {change.text}
                           </span>
                         </li>

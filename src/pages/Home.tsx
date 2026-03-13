@@ -9,15 +9,12 @@ import {
 } from 'pixelarticons/react';
 import { fetchStats, fetchNfts, fetchLeaderboard, fetchMarketplace } from '../api';
 import { StatCard } from '../components/StatCard';
-
-function formatDistance(meters: number): string {
-  if (meters < 1000) return `${Math.round(meters)} m`;
-  return `${(meters / 1000).toFixed(2)} km`;
-}
 import { NftCard } from '../components/NftCard';
 import { NftDetailModal } from '../components/NftDetailModal';
 import { LeaderboardRow } from '../components/LeaderboardRow';
 import { ListingCard } from '../components/ListingCard';
+import { formatDistance } from '../utils/format';
+import type { ChangelogData } from '../types/changelog';
 
 type LeaderboardMetric = 'distance' | 'earnings';
 type LeaderboardPeriod = 'daily' | 'weekly' | 'all_time';
@@ -42,11 +39,6 @@ const ONBOARDING_STEPS = [
   { icon: Human, title: 'Start Walking', description: 'Move to earn SAT tokens' },
 ];
 
-interface ChangelogData {
-  testflightUrl: string;
-  versions: { version: string; date: string; title: string; apkUrl?: string; changes: { type: string; text: string }[] }[];
-}
-
 export function Home() {
   const [selectedNftId, setSelectedNftId] = useState<string | null>(null);
   const [lbMetric, setLbMetric] = useState<LeaderboardMetric>('distance');
@@ -55,7 +47,10 @@ export function Home() {
 
   const changelog = useQuery<ChangelogData>({
     queryKey: ['changelog'],
-    queryFn: () => fetch('/changelog.json').then(r => r.json()),
+    queryFn: () => fetch('/changelog.json').then(r => {
+      if (!r.ok) throw new Error('Failed to load changelog');
+      return r.json();
+    }),
   });
 
   const stats = useQuery({ queryKey: ['stats'], queryFn: fetchStats });
@@ -74,15 +69,15 @@ export function Home() {
     <div className="mx-auto max-w-7xl px-4 py-12 space-y-24 relative">
       {/* ── Hero ─────────────────────────────────────────────── */}
       <div className="relative w-full h-[600px] rounded-xl overflow-hidden pixel-shadow border-2 border-m2e-border group z-10">
-        <img 
-          src="/assets/landing/galavant-hero.png" 
-          alt="Galavant Hero" 
+        <img
+          src="/assets/landing/galavant-hero.png"
+          alt="Galavant Hero"
           className="absolute inset-0 w-full h-full object-cover pixel-render"
         />
-        
+
         {/* Gradient Overlay - Bottom Half Only */}
         <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
-        
+
         <div className="absolute inset-0 flex flex-col items-center justify-end text-center p-6 pb-12">
           <h1 className="text-5xl md:text-7xl font-black text-white mb-6 drop-shadow-[4px_4px_0_rgba(0,0,0,1)] tracking-wider uppercase">
             WALK. EARN. CONQUER.
@@ -97,8 +92,8 @@ export function Home() {
             >
               Start Riding
             </a>
-            <Link 
-              to="/gameplay" 
+            <Link
+              to="/gameplay"
               className="pixel-btn pixel-btn-secondary text-xl px-8 py-4 hover:scale-105 transition-transform bg-white text-m2e-text border-white"
             >
               Guide
@@ -109,18 +104,18 @@ export function Home() {
 
       {/* ── Features ─────────────────────────────────────────── */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-        <FeatureCard 
-          title="Earn" 
+        <FeatureCard
+          title="Earn"
           description="Walk, jog, or run to earn SAT tokens. The more you move, the more you earn."
           icon={Coins}
         />
-        <FeatureCard 
-          title="Ride" 
+        <FeatureCard
+          title="Ride"
           description="Equip your bike and explore the world. Upgrade your gear to maximize efficiency."
           icon={SpeedFast}
         />
-        <FeatureCard 
-          title="Trade" 
+        <FeatureCard
+          title="Trade"
           description="Buy, sell, and trade bikes and parts on the marketplace. Build your empire."
           icon={Store}
         />
@@ -129,8 +124,8 @@ export function Home() {
       {/* ── Ready to Start ──────────────────────────────────── */}
       <section id="ready-to-start" className="scroll-mt-24 space-y-12 text-center py-8">
         <div className="space-y-3">
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-m2e-text">Ready to Start the Game?</h2>
-          <p className="text-m2e-text-secondary font-bold text-lg md:text-xl max-w-2xl mx-auto">Download Galavant and start earning today.</p>
+          <h2 className="text-4xl md:text-5xl font-black tracking-wide text-m2e-text">Ready to Start the Game?</h2>
+          <p className="text-m2e-text-secondary text-xl md:text-2xl max-w-2xl mx-auto">Download Galavant and start earning today.</p>
         </div>
 
         <div className="flex flex-wrap justify-center gap-6">
@@ -166,7 +161,7 @@ export function Home() {
               </div>
               <div className="text-sm font-black text-m2e-text-muted uppercase tracking-widest">Step {i + 1}</div>
               <div className="text-2xl font-black text-m2e-text">{step.title}</div>
-              <p className="text-base text-m2e-text-secondary font-bold leading-relaxed">{step.description}</p>
+              <p className="text-lg text-m2e-text-secondary leading-relaxed">{step.description}</p>
             </div>
           ))}
         </div>
@@ -175,8 +170,8 @@ export function Home() {
       {/* ── Global Stats ─────────────────────────────────────── */}
       <section className="space-y-10">
         <div className="space-y-2">
-          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-m2e-text uppercase">Global Stats</h2>
-          <p className="text-lg text-m2e-text-secondary font-bold">The current state of the Galavant ecosystem.</p>
+          <h2 className="text-3xl md:text-4xl font-black tracking-wide text-m2e-text uppercase">Global Stats</h2>
+          <p className="text-xl text-m2e-text-secondary">The current state of the Galavant ecosystem.</p>
         </div>
         {stats.isLoading ? (
           <div className="text-m2e-text-muted text-sm">Loading stats...</div>
@@ -206,8 +201,8 @@ export function Home() {
       {stats.data && stats.data.economyHealthScore != null && (
         <section className="space-y-10">
           <div className="space-y-2">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-m2e-text uppercase">Economy & Marketplace</h2>
-            <p className="text-lg text-m2e-text-secondary font-bold">Live market conditions and economy health.</p>
+            <h2 className="text-3xl md:text-4xl font-black tracking-wide text-m2e-text uppercase">Economy & Marketplace</h2>
+            <p className="text-xl text-m2e-text-secondary">Live market conditions and economy health.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Economy Health */}
@@ -266,11 +261,11 @@ export function Home() {
       <section className="space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-2">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-m2e-text uppercase flex items-center gap-3">
+            <h2 className="text-3xl md:text-4xl font-black tracking-wide text-m2e-text uppercase flex items-center gap-3">
               <ShoppingCart className="w-10 h-10 text-m2e-accent" />
               Marketplace
             </h2>
-            <p className="text-lg text-m2e-text-secondary font-bold">Latest bikes and tools for sale.</p>
+            <p className="text-xl text-m2e-text-secondary">Latest bikes and tools for sale.</p>
           </div>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex gap-2 bg-m2e-card p-1 rounded-lg border border-m2e-border">
@@ -328,8 +323,8 @@ export function Home() {
       {/* ── Minted NFTs Gallery ──────────────────────────────── */}
       <section className="space-y-10">
         <div className="space-y-2">
-          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-m2e-text uppercase">Minted Balance Bikes</h2>
-          <p className="text-lg text-m2e-text-secondary font-bold">Recently minted bikes by the community.</p>
+          <h2 className="text-3xl md:text-4xl font-black tracking-wide text-m2e-text uppercase">Minted Balance Bikes</h2>
+          <p className="text-xl text-m2e-text-secondary">Recently minted bikes by the community.</p>
         </div>
         {nfts.isLoading ? (
           <div className="text-m2e-text-muted text-sm">Loading NFTs...</div>
@@ -350,11 +345,11 @@ export function Home() {
       <section className="space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-2">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-m2e-text uppercase flex items-center gap-3">
+            <h2 className="text-3xl md:text-4xl font-black tracking-wide text-m2e-text uppercase flex items-center gap-3">
               <Chart className="w-10 h-10 text-m2e-accent" />
               Leaderboard
             </h2>
-            <p className="text-lg text-m2e-text-secondary font-bold">Top performers in the Galavant ecosystem.</p>
+            <p className="text-xl text-m2e-text-secondary">Top performers in the Galavant ecosystem.</p>
           </div>
 
           {/* Controls */}
@@ -425,8 +420,8 @@ function FeatureCard({ title, description, icon: Icon }: { title: string; descri
       <div className="w-24 h-24 mb-4 bg-m2e-bg rounded-full flex items-center justify-center border-2 border-m2e-border overflow-hidden pixel-shadow-sm group-hover:scale-110 transition-transform">
         <Icon className="w-12 h-12 text-m2e-accent" />
       </div>
-      <h3 className="text-2xl font-black text-m2e-text mb-2 uppercase tracking-tight">{title}</h3>
-      <p className="text-m2e-text-secondary font-bold text-sm leading-relaxed">{description}</p>
+      <h3 className="text-2xl font-black text-m2e-text mb-2 uppercase tracking-wide">{title}</h3>
+      <p className="text-m2e-text-secondary text-lg leading-relaxed">{description}</p>
     </div>
   );
 }
