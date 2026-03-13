@@ -7,7 +7,7 @@ export function GameplayLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex gap-0 -mx-4 md:-mx-8 -my-4 md:-my-8 -mb-12 md:-mb-16 min-h-[calc(100vh-4rem)]">
+    <div className="flex gap-0 min-h-[calc(100vh-4rem)]">
       {/* Mobile toggle */}
       <button
         onClick={() => setSidebarOpen((v) => !v)}

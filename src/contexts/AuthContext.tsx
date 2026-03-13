@@ -41,7 +41,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 
 interface AuthContextValue extends AuthState {
   loginWithWallet: (walletAddress: string, publicKey?: string, mldsaPublicKey?: string) => Promise<void>;
-  loginWithGoogle: (idToken: string) => Promise<GoogleAuthResult>;
+  loginWithGoogle: (code: string) => Promise<GoogleAuthResult>;
   logout: () => void;
 }
 
@@ -96,10 +96,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const loginWithGoogle = useCallback(async (idToken: string): Promise<GoogleAuthResult> => {
+  const loginWithGoogle = useCallback(async (code: string): Promise<GoogleAuthResult> => {
     dispatch({ type: 'SET_LOADING', loading: true });
     try {
-      const result = await googleAuth(idToken);
+      const result = await googleAuth(code);
       if (result.status === 'authenticated') {
         setAuthToken(result.token);
         localStorage.setItem(STORAGE_TOKEN, result.token);

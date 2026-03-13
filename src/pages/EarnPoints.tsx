@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Coins, ExternalLink, Copy, Check, Human } from 'pixelarticons/react';
+import { Link } from 'react-router';
+import { Coins, ExternalLink, Copy, Check, Human, Gift } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
 import { fetchReferralCode, fetchReferralStats } from '../api';
@@ -35,7 +36,7 @@ export function EarnPoints() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6">
       {/* Hero */}
       <div className="text-center py-6">
         <h1
@@ -47,6 +48,27 @@ export function EarnPoints() {
         <p className="text-xl text-m2e-text-secondary mt-2 max-w-lg mx-auto">
           Multiple ways to earn SAT Points in the Galavant ecosystem — walk, engage, and refer friends.
         </p>
+      </div>
+
+      {/* Testing Tasks */}
+      <div className="pixel-card p-5 space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-m2e-accent/10 flex items-center justify-center">
+            <Gift className="w-6 h-6 text-m2e-accent" />
+          </div>
+          <h2 className="text-2xl font-black uppercase tracking-wide text-m2e-text">
+            Testing Tasks
+          </h2>
+        </div>
+        <p className="text-lg text-m2e-text-secondary">
+          Complete 12 testnet tasks to earn up to <span className="text-m2e-accent font-black">1,700 SAT Points</span>. Your points will count toward the mainnet airdrop allocation.
+        </p>
+        <Link
+          to="/tasks"
+          className="pixel-btn pixel-btn-primary px-4 py-2 text-sm inline-flex items-center gap-2 no-underline"
+        >
+          View Tasks
+        </Link>
       </div>
 
       {/* Walk to Earn */}

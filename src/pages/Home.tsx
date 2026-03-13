@@ -66,42 +66,45 @@ export function Home() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 space-y-24 relative">
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <div className="relative w-full h-[600px] rounded-xl overflow-hidden pixel-shadow border-2 border-m2e-border group z-10">
-        <img
-          src="/assets/landing/galavant-hero.png"
-          alt="Galavant Hero"
-          className="absolute inset-0 w-full h-full object-cover pixel-render"
-        />
+    <>
+      {/* ── Hero ── full-bleed on mobile/tablet, contained on desktop ── */}
+      <div className="lg:mx-auto lg:max-w-7xl lg:px-4 lg:pt-4 mb-8 md:mb-12">
+        <div className="relative w-full aspect-[5/4] md:aspect-video overflow-hidden lg:rounded-xl lg:border-2 lg:border-m2e-border lg:shadow-[4px_4px_0_var(--color-m2e-shadow)] group z-10">
+          <img
+            src="/assets/landing/galavant-hero.png"
+            alt="Galavant Hero"
+            className="absolute inset-0 w-full h-full object-cover pixel-render"
+          />
 
-        {/* Gradient Overlay - Bottom Half Only */}
-        <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
+          {/* Gradient Overlay - Bottom Third */}
+          <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
 
-        <div className="absolute inset-0 flex flex-col items-center justify-end text-center p-6 pb-12">
-          <h1 className="text-5xl md:text-7xl font-black text-white mb-6 drop-shadow-[4px_4px_0_rgba(0,0,0,1)] tracking-wider uppercase">
-            WALK. EARN. CONQUER.
-          </h1>
-          <p className="text-xl md:text-3xl text-gray-200 mb-10 max-w-3xl drop-shadow-[2px_2px_0_rgba(0,0,0,1)] font-bold leading-relaxed">
-            The first Walk-to-Earn game with balance bikes on Bitcoin via OPNet.
-          </p>
-          <div className="flex gap-4">
-            <a
-              href="#ready-to-start"
-              className="pixel-btn pixel-btn-primary text-xl px-8 py-4 hover:scale-105 transition-transform"
-            >
-              Start Riding
-            </a>
-            <Link
-              to="/gameplay"
-              className="pixel-btn pixel-btn-secondary text-xl px-8 py-4 hover:scale-105 transition-transform bg-white text-m2e-text border-white"
-            >
-              Guide
-            </Link>
+          <div className="absolute inset-0 flex flex-col items-center justify-end text-center px-4 pb-4 md:pb-6 lg:px-6 lg:pb-10">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-1 lg:mb-3 drop-shadow-[4px_4px_0_rgba(0,0,0,1)] tracking-wider uppercase">
+              WALK. EARN. CONQUER.
+            </h1>
+            <p className="text-lg md:text-xl lg:text-3xl text-gray-200 mb-3 lg:mb-6 max-w-3xl drop-shadow-[2px_2px_0_rgba(0,0,0,1)] font-bold leading-snug">
+              The first Walk-to-Earn game with balance bikes on Bitcoin via OPNet.
+            </p>
+            <div className="flex gap-3 lg:gap-4">
+              <a
+                href="#ready-to-start"
+                className="pixel-btn pixel-btn-primary text-base lg:text-xl px-6 py-3 lg:px-8 lg:py-4 hover:scale-105 transition-transform"
+              >
+                Start Riding
+              </a>
+              <Link
+                to="/gameplay"
+                className="pixel-btn pixel-btn-secondary text-base lg:text-xl px-6 py-3 lg:px-8 lg:py-4 hover:scale-105 transition-transform bg-white text-m2e-text border-white"
+              >
+                Guide
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
+    <div className="mx-auto max-w-7xl px-4 pb-12 space-y-24 relative">
       {/* ── Features ─────────────────────────────────────────── */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
         <FeatureCard
@@ -411,6 +414,7 @@ export function Home() {
         <NftDetailModal nftId={selectedNftId} onClose={() => setSelectedNftId(null)} />
       )}
     </div>
+    </>
   );
 }
 

@@ -6,6 +6,7 @@ import { Marketplace } from './pages/Marketplace';
 import { Changelog } from './pages/Changelog';
 import { Profile } from './pages/Profile';
 import { EarnPoints } from './pages/EarnPoints';
+import { Tasks } from './pages/Tasks';
 import { GameplayLayout } from './pages/gameplay/GameplayLayout';
 import { GameplayPage } from './pages/gameplay/GameplayPage';
 
@@ -28,6 +29,7 @@ export function App() {
           <Route path="changelog" element={<Changelog />} />
           <Route path="profile" element={<Profile />} />
           <Route path="earn" element={<EarnPoints />} />
+          <Route path="tasks" element={<Tasks />} />
           <Route path="gameplay" element={<GameplayLayout />}>
             <Route index element={<GameplayPage />} />
             <Route path=":sectionSlug/:pageSlug" element={<GameplayPage />} />

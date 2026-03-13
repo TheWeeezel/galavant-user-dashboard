@@ -247,10 +247,10 @@ export function connectWallet(walletAddress: string, publicKey?: string, mldsaPu
   });
 }
 
-export function googleAuth(idToken: string) {
+export function googleAuth(code: string) {
   return fetchAuthJson<GoogleAuthResult>('/auth/google', {
     method: 'POST',
-    body: JSON.stringify({ idToken }),
+    body: JSON.stringify({ code }),
   });
 }
 
@@ -276,4 +276,28 @@ export function fetchReferralCode() {
 
 export function fetchReferralStats() {
   return fetchAuthJson<ReferralStats>('/referrals/stats');
+}
+
+// --- Testing Tasks ---
+
+export interface TestingTask {
+  id: string;
+  title: string;
+  description: string;
+  reward: number;
+  category: string;
+  sortOrder: number;
+  status: 'locked' | 'completed' | 'claimed';
+}
+
+export interface TestingTasksResponse {
+  tasks: TestingTask[];
+}
+
+export function fetchTestingTasks() {
+  return fetchAuthJson<TestingTasksResponse>('/tasks');
+}
+
+export function claimTestingTask(taskId: string) {
+  return fetchAuthJson<{ reward: number }>(`/tasks/${taskId}/claim`, { method: 'POST' });
 }

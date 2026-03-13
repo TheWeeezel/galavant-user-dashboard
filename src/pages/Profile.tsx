@@ -86,7 +86,7 @@ export function Profile() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6">
       <h1
         className="text-2xl md:text-3xl font-black uppercase tracking-widest text-m2e-accent"
         style={{ textShadow: '1px 1px 0px var(--color-m2e-accent-dark)' }}
@@ -181,12 +181,20 @@ export function Profile() {
             </span>
             <span className="text-sm font-bold text-m2e-text-muted ml-2 uppercase">Points</span>
           </div>
-          <Link
-            to="/earn"
-            className="pixel-btn pixel-btn-primary px-4 py-2 text-xs no-underline"
-          >
-            Earn More
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              to="/tasks"
+              className="pixel-btn pixel-btn-outline px-4 py-2 text-xs no-underline"
+            >
+              Tasks
+            </Link>
+            <Link
+              to="/earn"
+              className="pixel-btn pixel-btn-primary px-4 py-2 text-xs no-underline"
+            >
+              Earn More
+            </Link>
+          </div>
         </div>
       </div>
 

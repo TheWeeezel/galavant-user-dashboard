@@ -25,7 +25,7 @@ export function Changelog() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-3xl py-12 space-y-10">
+    <div className="mx-auto max-w-3xl px-4 md:px-8 py-12 space-y-10">
       {/* Header */}
       <div className="space-y-3">
         <div className="flex items-center gap-4">
