@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router';
 import { Cancel } from 'pixelarticons/react';
 import { useWalletConnect } from '@btc-vision/walletconnect';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,7 +13,6 @@ interface LoginModalProps {
 export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
   const { openConnectModal, connecting } = useWalletConnect();
   const { loginWithGoogle, isLoading } = useAuth();
-  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [needsWalletMsg, setNeedsWalletMsg] = useState(false);
 
@@ -40,7 +38,6 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
           const result = await loginWithGoogle(response.code);
           if (result.status === 'authenticated') {
             onClose();
-            navigate('/profile');
           } else {
             setNeedsWalletMsg(true);
           }
@@ -51,7 +48,7 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
     });
 
     client.requestCode();
-  }, [loginWithGoogle, onClose, navigate]);
+  }, [loginWithGoogle, onClose]);
 
   if (!open) return null;
 
