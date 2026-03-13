@@ -140,7 +140,7 @@ export function Home() {
  className="pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-base px-6 py-3"
             >
  <Smartphone className="w-5 h-5" />
-              Get it on iOS
+              Download on iOS
             </a>
           )}
           {changelog.data?.versions[0]?.apkUrl && (

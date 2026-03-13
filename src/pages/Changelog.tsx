@@ -69,7 +69,7 @@ export function Changelog() {
  className="pixel-btn pixel-btn-secondary inline-flex items-center gap-2 text-sm"
                 >
  <Smartphone className="w-4 h-4" />
-                  Download for iOS
+                  Download on iOS
                 </a>
               )}
             </div>
@@ -134,7 +134,7 @@ export function Changelog() {
  className="pixel-btn pixel-btn-secondary inline-flex items-center gap-2 text-sm"
                         >
  <Smartphone className="w-4 h-4" />
-                          Join TestFlight
+                          Download on iOS
                         </a>
                       )}
                     </div>
