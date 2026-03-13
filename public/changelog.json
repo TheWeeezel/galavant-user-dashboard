@@ -2,10 +2,18 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.6",
+      "date": "2026-03-13",
+      "title": "Google Sign-In Fix",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.6/galavant.apk",
+      "changes": [
+        { "type": "fix", "text": "Google Sign-In on preview/production builds (missing EAS environment variables)" }
+      ]
+    },
+    {
       "version": "0.0.5",
       "date": "2026-03-13",
       "title": "Wallets, Tasks & Native Sign-In",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.5/galavant.apk",
       "changes": [
         { "type": "feature", "text": "Wallet import functionality" },
         { "type": "feature", "text": "Task system with API endpoints" },
