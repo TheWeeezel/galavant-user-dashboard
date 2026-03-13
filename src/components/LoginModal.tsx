@@ -17,6 +17,12 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
   const [needsWalletMsg, setNeedsWalletMsg] = useState(false);
 
   const handleGoogleLogin = useCallback(() => {
+    console.log('[GoogleAuth] handleGoogleLogin called');
+    console.log('[GoogleAuth] window.google exists:', !!window.google);
+    console.log('[GoogleAuth] window.google.accounts exists:', !!window.google?.accounts);
+    console.log('[GoogleAuth] window.google.accounts.oauth2 exists:', !!window.google?.accounts?.oauth2);
+    console.log('[GoogleAuth] config.googleClientId:', config.googleClientId);
+
     if (!window.google?.accounts?.oauth2) {
       setError('Google sign-in is loading, please try again');
       return;
@@ -25,28 +31,35 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
     setError(null);
     setNeedsWalletMsg(false);
 
+    console.log('[GoogleAuth] creating code client...');
     const client = window.google.accounts.oauth2.initCodeClient({
       client_id: config.googleClientId,
       scope: 'openid email profile',
       ux_mode: 'popup',
       callback: async (response: { code?: string; error?: string }) => {
+        console.log('[GoogleAuth] callback fired, response:', JSON.stringify(response));
         if (response.error || !response.code) {
+          console.error('[GoogleAuth] no code or error:', response.error);
           setError('Google sign-in was cancelled');
           return;
         }
         try {
+          console.log('[GoogleAuth] calling loginWithGoogle, code length:', response.code.length);
           const result = await loginWithGoogle(response.code);
+          console.log('[GoogleAuth] result status:', result.status);
           if (result.status === 'authenticated') {
             onClose();
           } else {
             setNeedsWalletMsg(true);
           }
         } catch (err: any) {
+          console.error('[GoogleAuth] loginWithGoogle error:', err);
           setError(err.message ?? 'Google sign-in failed');
         }
       },
     });
 
+    console.log('[GoogleAuth] calling requestCode...');
     client.requestCode();
   }, [loginWithGoogle, onClose]);
 
