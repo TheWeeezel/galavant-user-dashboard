@@ -2,10 +2,26 @@
   "testflightUrl": "",
   "versions": [
     {
+      "version": "0.0.5",
+      "date": "2026-03-13",
+      "title": "Wallets, Tasks & Native Sign-In",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.5/galavant.apk",
+      "changes": [
+        { "type": "feature", "text": "Wallet import functionality" },
+        { "type": "feature", "text": "Task system with API endpoints" },
+        { "type": "feature", "text": "Referral system introduction" },
+        { "type": "feature", "text": "Whitepaper link in Profile" },
+        { "type": "improvement", "text": "Native Google Sign-In replaces browser-based flow" },
+        { "type": "improvement", "text": "Emission interval changed to 30 seconds (from 1 minute)" },
+        { "type": "improvement", "text": "New auth structure" },
+        { "type": "fix", "text": "Unload from sockets crash" },
+        { "type": "fix", "text": "Removed GPS penalty for short walks" }
+      ]
+    },
+    {
       "version": "0.0.3",
       "date": "2026-03-12",
       "title": "Staking, Swaps & Breeding",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-user-dashboard/releases/download/v0.0.3/galavant.apk",
       "changes": [
         { "type": "feature", "text": "SAT staking with milestone tiers (Iron to Legend)" },
         { "type": "feature", "text": "SAT/BTC swap via NativeSwap integration" },

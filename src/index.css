@@ -84,7 +84,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
+  font-weight: 400;
   letter-spacing: 2px;
   text-transform: uppercase;
   border-radius: var(--radius-pixel);

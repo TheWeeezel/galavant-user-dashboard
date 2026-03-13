@@ -426,6 +426,63 @@ export const gameplaySections: GameplaySection[] = [
     icon: Coins,
     pages: [
       {
+        slug: 'dashboard-login',
+        title: 'Dashboard Login',
+        content: [
+          { type: 'paragraph', text: 'The Galavant dashboard lets you manage your account, view tasks, and access the marketplace from a browser. There are two ways to log in.' },
+          { type: 'heading', text: 'OPNet Wallet Extension' },
+          { type: 'list', items: [
+            'Install the OPNet Wallet browser extension.',
+            'Create a new wallet or import an existing one using your recovery phrase.',
+            'On the dashboard, click "Connect Wallet" — the extension will prompt you to approve.',
+          ]},
+          { type: 'heading', text: 'Google Sign-In' },
+          { type: 'list', items: [
+            'Click "Sign in with Google" on the dashboard.',
+            'This only works if your Google account was already linked to a wallet in the mobile app.',
+            'If you see a "not linked" message, open the mobile app first and link Google from your profile settings.',
+          ]},
+          { type: 'tip', text: 'If Google sign-in shows a "not linked" message, set up the link in the mobile app first. Go to Profile → Link Google Account.' },
+        ],
+      },
+      {
+        slug: 'wallet-setup',
+        title: 'Wallet Setup',
+        content: [
+          { type: 'paragraph', text: 'Your wallet is your identity in Galavant. Set it up in the mobile app to start earning and access all features.' },
+          { type: 'heading', text: 'Create New Wallet' },
+          { type: 'list', items: [
+            'Choose "Create New Wallet" when you first open the app.',
+            'The app generates a 12-word recovery phrase — this is your master key.',
+            'Write down the recovery phrase and store it in a safe place.',
+            'Confirm the phrase to complete wallet creation.',
+          ]},
+          { type: 'heading', text: 'Import Existing Wallet' },
+          { type: 'list', items: [
+            'Choose "Import Wallet" if you already have a recovery phrase.',
+            'Enter your 12-word or 24-word mnemonic phrase.',
+            'The app derives your wallet address and keys automatically.',
+            'You\'ll be connected to the same account as before.',
+          ]},
+          { type: 'tip', text: 'Write down your recovery phrase and store it safely — it\'s the only way to recover your wallet. Never share it with anyone.' },
+        ],
+      },
+      {
+        slug: 'cross-platform-access',
+        title: 'Cross-Platform Access',
+        content: [
+          { type: 'paragraph', text: 'Your wallet address is your identity across Galavant. The same wallet gives you the same account on both the mobile app and the web dashboard.' },
+          { type: 'heading', text: 'How It Works' },
+          { type: 'list', items: [
+            'Set up your wallet in the mobile app (create new or import existing).',
+            'To access the dashboard: import the same recovery phrase into the OPNet browser extension, then connect on the dashboard.',
+            'Alternatively, link your Google account in the mobile app and use Google sign-in on the dashboard.',
+            'Both methods connect you to the same account — your bikes, SAT balance, and progress are shared.',
+          ]},
+          { type: 'tip', text: 'Your wallet address is your identity — the same address everywhere means the same account. Keep your recovery phrase backed up to access your account from any device.' },
+        ],
+      },
+      {
         slug: 'exporting-bikes',
         title: 'Exporting Bikes',
         content: [

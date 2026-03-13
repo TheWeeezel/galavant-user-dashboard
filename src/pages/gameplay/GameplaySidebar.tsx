@@ -19,8 +19,8 @@ export function GameplaySidebar({ onNavigate }: { onNavigate?: () => void }) {
   };
 
   return (
-    <nav className="py-4">
-      <div className="px-4 pb-3 text-xs font-black uppercase tracking-widest text-m2e-text-muted">
+ <nav className="py-4">
+ <div className="px-4 pb-3 text-xs uppercase tracking-widest text-m2e-text-muted">
         Gameplay Guide
       </div>
       {gameplaySections.map((section) => {
@@ -33,14 +33,14 @@ export function GameplaySidebar({ onNavigate }: { onNavigate?: () => void }) {
             {/* Section header */}
             <button
               onClick={() => toggle(section.slug)}
-              className={`w-full flex items-center gap-2 px-4 py-2.5 text-left text-sm font-black uppercase tracking-wider transition-colors hover:bg-m2e-border-light/50 ${
+ className={`w-full flex items-center gap-2 px-4 py-2.5 text-left text-sm uppercase tracking-wider transition-colors hover:bg-m2e-border-light/50 ${
                 isCurrent ? 'text-m2e-accent' : 'text-m2e-text-secondary'
               }`}
             >
-              <Icon className="w-5 h-5 shrink-0" />
-              <span className="flex-1">{section.title}</span>
+ <Icon className="w-5 h-5 shrink-0" />
+ <span className="flex-1">{section.title}</span>
               <ChevronDown
-                className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
+ className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
                   isExpanded ? '' : '-rotate-90'
                 }`}
               />
@@ -48,7 +48,7 @@ export function GameplaySidebar({ onNavigate }: { onNavigate?: () => void }) {
 
             {/* Pages */}
             <div
-              className={`overflow-hidden transition-all duration-200 ${
+ className={`overflow-hidden transition-all duration-200 ${
                 isExpanded ? 'max-h-96' : 'max-h-0'
               }`}
             >
@@ -61,7 +61,7 @@ export function GameplaySidebar({ onNavigate }: { onNavigate?: () => void }) {
                     key={page.slug}
                     to={`/gameplay/${section.slug}/${page.slug}`}
                     onClick={onNavigate}
-                    className={`block pl-11 pr-4 py-2 text-sm font-bold transition-colors ${
+ className={`block pl-11 pr-4 py-2 text-sm transition-colors ${
                       isActive
                         ? 'text-m2e-accent bg-m2e-accent/10 border-l-2 border-m2e-accent'
                         : 'text-m2e-text-muted hover:text-m2e-text-secondary hover:bg-m2e-border-light/30 border-l-2 border-transparent'

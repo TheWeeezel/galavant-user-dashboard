@@ -51,47 +51,47 @@ export function ListingCard({ listing, onClick }: { listing: MarketplaceListing;
   const itemLabel = itemTypeLabels[listing.itemType] ?? listing.itemType;
 
   return (
-    <div className={`pixel-card overflow-hidden hover:border-m2e-accent-dark transition-colors ${onClick ? 'cursor-pointer' : ''}`} onClick={onClick}>
+ <div className={`pixel-card overflow-hidden hover:border-m2e-accent-dark transition-colors ${onClick ? 'cursor-pointer' : ''}`} onClick={onClick}>
       {/* Image or placeholder */}
-      <div className="relative aspect-[16/9] bg-m2e-bg-alt border-b-2 border-m2e-border flex items-center justify-center">
+ <div className="relative aspect-[16/9] bg-m2e-bg-alt border-b-2 border-m2e-border flex items-center justify-center">
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={`${listing.itemType} listing`}
-            className="w-full h-full object-cover pixel-render"
+ className="w-full h-full object-cover pixel-render"
             loading="lazy"
           />
         ) : (
-          <span className="text-3xl font-black text-m2e-text-muted uppercase tracking-widest">
+ <span className="text-3xl text-m2e-text-muted uppercase tracking-widest">
             {itemLabel}
           </span>
         )}
         {/* Price tag */}
-        <span className="absolute top-2 right-2 px-2 py-0.5 text-xs font-black bg-m2e-accent text-m2e-text-on-accent pixel-border shadow-sm tracking-wide border-m2e-accent-dark">
+ <span className="absolute top-2 right-2 px-2 py-0.5 text-xs bg-m2e-accent text-m2e-text-on-accent pixel-border shadow-sm tracking-wide border-m2e-accent-dark">
           {formatPrice(listing.priceSatoshis)} SAT
         </span>
       </div>
 
       {/* Info */}
-      <div className="p-3 space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="font-black text-sm uppercase tracking-wide text-m2e-text">
+ <div className="p-3 space-y-2">
+ <div className="flex items-center justify-between">
+ <span className="text-sm uppercase tracking-wide text-m2e-text">
             {listing.item?.type ? `${listing.item.type}` : itemLabel}
           </span>
           {quality && (
-            <span className={`px-2 py-0.5 text-[10px] font-black uppercase pixel-border shadow-sm tracking-wide border-opacity-50 ${qualityColors[quality] ?? qualityColors.common}`}>
+ <span className={`px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide border-opacity-50 ${qualityColors[quality] ?? qualityColors.common}`}>
               {quality}
             </span>
           )}
         </div>
 
-        <div className="flex items-center justify-between text-xs text-m2e-text-muted font-bold tracking-wide uppercase">
+ <div className="flex items-center justify-between text-xs text-m2e-text-muted tracking-wide uppercase">
           <span>{itemLabel}</span>
           {listing.item?.level && <span>Lv. {listing.item.level}</span>}
         </div>
 
-        <div className="flex items-center justify-between text-xs text-m2e-text-muted">
-          {listing.sellerName && <span className="truncate max-w-[100px]">by {listing.sellerName}</span>}
+ <div className="flex items-center justify-between text-xs text-m2e-text-muted">
+ {listing.sellerName && <span className="truncate max-w-[100px]">by {listing.sellerName}</span>}
           <span>{timeAgo(listing.createdAt)}</span>
         </div>
       </div>

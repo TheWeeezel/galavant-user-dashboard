@@ -29,34 +29,34 @@ export function Layout() {
   ] as const;
 
   return (
-    <div className="min-h-screen flex flex-col bg-m2e-bg text-m2e-text">
+ <div className="min-h-screen flex flex-col bg-m2e-bg text-m2e-text">
       {/* Nav */}
-      <header className="sticky top-0 z-50 border-b-2 border-m2e-border bg-m2e-card shadow-sm">
-        <div className="mx-auto max-w-7xl flex items-center justify-between px-4 h-16">
-          <Link to="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="Galavant" className="h-14 w-14" />
-            <span className="hidden sm:inline text-m2e-accent text-2xl tracking-widest uppercase" style={{ textShadow: '1px 1px 0px var(--color-m2e-accent-dark)' }}>Galavant</span>
+ <header className="sticky top-0 z-50 border-b-2 border-m2e-border bg-m2e-card shadow-sm">
+ <div className="mx-auto max-w-7xl flex items-center justify-between px-4 h-16">
+ <Link to="/" className="flex items-center gap-2">
+ <img src="/logo.png" alt="Galavant" className="h-14 w-14" />
+ <span className="hidden sm:inline text-m2e-accent text-2xl tracking-widest uppercase" style={{ textShadow: '1px 1px 0px var(--color-m2e-accent-dark)' }}>Galavant</span>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-3 text-sm uppercase tracking-wider">
+ <nav className="hidden md:flex items-center gap-3 text-sm uppercase tracking-wider">
             {navLinks.map(({ href, label, icon: Icon }) => (
-              <Link key={href} to={href} className="flex items-center gap-2 bg-m2e-card-alt border-2 border-m2e-border text-m2e-text-secondary px-3 py-2 rounded-md hover:bg-m2e-border-light hover:text-m2e-text transition-colors">
-                <Icon className="w-5 h-5" />
+ <Link key={href} to={href} className="flex items-center gap-2 bg-m2e-card-alt border-2 border-m2e-border text-m2e-text-secondary px-3 py-2 rounded-md hover:bg-m2e-border-light hover:text-m2e-text transition-colors">
+ <Icon className="w-5 h-5" />
                 {label}
               </Link>
             ))}
             {isAuthenticated ? (
-              <Link to="/profile" className="flex items-center gap-2 bg-m2e-accent/10 border-2 border-m2e-accent text-m2e-accent px-3 py-2 rounded-md hover:bg-m2e-accent/20 transition-colors">
-                <Human className="w-5 h-5" />
+ <Link to="/profile" className="flex items-center gap-2 bg-m2e-accent/10 border-2 border-m2e-accent text-m2e-accent px-3 py-2 rounded-md hover:bg-m2e-accent/20 transition-colors">
+ <Human className="w-5 h-5" />
                 {user?.nickname ?? 'Profile'}
               </Link>
             ) : (
               <button
                 onClick={() => setShowLogin(true)}
-                className="flex items-center gap-2 bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark px-3 py-2 rounded-md hover:opacity-90 transition-opacity cursor-pointer"
+ className="flex items-center gap-2 bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark px-3 py-2 rounded-md hover:opacity-90 transition-opacity cursor-pointer"
               >
-                <Login className="w-5 h-5" />
+ <Login className="w-5 h-5" />
                 Login
               </button>
             )}
@@ -65,24 +65,24 @@ export function Layout() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen((v) => !v)}
-            className="hidden max-md:inline-flex items-center justify-center bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark rounded-md p-2"
+ className="hidden max-md:inline-flex items-center justify-center bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark rounded-md p-2"
             aria-label="Toggle navigation menu"
           >
-            {menuOpen ? <Cancel className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+ {menuOpen ? <Cancel className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
         {/* Mobile dropdown */}
         {menuOpen && (
-          <nav className="md:hidden bg-m2e-card border-b-2 border-m2e-border px-4 py-3 flex flex-col gap-2 text-sm uppercase tracking-wider">
+ <nav className="md:hidden bg-m2e-card border-b-2 border-m2e-border px-4 py-3 flex flex-col gap-2 text-sm uppercase tracking-wider">
             {navLinks.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
                 to={href}
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 bg-m2e-card-alt border-2 border-m2e-border text-m2e-text-secondary px-4 py-3 rounded-md hover:bg-m2e-border-light hover:text-m2e-text transition-colors w-full"
+ className="flex items-center gap-3 bg-m2e-card-alt border-2 border-m2e-border text-m2e-text-secondary px-4 py-3 rounded-md hover:bg-m2e-border-light hover:text-m2e-text transition-colors w-full"
               >
-                <Icon className="w-5 h-5" />
+ <Icon className="w-5 h-5" />
                 {label}
               </Link>
             ))}
@@ -90,17 +90,17 @@ export function Layout() {
               <Link
                 to="/profile"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 bg-m2e-accent/10 border-2 border-m2e-accent text-m2e-accent px-4 py-3 rounded-md hover:bg-m2e-accent/20 transition-colors w-full"
+ className="flex items-center gap-3 bg-m2e-accent/10 border-2 border-m2e-accent text-m2e-accent px-4 py-3 rounded-md hover:bg-m2e-accent/20 transition-colors w-full"
               >
-                <Human className="w-5 h-5" />
+ <Human className="w-5 h-5" />
                 {user?.nickname ?? 'Profile'}
               </Link>
             ) : (
               <button
                 onClick={() => { setMenuOpen(false); setShowLogin(true); }}
-                className="flex items-center gap-3 bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark px-4 py-3 rounded-md hover:opacity-90 transition-opacity cursor-pointer w-full"
+ className="flex items-center gap-3 bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark px-4 py-3 rounded-md hover:opacity-90 transition-opacity cursor-pointer w-full"
               >
-                <Login className="w-5 h-5" />
+ <Login className="w-5 h-5" />
                 Login
               </button>
             )}
@@ -111,13 +111,13 @@ export function Layout() {
       <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
 
       {/* Content */}
-      <main className="flex-1 w-full">
+ <main className="flex-1 w-full">
         <Outlet />
       </main>
 
       {/* Footer */}
-      <footer className="border-t-2 border-m2e-border bg-m2e-card py-6 mt-8 pb-20">
-        <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-m2e-text-muted uppercase tracking-wide">
+ <footer className="border-t-2 border-m2e-border bg-m2e-card py-6 mt-8 pb-20">
+ <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-m2e-text-muted uppercase tracking-wide">
           <span>Powered by OPNet on Bitcoin</span>
           <span>Walk to Earn &mdash; Walk. Earn. Own.</span>
         </div>

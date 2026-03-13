@@ -49,33 +49,33 @@ function SegmentedStatBar({ label, base, added, max, color, colorLight, showBase
   const addedPct = showBase ? 0 : Math.min((added / max) * 100, 100 - basePct);
 
   return (
-    <div className="flex items-center gap-2 text-xs">
-      <span className="w-10 text-m2e-text-secondary font-bold uppercase">{label}</span>
+ <div className="flex items-center gap-2 text-xs">
+ <span className="w-10 text-m2e-text-secondary uppercase">{label}</span>
       <div
-        className="flex-1 h-5 bg-m2e-bg-alt overflow-hidden pixel-border"
+ className="flex-1 h-5 bg-m2e-bg-alt overflow-hidden pixel-border"
         style={{
           borderBottomWidth: '3px',
           boxShadow: '2px 2px 0px 0px var(--color-m2e-shadow)',
         }}
       >
-        <div className="h-full flex">
+ <div className="h-full flex">
           <div
-            className={`h-full ${color}`}
+ className={`h-full ${color}`}
             style={{ width: `${basePct}%`, borderTop: '2px solid rgba(255,255,255,0.4)' }}
           />
           {!showBase && added > 0 && (
             <div
-              className={`h-full ${colorLight}`}
+ className={`h-full ${colorLight}`}
               style={{ width: `${addedPct}%`, borderTop: '2px solid rgba(255,255,255,0.2)' }}
             />
           )}
         </div>
       </div>
-      <span className="w-20 text-right text-m2e-text font-bold">
+ <span className="w-20 text-right text-m2e-text">
         {showBase ? (
           <>{base}/{max}</>
         ) : (
-          <>{total}<span className="text-m2e-text-muted text-[10px]">/{max}</span> <span className="text-m2e-text-muted text-[10px]">({base}+{added})</span></>
+ <>{total}<span className="text-m2e-text-muted text-[10px]">/{max}</span> <span className="text-m2e-text-muted text-[10px]">({base}+{added})</span></>
         )}
       </span>
     </div>
@@ -109,16 +109,16 @@ function SocketSlot({ socket }: { socket: PartSocket }) {
   const borderClass = socket.unlocked ? (socketTypeBorders[socket.type] ?? '') : 'border-m2e-border-light';
 
   return (
-    <div className={`pixel-border p-3 flex flex-col items-center gap-1 ${borderClass} ${socket.unlocked ? 'bg-m2e-card' : 'bg-m2e-bg-alt opacity-70'}`}>
+ <div className={`pixel-border p-3 flex flex-col items-center gap-1 ${borderClass} ${socket.unlocked ? 'bg-m2e-card' : 'bg-m2e-bg-alt opacity-70'}`}>
       {socket.unlocked ? (
-        <Icon className={`w-5 h-5 ${colorClass}`} />
+ <Icon className={`w-5 h-5 ${colorClass}`} />
       ) : (
-        <Lock className="w-5 h-5 text-m2e-text-muted" />
+ <Lock className="w-5 h-5 text-m2e-text-muted" />
       )}
-      <span className={`text-[10px] font-black uppercase tracking-wider ${socket.unlocked ? colorClass : 'text-m2e-text-muted'}`}>
+ <span className={`text-[10px] uppercase tracking-wider ${socket.unlocked ? colorClass : 'text-m2e-text-muted'}`}>
         {socket.type}
       </span>
-      <span className="text-[9px] font-bold text-m2e-text-muted uppercase">
+ <span className="text-[9px] text-m2e-text-muted uppercase">
         Slot {socket.slot + 1}
       </span>
     </div>
@@ -130,29 +130,29 @@ function ModalContent({ nft }: { nft: MintedNftDetail }) {
   const tierMax = QUALITY_MAX[nft.quality] ?? 112;
 
   return (
-    <div className="space-y-5">
+ <div className="space-y-5">
       {/* Header: image + basic info */}
-      <div className="flex gap-4">
-        <div className="w-32 h-32 shrink-0 bg-m2e-bg-alt pixel-border overflow-hidden">
+ <div className="flex gap-4">
+ <div className="w-32 h-32 shrink-0 bg-m2e-bg-alt pixel-border overflow-hidden">
           <img
             src={resolveImageUrl(nft)}
             alt={`${nft.type} #${nft.tokenId}`}
-            className="w-full h-full object-cover pixel-render"
+ className="w-full h-full object-cover pixel-render"
           />
         </div>
-        <div className="flex-1 space-y-2">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-black text-lg uppercase tracking-wide text-m2e-text">
+ <div className="flex-1 space-y-2">
+ <div className="flex items-center gap-2 flex-wrap">
+ <span className="text-lg uppercase tracking-wide text-m2e-text">
               #{nft.tokenId}
             </span>
-            <span className={`px-2 py-0.5 text-[10px] font-black uppercase pixel-border shadow-sm tracking-wide ${qualityColors[nft.quality] ?? qualityColors.common}`}>
+ <span className={`px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide ${qualityColors[nft.quality] ?? qualityColors.common}`}>
               {nft.quality}
             </span>
           </div>
-          <div className="text-sm font-black uppercase tracking-wide text-m2e-text-secondary">
+ <div className="text-sm uppercase tracking-wide text-m2e-text-secondary">
             {nft.type}
           </div>
-          <div className="text-xs text-m2e-text-muted font-bold space-x-3">
+ <div className="text-xs text-m2e-text-muted space-x-3">
             <span>Lv. {nft.level}</span>
             <span title={nft.id}>ID: {truncateId(nft.id)}</span>
           </div>
@@ -160,12 +160,12 @@ function ModalContent({ nft }: { nft: MintedNftDetail }) {
       </div>
 
       {/* Segmented stat bars */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-black uppercase tracking-widest text-m2e-text-muted">Attributes</h3>
+ <div className="space-y-2">
+ <div className="flex items-center justify-between">
+ <h3 className="text-xs uppercase tracking-widest text-m2e-text-muted">Attributes</h3>
           <button
             onClick={() => setShowBase((v) => !v)}
-            className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider pixel-border transition-colors ${
+ className={`px-3 py-1 text-[10px] uppercase tracking-wider pixel-border transition-colors ${
               showBase
                 ? 'bg-m2e-accent/20 text-m2e-accent border-m2e-accent/50'
                 : 'bg-m2e-info/20 text-m2e-info border-m2e-info/50'
@@ -174,7 +174,7 @@ function ModalContent({ nft }: { nft: MintedNftDetail }) {
             {showBase ? 'BASE' : 'TOTAL'}
           </button>
         </div>
-        <div className="space-y-1">
+ <div className="space-y-1">
           <SegmentedStatBar label="EAR" base={nft.baseEarning} added={nft.addedEarning} max={tierMax} color="bg-m2e-earning" colorLight="bg-m2e-earning/50" showBase={showBase} />
           <SegmentedStatBar label="LCK" base={nft.baseLuck} added={nft.addedLuck} max={tierMax} color="bg-m2e-luck" colorLight="bg-m2e-luck/50" showBase={showBase} />
           <SegmentedStatBar label="REC" base={nft.baseRecovery} added={nft.addedRecovery} max={tierMax} color="bg-m2e-recovery" colorLight="bg-m2e-recovery/50" showBase={showBase} />
@@ -183,9 +183,9 @@ function ModalContent({ nft }: { nft: MintedNftDetail }) {
       </div>
 
       {/* Socket grid */}
-      <div className="space-y-2">
-        <h3 className="text-xs font-black uppercase tracking-widest text-m2e-text-muted">Sockets</h3>
-        <div className="grid grid-cols-2 gap-2">
+ <div className="space-y-2">
+ <h3 className="text-xs uppercase tracking-widest text-m2e-text-muted">Sockets</h3>
+ <div className="grid grid-cols-2 gap-2">
           {(nft.partSockets ?? []).map((socket) => (
             <SocketSlot key={socket.slot} socket={socket} />
           ))}
@@ -193,18 +193,18 @@ function ModalContent({ nft }: { nft: MintedNftDetail }) {
       </div>
 
       {/* Extra info */}
-      <div className="grid grid-cols-3 gap-3 text-center">
-        <div className="pixel-border p-2 bg-m2e-bg-alt">
-          <div className="text-[10px] font-bold text-m2e-text-muted uppercase">Mint</div>
-          <div className="text-sm font-black text-m2e-text">{nft.mintCount}/{nft.maxMints}</div>
+ <div className="grid grid-cols-3 gap-3 text-center">
+ <div className="pixel-border p-2 bg-m2e-bg-alt">
+ <div className="text-[10px] text-m2e-text-muted uppercase">Mint</div>
+ <div className="text-sm text-m2e-text">{nft.mintCount}/{nft.maxMints}</div>
         </div>
-        <div className="pixel-border p-2 bg-m2e-bg-alt">
-          <div className="text-[10px] font-bold text-m2e-text-muted uppercase">HP</div>
-          <div className="text-sm font-black text-m2e-text">{Math.round(nft.hp)}%</div>
+ <div className="pixel-border p-2 bg-m2e-bg-alt">
+ <div className="text-[10px] text-m2e-text-muted uppercase">HP</div>
+ <div className="text-sm text-m2e-text">{Math.round(nft.hp)}%</div>
         </div>
-        <div className="pixel-border p-2 bg-m2e-bg-alt">
-          <div className="text-[10px] font-bold text-m2e-text-muted uppercase">Durability</div>
-          <div className="text-sm font-black text-m2e-text">{Math.round(nft.durability)}%</div>
+ <div className="pixel-border p-2 bg-m2e-bg-alt">
+ <div className="text-[10px] text-m2e-text-muted uppercase">Durability</div>
+ <div className="text-sm text-m2e-text">{Math.round(nft.durability)}%</div>
         </div>
       </div>
     </div>
@@ -232,24 +232,24 @@ export function NftDetailModal({ nftId, onClose }: NftDetailModalProps) {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/70" />
+ <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+ <div className="absolute inset-0 bg-black/70" />
       <div
-        className="relative w-full max-w-lg pixel-card bg-m2e-card p-5 max-h-[90vh] overflow-y-auto"
+ className="relative w-full max-w-lg pixel-card bg-m2e-card p-5 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 p-1 text-m2e-text-muted hover:text-m2e-text transition-colors"
+ className="absolute top-3 right-3 p-1 text-m2e-text-muted hover:text-m2e-text transition-colors"
         >
-          <Cancel className="w-6 h-6" />
+ <Cancel className="w-6 h-6" />
         </button>
 
         {isLoading ? (
-          <div className="py-12 text-center text-m2e-text-muted text-sm">Loading bike details...</div>
+ <div className="py-12 text-center text-m2e-text-muted text-sm">Loading bike details...</div>
         ) : error ? (
-          <div className="py-12 text-center text-red-400 text-sm">Failed to load details</div>
+ <div className="py-12 text-center text-red-400 text-sm">Failed to load details</div>
         ) : data ? (
           <ModalContent nft={data} />
         ) : null}
