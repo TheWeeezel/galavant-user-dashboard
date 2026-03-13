@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Cancel } from 'pixelarticons/react';
-import { useGoogleLogin } from '@react-oauth/google';
 import { useWalletConnect } from '@btc-vision/walletconnect';
 import { useAuth } from '../contexts/AuthContext';
+import { config } from '../config';
 
 interface LoginModalProps {
   open: boolean;
@@ -16,24 +16,39 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [needsWalletMsg, setNeedsWalletMsg] = useState(false);
 
-  const googleLogin = useGoogleLogin({
-    flow: 'auth-code',
-    onSuccess: async (response) => {
-      setError(null);
-      setNeedsWalletMsg(false);
-      try {
-        const result = await loginWithGoogle(response.code);
-        if (result.status === 'authenticated') {
-          onClose();
-        } else {
-          setNeedsWalletMsg(true);
+  const handleGoogleLogin = useCallback(() => {
+    if (!window.google?.accounts?.oauth2) {
+      setError('Google sign-in is loading, please try again');
+      return;
+    }
+
+    setError(null);
+    setNeedsWalletMsg(false);
+
+    const client = window.google.accounts.oauth2.initCodeClient({
+      client_id: config.googleClientId,
+      scope: 'openid email profile',
+      ux_mode: 'popup',
+      callback: async (response: { code?: string; error?: string }) => {
+        if (response.error || !response.code) {
+          setError('Google sign-in was cancelled');
+          return;
         }
-      } catch (err: any) {
-        setError(err.message ?? 'Google sign-in failed');
-      }
-    },
-    onError: () => setError('Google sign-in was cancelled'),
-  });
+        try {
+          const result = await loginWithGoogle(response.code);
+          if (result.status === 'authenticated') {
+            onClose();
+          } else {
+            setNeedsWalletMsg(true);
+          }
+        } catch (err: any) {
+          setError(err.message ?? 'Google sign-in failed');
+        }
+      },
+    });
+
+    client.requestCode();
+  }, [loginWithGoogle, onClose]);
 
   if (!open) return null;
 
@@ -109,7 +124,7 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
             Sign in with Google
           </p>
           <button
-            onClick={() => googleLogin()}
+            onClick={handleGoogleLogin}
             disabled={walletBusy}
             className="pixel-btn w-full px-4 py-3 text-sm flex items-center justify-center gap-2 bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50"
           >
