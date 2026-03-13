@@ -28,28 +28,34 @@ function getPartImageUrl(type: string, level: number): string {
 }
 
 export function Profile() {
-  const { isAuthenticated, isRestoring, user, logout } = useAuth();
+  const { isAuthenticated, isRestoring, isLoading, user, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
   const [copied, setCopied] = useState(false);
   const [selectedBikeId, setSelectedBikeId] = useState<string | null>(null);
 
-  const { data: spending } = useQuery({
+  console.log('[Profile] render — isAuthenticated:', isAuthenticated, 'isRestoring:', isRestoring, 'isLoading:', isLoading, 'user:', user?.nickname ?? null);
+
+  const { data: spending, error: spendingErr } = useQuery({
     queryKey: ['spending'],
     queryFn: fetchSpendingWallet,
     enabled: isAuthenticated,
   });
 
-  const { data: bikes } = useQuery({
+  const { data: bikes, error: bikesErr } = useQuery({
     queryKey: ['userBikes'],
     queryFn: fetchUserBikes,
     enabled: isAuthenticated,
   });
 
-  const { data: parts } = useQuery({
+  const { data: parts, error: partsErr } = useQuery({
     queryKey: ['userParts'],
     queryFn: fetchUserParts,
     enabled: isAuthenticated,
   });
+
+  if (spendingErr) console.error('[Profile] spending query error:', spendingErr);
+  if (bikesErr) console.error('[Profile] bikes query error:', bikesErr);
+  if (partsErr) console.error('[Profile] parts query error:', partsErr);
 
   if (isRestoring) {
     return (

@@ -27,10 +27,13 @@ type AuthAction =
   | { type: 'SET_RESTORING'; restoring: boolean };
 
 function authReducer(state: AuthState, action: AuthAction): AuthState {
+  console.log('[AuthReducer]', action.type, '— prev isAuthenticated:', state.isAuthenticated);
   switch (action.type) {
     case 'LOGIN':
+      console.log('[AuthReducer] LOGIN — user:', action.user?.nickname, 'token length:', action.token?.length);
       return { token: action.token, user: action.user, isAuthenticated: true, isLoading: false, isRestoring: false };
     case 'LOGOUT':
+      console.log('[AuthReducer] LOGOUT');
       return { token: null, user: null, isAuthenticated: false, isLoading: false, isRestoring: false };
     case 'SET_LOADING':
       return { ...state, isLoading: action.loading };
@@ -68,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Restore session on mount
   useEffect(() => {
     const savedToken = localStorage.getItem(STORAGE_TOKEN);
+    console.log('[AuthContext] restore — savedToken exists:', !!savedToken);
     if (!savedToken) {
       dispatch({ type: 'SET_RESTORING', restoring: false });
       return;
@@ -75,9 +79,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthToken(savedToken);
     fetchMe()
       .then((user) => {
+        console.log('[AuthContext] restore — fetchMe success, user:', user?.nickname);
         dispatch({ type: 'LOGIN', token: savedToken, user });
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('[AuthContext] restore — fetchMe FAILED, logging out:', err);
         logout();
       });
   }, [logout]);
@@ -97,19 +103,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loginWithGoogle = useCallback(async (code: string): Promise<GoogleAuthResult> => {
+    console.log('[AuthContext] loginWithGoogle — dispatching SET_LOADING');
     dispatch({ type: 'SET_LOADING', loading: true });
     try {
       const result = await googleAuth(code);
+      console.log('[AuthContext] loginWithGoogle — API result status:', result.status);
       if (result.status === 'authenticated') {
+        console.log('[AuthContext] loginWithGoogle — setting token, dispatching LOGIN, user:', result.user?.nickname);
         setAuthToken(result.token);
         localStorage.setItem(STORAGE_TOKEN, result.token);
         localStorage.setItem(STORAGE_WALLET, result.walletAddress);
         dispatch({ type: 'LOGIN', token: result.token, user: result.user });
+        console.log('[AuthContext] loginWithGoogle — LOGIN dispatched, localStorage token set:', !!localStorage.getItem(STORAGE_TOKEN));
       } else {
         dispatch({ type: 'SET_LOADING', loading: false });
       }
       return result;
     } catch (err) {
+      console.error('[AuthContext] loginWithGoogle — ERROR:', err);
       dispatch({ type: 'SET_LOADING', loading: false });
       throw err;
     }

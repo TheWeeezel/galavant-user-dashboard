@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router';
+import { useState, useEffect } from 'react';
+import { Outlet, Link } from 'react-router';
 import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login } from 'pixelarticons/react';
 import { MusicPlayer } from './MusicPlayer';
 import { LoginModal } from './LoginModal';
@@ -9,25 +9,14 @@ import { useWalletAuth } from '../hooks/useWalletAuth';
 export function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-  const { isAuthenticated, user } = useAuth();
-  const navigate = useNavigate();
-  const loginModalWasOpen = useRef(false);
+  const { isAuthenticated, isRestoring, isLoading, user } = useAuth();
 
-  // Track when login modal is shown
-  useEffect(() => {
-    if (showLogin) loginModalWasOpen.current = true;
-  }, [showLogin]);
+  console.log('[Layout] render — isAuthenticated:', isAuthenticated, 'isRestoring:', isRestoring, 'isLoading:', isLoading, 'user:', user?.nickname ?? null, 'showLogin:', showLogin);
 
-  // When auth succeeds from the login modal, close it and navigate to profile
+  // Auto-close login modal when auth succeeds (e.g. wallet connect)
   useEffect(() => {
-    if (isAuthenticated) {
-      setShowLogin(false);
-      if (loginModalWasOpen.current) {
-        loginModalWasOpen.current = false;
-        navigate('/profile');
-      }
-    }
-  }, [isAuthenticated, navigate]);
+    if (isAuthenticated) setShowLogin(false);
+  }, [isAuthenticated]);
 
   // Bridge wallet connect events to auth
   const { error: walletAuthError } = useWalletAuth();
