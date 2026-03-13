@@ -1,42 +1,36 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { useWalletConnect } from '@btc-vision/walletconnect';
 import { useAuth } from '../contexts/AuthContext';
 
 /**
  * Bridges @btc-vision/walletconnect state with our AuthContext.
- * When the wallet connects, automatically logs in.
- * When the wallet disconnects, automatically logs out — but only if the
- * current session was authenticated via wallet (authProvider === 'wallet').
- * Google-authenticated sessions are never affected by wallet state.
+ *
+ * - Auto-login on page load when wallet auto-connects (handled by effect)
+ * - Auto-logout when wallet disconnects (only for wallet-based sessions)
+ * - Manual connect from LoginModal is handled imperatively there (not here)
  */
 export function useWalletAuth() {
   const { walletAddress, publicKey, mldsaPublicKey } = useWalletConnect();
-  const { isAuthenticated, isLoading, user, loginWithWallet, logout } = useAuth();
-  const [error, setError] = useState<string | null>(null);
-  const loginAttempted = useRef(false);
+  const { isAuthenticated, isLoading, isRestoring, user, loginWithWallet, logout } = useAuth();
 
+  // Auto-login on page load: if wallet is already connected when the page
+  // loads (auto-reconnect) and there's no existing session, log in.
+  // This fires once on mount — the isRestoring guard waits for session restore.
   useEffect(() => {
-    // Wallet just connected — attempt login
-    if (walletAddress && !isAuthenticated && !isLoading && !loginAttempted.current) {
-      loginAttempted.current = true;
-      setError(null);
+    if (walletAddress && !isAuthenticated && !isLoading && !isRestoring) {
+      console.log('[useWalletAuth] Auto-login on page load:', walletAddress);
       loginWithWallet(walletAddress, publicKey ?? undefined, mldsaPublicKey ?? undefined).catch(
-        (err) => {
-          console.error('[useWalletAuth] login failed:', err);
-          setError(err.message ?? 'Login failed');
-          loginAttempted.current = false;
-        },
+        (err) => console.error('[useWalletAuth] Auto-login failed:', err),
       );
     }
+    // Only run when restoring completes — intentionally limited deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRestoring]);
 
-    // Wallet disconnected — only log out if the current session is wallet-based
-    if (!walletAddress) {
-      loginAttempted.current = false;
-      if (isAuthenticated && user?.authProvider === 'wallet') {
-        logout();
-      }
+  // Auto-logout when wallet disconnects (only for wallet-based sessions)
+  useEffect(() => {
+    if (!walletAddress && isAuthenticated && user?.authProvider === 'wallet') {
+      logout();
     }
-  }, [walletAddress, publicKey, mldsaPublicKey, isAuthenticated, isLoading, user, loginWithWallet, logout]);
-
-  return { error };
+  }, [walletAddress, isAuthenticated, user, logout]);
 }

@@ -18,8 +18,8 @@ export function Layout() {
     if (isAuthenticated) setShowLogin(false);
   }, [isAuthenticated]);
 
-  // Bridge wallet connect events to auth
-  const { error: walletAuthError } = useWalletAuth();
+  // Bridge wallet connect events to auth (auto-login on refresh, auto-logout on disconnect)
+  useWalletAuth();
 
   const navLinks = [
     { href: '/', label: 'Home', icon: Home },
@@ -29,17 +29,17 @@ export function Layout() {
   ] as const;
 
   return (
-    <div className="min-h-screen flex flex-col bg-m2e-bg text-m2e-text font-bold">
+    <div className="min-h-screen flex flex-col bg-m2e-bg text-m2e-text">
       {/* Nav */}
       <header className="sticky top-0 z-50 border-b-2 border-m2e-border bg-m2e-card shadow-sm">
         <div className="mx-auto max-w-7xl flex items-center justify-between px-4 h-16">
           <Link to="/" className="flex items-center gap-2">
             <img src="/logo.png" alt="Galavant" className="h-14 w-14" />
-            <span className="hidden sm:inline text-m2e-accent font-black text-2xl tracking-widest uppercase" style={{ textShadow: '1px 1px 0px var(--color-m2e-accent-dark)' }}>Galavant</span>
+            <span className="hidden sm:inline text-m2e-accent text-2xl tracking-widest uppercase" style={{ textShadow: '1px 1px 0px var(--color-m2e-accent-dark)' }}>Galavant</span>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-3 text-sm font-bold uppercase tracking-wider">
+          <nav className="hidden md:flex items-center gap-3 text-sm uppercase tracking-wider">
             {navLinks.map(({ href, label, icon: Icon }) => (
               <Link key={href} to={href} className="flex items-center gap-2 bg-m2e-card-alt border-2 border-m2e-border text-m2e-text-secondary px-3 py-2 rounded-md hover:bg-m2e-border-light hover:text-m2e-text transition-colors">
                 <Icon className="w-5 h-5" />
@@ -74,7 +74,7 @@ export function Layout() {
 
         {/* Mobile dropdown */}
         {menuOpen && (
-          <nav className="md:hidden bg-m2e-card border-b-2 border-m2e-border px-4 py-3 flex flex-col gap-2 text-sm font-bold uppercase tracking-wider">
+          <nav className="md:hidden bg-m2e-card border-b-2 border-m2e-border px-4 py-3 flex flex-col gap-2 text-sm uppercase tracking-wider">
             {navLinks.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
@@ -108,7 +108,7 @@ export function Layout() {
         )}
       </header>
 
-      <LoginModal open={showLogin} onClose={() => setShowLogin(false)} walletError={walletAuthError} />
+      <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
 
       {/* Content */}
       <main className="flex-1 w-full">
@@ -117,7 +117,7 @@ export function Layout() {
 
       {/* Footer */}
       <footer className="border-t-2 border-m2e-border bg-m2e-card py-6 mt-8 pb-20">
-        <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-m2e-text-muted font-bold uppercase tracking-wide">
+        <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-m2e-text-muted uppercase tracking-wide">
           <span>Powered by OPNet on Bitcoin</span>
           <span>Walk to Earn &mdash; Walk. Earn. Own.</span>
         </div>

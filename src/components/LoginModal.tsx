@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { Cancel } from 'pixelarticons/react';
 import { useWalletConnect } from '@btc-vision/walletconnect';
 import { useAuth } from '../contexts/AuthContext';
@@ -7,14 +7,71 @@ import { config } from '../config';
 interface LoginModalProps {
   open: boolean;
   onClose: () => void;
-  walletError?: string | null;
 }
 
-export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
-  const { openConnectModal, connecting } = useWalletConnect();
-  const { loginWithGoogle, isLoading } = useAuth();
+export function LoginModal({ open, onClose }: LoginModalProps) {
+  const { walletAddress, publicKey, mldsaPublicKey, openConnectModal, connecting } = useWalletConnect();
+  const { loginWithWallet, loginWithGoogle, isAuthenticated, isLoading } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [needsWalletMsg, setNeedsWalletMsg] = useState(false);
+  const [walletLoggingIn, setWalletLoggingIn] = useState(false);
+
+  // Keep refs up to date so the polling interval reads latest values
+  const walletRef = useRef({ walletAddress, publicKey, mldsaPublicKey });
+  walletRef.current = { walletAddress, publicKey, mldsaPublicKey };
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Clean up polling on unmount or when modal closes
+  useEffect(() => {
+    if (!open && pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+      setWalletLoggingIn(false);
+    }
+    return () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
+    };
+  }, [open]);
+
+  const handleWalletConnect = useCallback(() => {
+    setError(null);
+    setNeedsWalletMsg(false);
+    openConnectModal();
+
+    // Poll for wallet connection — bypasses useEffect dependency issues
+    if (pollRef.current) clearInterval(pollRef.current);
+
+    const startTime = Date.now();
+    pollRef.current = setInterval(() => {
+      const { walletAddress: addr, publicKey: pk, mldsaPublicKey: mldsa } = walletRef.current;
+
+      // Timeout after 60 seconds
+      if (Date.now() - startTime > 60_000) {
+        clearInterval(pollRef.current!);
+        pollRef.current = null;
+        return;
+      }
+
+      if (addr) {
+        clearInterval(pollRef.current!);
+        pollRef.current = null;
+        setWalletLoggingIn(true);
+        console.log('[LoginModal] Wallet detected, logging in:', addr);
+        loginWithWallet(addr, pk ?? undefined, mldsa ?? undefined)
+          .then(() => {
+            // onClose happens automatically via Layout's isAuthenticated effect
+          })
+          .catch((err: any) => {
+            console.error('[LoginModal] Wallet login failed:', err);
+            setError(err.message ?? 'Wallet login failed');
+            setWalletLoggingIn(false);
+          });
+      }
+    }, 300);
+  }, [openConnectModal, loginWithWallet]);
 
   const handleGoogleLogin = useCallback(() => {
     if (!window.google?.accounts?.oauth2) {
@@ -52,18 +109,9 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
 
   if (!open) return null;
 
-  const walletBusy = connecting || isLoading;
+  const walletBusy = connecting || isLoading || walletLoggingIn;
 
-  const handleWalletConnect = () => {
-    setError(null);
-    setNeedsWalletMsg(false);
-    openConnectModal();
-    // The walletconnect library opens its own modal.
-    // useWalletAuth hook handles login once wallet connects.
-    // Layout auto-closes this modal when isAuthenticated becomes true.
-  };
-
-  const displayError = error || walletError;
+  const displayError = error;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={onClose}>
@@ -78,7 +126,7 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2
-            className="text-xl font-black uppercase tracking-widest text-m2e-accent"
+            className="text-xl uppercase tracking-widest text-m2e-accent"
             style={{ textShadow: '1px 1px 0px var(--color-m2e-accent-dark)' }}
           >
             Login
@@ -94,7 +142,7 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
 
         {/* Wallet Connect */}
         <div className="space-y-3">
-          <p className="text-sm font-bold uppercase tracking-wider text-m2e-text-secondary">
+          <p className="text-sm uppercase tracking-wider text-m2e-text-secondary">
             Connect with OPNet Wallet
           </p>
           <button
@@ -102,11 +150,11 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
             disabled={walletBusy}
             className="pixel-btn pixel-btn-primary w-full px-4 py-3 text-sm"
           >
-            {walletBusy ? 'Connecting...' : 'Connect Wallet'}
+            {walletLoggingIn ? 'Logging in...' : walletBusy ? 'Connecting...' : 'Connect Wallet'}
           </button>
           {walletBusy && (
             <p className="text-xs text-m2e-text-muted text-center animate-pulse">
-              Approve the connection in your wallet extension...
+              {walletLoggingIn ? 'Authenticating your wallet...' : 'Approve the connection in your wallet extension...'}
             </p>
           )}
         </div>
@@ -114,13 +162,13 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
         {/* Divider */}
         <div className="flex items-center gap-3">
           <div className="flex-1 h-0.5 bg-m2e-border" />
-          <span className="text-xs font-bold uppercase tracking-widest text-m2e-text-muted">or</span>
+          <span className="text-xs uppercase tracking-widest text-m2e-text-muted">or</span>
           <div className="flex-1 h-0.5 bg-m2e-border" />
         </div>
 
         {/* Google Sign-In */}
         <div className="space-y-3">
-          <p className="text-sm font-bold uppercase tracking-wider text-m2e-text-secondary">
+          <p className="text-sm uppercase tracking-wider text-m2e-text-secondary">
             Sign in with Google
           </p>
           <button
@@ -150,7 +198,7 @@ export function LoginModal({ open, onClose, walletError }: LoginModalProps) {
 
         {/* Error */}
         {displayError && (
-          <p className="text-sm text-m2e-danger font-bold">{displayError}</p>
+          <p className="text-sm text-m2e-danger">{displayError}</p>
         )}
       </div>
     </div>
