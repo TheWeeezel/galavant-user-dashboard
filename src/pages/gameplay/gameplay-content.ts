@@ -359,11 +359,11 @@ export const gameplaySections: GameplaySection[] = [
         content: [
           { type: 'paragraph', text: 'Toolboxes are random drops you can receive while walking. Your Luck attribute influences how often they appear.' },
           { type: 'heading', text: 'Toolbox Levels' },
-          { type: 'paragraph', text: 'Toolboxes come in 5 levels. Higher level toolboxes contain better rewards, including higher level parts, more SAT, and occasionally minting tools.' },
+          { type: 'paragraph', text: 'Toolboxes come in 5 levels. Higher level toolboxes contain better rewards, including higher level parts, more SAP, and occasionally minting tools.' },
           { type: 'heading', text: 'What\'s Inside' },
           { type: 'list', items: [
             'Parts of various types and levels.',
-            'SAT point rewards.',
+            'SAP rewards.',
             'Minting tools (used for breeding bikes).',
           ]},
           { type: 'heading', text: 'Inventory Slots' },
@@ -553,7 +553,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'The in-game marketplace lets you buy and sell bikes, parts, and minting tools using SAP.' },
           { type: 'heading', text: 'Selling' },
           { type: 'list', items: [
-            'List any bike, part, or minting tool for a SAT price you choose.',
+            'List any bike, part, or minting tool for a SAP price you choose.',
             'A 5% fee is deducted from the sale price when an item sells.',
             'You can have up to 20 active listings at once.',
             'Cancel listings at any time to get your item back.',

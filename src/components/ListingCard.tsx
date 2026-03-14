@@ -68,7 +68,7 @@ export function ListingCard({ listing, onClick }: { listing: MarketplaceListing;
         )}
         {/* Price tag */}
  <span className="absolute top-2 right-2 px-2 py-0.5 text-xs bg-m2e-accent text-m2e-text-on-accent pixel-border shadow-sm tracking-wide border-m2e-accent-dark">
-          {formatPrice(listing.priceSatoshis)} SAT
+          {formatPrice(listing.priceSatoshis)} SAP
         </span>
       </div>
 

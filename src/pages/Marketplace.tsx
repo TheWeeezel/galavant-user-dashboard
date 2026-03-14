@@ -202,7 +202,7 @@ export function Marketplace() {
 
             {/* Price range */}
  <div className="space-y-2">
- <div className="text-xs uppercase tracking-widest text-m2e-text-muted">Price Range (SAT)</div>
+ <div className="text-xs uppercase tracking-widest text-m2e-text-muted">Price Range (SAP)</div>
  <div className="flex items-center gap-2">
                 <input
                   type="number"

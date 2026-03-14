@@ -48,7 +48,7 @@
       "title": "Marketplace & Conversions",
       "changes": [
         { "type": "feature", "text": "Marketplace for buying and selling bikes & parts" },
-        { "type": "feature", "text": "SAT Points to SAT Token conversion" },
+        { "type": "feature", "text": "SAP to SAT Token conversion" },
         { "type": "feature", "text": "Mystery box drops from activities" },
         { "type": "feature", "text": "Toolbox opening with random rewards" },
         { "type": "feature", "text": "Leaderboard rankings" },
@@ -66,7 +66,7 @@
         { "type": "feature", "text": "Bike inventory with quality tiers" },
         { "type": "feature", "text": "Part socketing for earning boosts" },
         { "type": "feature", "text": "Energy system with daily recovery" },
-        { "type": "feature", "text": "SAT Points earning from rides" },
+        { "type": "feature", "text": "SAP earning from rides" },
         { "type": "feature", "text": "Wallet generation and OPNet integration" },
         { "type": "feature", "text": "Bike leveling system" },
         { "type": "feature", "text": "Profile with lifetime stats" }

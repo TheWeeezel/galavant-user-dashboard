@@ -35,7 +35,7 @@ const ONBOARDING_STEPS = [
   { icon: Download, title: 'Download', description: 'Get the app on iOS or Android' },
   { icon: Login, title: 'Sign In', description: 'Create your account and wallet' },
   { icon: Gift, title: 'Free NFT', description: 'Claim your starter balance bike' },
-  { icon: Human, title: 'Start Walking', description: 'Move to earn SAT tokens' },
+  { icon: Human, title: 'Start Walking', description: 'Move to earn SAP' },
 ];
 
 export function Home() {
@@ -107,7 +107,7 @@ export function Home() {
  <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
         <FeatureCard
           title="Earn"
-          description="Walk, jog, or run to earn SAT tokens. The more you move, the more you earn."
+          description="Walk, jog, or run to earn SAP. The more you move, the more you earn."
           icon={Coins}
         />
         <FeatureCard
@@ -204,7 +204,7 @@ export function Home() {
               <StatCard icon={Image} label="Minted NFTs" value={(d.totalMintedNfts ?? 0).toLocaleString()} />
               <StatCard icon={SpeedFast} label="Avg Walk" value={avgWalk > 0 ? formatDistance(avgWalk) : '—'} />
               <StatCard icon={Trophy} label="Items Sold" value={sold.toLocaleString()} />
-              <StatCard icon={Fire} label="Volume Traded" value={vol > 0 ? `${formatSat(vol)} SAT` : '—'} />
+              <StatCard icon={Fire} label="Volume Traded" value={vol > 0 ? `${formatSat(vol)} SAP` : '—'} />
             </div>
           );
         })() : null}
@@ -247,7 +247,7 @@ export function Home() {
                 </div>
               </div>
  <div className="text-xs text-m2e-text-secondary">
- Avg price: <span className="text-m2e-accent">{(stats.data.avgListingPrice ?? 0) > 0 ? `${formatSat(stats.data.avgListingPrice)} SAT` : '—'}</span>
+ Avg price: <span className="text-m2e-accent">{(stats.data.avgListingPrice ?? 0) > 0 ? `${formatSat(stats.data.avgListingPrice)} SAP` : '—'}</span>
               </div>
             </div>
 
@@ -263,7 +263,7 @@ export function Home() {
                 </div>
               </div>
  <div className="text-xs text-m2e-text-secondary">
-                Cheapest active listing in SAT
+                Cheapest active listing in SAP
               </div>
             </div>
           </div>
