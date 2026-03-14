@@ -30,7 +30,7 @@ export interface Stats {
   totalUsers: number;
   totalMintedNfts: number;
   totalDistance: number;
-  totalSatEarned: number;
+  totalSapEarned: number;
   totalActivities: number;
   avgDistancePerActivity: number;
   // Marketplace
@@ -183,7 +183,7 @@ export interface UserProfile {
   authProvider: string;
   displayName: string | null;
   totalDistance: number;
-  totalSatEarned: number;
+  totalSapEarned: number;
   totalActivities: number;
   hasGoogleLinked: boolean;
   linkedEmail: string | null;
@@ -200,7 +200,7 @@ export type GoogleAuthResult =
   | { status: 'needs_wallet'; googleClaimToken: string; googleEmail: string; googleDisplayName: string };
 
 export interface SpendingWallet {
-  pointsBalance: number;
+  sapBalance: number;
   totalConverted: number;
 }
 

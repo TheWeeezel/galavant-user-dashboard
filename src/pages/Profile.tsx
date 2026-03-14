@@ -162,8 +162,8 @@ export function Profile() {
         />
         <StatCard
           icon={Coins}
-          label="SAT Earned"
-          value={user.totalSatEarned.toLocaleString()}
+          label="SAP Earned"
+          value={user.totalSapEarned.toLocaleString()}
         />
         <StatCard
           icon={Redo}
@@ -172,10 +172,10 @@ export function Profile() {
         />
       </div>
 
-      {/* SAT Points Balance */}
+      {/* SAP Balance */}
  <div className="pixel-card p-5">
  <h2 className="text-sm uppercase tracking-widest text-m2e-text-secondary mb-3">
-          SAT Points Balance
+          SAP Balance
         </h2>
  <div className="flex items-center justify-between">
           <div>
@@ -183,9 +183,9 @@ export function Profile() {
  className="text-3xl text-m2e-accent"
               style={{ textShadow: '1px 1px 0px var(--color-m2e-accent-dark)' }}
             >
-              {spending?.pointsBalance?.toLocaleString() ?? '—'}
+              {spending?.sapBalance?.toLocaleString() ?? '—'}
             </span>
- <span className="text-sm text-m2e-text-muted ml-2 uppercase">Points</span>
+ <span className="text-sm text-m2e-text-muted ml-2 uppercase">SAP</span>
           </div>
  <div className="flex gap-2">
             <Link

@@ -36,14 +36,14 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'what-is-galavant',
         title: 'What is Galavant?',
         content: [
-          { type: 'paragraph', text: 'Galavant is a walk-to-earn game built on Bitcoin. Grab a balance bike, head outdoors, and earn SAT points just by walking. Convert them into real value on the blockchain.' },
+          { type: 'paragraph', text: 'Galavant is a walk-to-earn game built on Bitcoin. Grab a balance bike, head outdoors, and earn Satoshi Activity Points (SAP) just by walking. Convert them into real value on the blockchain.' },
           { type: 'heading', text: 'How It Works' },
           { type: 'list', items: [
             'Get a balance bike — purchase one from the marketplace or breed a new one.',
             'Walk outdoors — the app tracks your real-world movement via GPS.',
-            'Earn SAT — every minute of walking earns you SAT points based on your bike and stats.',
+            'Earn SAP — every minute of walking earns you SAP based on your bike and stats.',
             'Level up — improve your bike, socket parts, and climb the leaderboards.',
-            'Go on-chain — convert SAT points into SAT tokens (an OP_20 token on Bitcoin) and swap for BTC.',
+            'Go on-chain — convert SAP into SAT tokens (an OP_20 token on Bitcoin) and swap for BTC.',
           ]},
           { type: 'tip', text: 'Galavant runs entirely on Bitcoin Layer 1 via the OPNet protocol. Your bikes and tokens are real on-chain assets.' },
           { type: 'heading', text: 'What Makes Galavant Different' },
@@ -121,11 +121,11 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Earning' },
           { type: 'paragraph', text: 'Increases the SAT you earn per minute of walking. Every 100 points of Earning doubles your base rate.' },
           { type: 'table', headers: ['Total Earning', 'Multiplier', 'Example (Common bike)'], rows: [
-            ['0', '1.00x', '5.0 SAT/min'],
-            ['10', '1.10x', '5.5 SAT/min'],
-            ['50', '1.50x', '7.5 SAT/min'],
-            ['100', '2.00x', '10.0 SAT/min'],
-            ['200', '3.00x', '15.0 SAT/min'],
+            ['0', '1.00x', '5.0 SAP/min'],
+            ['10', '1.10x', '5.5 SAP/min'],
+            ['50', '1.50x', '7.5 SAP/min'],
+            ['100', '2.00x', '10.0 SAP/min'],
+            ['200', '3.00x', '15.0 SAP/min'],
           ]},
           { type: 'heading', text: 'Luck' },
           { type: 'paragraph', text: 'Improves your chances of receiving a toolbox drop each minute you walk.' },
@@ -216,11 +216,11 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'how-earning-works',
         title: 'How Earning Works',
         content: [
-          { type: 'paragraph', text: 'Earning SAT is the core loop of Galavant. Every minute you walk outdoors with an equipped balance bike, you earn SAT points. The amount depends on several factors.' },
+          { type: 'paragraph', text: 'Earning SAP is the core loop of Galavant. Every minute you walk outdoors with an equipped balance bike, you earn SAP. The amount depends on several factors.' },
           { type: 'heading', text: 'What Affects Your Earnings' },
           { type: 'list', items: [
             'Bike quality — higher quality bikes have better earning potential.',
-            'Earning attribute — more points in Earning = more SAT per minute.',
+            'Earning attribute — more points in Earning = more SAP per minute.',
             'Bike level — higher level bikes earn more.',
             'Speed matching — staying in your bike\'s optimal speed zone maximizes earnings.',
             'GPS signal quality — poor signal reduces earnings.',
@@ -390,7 +390,7 @@ export const gameplaySections: GameplaySection[] = [
             'Two bikes, each at level 5 or higher.',
             'Each bike can breed up to 7 times in its lifetime.',
             'There\'s a 48-hour cooldown between breeds for each bike.',
-            'Breeding costs BTC (gas), SAT points, and 1 minting tool.',
+            'Breeding costs BTC (gas), SAP, and 1 minting tool.',
             'Costs increase with each subsequent breed for that bike.',
           ]},
           { type: 'tip', text: 'Plan your breeds carefully — each bike has limited breed count, and costs go up each time. Save your best bikes for when you\'re ready.' },
@@ -524,11 +524,11 @@ export const gameplaySections: GameplaySection[] = [
     icon: ChartBarBig,
     pages: [
       {
-        slug: 'sat-points-tokens',
-        title: 'SAT Points & Tokens',
+        slug: 'sap-and-sat-tokens',
+        title: 'SAP & SAT Tokens',
         content: [
           { type: 'paragraph', text: 'Galavant has a dual-currency system designed for both casual players and crypto-savvy users.' },
-          { type: 'heading', text: 'SAT Points (Off-Chain)' },
+          { type: 'heading', text: 'Satoshi Activity Points (SAP)' },
           { type: 'list', items: [
             'Earned by walking with your balance bike.',
             'Used for leveling, upgrades, marketplace trades, and breeding.',
@@ -538,19 +538,19 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'SAT Token (On-Chain)' },
           { type: 'list', items: [
             'An OP_20 token on Bitcoin with a fixed supply of 210 million.',
-            'Created by converting SAT points into tokens.',
+            'Created by converting SAP into SAT tokens.',
             'The conversion rate gets harder as more tokens are minted — early converters get the best rate.',
             'A 5% platform fee applies to conversions.',
             'Can be swapped for BTC on NativeSwap.',
           ]},
-          { type: 'tip', text: 'You don\'t need to convert to tokens to enjoy the game. SAT points work for everything in-game. Converting to tokens is optional for those who want on-chain value.' },
+          { type: 'tip', text: 'You don\'t need to convert to tokens to enjoy the game. SAP works for everything in-game. Converting to SAT tokens is optional for those who want on-chain value.' },
         ],
       },
       {
         slug: 'marketplace',
         title: 'Marketplace',
         content: [
-          { type: 'paragraph', text: 'The in-game marketplace lets you buy and sell bikes, parts, and minting tools using SAT points.' },
+          { type: 'paragraph', text: 'The in-game marketplace lets you buy and sell bikes, parts, and minting tools using SAP.' },
           { type: 'heading', text: 'Selling' },
           { type: 'list', items: [
             'List any bike, part, or minting tool for a SAT price you choose.',

@@ -43,10 +43,10 @@ export function EarnPoints() {
  className="text-4xl md:text-5xl uppercase tracking-widest text-m2e-accent"
           style={{ textShadow: '1px 1px 0px var(--color-m2e-accent-dark)' }}
         >
-          Earn More SAT Points
+          Earn More SAP
         </h1>
  <p className="text-xl text-m2e-text-secondary mt-2 max-w-lg mx-auto">
-          Multiple ways to earn SAT Points in the Galavant ecosystem — walk, engage, and refer friends.
+          Multiple ways to earn SAP in the Galavant ecosystem — walk, engage, and refer friends.
         </p>
       </div>
 
@@ -61,7 +61,7 @@ export function EarnPoints() {
           </h2>
         </div>
  <p className="text-lg text-m2e-text-secondary">
- Complete 13 testnet tasks to earn up to <span className="text-m2e-accent">1,800 SAT Points</span>. Your points will count toward the mainnet airdrop allocation.
+ Complete 13 testnet tasks to earn up to <span className="text-m2e-accent">1,800 SAP</span>. Your points will count toward the mainnet airdrop allocation.
         </p>
         <Link
           to="/tasks"
@@ -82,7 +82,7 @@ export function EarnPoints() {
           </h2>
         </div>
  <p className="text-lg text-m2e-text-secondary">
-          Equip a bike and walk or run in the Galavant mobile app. Earn SAT Points every minute of activity based on your bike stats and bonuses.
+          Equip a bike and walk or run in the Galavant mobile app. Earn SAP every minute of activity based on your bike stats and bonuses.
         </p>
         <a
           href="https://galavant.xyz"
@@ -142,7 +142,7 @@ export function EarnPoints() {
           </h2>
         </div>
  <p className="text-lg text-m2e-text-secondary">
- Share your referral link. Earn <span className="text-m2e-accent">50 SAT Points</span> when a friend signs up with Google and links their wallet.
+ Share your referral link. Earn <span className="text-m2e-accent">50 SAP</span> when a friend signs up with Google and links their wallet.
         </p>
 
         {isAuthenticated ? (
@@ -188,7 +188,7 @@ export function EarnPoints() {
  <div className="pixel-card p-3 text-center">
  <span className="text-2xl text-m2e-accent">{referralStats.totalEarned}</span>
  <p className="text-xs uppercase tracking-wide text-m2e-text-muted mt-1">
-                    SAT Earned
+                    SAP Earned
                   </p>
                 </div>
               </div>
