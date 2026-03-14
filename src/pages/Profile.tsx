@@ -163,7 +163,7 @@ export function Profile() {
         <StatCard
           icon={Coins}
           label="SAP Earned"
-          value={user.totalSapEarned.toLocaleString()}
+          value={(user.totalSapEarned ?? 0).toLocaleString()}
         />
         <StatCard
           icon={Redo}
