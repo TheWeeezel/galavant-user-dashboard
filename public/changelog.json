@@ -2,10 +2,18 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.7",
+      "date": "2026-03-15",
+      "title": "Satoshi Activity Points",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.7/galavant.apk",
+      "changes": [
+        { "type": "improvement", "text": "Renamed \"SAT Points\" to \"SAP\" (Satoshi Activity Points) across all packages, DB, and UI" }
+      ]
+    },
+    {
       "version": "0.0.6",
       "date": "2026-03-13",
       "title": "Google Sign-In Fix",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.6/galavant.apk",
       "changes": [
         { "type": "fix", "text": "Google Sign-In on preview/production builds (missing EAS environment variables)" }
       ]
