@@ -11,6 +11,7 @@
         { "type": "feature", "text": "Your own listings are marked in the Marketplace" },
         { "type": "feature", "text": "App prompts you to update when a new version is available" },
         { "type": "improvement", "text": "\"SAT Points\" renamed to \"SAP\" (Satoshi Activity Points) everywhere" },
+        { "type": "fix", "text": "Socket unequip no longer crashes the app on iOS" },
         { "type": "fix", "text": "Energy cap now applied correctly during earning" },
         { "type": "fix", "text": "Max energy updates properly when staking or unstaking" }
       ]
