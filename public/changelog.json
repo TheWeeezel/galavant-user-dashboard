@@ -7,7 +7,12 @@
       "title": "Satoshi Activity Points",
       "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.7/galavant.apk",
       "changes": [
-        { "type": "improvement", "text": "Renamed \"SAT Points\" to \"SAP\" (Satoshi Activity Points) across all packages, DB, and UI" }
+        { "type": "feature", "text": "Part bonuses now visible on Bike Detail and Level Up screens" },
+        { "type": "feature", "text": "Your own listings are marked in the Marketplace" },
+        { "type": "feature", "text": "App prompts you to update when a new version is available" },
+        { "type": "improvement", "text": "\"SAT Points\" renamed to \"SAP\" (Satoshi Activity Points) everywhere" },
+        { "type": "fix", "text": "Energy cap now applied correctly during earning" },
+        { "type": "fix", "text": "Max energy updates properly when staking or unstaking" }
       ]
     },
     {
