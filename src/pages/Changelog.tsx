@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Notes, Zap, Debug, Redo, Download } from 'pixelarticons/react';
-import type { ChangeType, ChangelogData } from '../types/changelog';
+import type { ChangeType, ChangelogData, VersionEntry } from '../types/changelog';
 
 const CHANGE_CONFIG: Record<ChangeType, { label: string; color: string; bg: string; Icon: React.ComponentType<any> }> = {
   feature: { label: 'NEW', color: 'text-m2e-success', bg: 'bg-m2e-success/15', Icon: Zap },
@@ -8,10 +8,99 @@ const CHANGE_CONFIG: Record<ChangeType, { label: string; color: string; bg: stri
   improvement: { label: 'IMP', color: 'text-m2e-info', bg: 'bg-m2e-info/15', Icon: Redo },
 };
 
+const CHANGE_EMOJI: Record<ChangeType, string> = {
+  feature: '\u{1F195}',
+  fix: '\u{1F6E0}',
+  improvement: '\u{1F504}',
+};
+
+const SECTION_HEADERS: Record<ChangeType, { emoji: string; title: string }> = {
+  feature: { emoji: '\u{1F195}', title: 'New Features' },
+  improvement: { emoji: '\u{1F504}', title: 'Improvements' },
+  fix: { emoji: '\u{1F6E0}', title: 'Fixes' },
+};
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function buildShareMessage(entry: VersionEntry): string {
+  const lines: string[] = [];
+
+  lines.push(`\u{1F680} Galavant Update \u2014 v${entry.version}`);
+  lines.push('');
+  lines.push(`\u{1F4C5} ${formatDate(entry.date)}`);
+  lines.push('');
+  lines.push(`${entry.title}`);
+  lines.push('https://galavant.run/changelog');
+
+  // Group changes by type
+  const grouped: Record<ChangeType, string[]> = { feature: [], improvement: [], fix: [] };
+  for (const change of entry.changes) {
+    grouped[change.type].push(change.text);
+  }
+
+  for (const type of ['feature', 'improvement', 'fix'] as ChangeType[]) {
+    if (grouped[type].length === 0) continue;
+    const { emoji, title } = SECTION_HEADERS[type];
+    lines.push('');
+    lines.push(`${emoji} ${title}`);
+    lines.push('');
+    for (const text of grouped[type]) {
+      lines.push(`${CHANGE_EMOJI[type]} ${text}`);
+    }
+  }
+
+  lines.push('');
+  lines.push('\u{1F9EA} Help Us Test the Platform');
+  lines.push('');
+  lines.push('We are currently testing the ecosystem before Mainnet launch and are tracking which users complete which tasks.');
+  lines.push('');
+  lines.push('\u{1F449} Use the wallet and complete tasks here:');
+  lines.push('https://galavant.run/tasks');
+  lines.push('');
+  lines.push('\u{1F381} All completed tasks will be rewarded with Bike Parts once we go live on Mainnet.');
+
+  return lines.join('\n');
+}
+
 export function Changelog() {
   const [data, setData] = useState<ChangelogData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copiedVersion, setCopiedVersion] = useState<string | null>(null);
+
+  const handleShare = useCallback(async (entry: VersionEntry) => {
+    const message = buildShareMessage(entry);
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: message });
+        return;
+      } catch {
+        // User cancelled or share failed — fall through to clipboard
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(message);
+      setCopiedVersion(entry.version);
+      setTimeout(() => setCopiedVersion(null), 2000);
+    } catch {
+      // Fallback for older browsers
+      const textarea = document.createElement('textarea');
+      textarea.value = message;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopiedVersion(entry.version);
+      setTimeout(() => setCopiedVersion(null), 2000);
+    }
+  }, []);
 
   useEffect(() => {
     fetch('/changelog.json')
@@ -109,9 +198,36 @@ export function Changelog() {
                         </span>
                       )}
                     </div>
- <span className="text-xs text-m2e-text-muted uppercase tracking-wider">
-                      {entry.date}
-                    </span>
+ <div className="flex items-center gap-2">
+                      <span className="text-xs text-m2e-text-muted uppercase tracking-wider">
+                        {entry.date}
+                      </span>
+                      <button
+                        onClick={() => handleShare(entry)}
+                        className={`inline-flex items-center gap-1 px-2 py-1 text-[10px] uppercase tracking-widest pixel-border transition-colors ${
+                          copiedVersion === entry.version
+                            ? 'bg-m2e-success/15 text-m2e-success border-current'
+                            : 'bg-m2e-bg-alt text-m2e-text-muted border-m2e-border hover:text-m2e-accent hover:border-m2e-accent'
+                        }`}
+                        title="Share this update"
+                      >
+                        {copiedVersion === entry.version ? (
+                          <>
+                            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            Copied
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M18 16c-.8 0-1.4.4-2 .8l-7-4v-1.6l7-4c.5.4 1.2.8 2 .8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3v.8l-7 4C7.5 9.4 6.8 9 6 9c-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.4 2-.8l7 4v.8c0 1.7 1.3 3 3 3s3-1.3 3-3-1.3-3-3-3z"/>
+                            </svg>
+                            Share
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Title */}
