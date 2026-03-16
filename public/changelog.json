@@ -2,10 +2,18 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.9",
+      "date": "2026-03-16",
+      "title": "Update Dialog Addon",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.9/galavant-v0.0.9.apk",
+      "changes": [
+        { "type": "improvement", "text": "Improved text readability and accessibility across the app" }
+      ]
+    },
+    {
       "version": "0.0.8",
       "date": "2026-03-16",
       "title": "Bike Economy & Testing Rewards",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.8/galavant-v0.0.8.apk",
       "changes": [
         { "type": "feature", "text": "Additional testing rewards for early testers" },
         { "type": "feature", "text": "Choose your own bike when getting started" },
