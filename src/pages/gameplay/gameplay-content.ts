@@ -4,13 +4,16 @@ import {
   ChartBarBig, Trophy, ToolCase,
 } from 'pixelarticons/react';
 
+export type ChartBar = { label: string; value: number; accent?: boolean };
+
 export type ContentBlock =
   | { type: 'paragraph'; text: string }
   | { type: 'heading'; text: string }
   | { type: 'list'; items: string[] }
   | { type: 'tip'; text: string }
   | { type: 'table'; headers: string[]; rows: string[][] }
-  | { type: 'divider' };
+  | { type: 'divider' }
+  | { type: 'chart'; title: string; bars: ChartBar[]; unit?: string };
 
 export type GameplayPage = {
   slug: string;
@@ -239,21 +242,52 @@ export const gameplaySections: GameplaySection[] = [
             'Energy is measured in minutes of earning time.',
             'It refills 25% every 6 hours — a full refill takes 24 hours.',
             'Your total energy pool depends on how many bikes you own and their quality.',
-            'The maximum energy cap is 60 minutes per day.',
+            'The maximum energy cap is 100 minutes per day.',
             'Only bikes with HP remaining contribute to your energy pool.',
           ]},
-          { type: 'heading', text: 'Max Energy Pool' },
-          { type: 'paragraph', text: 'Your first bike contributes its full energy. Each additional bike adds less due to diminishing returns. The absolute cap is 60 minutes.' },
-          { type: 'table', headers: ['Scenario', 'Energy Pool'], rows: [
-            ['1 Common bike', '10 min'],
-            ['1 Legendary bike', '25 min'],
-            ['3 Common bikes', '17 min'],
-            ['3 Legendary bikes', '43 min'],
-            ['1 Legendary + 4 Rare', '44 min'],
-            ['5 Legendary bikes', '~59 min'],
-            ['6 Legendary bikes', '60 min (cap)'],
+          { type: 'heading', text: 'Base Energy by Bike Count' },
+          { type: 'paragraph', text: 'Your base energy grows as you collect more bikes. At key thresholds your base energy jumps up, and between thresholds it scales smoothly.' },
+          { type: 'table', headers: ['Bikes Owned', 'Base Energy'], rows: [
+            ['1', '10 min'],
+            ['3', '20 min'],
+            ['5', '35 min'],
+            ['9', '50 min'],
+            ['15', '75 min'],
+            ['30', '100 min'],
           ]},
-          { type: 'tip', text: 'Even a single Common bike gives you enough energy to get started. As you grow your collection, your daily earning potential increases significantly.' },
+          { type: 'chart', title: 'Base Energy by Bike Count', unit: ' min', bars: [
+            { label: '1 bike', value: 10 },
+            { label: '2 bikes', value: 15 },
+            { label: '3 bikes', value: 20 },
+            { label: '5 bikes', value: 35 },
+            { label: '7 bikes', value: 42 },
+            { label: '9 bikes', value: 50 },
+            { label: '12 bikes', value: 62 },
+            { label: '15 bikes', value: 75 },
+            { label: '20 bikes', value: 83 },
+            { label: '30 bikes', value: 100, accent: true },
+          ]},
+          { type: 'heading', text: 'Quality Bonus' },
+          { type: 'paragraph', text: 'On top of the base energy, each bike adds a flat bonus depending on its quality. Higher quality bikes contribute more bonus energy per bike.' },
+          { type: 'table', headers: ['Quality', 'Bonus per Bike'], rows: [
+            ['Common', '+0 min'],
+            ['Uncommon', '+2 min'],
+            ['Rare', '+5 min'],
+            ['Epic', '+8 min'],
+            ['Legendary', '+12 min'],
+          ]},
+          { type: 'heading', text: 'Example Scenarios' },
+          { type: 'paragraph', text: 'Your total energy = base energy from bike count + quality bonus from each bike, capped at 100 minutes.' },
+          { type: 'chart', title: 'Energy by Collection', unit: ' min', bars: [
+            { label: '1 Common', value: 10 },
+            { label: '1 Legendary', value: 22 },
+            { label: '3 Common', value: 20 },
+            { label: '3 Legendary', value: 56 },
+            { label: '5 Rare', value: 60 },
+            { label: '5 Legendary', value: 95, accent: true },
+            { label: '6+ Legendary', value: 100, accent: true },
+          ]},
+          { type: 'tip', text: 'Collecting more bikes is the best way to increase your energy. Higher quality bikes add extra energy per bike — for example, 3 Legendary bikes give you 56 minutes compared to just 20 for 3 Common bikes.' },
         ],
       },
       {

@@ -1,6 +1,36 @@
 import { useParams, Link, Navigate } from 'react-router';
 import { ChevronLeft, ChevronRight } from 'pixelarticons/react';
-import { flatPages, type ContentBlock } from './gameplay-content';
+import { flatPages, type ContentBlock, type ChartBar } from './gameplay-content';
+
+function BarChart({ title, bars, unit = '' }: { title: string; bars: ChartBar[]; unit?: string }) {
+  const max = Math.max(...bars.map((b) => b.value));
+  return (
+    <div className="my-6 pixel-card px-5 py-5">
+      <div className="text-sm uppercase tracking-wider text-m2e-text mb-4">{title}</div>
+      <div className="space-y-2.5">
+        {bars.map((bar, i) => {
+          const pct = max > 0 ? (bar.value / max) * 100 : 0;
+          return (
+            <div key={i} className="flex items-center gap-3">
+              <span className="w-28 shrink-0 text-right text-sm text-m2e-text-secondary font-medium truncate">
+                {bar.label}
+              </span>
+              <div className="flex-1 h-6 bg-m2e-card-alt/60 border border-m2e-border/50 relative overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-300 ${bar.accent ? 'bg-m2e-accent' : 'bg-m2e-accent/60'}`}
+                  style={{ width: `${Math.max(pct, 2)}%` }}
+                />
+              </div>
+              <span className="w-16 shrink-0 text-sm text-m2e-text-secondary font-medium tabular-nums">
+                {bar.value}{unit}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function renderBlock(block: ContentBlock, i: number) {
   switch (block.type) {
@@ -77,6 +107,8 @@ function renderBlock(block: ContentBlock, i: number) {
       );
     case 'divider':
  return <hr key={i} className="border-t-2 border-m2e-border my-4" />;
+    case 'chart':
+      return <BarChart key={i} title={block.title} bars={block.bars} unit={block.unit} />;
   }
 }
 

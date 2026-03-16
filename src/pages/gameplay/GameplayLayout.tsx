@@ -27,14 +27,16 @@ export function GameplayLayout() {
 
       {/* Sidebar */}
       <aside
- className={`w-72 shrink-0 border-l-2 border-r-2 border-m2e-border bg-m2e-card overflow-y-auto
-          lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:block
+ className={`w-72 shrink-0 border-l-2 border-r-2 border-m2e-border bg-m2e-card
+          lg:block
           ${sidebarOpen
-            ? 'fixed inset-y-0 left-0 z-50 top-16 h-[calc(100vh-4rem)] block'
+            ? 'fixed inset-y-0 left-0 z-50 top-16 h-[calc(100vh-4rem)] overflow-y-auto block'
             : 'hidden'
           }`}
       >
-        <GameplaySidebar onNavigate={() => setSidebarOpen(false)} />
+        <div className="lg:sticky lg:top-16 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
+          <GameplaySidebar onNavigate={() => setSidebarOpen(false)} />
+        </div>
       </aside>
 
       {/* Content */}

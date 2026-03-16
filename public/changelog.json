@@ -2,10 +2,22 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.8",
+      "date": "2026-03-16",
+      "title": "Bike Economy & Testing Rewards",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.8/galavant-v0.0.8.apk",
+      "changes": [
+        { "type": "feature", "text": "Additional testing rewards for early testers" },
+        { "type": "feature", "text": "Choose your own bike when getting started" },
+        { "type": "improvement", "text": "Revamped bike economic model for better balance" },
+        { "type": "improvement", "text": "Improved GPS logging accuracy" },
+        { "type": "fix", "text": "Internal stability improvements" }
+      ]
+    },
+    {
       "version": "0.0.7",
       "date": "2026-03-15",
       "title": "Satoshi Activity Points",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.7/galavant.apk",
       "changes": [
         { "type": "feature", "text": "Part bonuses now visible on Bike Detail and Level Up screens" },
         { "type": "feature", "text": "Your own listings are marked in the Marketplace" },

@@ -8,7 +8,7 @@ import {
 } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
-import { fetchTestingTasks, claimTestingTask } from '../api';
+import { fetchTestingTasks, claimTestingTask, fetchBonusClaimStatus, claimBonusBike } from '../api';
 import type { TestingTask } from '../api';
 import type { ComponentType, SVGProps } from 'react';
 
@@ -132,6 +132,8 @@ export function Tasks() {
         </p>
       </div>
 
+      <BonusClaims />
+
       {isLoading ? (
  <div className="flex items-center justify-center py-12">
  <p className="text-m2e-text-muted uppercase tracking-widest">Loading tasks...</p>
@@ -235,6 +237,104 @@ function TaskCard({
  <Check className="w-4 h-4" /> Claimed
           </span>
         )}
+      </div>
+    </div>
+  );
+}
+
+const BONUS_BIKE_TYPES = ['commuter', 'touring', 'racing'] as const;
+const BONUS_BIKE_LABELS: Record<string, string> = {
+  commuter: 'Commuter',
+  touring: 'Touring',
+  racing: 'Racing',
+};
+
+function BonusClaims() {
+  const { isAuthenticated } = useAuth();
+  const queryClient = useQueryClient();
+
+  const { data: status } = useQuery({
+    queryKey: ['bonus-claim-status'],
+    queryFn: fetchBonusClaimStatus,
+    enabled: isAuthenticated,
+  });
+
+  const claimMutation = useMutation({
+    mutationFn: claimBonusBike,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bonus-claim-status'] });
+      queryClient.invalidateQueries({ queryKey: ['bikes'] });
+    },
+  });
+
+  if (!isAuthenticated) return null;
+
+  // Loading state — show placeholder so the section is always visible
+  if (!status) {
+    return (
+ <div className="pixel-card p-5 space-y-2">
+ <h2 className="text-sm uppercase tracking-widest text-m2e-text-secondary">Bonus Claims</h2>
+ <p className="text-xs text-m2e-text-muted uppercase tracking-widest">Loading...</p>
+      </div>
+    );
+  }
+
+  // Already claimed
+  if (status.claimed) {
+    return (
+ <div className="pixel-card p-5 border-m2e-success space-y-2">
+ <h2 className="text-sm uppercase tracking-widest text-m2e-text-secondary">Bonus Claims</h2>
+ <div className="flex items-center gap-3">
+ <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-m2e-success/10">
+ <Check className="w-6 h-6 text-m2e-success" />
+          </div>
+ <div>
+ <p className="text-sm uppercase tracking-wide text-m2e-success">Bonus bike claimed!</p>
+ <p className="text-xs text-m2e-text-muted mt-0.5">Your Uncommon bike has been added to your inventory.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Eligible — show bike type choices
+  if (status.eligible) {
+    return (
+ <div className="pixel-card p-5 border-m2e-accent space-y-3">
+ <h2 className="text-sm uppercase tracking-widest text-m2e-text-secondary">Bonus Claims</h2>
+ <p className="text-xs text-m2e-text-muted">
+          Choose an Uncommon bike as your bonus reward!
+        </p>
+ <div className="grid grid-cols-3 gap-3">
+          {BONUS_BIKE_TYPES.map((type) => (
+            <button
+              key={type}
+              onClick={() => claimMutation.mutate(type)}
+              disabled={claimMutation.isPending}
+ className="pixel-btn pixel-btn-primary py-3 text-xs uppercase tracking-wide disabled:opacity-50"
+            >
+              {claimMutation.isPending && claimMutation.variables === type
+                ? 'Claiming...'
+                : BONUS_BIKE_LABELS[type]}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Not eligible — locked state
+  return (
+ <div className="pixel-card p-5 space-y-2">
+ <h2 className="text-sm uppercase tracking-widest text-m2e-text-secondary">Bonus Claims</h2>
+ <div className="flex items-center gap-3">
+ <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-m2e-bg-alt">
+ <Gift className="w-6 h-6 text-m2e-text-muted" />
+        </div>
+ <div>
+ <p className="text-sm uppercase tracking-wide text-m2e-text-muted">Bonus Bike Locked</p>
+ <p className="text-xs text-m2e-text-muted mt-0.5">Complete any task to unlock a free Uncommon bike of your choice.</p>
+        </div>
       </div>
     </div>
   );

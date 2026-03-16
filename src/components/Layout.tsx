@@ -116,7 +116,7 @@ export function Layout() {
       </main>
 
       {/* Footer */}
- <footer className="border-t-2 border-m2e-border bg-m2e-card py-6 mt-8 pb-20">
+ <footer className="border-t-2 border-m2e-border bg-m2e-card py-6 pb-20">
  <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-m2e-text-muted uppercase tracking-wide">
           <span>Powered by OPNet on Bitcoin</span>
           <span>Walk to Earn &mdash; Walk. Earn. Own.</span>
