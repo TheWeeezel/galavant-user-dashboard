@@ -5,6 +5,7 @@ import {
   Store, ShoppingCart, Coins,
   SpeedFast, Zap, Heart,
   Redo, Fire, Gift, Check,
+  ExternalLink, Loader,
 } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
@@ -17,9 +18,10 @@ const CATEGORY_LABELS: Record<string, string> = {
   marketplace: 'Marketplace',
   bike_progression: 'Bike Progression',
   economy: 'Economy',
+  wallet: 'Wallet',
 };
 
-const CATEGORY_ORDER = ['getting_started', 'marketplace', 'bike_progression', 'economy'];
+const CATEGORY_ORDER = ['getting_started', 'marketplace', 'bike_progression', 'economy', 'wallet'];
 
 const TASK_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   create_wallet: Login,
@@ -35,6 +37,8 @@ const TASK_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   convert_points_to_tokens: Redo,
   convert_btc_to_sat: Fire,
   convert_sat_to_points: Gift,
+  export_bike_to_wallet: ExternalLink,
+  import_bike_from_wallet: Loader,
 };
 
 export function Tasks() {
