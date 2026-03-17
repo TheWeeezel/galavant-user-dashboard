@@ -131,7 +131,7 @@ export const gameplaySections: GameplaySection[] = [
             ['200', '3.00x', '15.0 SAP/min'],
           ]},
           { type: 'heading', text: 'Luck' },
-          { type: 'paragraph', text: 'Improves your chances of receiving a toolbox drop each minute you walk.' },
+          { type: 'paragraph', text: 'Improves your chances of receiving a toolbox drop each minute you walk, and increases the likelihood of higher-level toolboxes. Higher Luck means better odds, but drops are never guaranteed to be a specific level.' },
           { type: 'table', headers: ['Total Luck', 'Drop Chance per Minute'], rows: [
             ['0', '2%'],
             ['10', '5%'],
@@ -391,7 +391,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'toolboxes',
         title: 'Toolboxes',
         content: [
-          { type: 'paragraph', text: 'Toolboxes are reward containers that drop randomly while you walk. Your Luck attribute influences both drop frequency and the level of toolbox you receive.' },
+          { type: 'paragraph', text: 'Toolboxes are reward containers that drop randomly while you walk. Your actual walking movement determines the level of toolbox you receive — only minutes where you\'re actively moving and earning count toward toolbox level. Standing still won\'t improve your toolbox level, even on a long session.' },
           { type: 'heading', text: 'Toolbox Levels' },
           { type: 'paragraph', text: 'Toolboxes range from Level 1 (most common) to Level 5 (rarest). Higher levels contain better parts, more SAP, and a chance at minting tools.' },
           { type: 'table', headers: ['Level', 'Rarity', 'Description'], rows: [
@@ -401,14 +401,14 @@ export const gameplaySections: GameplaySection[] = [
             ['Lv. 4', 'Rare', 'High-value rewards and better premium-drop potential.'],
             ['Lv. 5', 'Very Rare', 'The strongest rewards and the best chance at top-tier extras.'],
           ]},
-          { type: 'tip', text: 'Investing in Luck — through leveling, parts, and bike quality — meaningfully improves both your drop rate and the level of toolboxes you receive.' },
+          { type: 'tip', text: 'Investing in Luck — through leveling, parts, and bike quality — significantly improves both your drop rate and the level of toolboxes you receive. More active movement time pushes the toolbox level higher. Standing still or having poor GPS signal won\'t count toward your toolbox level. However, there\'s always some randomness — even with high Luck and a long walk, you may occasionally get a lower-level toolbox.' },
           { type: 'heading', text: 'Cooldown Timers' },
           { type: 'paragraph', text: 'Each toolbox has a cooldown period that starts when it drops. You must wait for the timer to expire before opening. Higher-level toolboxes take longer — ranging from about 2 days for Lv. 1 up to about a week for Lv. 5.' },
           { type: 'tip', text: 'Extra inventory slots let you cool down multiple boxes in parallel, so you\'re always ready to open one while others count down.' },
           { type: 'heading', text: 'Speed Open' },
           { type: 'paragraph', text: 'Don\'t want to wait? You can spend SAP to instantly skip the remaining cooldown. The cost scales with how much time is left — the more patient you are, the less it costs. This cost is in addition to the normal opening cost.' },
           { type: 'heading', text: 'Live Drop Progress' },
-          { type: 'paragraph', text: 'During a walk, the live activity screen shows your estimated toolbox drop progress — including your cumulative drop chance so far and the likely toolbox level you\'d receive. This updates in real time as your walk continues.' },
+          { type: 'paragraph', text: 'During a walk, the live activity screen shows your estimated toolbox drop progress — including your cumulative drop chance so far and the likely toolbox level based on your actual movement. If you stop moving, the estimated level reflects that. This updates in real time as your walk continues.' },
           { type: 'heading', text: 'Opening Costs' },
           { type: 'paragraph', text: 'Every toolbox has an opening cost. Lower-level toolboxes are easier to open, while higher-level toolboxes may also require BTC in addition to SAP.' },
           { type: 'table', headers: ['Level', 'Cost Type'], rows: [
@@ -602,6 +602,8 @@ export const gameplaySections: GameplaySection[] = [
             'Can be swapped for BTC on NativeSwap.',
           ]},
           { type: 'tip', text: 'You don\'t need to convert to tokens to enjoy the game. SAP works for everything in-game. Converting to SAT tokens is optional for those who want on-chain value.' },
+          { type: 'heading', text: 'Token Supply Management' },
+          { type: 'paragraph', text: 'The platform actively manages the SAT token supply to maintain a healthy economy. A portion of platform revenue goes into a stabilization fund used for token burns (permanently reducing supply) and buybacks (purchasing tokens on the open market). These operations are reviewed and approved by the team to ensure long-term token value stability.' },
         ],
       },
       {
