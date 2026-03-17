@@ -2,10 +2,26 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.10",
+      "date": "2026-03-17",
+      "title": "Ride Recovery & Local-First Tracking",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.10/galavant-v0.0.10.apk",
+      "changes": [
+        { "type": "feature", "text": "Activity history screen to view past rides" },
+        { "type": "feature", "text": "Crash recovery for interrupted activities — ride data is saved locally and can be resumed" },
+        { "type": "feature", "text": "Faster wallet operations with prepared transaction caching" },
+        { "type": "improvement", "text": "GPS tracking now saves data locally first for better reliability" },
+        { "type": "improvement", "text": "Android live tracking improved with native foreground service" },
+        { "type": "improvement", "text": "Toolbox rewards now based on actual riding time instead of total session time" },
+        { "type": "fix", "text": "Login now works correctly across different address formats" },
+        { "type": "fix", "text": "Marketplace listing modal scroll behavior fixed" },
+        { "type": "fix", "text": "Improved bike image display" }
+      ]
+    },
+    {
       "version": "0.0.9",
       "date": "2026-03-16",
       "title": "Update Dialog Addon",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.9/galavant-v0.0.9.apk",
       "changes": [
         { "type": "improvement", "text": "Improved text readability and accessibility across the app" }
       ]
