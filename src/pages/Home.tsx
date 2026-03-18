@@ -32,6 +32,17 @@ function formatSat(n: number): string {
   return n.toLocaleString();
 }
 
+const COMPARISON_ROWS: [string, string, string][] = [
+  ['Blockchain', 'Solana, BNB, L2s', 'Bitcoin Layer 1'],
+  ['Economy Management', 'None — mint and pray', 'AI Central Banker with human approval'],
+  ['Token Supply Control', 'Unlimited or ignored', 'Active burns, buybacks & reserves'],
+  ['Stabilization Fund', 'Non-existent', 'Revenue-backed, auditable fund'],
+  ['Economy Health Visibility', 'Hidden or non-existent', 'Public real-time health score'],
+  ['Asset Security', 'Chain-dependent', 'Secured by Bitcoin\'s hashrate'],
+  ['Inflation Response', 'Usually too late', 'Daily AI monitoring + tunable economic levers'],
+  ['Revenue Model', 'Speculation-driven', 'Platform fees fund stability operations'],
+];
+
 const ONBOARDING_STEPS = [
   { icon: Download, title: 'Download', description: 'Get the app on iOS or Android' },
   { icon: Login, title: 'Sign In', description: 'Create your account and wallet' },
@@ -135,37 +146,28 @@ export function Home() {
           <p className="text-xl text-m2e-text-secondary max-w-3xl mx-auto">See what separates Galavant from every other move-to-earn game.</p>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left">
+        <div className="overflow-x-auto -mx-4 px-4">
+          <table className="w-full border-collapse text-left text-sm sm:text-base">
             <thead>
               <tr>
-                <th className="py-3 px-4 text-sm uppercase tracking-widest text-m2e-text-muted border-b-2 border-m2e-border w-[40%]" />
-                <th className="py-3 px-4 text-center text-sm uppercase tracking-widest text-m2e-text-muted border-b-2 border-m2e-border w-[30%]">Other M2E Games</th>
-                <th className="py-3 px-4 text-center text-sm uppercase tracking-widest text-m2e-accent border-b-2 border-m2e-accent w-[30%]">Galavant</th>
+                <th className="py-2 px-2 sm:px-3 text-xs uppercase tracking-widest text-m2e-text-muted border-b-2 border-m2e-border" />
+                <th className="py-2 px-2 sm:px-3 text-center text-xs uppercase tracking-widest text-m2e-text-muted border-b-2 border-m2e-border">Others</th>
+                <th className="py-2 px-2 sm:px-3 text-center text-xs uppercase tracking-widest text-m2e-accent border-b-2 border-m2e-accent">Galavant</th>
               </tr>
             </thead>
-            <tbody className="text-base">
-              {([
-                ['Blockchain', 'Solana, BNB, L2s', 'Bitcoin Layer 1'],
-                ['Economy Management', 'None — mint and pray', 'AI Central Banker with human approval'],
-                ['Token Supply Control', 'Unlimited or ignored', 'Active burns, buybacks & reserves'],
-                ['Stabilization Fund', 'Non-existent', 'Revenue-backed, auditable fund'],
-                ['Economy Health Visibility', 'Hidden or non-existent', 'Public real-time health score'],
-                ['Asset Security', 'Chain-dependent', 'Secured by Bitcoin\'s hashrate'],
-                ['Inflation Response', 'Usually too late', 'Daily AI monitoring + 40+ tunable levers'],
-                ['Revenue Model', 'Speculation-driven', 'Platform fees fund stability operations'],
-              ] as const).map(([label, other, galavant], i) => (
+            <tbody>
+              {COMPARISON_ROWS.map(([label, other, galavant], i) => (
                 <tr key={i} className={i % 2 === 0 ? 'bg-m2e-card/50' : ''}>
-                  <td className="py-3 px-4 text-m2e-text border-b border-m2e-border-light">{label}</td>
-                  <td className="py-3 px-4 text-center border-b border-m2e-border-light">
-                    <span className="inline-flex items-center gap-1.5 text-m2e-text-muted">
-                      <Cancel className="w-4 h-4 text-m2e-danger shrink-0" />
+                  <td className="py-1.5 px-2 sm:px-3 text-m2e-text border-b border-m2e-border-light">{label}</td>
+                  <td className="py-1.5 px-2 sm:px-3 text-center border-b border-m2e-border-light">
+                    <span className="inline-flex items-center gap-1 text-m2e-text-muted">
+                      <Cancel className="w-3.5 h-3.5 text-m2e-danger shrink-0" />
                       {other}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-center border-b border-m2e-border-light">
-                    <span className="inline-flex items-center gap-1.5 text-m2e-text">
-                      <Check className="w-4 h-4 text-m2e-success shrink-0" />
+                  <td className="py-1.5 px-2 sm:px-3 text-center border-b border-m2e-border-light">
+                    <span className="inline-flex items-center gap-1 text-m2e-text">
+                      <Check className="w-3.5 h-3.5 text-m2e-success shrink-0" />
                       {galavant}
                     </span>
                   </td>
