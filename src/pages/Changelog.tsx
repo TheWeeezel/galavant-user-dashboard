@@ -8,12 +8,6 @@ const CHANGE_CONFIG: Record<ChangeType, { label: string; color: string; bg: stri
   improvement: { label: 'IMP', color: 'text-m2e-info', bg: 'bg-m2e-info/15', Icon: Redo },
 };
 
-const CHANGE_EMOJI: Record<ChangeType, string> = {
-  feature: '\u{1F195}',
-  fix: '\u{1F6E0}',
-  improvement: '\u{1F504}',
-};
-
 const SECTION_HEADERS: Record<ChangeType, { emoji: string; title: string }> = {
   feature: { emoji: '\u{1F195}', title: 'New Features' },
   improvement: { emoji: '\u{1F504}', title: 'Improvements' },
@@ -48,7 +42,7 @@ function buildShareMessage(entry: VersionEntry): string {
     lines.push(`${emoji} ${title}`);
     lines.push('');
     for (const text of grouped[type]) {
-      lines.push(`${CHANGE_EMOJI[type]} ${text}`);
+      lines.push(`- ${text}`);
     }
   }
 
