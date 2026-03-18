@@ -2,10 +2,31 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.11",
+      "date": "2026-03-18",
+      "title": "HP Lifeline, Anti-Cheat & Activity Hardening",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.11/galavant-v0.0.11.apk",
+      "changes": [
+        { "type": "feature", "text": "HP Lifeline safety net — if your bike's HP drops critically low after a ride, it gets a one-time automatic repair" },
+        { "type": "feature", "text": "New \"Trigger HP Lifeline\" task with SAP reward" },
+        { "type": "feature", "text": "Smarter anti-cheat detection for stationary phones" },
+        { "type": "feature", "text": "Toolbox drops now require actual movement during your ride" },
+        { "type": "improvement", "text": "Breeding balance updated — cross-tier breeding now favors the lower-quality parent" },
+        { "type": "improvement", "text": "Energy calculation no longer counts bikes listed on the marketplace or exported" },
+        { "type": "improvement", "text": "Activity tracking is more resilient to app crashes and network issues" },
+        { "type": "improvement", "text": "Android back button no longer exits the live activity screen" },
+        { "type": "improvement", "text": "Ride timer now syncs with the server for accurate elapsed time" },
+        { "type": "improvement", "text": "Home screen detects active rides faster for quicker resume" },
+        { "type": "fix", "text": "Currency labels corrected to \"SAP\" throughout the marketplace" },
+        { "type": "fix", "text": "Wallet keys now sync properly after Google sign-in" },
+        { "type": "fix", "text": "Marketplace purchases no longer fail when seller has no balance entry" },
+        { "type": "fix", "text": "Improved error messages when activities fail to start or stop" }
+      ]
+    },
+    {
       "version": "0.0.10",
       "date": "2026-03-17",
       "title": "Ride Recovery & Local-First Tracking",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.10/galavant-v0.0.10.apk",
       "changes": [
         { "type": "feature", "text": "Activity history screen to view past rides" },
         { "type": "feature", "text": "Crash recovery for interrupted activities — ride data is saved locally and can be resumed" },
