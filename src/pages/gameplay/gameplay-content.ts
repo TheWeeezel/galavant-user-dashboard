@@ -1,7 +1,7 @@
 import type { ComponentType, SVGProps } from 'react';
 import {
   Flag, SpeedFast, Gamepad, Sparkle, Coins,
-  ChartBarBig, Trophy, ToolCase,
+  ChartBarBig, Trophy, ToolCase, Shield,
 } from 'pixelarticons/react';
 
 export type ChartBar = { label: string; value: number; accent?: boolean };
@@ -239,7 +239,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Energy determines how many minutes you can earn per day. Without energy, you can still walk, but you won\'t earn SAT.' },
           { type: 'heading', text: 'Energy Basics' },
           { type: 'list', items: [
-            'Energy is measured in minutes of earning time.',
+            'Energy is measured in minutes of earning time. Only minutes where you actively earn SAT consume energy — if your speed is out of range or you stop moving, your energy is preserved.',
             'It refills 25% every 6 hours — a full refill takes 24 hours.',
             'Your total energy pool depends on how many bikes you own and their quality.',
             'The maximum energy cap is 100 minutes per day.',
@@ -303,6 +303,7 @@ export const gameplaySections: GameplaySection[] = [
             ['Electric', '1 – 20 km/h', '2 – 18 km/h', 'Any pace'],
           ]},
           { type: 'paragraph', text: 'Inside the optimal range you earn 100%. In the buffer zones (between full range and optimal range) earnings scale linearly. Outside the full range earnings are zero.' },
+          { type: 'paragraph', text: 'When your speed is outside the earning range, your energy is preserved — only minutes where you actually earn will consume energy. So if you stop to rest or slow down, you won\'t waste your energy minutes.' },
           { type: 'tip', text: 'For reference: a casual walk is about 3 km/h, a brisk walk ~6 km/h, a jog ~8 km/h, and a run ~12–16 km/h. Pick the bike that fits your natural pace.' },
         ],
       },
@@ -654,7 +655,118 @@ export const gameplaySections: GameplaySection[] = [
     ],
   },
 
-  // ─── 8. Progression & Rewards ─────────────────────────────────
+  // ─── 8. Economic Governance ──────────────────────────────────
+  {
+    slug: 'economic-governance',
+    title: 'Economic Governance',
+    icon: Shield,
+    pages: [
+      {
+        slug: 'how-decisions-are-made',
+        title: 'How Economic Decisions Are Made',
+        content: [
+          { type: 'paragraph', text: 'Galavant\'s economy isn\'t left to chance. Behind the scenes, an AI-powered economy agent continuously monitors the health of the entire game economy and proposes adjustments to keep things balanced and sustainable.' },
+          { type: 'heading', text: 'The Economy Agent' },
+          { type: 'paragraph', text: 'Every day, the economy agent analyzes real-time data from across the game — player activity, token flows, marketplace trends, conversion patterns, and more. Based on this analysis, it identifies potential risks like inflation, deflation, or market imbalances and proposes corrective actions.' },
+          { type: 'list', items: [
+            'The agent reviews economy health metrics daily.',
+            'It produces a risk assessment (low, medium, high, or critical) based on current conditions.',
+            'It can propose changes to economic parameters — like conversion rates or treasury operations.',
+            'Every proposal requires human admin approval before taking effect. The agent cannot act unilaterally.',
+          ]},
+          { type: 'tip', text: 'No economic change happens automatically. The AI proposes, humans approve. This ensures accountability while benefiting from data-driven analysis.' },
+          { type: 'heading', text: 'Economy Health Score' },
+          { type: 'paragraph', text: 'The game maintains a real-time economy health score visible on the dashboard homepage. This score reflects the overall balance between earning, spending, and token activity across the ecosystem.' },
+          { type: 'list', items: [
+            'Healthy — the economy is well-balanced with strong player activity and stable token flows.',
+            'Cautious — some metrics are trending outside ideal ranges. The team is monitoring closely.',
+            'Stressed — significant imbalance detected. Active measures may be in progress to restore stability.',
+          ]},
+          { type: 'paragraph', text: 'This score is calculated from multiple factors including player activity levels, how currency flows through the game, and the balance between earning sources and spending sinks.' },
+        ],
+      },
+      {
+        slug: 'central-banking',
+        title: 'The Central Banking System',
+        content: [
+          { type: 'paragraph', text: 'Galavant uses an AI-driven central banking model to manage the SAT token supply. This is one of the key systems that sets Galavant apart from other move-to-earn games — instead of letting token value erode over time, the platform actively works to maintain a healthy token economy.' },
+          { type: 'heading', text: 'How It Works' },
+          { type: 'paragraph', text: 'A portion of all platform revenue flows into a stabilization fund. This fund is the central banker\'s operating budget, used exclusively for operations that support the long-term health of the SAT token.' },
+          { type: 'heading', text: 'Treasury Operations' },
+          { type: 'list', items: [
+            'Token Burns — SAT tokens can be permanently removed from circulation by sending them to an unspendable address. This reduces the total supply, which helps counteract inflation when too many tokens are entering the market.',
+            'Buybacks — The platform can use BTC reserves to purchase SAT tokens on the open market (NativeSwap). This creates buy pressure and supports the token price during periods of heavy selling.',
+            'Hold — Sometimes the best action is no action. When the economy is stable, the central banker holds reserves and observes, ready to act if conditions change.',
+          ]},
+          { type: 'tip', text: 'Every treasury operation is proposed by the AI economy agent, reviewed by the team, and requires explicit admin approval before execution. The system is designed for careful, deliberate action — not reactive panic moves.' },
+          { type: 'heading', text: 'The Stabilization Fund' },
+          { type: 'paragraph', text: 'The stabilization fund is built from a share of platform tax revenue collected on conversions, swaps, and marketplace trades. It accumulates over time and serves as a reserve that the central banking system can draw from when economic intervention is needed.' },
+          { type: 'list', items: [
+            'Revenue flows in continuously from platform activity.',
+            'The fund holds multiple currencies (SAT, BTC) to enable different types of operations.',
+            'Minimum reserve thresholds ensure the fund is never fully depleted.',
+            'All fund movements are recorded and auditable.',
+          ]},
+        ],
+      },
+      {
+        slug: 'what-can-change',
+        title: 'What Can Change',
+        content: [
+          { type: 'paragraph', text: 'Galavant\'s economy is a living system. To keep it healthy and fair, the team can adjust a wide range of economic parameters over time. This is by design — a static economy can\'t respond to real-world conditions like player growth, market shifts, or emerging imbalances.' },
+          { type: 'tip', text: 'Changes are always made carefully, proposed by the AI economy agent, and approved by the team. The goal is never to disadvantage players — it\'s to keep the economy sustainable so your earnings and assets hold value long-term.' },
+          { type: 'heading', text: 'Adjustable Economic Levers' },
+          { type: 'paragraph', text: 'The following table shows the categories of parameters the team can tune. No exact values are listed — just what each lever controls and why it might be adjusted.' },
+          { type: 'table', headers: ['Area', 'What Can Be Adjusted', 'Why It Might Change'], rows: [
+            ['Earning Rates', 'Base SAP earned per minute by bike quality', 'To balance inflation if too much SAP is entering the economy'],
+            ['Energy System', 'Daily energy caps, regen speed, quality bonuses', 'To balance earning capacity as the player base grows'],
+            ['Conversion Rate', 'Difficulty of converting SAP into SAT tokens', 'To control token minting speed and protect token value'],
+            ['Repair & Maintenance', 'Cost to repair HP and durability', 'To calibrate how much SAP flows back out as a spending sink'],
+            ['Leveling Costs', 'SAP and BTC costs for leveling bikes', 'To ensure progression costs stay meaningful at all stages'],
+            ['Part Upgrades', 'Upgrade costs and success rates', 'To balance the part economy and prevent excess supply'],
+            ['Breeding Costs', 'BTC and SAP costs per breed attempt', 'To control the rate of new bike creation'],
+            ['Toolbox System', 'Drop rates, cooldowns, opening costs', 'To manage the flow of parts and resources into the game'],
+            ['Marketplace Fees', 'Platform fee on trades', 'To adjust the SAP sink from player-to-player trading'],
+            ['Staking Rewards', 'Earning boosts and energy bonuses from staking', 'To incentivize or moderate token locking behavior'],
+            ['Loyalty Multipliers', 'Streak bonuses and holding rewards', 'To calibrate how much consistency is rewarded'],
+            ['Treasury Operations', 'Burn rate, buyback rate, reserve thresholds', 'To manage SAT token supply and price stability'],
+            ['Revenue Allocation', 'Share of tax revenue going to stabilization fund', 'To grow or maintain the fund that backs treasury operations'],
+            ['Swap Fees', 'Fees on SAT/BTC exchange', 'To manage trading friction and platform revenue'],
+          ]},
+          { type: 'divider' },
+          { type: 'heading', text: 'What Stays the Same' },
+          { type: 'paragraph', text: 'Some things are fixed by design and will not change:' },
+          { type: 'list', items: [
+            'SAT token total supply — hard-capped at 210 million, enforced by the smart contract.',
+            'On-chain ownership — your bikes and tokens are real Bitcoin assets you control.',
+            'Human approval requirement — no economy change happens without team review.',
+            'Transparency — the economy health score remains public.',
+          ]},
+        ],
+      },
+      {
+        slug: 'why-this-matters',
+        title: 'Why This Matters',
+        content: [
+          { type: 'paragraph', text: 'Most move-to-earn games suffer from a common problem: their token value crashes over time because there\'s nothing managing the economy. Tokens are minted endlessly, early players cash out, and the game becomes worthless for everyone else.' },
+          { type: 'heading', text: 'Galavant\'s Approach' },
+          { type: 'list', items: [
+            'Active supply management — token burns and buybacks prevent runaway inflation.',
+            'Data-driven decisions — the AI economy agent uses real metrics, not guesswork, to propose adjustments.',
+            'Human oversight — no automated system can change the economy without team approval.',
+            'Transparent health monitoring — the economy health score is public, so you always know the state of the game.',
+            'Revenue-backed stability — the stabilization fund is built from real platform revenue, not printed tokens.',
+          ]},
+          { type: 'heading', text: 'Designed for Sustainability' },
+          { type: 'paragraph', text: 'The central banking system is designed to keep the Galavant economy healthy over months and years, not just weeks. By actively managing token supply, monitoring risk indicators, and maintaining reserves, the platform aims to avoid the boom-and-bust cycles that have plagued other blockchain games.' },
+          { type: 'paragraph', text: 'Combined with Galavant\'s multiple spending sinks (repair, leveling, upgrades, breeding, marketplace fees), the economy has both natural deflationary pressure and active management tools to maintain balance.' },
+          { type: 'tip', text: 'The economy health score on the homepage gives you a real-time view of how things are going. A healthy economy means your earnings and assets hold their value over time.' },
+        ],
+      },
+    ],
+  },
+
+  // ─── 9. Progression & Rewards ─────────────────────────────────
   {
     slug: 'progression',
     title: 'Progression & Rewards',
