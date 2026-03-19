@@ -2,10 +2,10 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
-      "version": "0.0.12",
+      "version": "0.0.13",
       "date": "2026-03-19",
       "title": "Wallet Recovery, Route Maps & Cleanup",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.12/galavant-v0.0.12.apk",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.13/galavant-v0.0.13.apk",
       "changes": [
         { "type": "feature", "text": "GPS route map on ride detail screen — see your ride path on an interactive map" },
         { "type": "feature", "text": "Wallet Settings screen with recovery phrase backup, import, and reset options" },
@@ -13,6 +13,7 @@
         { "type": "improvement", "text": "Marketplace sell modal now shows bike and part cards instead of plain text" },
         { "type": "improvement", "text": "SAT token renamed from \"SAT Move-to-Earn\" to \"Satoshis Activity Token\"" },
         { "type": "improvement", "text": "Improved error messages across all screens — raw technical errors are no longer shown to users" },
+        { "type": "fix", "text": "Android app crash when viewing ride history on the map" },
         { "type": "fix", "text": "Android push notifications now display correctly for toolbox drops" },
         { "type": "fix", "text": "Wallet recovery import now verifies your address to prevent accidental overwrites" },
         { "type": "fix", "text": "Bike type names standardized across the app" }
