@@ -40,7 +40,7 @@ export function GameplayLayout() {
       </aside>
 
       {/* Content */}
- <div className="flex-1 max-w-4xl mx-auto px-6 py-12 lg:py-16">
+ <div className="flex-1 min-w-0 max-w-4xl mx-auto px-6 py-12 lg:py-16">
         <Outlet />
       </div>
     </div>
