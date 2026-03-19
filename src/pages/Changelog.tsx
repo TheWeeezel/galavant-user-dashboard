@@ -55,6 +55,9 @@ function buildShareMessage(entry: VersionEntry): string {
   lines.push('https://galavant.run/tasks');
   lines.push('');
   lines.push('\u{1F381} All completed tasks will be rewarded with Bike Parts once we go live on Mainnet.');
+  lines.push('');
+  lines.push('\u{1F426} Follow us on X: https://x.com/galavantBTC');
+  lines.push('\u{1F4AC} Join our Telegram: https://t.me/galavantBTC');
 
   return lines.join('\n');
 }
