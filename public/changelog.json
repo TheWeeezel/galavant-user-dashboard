@@ -2,10 +2,26 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.14",
+      "date": "2026-03-20",
+      "title": "Marketplace Filters, UI Refresh & Wallet Fixes",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.14/galavant-v0.0.14.apk",
+      "changes": [
+        { "type": "feature", "text": "Marketplace filter drawer with level and mint count range sliders" },
+        { "type": "feature", "text": "Profile page redesigned with Account, Stats, and Referrals tabs" },
+        { "type": "feature", "text": "Wallet screen redesigned with visual action cards" },
+        { "type": "improvement", "text": "Marketplace now displays bikes, parts, and tools in separate grids" },
+        { "type": "improvement", "text": "Improved UI consistency and styling across the app" },
+        { "type": "fix", "text": "SAT/BTC swaps now recover properly after server restarts" },
+        { "type": "fix", "text": "Swap status updates no longer show false errors" },
+        { "type": "fix", "text": "Wallet key sync works correctly across address formats" },
+        { "type": "fix", "text": "Mobile keyboard invisible characters no longer break wallet recovery import" }
+      ]
+    },
+    {
       "version": "0.0.13",
       "date": "2026-03-19",
       "title": "Wallet Recovery, Route Maps & Cleanup",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.13/galavant-v0.0.13.apk",
       "changes": [
         { "type": "feature", "text": "GPS route map on ride detail screen — see your ride path on an interactive map" },
         { "type": "feature", "text": "Wallet Settings screen with recovery phrase backup, import, and reset options" },
