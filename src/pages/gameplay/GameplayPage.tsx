@@ -165,11 +165,11 @@ export function GameplayPage() {
       </div>
 
       {/* Prev / Next */}
- <div className="flex items-stretch gap-4 mt-12 pt-6 border-t-2 border-m2e-border">
+ <div className="flex items-stretch gap-4 mt-12 pt-6 border-t-2 border-m2e-border overflow-hidden">
         {prev ? (
           <Link
             to={`/gameplay/${prev.sectionSlug}/${prev.page.slug}`}
- className="flex-1 pixel-card px-4 py-3 flex items-center gap-2 hover:border-m2e-accent/60 transition-colors group"
+ className="flex-1 min-w-0 pixel-card px-4 py-3 flex items-center gap-2 hover:border-m2e-accent/60 transition-colors group overflow-hidden"
           >
  <ChevronLeft className="w-5 h-5 text-m2e-text-muted group-hover:text-m2e-accent transition-colors shrink-0" />
  <div className="min-w-0">
@@ -187,7 +187,7 @@ export function GameplayPage() {
         {next ? (
           <Link
             to={`/gameplay/${next.sectionSlug}/${next.page.slug}`}
- className="flex-1 pixel-card px-4 py-3 flex items-center justify-end gap-2 hover:border-m2e-accent/60 transition-colors group text-right"
+ className="flex-1 min-w-0 pixel-card px-4 py-3 flex items-center justify-end gap-2 hover:border-m2e-accent/60 transition-colors group text-right overflow-hidden"
           >
  <div className="min-w-0">
  <div className="text-[10px] uppercase tracking-widest text-m2e-text-muted">

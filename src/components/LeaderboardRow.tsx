@@ -13,7 +13,7 @@ export function LeaderboardRow({ entry, metric }: LeaderboardRowProps) {
   const formattedValue =
     metric === 'distance'
       ? formatDistance(entry.value)
-      : `${entry.value.toLocaleString()} SAT`;
+      : `${entry.value.toLocaleString()} SAP`;
 
   return (
  <div className="flex items-center gap-3 px-4 py-3 border-b border-m2e-border/50 last:border-0 hover:bg-m2e-card/30 transition-colors">

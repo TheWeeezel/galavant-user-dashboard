@@ -65,6 +65,7 @@ export const gameplaySections: GameplaySection[] = [
             'Equip your bike from the inventory screen.',
             'Tap the "Walk" button to start a session.',
             'Head outside and walk at a pace that matches your bike type.',
+            'Need a break? Tap Pause to freeze your session — no energy is consumed while paused. Tap Resume when you\'re ready to continue.',
             'When you\'re done, stop the session and collect your SAT earnings!',
           ]},
           { type: 'tip', text: 'Make sure you have good GPS signal before starting. Indoor movement and treadmills won\'t count.' },
@@ -239,7 +240,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Energy determines how many minutes you can earn per day. Without energy, you can still walk, but you won\'t earn SAT.' },
           { type: 'heading', text: 'Energy Basics' },
           { type: 'list', items: [
-            'Energy is measured in minutes of earning time. Only minutes where you actively earn SAT consume energy — if your speed is out of range or you stop moving, your energy is preserved.',
+            'Energy is measured in minutes of earning time. Only minutes where you actively earn SAT consume energy — if your speed is out of range, you stop moving, or you pause your session, your energy is preserved.',
             'It refills 25% every 6 hours — a full refill takes 24 hours.',
             'Your total energy pool depends on how many bikes you own and their quality.',
             'The maximum energy cap is 100 minutes per day.',
@@ -393,7 +394,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'toolboxes',
         title: 'Toolboxes',
         content: [
-          { type: 'paragraph', text: 'Toolboxes are reward containers that drop randomly while you walk. You need to actually move a meaningful distance during your session before any toolbox can drop — standing still or barely moving won\'t earn you a toolbox. Your actual walking movement also determines the level of toolbox you receive — only minutes where you\'re actively moving and earning count toward toolbox level.' },
+          { type: 'paragraph', text: 'Toolboxes are reward containers that can drop while you walk and earn. You need to actually move a meaningful distance during your session before any toolbox can drop — standing still or barely moving won\'t earn you a toolbox. Both your drop chance and the level of toolbox you receive depend on your active earning time — once your energy runs out, no further drops can occur.' },
           { type: 'heading', text: 'Toolbox Levels' },
           { type: 'paragraph', text: 'Toolboxes range from Level 1 (most common) to Level 5 (rarest). Higher levels contain better parts, more SAP, and a chance at minting tools.' },
           { type: 'table', headers: ['Level', 'Rarity', 'Description'], rows: [
@@ -811,6 +812,27 @@ export const gameplaySections: GameplaySection[] = [
         ],
       },
       {
+        slug: 'social-rewards',
+        title: 'Social Rewards',
+        content: [
+          { type: 'paragraph', text: 'Earn SAP by engaging with Galavant on X (Twitter). Follow our account, like our posts, and retweet to earn rewards.' },
+          { type: 'heading', text: 'Getting Started' },
+          { type: 'list', items: [
+            'Go to the Earn More page and link your X username.',
+            'Follow @GalavantBTC to earn a one-time reward.',
+            'Browse posted tweets and like or retweet them to earn additional rewards.',
+          ]},
+          { type: 'heading', text: 'How It Works' },
+          { type: 'list', items: [
+            'Each like and retweet on a Galavant tweet earns you SAP.',
+            'You can only earn once per action per tweet — no double-dipping.',
+            'Likes and retweets are verified through the Twitter API before rewards are credited.',
+            'The follow reward is a one-time bonus for following our account.',
+          ]},
+          { type: 'tip', text: 'Visit the Earn More page regularly — new tweets appear as they\'re posted, and each one is a fresh opportunity to earn SAP!' },
+        ],
+      },
+      {
         slug: 'leaderboards',
         title: 'Leaderboards',
         content: [
@@ -818,7 +840,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Leaderboard Categories' },
           { type: 'table', headers: ['Category', 'What It Tracks'], rows: [
             ['Distance', 'Total distance covered while walking'],
-            ['Earnings', 'Total SAT earned from walking'],
+            ['Earnings', 'Total SAP earned from walking'],
           ]},
           { type: 'heading', text: 'Time Periods' },
           { type: 'list', items: [

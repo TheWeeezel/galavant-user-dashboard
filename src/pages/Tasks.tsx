@@ -121,7 +121,7 @@ export function Tasks() {
             >
               {earnedPoints.toLocaleString()}
             </span>
- <span className="text-sm text-m2e-text-muted ml-1">/ {totalPoints.toLocaleString()} SAT</span>
+ <span className="text-sm text-m2e-text-muted ml-1">/ {totalPoints.toLocaleString()} SAP</span>
           </div>
         </div>
         {/* Progress bar */}
@@ -225,7 +225,7 @@ function TaskCard({
                 : 'text-m2e-text-muted'
           }`}
         >
-          +{task.reward} SAT
+          +{task.reward} SAP
         </span>
         {isCompleted && (
           <button

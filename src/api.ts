@@ -320,3 +320,54 @@ export function claimBonusBike(bikeType: string) {
     body: JSON.stringify({ bikeType }),
   });
 }
+
+// --- Social Rewards ---
+
+export interface SocialRewardStatus {
+  twitterLinked: boolean;
+  twitterUsername?: string;
+  followClaimed: boolean;
+}
+
+export interface SocialTweet {
+  twitterId: string;
+  content: string;
+  postedAt: string;
+  likes: number;
+  retweets: number;
+  likeClaimed: boolean;
+  retweetClaimed: boolean;
+}
+
+export function fetchSocialStatus() {
+  return fetchAuthJson<SocialRewardStatus>('/social/status');
+}
+
+export function linkTwitter(username: string) {
+  return fetchAuthJson<{ success: boolean }>('/social/link-twitter', {
+    method: 'POST',
+    body: JSON.stringify({ username }),
+  });
+}
+
+export function fetchSocialTweets() {
+  return fetchAuthJson<{ tweets: SocialTweet[] }>('/social/tweets');
+}
+
+export function claimFollow() {
+  return fetchAuthJson<{ reward: number }>('/social/claim/follow', { method: 'POST' });
+}
+
+export function claimLike(twitterTweetId: string) {
+  return fetchAuthJson<{ reward: number }>('/social/claim/like', {
+    method: 'POST',
+    body: JSON.stringify({ twitterTweetId }),
+  });
+}
+
+export function claimRetweet(twitterTweetId: string) {
+  return fetchAuthJson<{ reward: number }>('/social/claim/retweet', {
+    method: 'POST',
+    body: JSON.stringify({ twitterTweetId }),
+  });
+}
