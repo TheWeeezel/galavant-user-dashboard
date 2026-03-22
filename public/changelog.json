@@ -2,10 +2,25 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.15",
+      "date": "2026-03-22",
+      "title": "Pause, Social Rewards & Swap Fixes",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.15/galavant-v0.0.15.apk",
+      "changes": [
+        { "type": "feature", "text": "Pause and resume rides — take a break without ending your activity" },
+        { "type": "feature", "text": "Social rewards — link your X account and earn SAP for following, liking, and retweeting" },
+        { "type": "feature", "text": "SAT token now displays its icon on-chain" },
+        { "type": "improvement", "text": "Swap flow redesigned with clearer step-by-step progress and signing prompts" },
+        { "type": "improvement", "text": "Background swap monitoring automatically tracks pending transactions" },
+        { "type": "fix", "text": "GPS drift no longer incorrectly earns rewards while stationary" },
+        { "type": "fix", "text": "SAT/BTC swap transactions now complete correctly" },
+        { "type": "fix", "text": "Ride timer correctly excludes paused time" }
+      ]
+    },
+    {
       "version": "0.0.14",
       "date": "2026-03-20",
       "title": "Marketplace Filters, UI Refresh & Wallet Fixes",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.14/galavant-v0.0.14.apk",
       "changes": [
         { "type": "feature", "text": "Marketplace filter drawer with level and mint count range sliders" },
         { "type": "feature", "text": "Profile page redesigned with Account, Stats, and Referrals tabs" },
