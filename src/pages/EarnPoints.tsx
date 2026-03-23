@@ -19,6 +19,7 @@ export function EarnPoints() {
   const [showLogin, setShowLogin] = useState(false);
   const [copied, setCopied] = useState(false);
   const [twitterHandle, setTwitterHandle] = useState('');
+  const [followClicked, setFollowClicked] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: referralData } = useQuery({
@@ -207,24 +208,24 @@ export function EarnPoints() {
                 <span className="pixel-border border-m2e-success bg-m2e-success/10 px-3 py-1 text-xs uppercase tracking-wide text-m2e-success flex items-center gap-1">
                   <Check className="w-3 h-3" /> Claimed
                 </span>
+              ) : !followClicked ? (
+                <a
+                  href="https://x.com/intent/follow?screen_name=GalavantBTC"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setFollowClicked(true)}
+                  className="pixel-btn pixel-btn-primary px-3 py-1 text-xs no-underline"
+                >
+                  Follow on X
+                </a>
               ) : (
-                <div className="flex items-center gap-2">
-                  <a
-                    href="https://x.com/intent/follow?screen_name=GalavantBTC"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="pixel-btn pixel-btn-outline px-3 py-1 text-xs no-underline"
-                  >
-                    Follow
-                  </a>
-                  <button
-                    onClick={() => claimFollowMutation.mutate()}
-                    disabled={claimFollowMutation.isPending}
-                    className="pixel-btn pixel-btn-primary px-3 py-1 text-xs disabled:opacity-50"
-                  >
-                    {claimFollowMutation.isPending ? 'Claiming...' : 'Claim 10 SAP'}
-                  </button>
-                </div>
+                <button
+                  onClick={() => claimFollowMutation.mutate()}
+                  disabled={claimFollowMutation.isPending}
+                  className="pixel-btn pixel-btn-primary px-3 py-1 text-xs disabled:opacity-50"
+                >
+                  {claimFollowMutation.isPending ? 'Claiming...' : 'Claim 10 SAP'}
+                </button>
               )}
             </div>
             {claimFollowMutation.isError && (
@@ -288,6 +289,12 @@ export function EarnPoints() {
                     </div>
                   ))}
                 </div>
+                {claimLikeMutation.isError && (
+                  <p className="text-xs text-m2e-danger">{(claimLikeMutation.error as Error).message}</p>
+                )}
+                {claimRetweetMutation.isError && (
+                  <p className="text-xs text-m2e-danger">{(claimRetweetMutation.error as Error).message}</p>
+                )}
               </div>
             )}
           </div>

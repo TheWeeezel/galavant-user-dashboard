@@ -22,7 +22,10 @@ async function fetchAuthJson<T>(path: string, options: RequestInit = {}): Promis
     headers['Authorization'] = `Bearer ${_authToken}`;
   }
   const res = await fetch(`${config.apiUrl}${path}`, { ...options, headers });
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.error ?? `API error: ${res.status}`);
+  }
   return res.json();
 }
 
