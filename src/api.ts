@@ -203,7 +203,7 @@ export type GoogleAuthResult =
   | { status: 'needs_wallet'; googleClaimToken: string; googleEmail: string; googleDisplayName: string };
 
 export interface SpendingWallet {
-  sapBalance: number;
+  sap: number;
   totalConverted: number;
 }
 

@@ -22,10 +22,10 @@ export function Layout() {
   useWalletAuth();
 
   const navLinks = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/gameplay', label: 'Guide', icon: BookOpen },
-    { href: '/market', label: 'Market', icon: ShoppingCart },
-    { href: '/changelog', label: 'Updates', icon: Notes },
+    { href: '/', label: 'Home', icon: Home, iconOnly: true },
+    { href: '/gameplay', label: 'Guide', icon: BookOpen, iconOnly: true },
+    { href: '/market', label: 'Market', icon: ShoppingCart, iconOnly: true },
+    { href: '/changelog', label: 'Updates', icon: Notes, iconOnly: false },
   ] as const;
 
   return (
@@ -40,12 +40,18 @@ export function Layout() {
 
           {/* Desktop nav */}
  <nav className="hidden md:flex items-center gap-3 text-sm uppercase tracking-wider">
-            {navLinks.map(({ href, label, icon: Icon }) => (
- <Link key={href} to={href} className="flex items-center gap-2 bg-m2e-card-alt border-2 border-m2e-border text-m2e-text-secondary px-3 py-2 rounded-md hover:bg-m2e-border-light hover:text-m2e-text transition-colors">
+            {navLinks.map(({ href, label, icon: Icon, iconOnly }) => (
+ <Link key={href} to={href} className="flex items-center gap-2 bg-m2e-card-alt border-2 border-m2e-border text-m2e-text-secondary px-3 py-2 rounded-md hover:bg-m2e-border-light hover:text-m2e-text transition-colors" title={label}>
  <Icon className="w-5 h-5" />
-                {label}
+                {!iconOnly && label}
               </Link>
             ))}
+            {isAuthenticated && (
+ <Link to="/earn" className="flex items-center gap-2 bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark px-3 py-2 rounded-md hover:opacity-90 transition-opacity animate-pulse hover:animate-none font-bold text-sm">
+ <img src="/assets/token-silver.png" alt="SAP" className="w-5 h-5" />
+                Earn SAP
+              </Link>
+            )}
             {isAuthenticated ? (
  <Link to="/profile" className="flex items-center gap-2 bg-m2e-accent/10 border-2 border-m2e-accent text-m2e-accent px-3 py-2 rounded-md hover:bg-m2e-accent/20 transition-colors">
  <Human className="w-5 h-5" />
@@ -75,7 +81,7 @@ export function Layout() {
         {/* Mobile dropdown */}
         {menuOpen && (
  <nav className="md:hidden bg-m2e-card border-b-2 border-m2e-border px-4 py-3 flex flex-col gap-2 text-sm uppercase tracking-wider">
-            {navLinks.map(({ href, label, icon: Icon }) => (
+            {navLinks.map(({ href, label, icon: Icon, iconOnly }) => (
               <Link
                 key={href}
                 to={href}
@@ -86,6 +92,16 @@ export function Layout() {
                 {label}
               </Link>
             ))}
+            {isAuthenticated && (
+              <Link
+                to="/earn"
+                onClick={() => setMenuOpen(false)}
+ className="flex items-center gap-3 bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark px-4 py-3 rounded-md hover:opacity-90 transition-opacity font-bold text-base w-full"
+              >
+ <img src="/assets/token-silver.png" alt="SAP" className="w-5 h-5" />
+                Earn SAP
+              </Link>
+            )}
             {isAuthenticated ? (
               <Link
                 to="/profile"

@@ -183,7 +183,7 @@ export function Profile() {
  className="text-3xl text-m2e-accent"
               style={{ textShadow: '1px 1px 0px var(--color-m2e-accent-dark)' }}
             >
-              {spending?.sapBalance?.toLocaleString() ?? '—'}
+              {spending?.sap?.toLocaleString() ?? '—'}
             </span>
  <span className="text-sm text-m2e-text-muted ml-2 uppercase">SAP</span>
           </div>
