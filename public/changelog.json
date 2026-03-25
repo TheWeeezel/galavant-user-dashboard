@@ -2,10 +2,24 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.16",
+      "date": "2026-03-25",
+      "title": "Speed, Style & Live Sync",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.16/galavant-v0.0.16.apk",
+      "changes": [
+        { "type": "feature", "text": "Real-time balance, energy, and swap status updates — no more manual refreshing" },
+        { "type": "feature", "text": "Bike detail floating action bar — all actions (Equip, Level Up, Sell, Export, Breed) always visible at a glance" },
+        { "type": "improvement", "text": "Bike images load significantly faster with optimized mobile formats and loading indicators" },
+        { "type": "improvement", "text": "Buttons and cards redesigned for a cleaner, more consistent look across the app" },
+        { "type": "improvement", "text": "HP restore parts rebalanced so higher-level parts always outperform multiple lower-level ones" },
+        { "type": "fix", "text": "Swap Phase 2 completion no longer fails for users with limited UTXOs" },
+        { "type": "fix", "text": "Swap sign button no longer appears before the transaction is ready" }
+      ]
+    },
+    {
       "version": "0.0.15",
       "date": "2026-03-22",
       "title": "Pause, Social Rewards & Swap Fixes",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.15/galavant-v0.0.15.apk",
       "changes": [
         { "type": "feature", "text": "Pause and resume rides — take a break without ending your activity" },
         { "type": "feature", "text": "Social rewards — link your X account and earn SAP for following, liking, and retweeting" },
