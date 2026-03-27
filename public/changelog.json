@@ -2,10 +2,22 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.17",
+      "date": "2026-03-27",
+      "title": "Bike Store & Stability",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.17/galavant-v0.0.17.apk",
+      "changes": [
+        { "type": "feature", "text": "Bike Store — buy bikes directly with BTC from the home screen and store page" },
+        { "type": "feature", "text": "Wallet recovery prompts appear automatically when keys are missing before a purchase" },
+        { "type": "improvement", "text": "Bike purchases are now signed on-device for improved security" },
+        { "type": "improvement", "text": "Purchased bikes are available immediately as in-game items (export to NFT later)" },
+        { "type": "fix", "text": "iOS app crash fix" }
+      ]
+    },
+    {
       "version": "0.0.16",
       "date": "2026-03-25",
       "title": "Speed, Style & Live Sync",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.16/galavant-v0.0.16.apk",
       "changes": [
         { "type": "feature", "text": "Real-time balance, energy, and swap status updates — no more manual refreshing" },
         { "type": "feature", "text": "Bike detail floating action bar — all actions (Equip, Level Up, Sell, Export, Breed) always visible at a glance" },
