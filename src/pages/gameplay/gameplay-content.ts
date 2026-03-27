@@ -61,7 +61,8 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Step by Step' },
           { type: 'list', items: [
             'Open the Galavant app and create your wallet.',
-            'Get your first balance bike — check the marketplace or receive one from a friend.',
+            'Get your first balance bike — buy one from the Bike Store with BTC, browse the marketplace, or receive one from a friend.',
+            'Bike Store purchases go straight into your in-game inventory, so you can equip the bike immediately after payment.',
             'Equip your bike from the inventory screen.',
             'Tap the "Walk" button to start a session.',
             'Head outside and walk at a pace that matches your bike type.',
@@ -396,7 +397,7 @@ export const gameplaySections: GameplaySection[] = [
         content: [
           { type: 'paragraph', text: 'Toolboxes are reward containers that can drop while you walk and earn. You need to actually move a meaningful distance during your session before any toolbox can drop — standing still or barely moving won\'t earn you a toolbox. Both your drop chance and the level of toolbox you receive depend on your active earning time — once your energy runs out, no further drops can occur.' },
           { type: 'heading', text: 'Toolbox Levels' },
-          { type: 'paragraph', text: 'Toolboxes range from Level 1 (most common) to Level 5 (rarest). Higher levels contain better parts, more SAP, and a chance at minting tools.' },
+          { type: 'paragraph', text: 'Toolboxes range from Level 1 (most common) to Level 5 (rarest). Higher levels contain better parts and a chance at minting tools.' },
           { type: 'table', headers: ['Level', 'Rarity', 'Description'], rows: [
             ['Lv. 1', 'Very Common', 'Basic rewards that help early progression.'],
             ['Lv. 2', 'Common', 'A modest step up in parts and SAP rewards.'],
@@ -420,7 +421,7 @@ export const gameplaySections: GameplaySection[] = [
           ]},
           { type: 'paragraph', text: 'This keeps early toolboxes accessible while making the highest-level boxes a more deliberate upgrade path.' },
           { type: 'heading', text: 'Contents by Level' },
-          { type: 'paragraph', text: 'Toolboxes can contain parts from any of the four part types, SAP rewards, and sometimes minting tools. Higher-level toolboxes generally give stronger parts, better SAP payouts, and better premium-drop potential.' },
+          { type: 'paragraph', text: 'Toolboxes can contain parts from any of the four part types, a small SAP bonus, and sometimes minting tools. Opening a toolbox always costs more SAP than the SAP you receive back — the real value is the parts and tools inside.' },
           { type: 'list', items: [
             'Any toolbox can help you build out your parts inventory.',
             'Higher-level toolboxes are better for chasing stronger part levels.',
@@ -549,6 +550,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'exporting-bikes',
         title: 'Exporting Bikes',
         content: [
+          { type: 'paragraph', text: 'Bikes you buy from the Bike Store or earn in-game start as normal inventory bikes. Exporting is optional and only needed when you want to move a bike onto the Bitcoin blockchain.' },
           { type: 'paragraph', text: 'Any bike with full HP can be exported as an on-chain NFT (BikeNFT). This puts your balance bike on the Bitcoin blockchain where it can be traded, sold, or transferred to other wallets.' },
           { type: 'heading', text: 'How Exporting Works' },
           { type: 'list', items: [
@@ -619,6 +621,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Selling' },
           { type: 'list', items: [
             'List any bike, part, or minting tool for a SAP price you choose.',
+            'Bikes must be at 100% durability to be listed — repair first if needed.',
             'A 5% fee is deducted from the sale price when an item sells.',
             'You can have up to 20 active listings at once.',
             'Cancel listings at any time to get your item back.',

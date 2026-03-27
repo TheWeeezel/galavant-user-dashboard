@@ -21,6 +21,7 @@ export function EarnPoints() {
   const [copied, setCopied] = useState(false);
   const [twitterHandle, setTwitterHandle] = useState('');
   const [followClicked, setFollowClicked] = useState(false);
+  const [visitedTweets, setVisitedTweets] = useState<Set<string>>(new Set());
   const queryClient = useQueryClient();
 
   const { data: referralData } = useQuery({
@@ -289,6 +290,7 @@ export function EarnPoints() {
                           href={`https://x.com/GalavantBTC/status/${tweet.twitterId}`}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={() => setVisitedTweets((prev) => new Set(prev).add(tweet.twitterId))}
                           className="pixel-btn pixel-btn-outline px-2 py-1 text-xs no-underline inline-flex items-center gap-1"
                         >
                           Open on X <ExternalLink className="w-3 h-3" />
@@ -296,6 +298,10 @@ export function EarnPoints() {
                         {tweet.likeClaimed ? (
                           <span className="text-xs text-m2e-success flex items-center gap-1">
                             <Check className="w-3 h-3" /> Like claimed
+                          </span>
+                        ) : !visitedTweets.has(tweet.twitterId) ? (
+                          <span className="text-xs text-m2e-text-muted italic">
+                            Open tweet to like & claim
                           </span>
                         ) : (
                           <button
