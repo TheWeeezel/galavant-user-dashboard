@@ -14,16 +14,28 @@ export interface Track {
  */
 export const tracklist: Track[] = [
   {
-    src: '/music/repeated-tragedy.mp3',
-    title: 'Repeated Tragedy',
-    artist: 'The Raiden Project OST',
-    credit: 'YouTube: AlexTheLuffyFan765',
+    src: '/music/track-06.mp3',
+    title: 'Bunker I',
+    artist: 'GoldenEye 007 OST',
+    credit: 'YouTube: Video-Game OST HQ',
   },
   {
     src: '/music/track-03.mp3',
     title: 'MilkyWay (Battle)',
     artist: 'FTL: Faster Than Light OST — Ben Prunty',
     credit: 'YouTube: Frostythefiremage',
+  },
+  {
+    src: '/music/repeated-tragedy.mp3',
+    title: 'Repeated Tragedy',
+    artist: 'The Raiden Project OST',
+    credit: 'YouTube: AlexTheLuffyFan765',
+  },
+  {
+    src: '/music/track-05.mp3',
+    title: 'Main Theme',
+    artist: 'Rogue Legacy OST',
+    credit: 'YouTube: VGMTracks',
   },
   {
     src: '/music/track-04.mp3',

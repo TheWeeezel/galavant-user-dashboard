@@ -6,7 +6,8 @@ import {
   Store, ShoppingCart, Trophy, SpeedFast,
   Heart, Scale, Chart, Fire,
   Download, Login, Gift, Human,
-  Cancel, Check,
+  Cancel, Check, Globe, Flag,
+  Music, Cloud, Lock, Clock,
 } from 'pixelarticons/react';
 import { fetchStats, fetchLeaderboard, fetchMarketplace } from '../api';
 import { StatCard } from '../components/StatCard';
@@ -50,6 +51,19 @@ const ONBOARDING_STEPS = [
   { icon: Human, title: 'Start Walking', description: 'Move to earn SAP' },
 ];
 
+const ROADMAP_ITEMS: { title: string; icon: React.ComponentType<any>; status: 'done' | 'current' | 'upcoming' }[] = [
+  { title: 'Testnet', icon: Zap, status: 'done' },
+  { title: 'Mainnet Launch', icon: Flag, status: 'current' },
+  { title: 'Daily Missions', icon: Check, status: 'upcoming' },
+  { title: 'Sound Design', icon: Music, status: 'upcoming' },
+  { title: 'Achievements', icon: Trophy, status: 'upcoming' },
+  { title: 'Bike Legacy', icon: Heart, status: 'upcoming' },
+  { title: 'Guilds / Crews', icon: Users, status: 'upcoming' },
+  { title: 'Weather', icon: Cloud, status: 'upcoming' },
+  { title: 'Zones', icon: Globe, status: 'upcoming' },
+  { title: 'Lucky Events', icon: Gift, status: 'upcoming' },
+];
+
 export function Home() {
   const [selectedNftId, setSelectedNftId] = useState<string | null>(null);
   const [lbMetric, setLbMetric] = useState<LeaderboardMetric>('distance');
@@ -71,7 +85,7 @@ export function Home() {
   });
   const marketplace = useQuery({
     queryKey: ['marketplace', mpSort],
-    queryFn: () => fetchMarketplace({ page: 1, limit: 8, sortBy: mpSort }),
+    queryFn: () => fetchMarketplace({ page: 1, limit: 6, sortBy: mpSort }),
     retry: false,
   });
 
@@ -370,8 +384,8 @@ export function Home() {
  <div className="text-red-400 text-sm">Failed to load marketplace</div>
         ) : marketplace.data && marketplace.data.listings.length > 0 ? (
           <>
- <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {marketplace.data.listings.map((listing) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+              {marketplace.data.listings.slice(0, 6).map((listing) => (
                 <ListingCard
                   key={listing.id}
                   listing={listing}
@@ -379,9 +393,12 @@ export function Home() {
                 />
               ))}
             </div>
-            {marketplace.data.total > 8 && (
- <div className="text-center text-sm text-m2e-text-muted">
-                Showing 8 of {marketplace.data.total} listings
+            {marketplace.data.total > 6 && (
+              <div className="text-center">
+                <Link to="/market" className="pixel-btn pixel-btn-secondary text-sm px-6 py-3 inline-flex items-center gap-2">
+                  <ShoppingCart className="w-5 h-5" />
+                  View All Listings
+                </Link>
               </div>
             )}
           </>
@@ -455,6 +472,49 @@ export function Home() {
           ) : (
  <div className="p-6 text-m2e-text-muted text-sm">No entries yet</div>
           )}
+        </div>
+      </section>
+
+      {/* ── Roadmap ──────────────────────────────────────────── */}
+      <section className="space-y-10">
+        <div className="space-y-2 text-center">
+          <h2 className="text-3xl md:text-4xl tracking-wide text-m2e-text uppercase">What's Coming</h2>
+          <p className="text-xl text-m2e-text-secondary">A glimpse at the road ahead.</p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {ROADMAP_ITEMS.map((item) => {
+            const isDone = item.status === 'done';
+            const isCurrent = item.status === 'current';
+            return (
+              <div
+                key={item.title}
+                className={`pixel-card p-3 flex flex-col items-center text-center gap-2 ${
+                  isCurrent ? 'ring-2 ring-m2e-accent/30' : ''
+                } ${isDone ? 'opacity-70' : ''}`}
+              >
+                <item.icon className={`w-7 h-7 ${isDone ? 'text-m2e-success' : isCurrent ? 'text-m2e-accent' : 'text-m2e-text-muted'}`} />
+                <span className="text-sm uppercase tracking-wider text-m2e-text leading-tight">{item.title}</span>
+                <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] uppercase tracking-widest pixel-border ${
+                  isDone
+                    ? 'bg-m2e-success/15 text-m2e-success border-current'
+                    : isCurrent
+                      ? 'bg-m2e-accent/15 text-m2e-accent border-current'
+                      : 'bg-m2e-bg-alt text-m2e-text-muted border-m2e-border'
+                }`}>
+                  {isDone ? <Check className="w-2.5 h-2.5" /> : isCurrent ? <Clock className="w-2.5 h-2.5" /> : <Lock className="w-2.5 h-2.5" />}
+                  {isDone ? 'Done' : isCurrent ? 'Now' : 'Soon'}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="text-center">
+          <Link to="/roadmap" className="pixel-btn pixel-btn-secondary text-sm px-6 py-3 inline-flex items-center gap-2">
+            <Globe className="w-5 h-5" />
+            View Full Roadmap
+          </Link>
         </div>
       </section>
 

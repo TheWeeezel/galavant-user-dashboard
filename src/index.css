@@ -173,3 +173,21 @@ body {
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
+
+@keyframes glitch-flicker {
+  0%, 100% { color: var(--color-m2e-accent); opacity: 1; }
+  4% { color: var(--color-m2e-text); opacity: 0.4; }
+  8% { color: var(--color-m2e-accent); opacity: 1; }
+  42% { color: var(--color-m2e-accent); opacity: 1; }
+  44% { color: var(--color-m2e-accent-dark); opacity: 0.6; }
+  46% { color: var(--color-m2e-text); opacity: 0.3; }
+  48% { color: var(--color-m2e-accent); opacity: 1; }
+  78% { color: var(--color-m2e-accent); opacity: 1; }
+  80% { color: var(--color-m2e-text); opacity: 0.4; }
+  82% { color: var(--color-m2e-accent-dark); opacity: 0.5; }
+  84% { color: var(--color-m2e-accent); opacity: 1; }
+}
+
+.animate-glitch-flicker {
+  animation: glitch-flicker 3s steps(1) infinite;
+}

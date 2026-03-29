@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { tracklist, type Track } from '../music/tracklist';
 
 /* ── Inline SVG icons (matches pixel-art dashboard style) ── */
@@ -60,10 +60,56 @@ function VolumeIcon({ className }: { className?: string }) {
   );
 }
 
+function ShuffleIcon({ className }: { className?: string }) {
+  return (
+ <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M10.59 9.17 5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
+    </svg>
+  );
+}
+function RepeatIcon({ className }: { className?: string }) {
+  return (
+ <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+    </svg>
+  );
+}
+function RepeatOneIcon({ className }: { className?: string }) {
+  return (
+ <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z" />
+    </svg>
+  );
+}
+
+function EqBars({ className }: { className?: string }) {
+  return (
+    <span className={`inline-flex items-end gap-[2px] h-3 ${className ?? ''}`}>
+      <span className="w-[3px] bg-m2e-accent animate-[eq_0.4s_ease-in-out_infinite_alternate]" />
+      <span className="w-[3px] bg-m2e-accent animate-[eq_0.4s_ease-in-out_0.15s_infinite_alternate]" />
+      <span className="w-[3px] bg-m2e-accent animate-[eq_0.4s_ease-in-out_0.3s_infinite_alternate]" />
+      <style>{`@keyframes eq { from { height: 20%; } to { height: 100%; } }`}</style>
+    </span>
+  );
+}
+
+/** Fisher-Yates shuffle — returns a new array */
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+type RepeatMode = 'off' | 'all' | 'one';
+
 /* ── Player ── */
 
 export function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const activeTrackRef = useRef<HTMLButtonElement | null>(null);
   const [trackIdx, setTrackIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -71,8 +117,17 @@ export function MusicPlayer() {
   const [volume, setVolume] = useState(0.5);
   const [showVolume, setShowVolume] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [shuffled, setShuffled] = useState(false);
+  const [shuffleOrder, setShuffleOrder] = useState<number[]>([]);
+  const [repeatMode, setRepeatMode] = useState<RepeatMode>('off');
 
-  const track: Track = tracklist[trackIdx] ?? tracklist[0];
+  // The playlist indices in current play order
+  const playOrder = useMemo(
+    () => (shuffled ? shuffleOrder : tracklist.map((_, i) => i)),
+    [shuffled, shuffleOrder],
+  );
+
+  const track: Track = tracklist[playOrder[trackIdx]] ?? tracklist[0];
 
   // Keep audio element in sync with volume
   useEffect(() => {
@@ -137,8 +192,41 @@ export function MusicPlayer() {
     }
   };
 
-  const prev = () => setTrackIdx((i) => (i - 1 + tracklist.length) % tracklist.length);
-  const next = () => setTrackIdx((i) => (i + 1) % tracklist.length);
+  const prev = () => setTrackIdx((i) => (i - 1 + playOrder.length) % playOrder.length);
+  const next = () => setTrackIdx((i) => (i + 1) % playOrder.length);
+
+  const handleEnded = () => {
+    if (repeatMode === 'one') {
+      const audio = audioRef.current;
+      if (audio) { audio.currentTime = 0; audio.play(); }
+    } else if (repeatMode === 'all') {
+      next();
+    } else {
+      // 'off' — stop at end of playlist
+      if (trackIdx < playOrder.length - 1) next();
+      else setPlaying(false);
+    }
+  };
+
+  const toggleShuffle = () => {
+    if (!shuffled) {
+      const order = shuffle(tracklist.map((_, i) => i));
+      // Move the current real track index to position 0 so playback continues
+      const realIdx = playOrder[trackIdx];
+      const pos = order.indexOf(realIdx);
+      [order[0], order[pos]] = [order[pos], order[0]];
+      setShuffleOrder(order);
+      setTrackIdx(0);
+    } else {
+      // Unshuffle — jump back to the real index
+      const realIdx = playOrder[trackIdx];
+      setTrackIdx(realIdx);
+    }
+    setShuffled((v) => !v);
+  };
+
+  const cycleRepeat = () =>
+    setRepeatMode((m) => (m === 'off' ? 'all' : m === 'all' ? 'one' : 'off'));
 
   const seek = (e: React.MouseEvent<HTMLDivElement>) => {
     const audio = audioRef.current;
@@ -154,6 +242,13 @@ export function MusicPlayer() {
     return `${m}:${sec.toString().padStart(2, '0')}`;
   };
 
+  // Auto-scroll to the active track when the panel opens
+  useEffect(() => {
+    if (expanded && activeTrackRef.current) {
+      activeTrackRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, [expanded, trackIdx]);
+
   if (tracklist.length === 0) return null;
 
   return (
@@ -163,7 +258,7 @@ export function MusicPlayer() {
         src={track.src}
         onTimeUpdate={(e) => setProgress(e.currentTarget.currentTime)}
         onDurationChange={(e) => setDuration(e.currentTarget.duration)}
-        onEnded={next}
+        onEnded={handleEnded}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
       />
@@ -175,27 +270,30 @@ export function MusicPlayer() {
  <div className="px-4 py-3 border-b border-m2e-border">
  <h3 className="text-base uppercase tracking-wide text-m2e-accent">Galavant Radio</h3>
             </div>
-            {tracklist.map((t, i) => (
-              <button
-                key={t.src}
-                onClick={() => setTrackIdx(i)}
+            {playOrder.map((realIdx, i) => {
+              const t = tracklist[realIdx];
+              const isActive = i === trackIdx;
+              return (
+                <button
+                  key={t.src}
+                  ref={isActive ? activeTrackRef : undefined}
+                  onClick={() => setTrackIdx(i)}
  className={`w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-m2e-border-light transition-colors ${
-                  i === trackIdx ? 'bg-m2e-card-alt text-m2e-accent' : 'text-m2e-text-secondary'
-                }`}
-              >
+                    isActive ? 'bg-m2e-card-alt text-m2e-accent' : 'text-m2e-text-secondary'
+                  }`}
+                >
  <span className="text-sm font-mono w-6 text-center">{i + 1}</span>
  <MusicIcon className="w-4 h-4 shrink-0" />
  <div className="min-w-0 flex-1">
  <div className="text-base truncate">{t.title}</div>
  <div className="text-sm text-m2e-text-muted truncate">
-                    {t.artist} &middot; {t.credit}
+                      {t.artist} &middot; {t.credit}
+                    </div>
                   </div>
-                </div>
-                {i === trackIdx && playing && (
- <span className="text-sm text-m2e-accent animate-pulse">Playing</span>
-                )}
-              </button>
-            ))}
+                  {isActive && playing && <EqBars />}
+                </button>
+              );
+            })}
           </div>
         )}
 
@@ -250,6 +348,30 @@ export function MusicPlayer() {
               </button>
             </div>
 
+            {/* Shuffle & Repeat */}
+ <div className="flex items-center gap-1 hidden sm:flex">
+              <button
+                onClick={toggleShuffle}
+ className={`p-1.5 transition-colors ${shuffled ? 'text-m2e-accent' : 'text-m2e-text-muted hover:text-m2e-text'}`}
+                aria-label="Shuffle"
+                title={shuffled ? 'Shuffle on' : 'Shuffle off'}
+              >
+ <ShuffleIcon className="w-4 h-4" />
+              </button>
+              <button
+                onClick={cycleRepeat}
+ className={`p-1.5 transition-colors ${repeatMode !== 'off' ? 'text-m2e-accent' : 'text-m2e-text-muted hover:text-m2e-text'}`}
+                aria-label="Repeat"
+                title={`Repeat: ${repeatMode}`}
+              >
+                {repeatMode === 'one' ? (
+ <RepeatOneIcon className="w-4 h-4" />
+                ) : (
+ <RepeatIcon className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+
             {/* Track info */}
  <div className="min-w-0 flex-1">
  <div className="flex items-center gap-2">
@@ -262,6 +384,11 @@ export function MusicPlayer() {
                 </div>
               </div>
             </div>
+
+            {/* Track counter */}
+ <span className="text-xs text-m2e-text-muted font-mono hidden sm:block">
+              {trackIdx + 1}/{playOrder.length}
+            </span>
 
             {/* Time */}
             {duration > 0 && (
