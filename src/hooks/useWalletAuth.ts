@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useWalletConnect } from '@btc-vision/walletconnect';
 import { useAuth } from '../contexts/AuthContext';
+import { syncWalletKeys } from '../api';
 
 /**
  * Bridges @btc-vision/walletconnect state with our AuthContext.
@@ -8,10 +9,18 @@ import { useAuth } from '../contexts/AuthContext';
  * - Auto-login on page load when wallet auto-connects (handled by effect)
  * - Auto-logout when wallet disconnects (only for wallet-based sessions)
  * - Manual connect from LoginModal is handled imperatively there (not here)
+ * - Syncs wallet public keys to the server when the extension provides them
+ *   (handles timing: keys may arrive after login, or on session restore)
  */
 export function useWalletAuth() {
   const { walletAddress, publicKey, mldsaPublicKey } = useWalletConnect();
   const { isAuthenticated, isLoading, isRestoring, user, loginWithWallet, logout } = useAuth();
+  const keysSyncedRef = useRef(false);
+
+  // Reset sync flag when wallet changes (different wallet = new sync needed)
+  useEffect(() => {
+    keysSyncedRef.current = false;
+  }, [walletAddress]);
 
   // Auto-login: when wallet is connected but user isn't authenticated.
   // Fires when session restore completes AND when wallet address appears.
@@ -28,6 +37,19 @@ export function useWalletAuth() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRestoring, walletAddress]);
+
+  // Sync wallet public keys to the server once they become available.
+  // This covers two scenarios:
+  // 1. Keys arrive from the extension AFTER loginWithWallet already fired
+  // 2. Session was restored from JWT (no connectWallet call), then wallet auto-connects
+  useEffect(() => {
+    if (isAuthenticated && publicKey && mldsaPublicKey && !keysSyncedRef.current) {
+      keysSyncedRef.current = true;
+      syncWalletKeys(publicKey, mldsaPublicKey).catch((err) =>
+        console.error('[useWalletAuth] Key sync failed:', err),
+      );
+    }
+  }, [isAuthenticated, publicKey, mldsaPublicKey]);
 
   // Auto-logout when wallet disconnects (only for wallet-based sessions)
   useEffect(() => {

@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { ShoppingCart, ChevronLeft, Cancel } from 'pixelarticons/react';
+import { ShoppingCart, ChevronLeft, Cancel, Store } from 'pixelarticons/react';
 import { fetchMarketplace } from '../api';
 import { ListingCard } from '../components/ListingCard';
 import { NftDetailModal } from '../components/NftDetailModal';
+import { StoreContent } from './Store';
+import { LoginModal } from '../components/LoginModal';
+import { useAuth } from '../contexts/AuthContext';
 
 type ItemType = '' | 'bike' | 'part' | 'tool';
 type SortBy = 'newest' | 'price_asc' | 'price_desc' | 'level_desc' | 'level_asc';
@@ -52,7 +55,9 @@ function Chip({ label, active, onClick }: { label: string; active: boolean; onCl
 }
 
 export function Marketplace() {
+  const { isAuthenticated } = useAuth();
   const [selectedNftId, setSelectedNftId] = useState<string | null>(null);
+  const [showLogin, setShowLogin] = useState(false);
   const [itemType, setItemType] = useState<ItemType>('');
   const [sortBy, setSortBy] = useState<SortBy>('newest');
   const [quality, setQuality] = useState('');
@@ -124,6 +129,24 @@ export function Marketplace() {
  <ShoppingCart className="w-10 h-10 text-m2e-accent" />
           MARKETPLACE
         </h1>
+      </div>
+
+      {/* ── Bike Store (BTC) ──────────────────────────────────────── */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-3">
+          <Store className="w-6 h-6 text-m2e-accent" />
+          <h2 className="text-2xl uppercase tracking-wide">Bike Store</h2>
+          <span className="px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide bg-m2e-accent text-m2e-text-on-accent border-m2e-accent-dark">BTC</span>
+        </div>
+        <p className="text-sm text-m2e-text-secondary">Buy your first bike with BTC to start earning. New to Galavant? This is where you begin.</p>
+        <StoreContent onLoginRequest={() => setShowLogin(true)} />
+      </section>
+
+      {/* ── Player Marketplace (SAP) ─────────────────────────────── */}
+      <div className="flex items-center gap-3 pt-4">
+        <ShoppingCart className="w-6 h-6 text-m2e-accent" />
+        <h2 className="text-2xl uppercase tracking-wide">Player Market</h2>
+        <span className="px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide bg-m2e-card border-m2e-border text-m2e-text-secondary">SAP</span>
       </div>
 
       {/* Item type chips */}
@@ -294,6 +317,10 @@ export function Marketplace() {
       {/* NFT Detail Modal */}
       {selectedNftId && (
         <NftDetailModal nftId={selectedNftId} onClose={() => setSelectedNftId(null)} />
+      )}
+
+      {!isAuthenticated && (
+        <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
       )}
     </div>
   );

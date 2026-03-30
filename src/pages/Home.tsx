@@ -493,6 +493,15 @@ export function Home() {
           )}
         </div>
 
+        <div className="flex justify-center pt-2">
+          <Link
+            to="/store"
+            className="text-m2e-accent hover:underline text-lg uppercase tracking-wider"
+          >
+            Or buy your first bike on the web &rarr;
+          </Link>
+        </div>
+
  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 text-center mt-16">
           {ONBOARDING_STEPS.map((step, i) => (
  <div key={step.title} className="flex flex-col items-center gap-1">

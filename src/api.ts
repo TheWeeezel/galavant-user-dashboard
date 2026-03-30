@@ -250,6 +250,14 @@ export function connectWallet(walletAddress: string, publicKey?: string, mldsaPu
   });
 }
 
+/** Sync wallet public keys to the server (called when the extension provides keys after login). */
+export function syncWalletKeys(publicKey: string, mldsaPublicKey: string) {
+  return fetchAuthJson<{ synced: boolean }>('/auth/sync-wallet-keys', {
+    method: 'POST',
+    body: JSON.stringify({ publicKey, mldsaPublicKey }),
+  });
+}
+
 export function googleAuth(code: string) {
   return fetchAuthJson<GoogleAuthResult>('/auth/google', {
     method: 'POST',
@@ -763,4 +771,54 @@ export function getMyListings() {
 
 export function getListingDetail(id: string) {
   return fetchAuthJson<MarketplaceListing>(`/marketplace/${id}`);
+}
+
+// --- Bike Store ---
+
+export interface StoreListingInfo {
+  type: string;
+  displayName: string;
+  quality: string;
+  priceSats: number;
+  available: boolean;
+}
+
+export interface StoreStatus {
+  enabled: boolean;
+  listings: StoreListingInfo[];
+  totalSold: number;
+  totalCap: number;
+  soldToday: number;
+  dailyCap: number;
+}
+
+export interface StorePrepareResponse extends PrepareResponse {
+  priceSats: number;
+}
+
+export interface StorePurchaseResult {
+  bikeId: string;
+  tokenId: string | null;
+  txHash: string | null;
+  quality: string;
+  type: string;
+  priceSats: number;
+}
+
+export function fetchStoreStatus() {
+  return fetchJson<StoreStatus>('/store/bikes');
+}
+
+export function storeBuyPrepare(bikeType: string) {
+  return fetchAuthJson<StorePrepareResponse>('/store/buy/prepare', {
+    method: 'POST',
+    body: JSON.stringify({ bikeType }),
+  });
+}
+
+export function storeBuySubmit(prepareId: string, signedTx: SignedTx) {
+  return fetchAuthJson<StorePurchaseResult>('/store/buy/submit', {
+    method: 'POST',
+    body: JSON.stringify({ prepareId, signedTx }),
+  });
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link } from 'react-router';
-import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe, Coins } from 'pixelarticons/react';
+import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe, Coins, Store } from 'pixelarticons/react';
 import { MusicPlayer } from './MusicPlayer';
 import { LoginModal } from './LoginModal';
 import { useAuth } from '../contexts/AuthContext';
@@ -53,6 +53,9 @@ export function Layout() {
                 Earn SAP
               </Link>
             )}
+            <Link to="/store" className="flex items-center gap-1.5 text-m2e-text-secondary hover:text-m2e-accent transition-colors">
+              <Store className="w-5 h-5" />
+            </Link>
             {isAuthenticated && (
               <Link to="/wallet" className="flex items-center gap-1.5 text-m2e-text-secondary hover:text-m2e-accent transition-colors">
                 <Coins className="w-5 h-5" />
@@ -109,6 +112,14 @@ export function Layout() {
                 Earn SAP
               </Link>
             )}
+            <Link
+              to="/store"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 text-m2e-text-secondary hover:text-m2e-accent transition-colors py-2 px-2"
+            >
+              <Store className="w-5 h-5" />
+              Bike Store
+            </Link>
             {isAuthenticated && (
               <Link
                 to="/wallet"

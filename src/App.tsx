@@ -14,6 +14,7 @@ import { Convert } from './pages/Convert';
 import { Staking } from './pages/Staking';
 import { Swap } from './pages/Swap';
 import { Deposit } from './pages/Deposit';
+import { Store } from './pages/Store';
 import { GameplayLayout } from './pages/gameplay/GameplayLayout';
 import { GameplayPage } from './pages/gameplay/GameplayPage';
 
@@ -44,6 +45,7 @@ export function App() {
           <Route path="staking" element={<Staking />} />
           <Route path="swap" element={<Swap />} />
           <Route path="deposit" element={<Deposit />} />
+          <Route path="store" element={<Store />} />
           <Route path="gameplay" element={<GameplayLayout />}>
             <Route index element={<GameplayPage />} />
             <Route path=":sectionSlug/:pageSlug" element={<GameplayPage />} />
