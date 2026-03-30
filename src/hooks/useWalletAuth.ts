@@ -13,19 +13,21 @@ export function useWalletAuth() {
   const { walletAddress, publicKey, mldsaPublicKey } = useWalletConnect();
   const { isAuthenticated, isLoading, isRestoring, user, loginWithWallet, logout } = useAuth();
 
-  // Auto-login on page load: if wallet is already connected when the page
-  // loads (auto-reconnect) and there's no existing session, log in.
-  // This fires once on mount — the isRestoring guard waits for session restore.
+  // Auto-login: when wallet is connected but user isn't authenticated.
+  // Fires when session restore completes AND when wallet address appears.
+  // This covers both initial page load (wallet auto-reconnects) and fresh
+  // connects where the wallet extension reports the address after isRestoring
+  // has already settled.
+  // Excludes isAuthenticated from deps to prevent re-login after manual logout.
   useEffect(() => {
     if (walletAddress && !isAuthenticated && !isLoading && !isRestoring) {
-      console.log('[useWalletAuth] Auto-login on page load:', walletAddress);
+      console.log('[useWalletAuth] Auto-login:', walletAddress);
       loginWithWallet(walletAddress, publicKey ?? undefined, mldsaPublicKey ?? undefined).catch(
         (err) => console.error('[useWalletAuth] Auto-login failed:', err),
       );
     }
-    // Only run when restoring completes — intentionally limited deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRestoring]);
+  }, [isRestoring, walletAddress]);
 
   // Auto-logout when wallet disconnects (only for wallet-based sessions)
   useEffect(() => {

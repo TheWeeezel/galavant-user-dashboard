@@ -9,7 +9,7 @@ interface WalletRequiredGuardProps {
 
 export function WalletRequiredGuard({ children }: WalletRequiredGuardProps) {
   const { isAuthenticated } = useAuth();
-  const { signer, walletAddress, openConnectModal } = useWalletConnect();
+  const { walletAddress, openConnectModal, connecting } = useWalletConnect();
 
   if (!isAuthenticated) {
     return (
@@ -21,7 +21,17 @@ export function WalletRequiredGuard({ children }: WalletRequiredGuardProps) {
     );
   }
 
-  if (!signer || !walletAddress) {
+  if (connecting) {
+    return (
+      <div className="mx-auto max-w-xl px-4 py-24 text-center space-y-4">
+        <Lock className="w-12 h-12 text-m2e-accent mx-auto animate-pulse" />
+        <h2 className="text-2xl uppercase tracking-wide">Connecting Wallet...</h2>
+        <p className="text-m2e-text-secondary text-lg">Approve the connection in your wallet extension.</p>
+      </div>
+    );
+  }
+
+  if (!walletAddress) {
     return (
       <div className="mx-auto max-w-xl px-4 py-24 text-center space-y-4">
         <Lock className="w-12 h-12 text-m2e-accent mx-auto" />

@@ -876,7 +876,7 @@ export const gameplaySections: GameplaySection[] = [
             'Marketplace — trading goals like "List an item" or "Buy something".',
             'Progression — investment goals like "Socket a part" or "Start a level-up".',
           ]},
-          { type: 'paragraph', text: 'Mission targets are scaled to your current capacity. If you have 10 energy, you might get "Ride for 5 minutes." If you have 80 energy, you might get "Ride for 30 minutes." The system also checks your inventory, bike milestones, socket availability, and whether there is a real marketplace action available, so missions only appear when you can act on them right now.' },
+          { type: 'paragraph', text: 'Mission targets are scaled to your current capacity. If you have 10 energy, you might get "Ride for 5 minutes." If you have 80 energy, you might get "Ride for 30 minutes." The system also checks your inventory, bike milestones, socket availability, toolbox state, and live market conditions, so missions only appear when you have a real action to take right now, like an item you can list, a listing you can afford, or a toolbox you can actually open or speed-open.' },
           { type: 'tip', text: 'One of your 3 daily missions can be highlighted as a Featured Mission by the live economy controls. It may come with a bonus indicator!' },
         ],
       },
