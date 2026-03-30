@@ -857,6 +857,64 @@ export const gameplaySections: GameplaySection[] = [
       },
     ],
   },
+
+  // ─── Daily Missions ──────────────────────────────────────────────────
+  {
+    slug: 'daily-missions',
+    title: 'Daily Missions',
+    icon: Trophy,
+    pages: [
+      {
+        slug: 'how-it-works',
+        title: 'How Missions Work',
+        content: [
+          { type: 'paragraph', text: 'Every day you receive 3 missions tailored to your current game state. Complete all 3 to unlock a Mission Chest filled with parts and SAP.' },
+          { type: 'heading', text: 'Mission Types' },
+          { type: 'list', items: [
+            'Engagement — walking goals like "Ride for 15 minutes" or "Walk 2 km".',
+            'Sink — spending goals like "Repair a bike" or "Open a toolbox".',
+            'Marketplace — trading goals like "List an item" or "Buy something".',
+            'Progression — investment goals like "Socket a part" or "Start a level-up".',
+          ]},
+          { type: 'paragraph', text: 'Mission targets are scaled to your current capacity. If you have 10 energy, you might get "Ride for 5 minutes." If you have 80 energy, you might get "Ride for 30 minutes." The system also checks your inventory, bike milestones, socket availability, and whether there is a real marketplace action available, so missions only appear when you can act on them right now.' },
+          { type: 'tip', text: 'One of your 3 daily missions can be highlighted as a Featured Mission by the live economy controls. It may come with a bonus indicator!' },
+        ],
+      },
+      {
+        slug: 'mission-chest',
+        title: 'Mission Chest',
+        content: [
+          { type: 'paragraph', text: 'Complete all 3 missions to unlock a Mission Chest. The chest contains parts, a small SAP bonus, and a rare chance at a minting tool.' },
+          { type: 'heading', text: 'Chest Contents' },
+          { type: 'list', items: [
+            'Parts (guaranteed) — 1 or more parts to help you progress.',
+            'SAP (guaranteed) — a small SAP bonus.',
+            'Minting Tool (rare) — valuable tools used for breeding new bikes.',
+          ]},
+          { type: 'paragraph', text: 'Higher streak tiers increase chest quality — more parts, higher part levels, bigger SAP bonuses, and better minting tool odds.' },
+        ],
+      },
+      {
+        slug: 'mission-streak',
+        title: 'Mission Streak',
+        content: [
+          { type: 'paragraph', text: 'Complete all 3 missions every day to build a Mission Streak. Your streak locks in as soon as the third mission is finished, and the longer it gets, the better your chest rewards become.' },
+          { type: 'heading', text: 'Streak Tiers' },
+          { type: 'list', items: [
+            'Iron (3 days) — small chest bonus.',
+            'Bronze (7-30 days) — improved parts and tool chance.',
+            'Silver (60-180 days) — significantly better rewards.',
+            'Gold (365-730 days) — powerful chest upgrades.',
+            'Diamond (1000+ days) — elite rewards and exclusive title.',
+            'Legendary (2000+ days) — the ultimate tier, scaling infinitely.',
+          ]},
+          { type: 'heading', text: 'Streak Shields' },
+          { type: 'paragraph', text: 'At major milestones (Silver II, Gold I, Gold III) you earn Streak Shields. If you miss a day, a shield is consumed automatically to protect your streak. You can bank up to 3 shields, and you can still claim an already-unlocked chest later without losing that day of streak progress.' },
+          { type: 'tip', text: 'Missing a day without shields resets your streak to zero. Plan your shields wisely — they are your safety net for sick days or vacations!' },
+        ],
+      },
+    ],
+  },
 ];
 
 /** Flat list of all pages with section context for prev/next navigation */

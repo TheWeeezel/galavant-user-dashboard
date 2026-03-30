@@ -9,6 +9,11 @@ import { EarnPoints } from './pages/EarnPoints';
 import { Tasks } from './pages/Tasks';
 import { Roadmap } from './pages/Roadmap';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { Wallet } from './pages/Wallet';
+import { Convert } from './pages/Convert';
+import { Staking } from './pages/Staking';
+import { Swap } from './pages/Swap';
+import { Deposit } from './pages/Deposit';
 import { GameplayLayout } from './pages/gameplay/GameplayLayout';
 import { GameplayPage } from './pages/gameplay/GameplayPage';
 
@@ -34,6 +39,11 @@ export function App() {
           <Route path="tasks" element={<Tasks />} />
           <Route path="roadmap" element={<Roadmap />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="wallet" element={<Wallet />} />
+          <Route path="convert" element={<Convert />} />
+          <Route path="staking" element={<Staking />} />
+          <Route path="swap" element={<Swap />} />
+          <Route path="deposit" element={<Deposit />} />
           <Route path="gameplay" element={<GameplayLayout />}>
             <Route index element={<GameplayPage />} />
             <Route path=":sectionSlug/:pageSlug" element={<GameplayPage />} />

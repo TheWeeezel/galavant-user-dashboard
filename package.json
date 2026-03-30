@@ -10,6 +10,8 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@btc-vision/bitcoin": "^7.0.0",
+    "@btc-vision/transaction": "^1.8.4",
     "@btc-vision/walletconnect": "^1.10.5",
     "@react-oauth/google": "^0.13.4",
     "@tailwindcss/vite": "^4.0.0",
@@ -19,6 +21,7 @@
     "@vitejs/plugin-react": "^4.3.0",
     "buffer": "^6.0.3",
     "framer-motion": "^12.35.2",
+    "opnet": "^1.8.11",
     "pixelarticons": "^2.0.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",

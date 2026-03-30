@@ -374,3 +374,393 @@ export function claimRetweet(twitterTweetId: string) {
     body: JSON.stringify({ twitterTweetId }),
   });
 }
+
+// --- Daily Missions ---
+
+export interface MissionStreakData {
+  streak: {
+    currentStreak: number;
+    longestStreak: number;
+    currentTier: string;
+    shieldsAvailable: number;
+    totalMissionsCompleted: number;
+    totalChestsClaimed: number;
+  };
+  currentTierConfig: { tier: string; label: string; minDays: number };
+  nextTierConfig: { tier: string; label: string; minDays: number } | null;
+  daysUntilNextTier: number | null;
+}
+
+export interface MissionsTodayData {
+  date: string;
+  missions: Array<{
+    id: string;
+    slot: number;
+    template: string;
+    category: string;
+    featured: boolean;
+    targetValue: number;
+    description: string;
+    progress: number;
+    completed: boolean;
+  }>;
+  chestClaimed: boolean;
+  resetAtUtc: string;
+}
+
+export function fetchMissionStreak(): Promise<MissionStreakData> {
+  return fetchAuthJson<MissionStreakData>('/missions/streak');
+}
+
+export function fetchMissionsToday(): Promise<MissionsTodayData> {
+  return fetchAuthJson<MissionsTodayData>('/missions/today');
+}
+
+// --- Wallet (on-chain) ---
+
+export interface MainWallet {
+  address: string;
+  satTokenBalance: string;
+  btcBalance: string;
+}
+
+export interface WalletTransaction {
+  id: string;
+  type: string;
+  currency: string;
+  amount: number;
+  direction: string;
+  onChainTxId: string | null;
+  createdAt: string;
+}
+
+export function fetchMainWallet() {
+  return fetchAuthJson<MainWallet>('/wallet/main');
+}
+
+export function fetchWalletNfts() {
+  return fetchAuthJson<{ bikes: UserBike[] }>('/wallet/nfts');
+}
+
+export function fetchWalletTransactions() {
+  return fetchAuthJson<WalletTransaction[]>('/wallet/transactions');
+}
+
+// --- Swap (BTC <-> SAT) ---
+
+export interface SignedTx {
+  fundingTx: string | null;
+  interactionTx: string;
+}
+
+export interface SwapQuote {
+  poolAvailable: boolean;
+  tokensOut?: string;
+  requiredSatoshis?: string;
+  price?: string;
+  scale?: string;
+  minimumReceived?: string;
+  reservationBaseFee?: string;
+}
+
+export interface SwapLiquidity {
+  satReserve: string;
+  btcReserve: string;
+  totalLP: string;
+  reservedLiquidity?: string;
+  reservationFee?: string;
+  btcPriceUsd?: number | null;
+}
+
+export interface SwapOrder {
+  id: string;
+  userId: string;
+  status: string;
+  satoshisIn: string;
+  expectedTokensOut: string;
+  minimumTokensOut: string;
+  reserveTxHash: string | null;
+  swapTxHash: string | null;
+  error?: string;
+  createdAt: number;
+}
+
+export interface SellOrder {
+  id: string;
+  userId: string;
+  status: string;
+  tokensListed: string;
+  btcReceiver: string;
+  approveTxHash: string | null;
+  listTxHash: string | null;
+  cancelTxHash: string | null;
+  error?: string;
+  createdAt: number;
+}
+
+export interface PrepareResponse {
+  prepareId: string;
+  offlineBuffer: string;
+  maxSatToSpend: string;
+  feeRate: number;
+  refundAddress: string;
+  extraOutputs?: Array<{ address: string; value: string }>;
+}
+
+export function swapPreflight() {
+  return fetchAuthJson<{ ready: boolean; reason?: string }>('/swap/preflight');
+}
+
+export function getSwapQuote(satoshisIn: string, slippageBps?: number) {
+  const params = new URLSearchParams({ satoshisIn });
+  if (slippageBps !== undefined) params.set('slippageBps', String(slippageBps));
+  return fetchAuthJson<SwapQuote>(`/swap/quote?${params}`);
+}
+
+export function getSwapLiquidity() {
+  return fetchAuthJson<SwapLiquidity>('/swap/liquidity');
+}
+
+export function getSwapOrders() {
+  return fetchAuthJson<SwapOrder[]>('/swap/orders');
+}
+
+export function getSwapOrder(id: string) {
+  return fetchAuthJson<SwapOrder>(`/swap/orders/${id}`);
+}
+
+export function reserveSwapPrepare(satoshisIn: string, slippageBps?: number) {
+  return fetchAuthJson<PrepareResponse>('/swap/reserve/prepare', {
+    method: 'POST',
+    body: JSON.stringify({ satoshisIn, slippageBps }),
+  });
+}
+
+export function reserveSwapSubmit(prepareId: string, signedTx: SignedTx) {
+  return fetchAuthJson<{ orderId: string; status: string; reserveTxHash: string }>('/swap/reserve/submit', {
+    method: 'POST',
+    body: JSON.stringify({ prepareId, signedTx }),
+  });
+}
+
+export function executeSwapPrepare(orderId: string) {
+  return fetchAuthJson<PrepareResponse>('/swap/execute/prepare', {
+    method: 'POST',
+    body: JSON.stringify({ orderId }),
+  });
+}
+
+export function executeSwapSubmit(prepareId: string, signedTx: SignedTx) {
+  return fetchAuthJson<{ swapTxHash: string; tokensReceived: string }>('/swap/execute/submit', {
+    method: 'POST',
+    body: JSON.stringify({ prepareId, signedTx }),
+  });
+}
+
+// Sell (SAT -> BTC)
+
+export function getSellOrders() {
+  return fetchAuthJson<SellOrder[]>('/swap/sell/orders');
+}
+
+export function getSellOrder(id: string) {
+  return fetchAuthJson<SellOrder>(`/swap/sell/orders/${id}`);
+}
+
+export function getSellListingStatus() {
+  return fetchAuthJson<{ hasListing: boolean; liquidity?: string; reserved?: string; btcReceiver?: string; isActive?: boolean }>('/swap/sell/status');
+}
+
+export function sellSatPrepare(tokenAmount: string) {
+  return fetchAuthJson<PrepareResponse & { sellOrderId: string; phase: 'approve' | 'list' }>('/swap/sell/prepare', {
+    method: 'POST',
+    body: JSON.stringify({ tokenAmount }),
+  });
+}
+
+export function sellSatSubmit(prepareId: string, signedTx: SignedTx) {
+  return fetchAuthJson<{ sellOrderId: string; status: string; listTxHash: string | null; approveTxHash: string | null }>('/swap/sell/submit', {
+    method: 'POST',
+    body: JSON.stringify({ prepareId, signedTx }),
+  });
+}
+
+export function retrySellPrepare(sellOrderId: string) {
+  return fetchAuthJson<PrepareResponse>('/swap/sell/retry/prepare', {
+    method: 'POST',
+    body: JSON.stringify({ sellOrderId }),
+  });
+}
+
+export function retrySellSubmit(prepareId: string, signedTx: SignedTx) {
+  return fetchAuthJson<{ status: string; listTxHash: string }>('/swap/sell/retry/submit', {
+    method: 'POST',
+    body: JSON.stringify({ prepareId, signedTx }),
+  });
+}
+
+export function cancelSellPrepare(sellOrderId: string) {
+  return fetchAuthJson<PrepareResponse>('/swap/sell/cancel/prepare', {
+    method: 'POST',
+    body: JSON.stringify({ sellOrderId }),
+  });
+}
+
+export function cancelSellSubmit(prepareId: string, signedTx: SignedTx) {
+  return fetchAuthJson<{ cancelTxHash: string }>('/swap/sell/cancel/submit', {
+    method: 'POST',
+    body: JSON.stringify({ prepareId, signedTx }),
+  });
+}
+
+// --- Convert (SAP <-> SAT) ---
+
+export interface ConversionPreview {
+  pointsAmount: number;
+  expectedTokens: string;
+  difficultyMultiplier: number;
+  conversionRate: number;
+  poolUsedPercent: number;
+}
+
+export interface ConversionResult {
+  pointsDebited: number;
+  tokensReceived: string;
+  txHash: string;
+}
+
+export interface ConversionPool {
+  totalConverted: string;
+  maxConvertible: string;
+  remaining: string;
+  usedPercent: number;
+}
+
+export interface ConversionTransaction {
+  id: string;
+  type: string;
+  currency: string;
+  amount: number;
+  direction: string;
+  onChainTxId: string | null;
+  createdAt: string;
+}
+
+export function previewConversion(pointsAmount: number) {
+  return fetchAuthJson<ConversionPreview>('/convert/preview', {
+    method: 'POST',
+    body: JSON.stringify({ pointsAmount }),
+  });
+}
+
+export function executeConversion(pointsAmount: number) {
+  return fetchAuthJson<ConversionResult>('/convert/execute', {
+    method: 'POST',
+    body: JSON.stringify({ pointsAmount }),
+  });
+}
+
+export function fetchConversionPool() {
+  return fetchAuthJson<ConversionPool>('/convert/pool');
+}
+
+export function fetchConversionHistory() {
+  return fetchAuthJson<ConversionTransaction[]>('/convert/history');
+}
+
+export function depositTokensPrepare(amount: string) {
+  return fetchAuthJson<PrepareResponse>('/convert/deposit/prepare', {
+    method: 'POST',
+    body: JSON.stringify({ amount }),
+  });
+}
+
+export function depositTokensSubmit(prepareId: string, signedTx: SignedTx) {
+  return fetchAuthJson<{ pointsCredited: number; tokensDeposited: string; txHash: string }>('/convert/deposit/submit', {
+    method: 'POST',
+    body: JSON.stringify({ prepareId, signedTx }),
+  });
+}
+
+// --- Staking ---
+
+export interface StakeInfo {
+  id: string;
+  type: string;
+  amount: number;
+  lockPeriod: number;
+  status: string;
+  startedAt: string;
+  endsAt: string;
+}
+
+export interface StakingData {
+  stakes: StakeInfo[];
+  totalPower: number;
+  effectivePower: number;
+  earningBoost: number;
+  earningBoostPercent: number;
+  energyBonus: number;
+}
+
+export function fetchStaking() {
+  return fetchAuthJson<StakingData>('/staking');
+}
+
+export function createStake(type: string, amount: number, lockPeriod: number) {
+  return fetchAuthJson<{ stakeId: string }>('/staking/create', {
+    method: 'POST',
+    body: JSON.stringify({ type, amount, lockPeriod }),
+  });
+}
+
+export function unstake(stakeId: string) {
+  return fetchAuthJson<{ returned: number; penalty: number }>(`/staking/${stakeId}/unstake`, {
+    method: 'POST',
+  });
+}
+
+// --- Blockchain / NFT ---
+
+export function mintBikeNft(bikeId: string) {
+  return fetchAuthJson<{ tokenId: string; txHash: string; imageUrl: string }>('/blockchain/mint-bike', {
+    method: 'POST',
+    body: JSON.stringify({ bikeId }),
+  });
+}
+
+export function importBikeNft(tokenId: number) {
+  return fetchAuthJson<{ bike: UserBike; txHash: string }>('/blockchain/import-bike', {
+    method: 'POST',
+    body: JSON.stringify({ tokenId }),
+  });
+}
+
+// --- Marketplace mutations ---
+
+export function createListing(itemType: string, itemId: string, priceSatoshis: number) {
+  return fetchAuthJson<MarketplaceListing>('/marketplace', {
+    method: 'POST',
+    body: JSON.stringify({ itemType, itemId, priceSatoshis }),
+  });
+}
+
+export function buyListing(id: string) {
+  return fetchAuthJson<{ success: boolean }>(`/marketplace/${id}/buy`, {
+    method: 'POST',
+  });
+}
+
+export function cancelListing(id: string) {
+  return fetchAuthJson<{ success: boolean }>(`/marketplace/${id}/cancel`, {
+    method: 'POST',
+  });
+}
+
+export function getMyListings() {
+  return fetchAuthJson<MarketplaceListing[]>('/marketplace/my');
+}
+
+export function getListingDetail(id: string) {
+  return fetchAuthJson<MarketplaceListing>(`/marketplace/${id}`);
+}

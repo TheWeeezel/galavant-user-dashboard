@@ -8,6 +8,7 @@ import { StatCard } from '../components/StatCard';
 import { NftDetailModal } from '../components/NftDetailModal';
 import { fetchSpendingWallet, fetchUserBikes, fetchUserParts } from '../api';
 import type { UserBike, UserPart } from '../api';
+import { MissionProfileCard } from '../components/MissionProfileCard';
 import { config } from '../config';
 const PART_TYPE_LABELS: Record<string, string> = {
   earning: 'Earning',
@@ -203,6 +204,9 @@ export function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Daily Missions */}
+      <MissionProfileCard />
 
       {/* Inventory — Bikes */}
  <div className="pixel-card p-5">
