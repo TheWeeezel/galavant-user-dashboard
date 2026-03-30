@@ -151,6 +151,8 @@ export function Layout() {
             <span>Powered by OPNet on Bitcoin</span>
             <span className="hidden sm:inline text-m2e-border">|</span>
             <span>Galavant &mdash; Walk. Earn. Conquer.</span>
+            <span className="hidden sm:inline text-m2e-border">|</span>
+            <Link to="/privacy" className="hover:text-m2e-accent transition-colors">Privacy Policy</Link>
           </div>
         </div>
       </footer>
