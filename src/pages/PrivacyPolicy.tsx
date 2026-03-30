@@ -175,6 +175,30 @@ export function PrivacyPolicy() {
 
         <div className="h-[2px] bg-m2e-border" />
 
+        {/* Delete Account */}
+        <section id="delete-account" className="space-y-4">
+          <h2 className="text-2xl text-m2e-text tracking-wide uppercase">Delete Your Account</h2>
+          <p>
+            You may request deletion of your Galavant account and all associated personal data at any time.
+            To do so, send an email to{' '}
+            <a href="mailto:we@galavant.run" className="text-m2e-accent hover:underline">we@galavant.run</a>{' '}
+            with the subject line "Account Deletion Request" and include the email address or wallet address
+            associated with your account.
+          </p>
+          <p>Upon receiving your request, we will:</p>
+          <ul className="list-disc list-inside space-y-1 pl-2">
+            <li>Verify your identity to prevent unauthorized deletions</li>
+            <li>Delete your account and personal data within 30 days</li>
+            <li>Send you a confirmation once the deletion is complete</li>
+          </ul>
+          <p>
+            Please note that blockchain transactions (e.g., NFT transfers, on-chain activity) are permanent
+            and cannot be deleted due to the nature of the technology.
+          </p>
+        </section>
+
+        <div className="h-[2px] bg-m2e-border" />
+
         {/* Changes */}
         <section className="space-y-4">
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">Changes to This Policy</h2>
@@ -192,6 +216,9 @@ export function PrivacyPolicy() {
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">Contact Us</h2>
           <p>If you have questions about this Privacy Policy, you can reach us at:</p>
           <ul className="list-disc list-inside space-y-1 pl-2">
+            <li>
+              Email: <a href="mailto:we@galavant.run" className="text-m2e-accent hover:underline">we@galavant.run</a>
+            </li>
             <li>
               Telegram: <a href="https://t.me/galavantBTC" target="_blank" rel="noopener noreferrer" className="text-m2e-accent hover:underline">t.me/galavantBTC</a>
             </li>
