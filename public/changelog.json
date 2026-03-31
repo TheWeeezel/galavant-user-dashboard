@@ -2,10 +2,22 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.18",
+      "date": "2026-03-31",
+      "title": "Daily Missions & Gameplay Guide",
+      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.18/galavant-v0.0.18.apk",
+      "changes": [
+        { "type": "feature", "text": "Daily missions — complete daily challenges and build streaks for bonus rewards" },
+        { "type": "improvement", "text": "Back buttons added to web-redirect screens for easier navigation" },
+        { "type": "improvement", "text": "General UI polish and consistency improvements" },
+        { "type": "fix", "text": "Missions correctly show only tasks you can actually complete right now" },
+        { "type": "fix", "text": "Deposit balance updates are now handled more reliably" }
+      ]
+    },
+    {
       "version": "0.0.17",
       "date": "2026-03-27",
       "title": "Bike Store & Stability",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.17/galavant-v0.0.17.apk",
       "changes": [
         { "type": "feature", "text": "Bike Store — buy bikes directly with BTC from the home screen and store page" },
         { "type": "feature", "text": "Wallet recovery prompts appear automatically when keys are missing before a purchase" },
