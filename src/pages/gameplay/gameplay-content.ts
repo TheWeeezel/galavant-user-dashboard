@@ -325,6 +325,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'tip', text: 'For the best experience, walk in open areas with good sky visibility. Parks, sidewalks, and trails work great. Keep your phone on your body while walking — it needs to sense your movement.' },
           { type: 'heading', text: 'Signal Quality' },
           { type: 'paragraph', text: 'Your GPS signal quality is reflected in your earnings. Strong, consistent signals mean full rewards. If the signal is weak or intermittent, your earnings for those minutes will be reduced. The app will let you know if signal quality is too poor to earn.' },
+          { type: 'paragraph', text: 'When you stop a ride, the app syncs any final GPS points and the server finalizes your result from a validated stop moment. That means brief upload delays should not cost you legitimate earnings, while obviously inconsistent stop times are ignored to keep results fair for everyone.' },
         ],
       },
     ],

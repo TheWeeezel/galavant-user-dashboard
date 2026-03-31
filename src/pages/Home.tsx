@@ -495,7 +495,7 @@ export function Home() {
 
         <div className="flex justify-center pt-2">
           <Link
-            to="/store"
+            to="/marketplace"
             className="text-m2e-accent hover:underline text-lg uppercase tracking-wider"
           >
             Or buy your first bike on the web &rarr;

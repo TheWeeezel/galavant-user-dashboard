@@ -160,16 +160,50 @@ function BuyTab() {
           <div className="text-sm space-y-1">
             <p>Sending: {formatSats(activeOrder.satoshisIn)} sats</p>
             <p>Expected: {formatTokens(activeOrder.expectedTokensOut)} SAT</p>
-            <p className="text-m2e-text-muted">Status: {activeOrder.status}</p>
           </div>
+
+          {/* Status-specific messaging */}
+          {activeOrder.status === 'pending_reserve' && (
+            <div className="bg-m2e-bg-alt border border-m2e-border-light rounded p-3 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-m2e-accent animate-pulse" />
+                <p className="text-sm text-m2e-accent font-bold uppercase">Waiting for confirmation</p>
+              </div>
+              <p className="text-xs text-m2e-text-muted">
+                Your reservation transaction has been broadcast. Waiting for the network to confirm it — this usually takes a few minutes. You can safely leave this page and come back.
+              </p>
+            </div>
+          )}
+
           {activeOrder.status === 'reserved' && (
-            <button
-              onClick={() => executeMutation.mutate(activeOrder.id)}
-              disabled={executeMutation.isPending}
-              className="pixel-btn pixel-btn-primary w-full py-3 text-sm"
-            >
-              {executeMutation.isPending ? 'Executing...' : 'Execute Swap'}
-            </button>
+            <div className="bg-m2e-accent/10 border border-m2e-accent rounded p-3 space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-m2e-success" />
+                <p className="text-sm text-m2e-accent font-bold uppercase">Action required</p>
+              </div>
+              <p className="text-xs text-m2e-text-secondary">
+                Your reservation is confirmed. Click below to execute the swap — your wallet will prompt you to sign the final transaction.
+              </p>
+              <button
+                onClick={() => executeMutation.mutate(activeOrder.id)}
+                disabled={executeMutation.isPending}
+                className="pixel-btn pixel-btn-primary w-full py-3 text-sm"
+              >
+                {executeMutation.isPending ? 'Signing & executing...' : 'Execute Swap'}
+              </button>
+            </div>
+          )}
+
+          {activeOrder.status === 'pending_swap' && (
+            <div className="bg-m2e-bg-alt border border-m2e-border-light rounded p-3 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-m2e-accent animate-pulse" />
+                <p className="text-sm text-m2e-accent font-bold uppercase">Executing swap</p>
+              </div>
+              <p className="text-xs text-m2e-text-muted">
+                Your swap transaction has been broadcast. Waiting for network confirmation — your SAT tokens will arrive shortly.
+              </p>
+            </div>
           )}
         </div>
       )}

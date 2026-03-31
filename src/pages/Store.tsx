@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Store as StoreIcon, Coins } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
 import { useWebSigner } from '../hooks/useWebSigner';
-import { LoginModal } from '../components/LoginModal';
 import {
   fetchStoreStatus,
   fetchMainWallet,
@@ -23,27 +21,6 @@ const BIKE_TYPE_DESCRIPTIONS: Record<string, string> = {
 
 function bikeImageUrl(bikeType: string): string {
   return `${config.apiUrl}/art/bases/bike-${bikeType.toLowerCase()}.png`;
-}
-
-export function Store() {
-  const { isAuthenticated } = useAuth();
-  const [showLogin, setShowLogin] = useState(false);
-
-  return (
-    <div className="mx-auto max-w-4xl px-4 md:px-8 py-12 space-y-8">
-      <div className="flex items-center gap-4">
-        <StoreIcon className="w-10 h-10 text-m2e-accent" />
-        <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Bike Store</h1>
-      </div>
-      <p className="text-m2e-text-secondary text-lg">
-        Your first step into Galavant. Buy a bike with BTC to start earning.
-      </p>
-      <StoreContent onLoginRequest={() => setShowLogin(true)} />
-      {!isAuthenticated && (
-        <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
-      )}
-    </div>
-  );
 }
 
 export function StoreContent({ onLoginRequest }: { onLoginRequest?: () => void }) {

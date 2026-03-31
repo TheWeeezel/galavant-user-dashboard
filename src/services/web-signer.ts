@@ -15,7 +15,7 @@ export interface SignedTransactionData {
 /**
  * Sign a prepared transaction using the wallet browser extension.
  *
- * @param signer - UnisatSigner from useWalletConnect()
+ * @param signer - UnisatSigner (or OPWalletSigner for OP_WALLET)
  * @param offlineBufferHex - Hex-encoded offline buffer from server's prepare endpoint
  * @param refundAddress - User's p2tr address (for change outputs)
  * @param maxSatToSpend - Maximum satoshis the TX can spend (as string)
