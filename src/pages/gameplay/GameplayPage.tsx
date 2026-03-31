@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import { useParams, Link, Navigate } from 'react-router';
 import { ChevronLeft, ChevronRight } from 'pixelarticons/react';
-import { flatPages, type ContentBlock, type ChartBar } from './gameplay-content';
+import { buildFlatPages, type ContentBlock, type ChartBar } from './gameplay-content';
+import { useGuideParams } from '../../contexts/GuideParamsContext';
 
 function BarChart({ title, bars, unit = '' }: { title: string; bars: ChartBar[]; unit?: string }) {
   const max = Math.max(...bars.map((b) => b.value));
@@ -114,17 +116,19 @@ function renderBlock(block: ContentBlock, i: number) {
 
 export function GameplayPage() {
   const { sectionSlug, pageSlug } = useParams();
+  const guideParams = useGuideParams();
+  const pages = useMemo(() => buildFlatPages(guideParams), [guideParams]);
 
   // Redirect /gameplay to first page
   if (!sectionSlug || !pageSlug) {
-    const first = flatPages[0];
+    const first = pages[0];
     if (first) {
       return <Navigate to={`/gameplay/${first.sectionSlug}/${first.page.slug}`} replace />;
     }
     return null;
   }
 
-  const currentIndex = flatPages.findIndex(
+  const currentIndex = pages.findIndex(
     (fp) => fp.sectionSlug === sectionSlug && fp.page.slug === pageSlug,
   );
 
@@ -139,9 +143,9 @@ export function GameplayPage() {
     );
   }
 
-  const current = flatPages[currentIndex];
-  const prev = currentIndex > 0 ? flatPages[currentIndex - 1] : null;
-  const next = currentIndex < flatPages.length - 1 ? flatPages[currentIndex + 1] : null;
+  const current = pages[currentIndex];
+  const prev = currentIndex > 0 ? pages[currentIndex - 1] : null;
+  const next = currentIndex < pages.length - 1 ? pages[currentIndex + 1] : null;
 
   return (
     <article>

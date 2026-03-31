@@ -3,6 +3,7 @@ import {
   Flag, SpeedFast, Gamepad, Sparkle, Coins,
   ChartBarBig, Trophy, ToolCase, Shield,
 } from 'pixelarticons/react';
+import type { GuideParams } from '../../api';
 
 export type ChartBar = { label: string; value: number; accent?: boolean };
 
@@ -27,6 +28,144 @@ export type GameplaySection = {
   icon: ComponentType<SVGProps<SVGSVGElement>>;
   pages: GameplayPage[];
 };
+
+const DEFAULT_GUIDE_PARAMS: GuideParams = {
+  maxEnergyCap: 60,
+  energyRegenPercent: 25,
+  energyRegenIntervalHours: 6,
+  fullRechargeHours: 24,
+  baseEarningRateCommon: 5,
+  hpDecayPerMinute: 0.5,
+  durabilityDecayPerMinute: 0.8,
+  toolboxBaseDropChance: 0.02,
+  platformTaxPercent: 5,
+};
+
+function buildEnergyPage(p: GuideParams): GameplayPage {
+  const cap = p.maxEnergyCap;
+  return {
+    slug: 'energy',
+    title: 'Energy',
+    content: [
+      { type: 'paragraph', text: 'Energy determines how many minutes you can earn per day. Without energy, you can still walk, but you won\'t earn SAT.' },
+      { type: 'heading', text: 'Energy Basics' },
+      { type: 'list', items: [
+        'Energy is measured in minutes of earning time. Only minutes where you actively earn SAT consume energy — if your speed is out of range, you stop moving, or you pause your session, your energy is preserved.',
+        `It refills ${p.energyRegenPercent}% every ${p.energyRegenIntervalHours} hours — a full refill takes ${p.fullRechargeHours} hours.`,
+        'Your total energy pool depends on how many bikes you own and their quality.',
+        `The maximum energy cap is ${cap} minutes per day.`,
+        'Only bikes with HP remaining contribute to your energy pool.',
+      ]},
+      { type: 'heading', text: 'Base Energy by Bike Count' },
+      { type: 'paragraph', text: 'Your base energy grows as you collect more bikes. At key thresholds your base energy jumps up, and between thresholds it scales smoothly.' },
+      { type: 'table', headers: ['Bikes Owned', 'Base Energy'], rows: [
+        ['1', '10 min'],
+        ['3', '20 min'],
+        ['5', '35 min'],
+        ['9', '50 min'],
+        ['15', '75 min'],
+        ['30', `${Math.min(100, cap)} min`],
+      ]},
+      { type: 'chart', title: 'Base Energy by Bike Count', unit: ' min', bars: [
+        { label: '1 bike', value: 10 },
+        { label: '2 bikes', value: 15 },
+        { label: '3 bikes', value: 20 },
+        { label: '5 bikes', value: 35 },
+        { label: '7 bikes', value: 42 },
+        { label: '9 bikes', value: 50 },
+        { label: '12 bikes', value: 62 },
+        { label: '15 bikes', value: 75 },
+        { label: '20 bikes', value: 83 },
+        { label: '30 bikes', value: Math.min(100, cap), accent: true },
+      ]},
+      { type: 'heading', text: 'Quality Bonus' },
+      { type: 'paragraph', text: 'On top of the base energy, each bike adds a flat bonus depending on its quality. Higher quality bikes contribute more bonus energy per bike.' },
+      { type: 'table', headers: ['Quality', 'Bonus per Bike'], rows: [
+        ['Common', '+0 min'],
+        ['Uncommon', '+2 min'],
+        ['Rare', '+5 min'],
+        ['Epic', '+8 min'],
+        ['Legendary', '+12 min'],
+      ]},
+      { type: 'heading', text: 'Example Scenarios' },
+      { type: 'paragraph', text: `Your total energy = base energy from bike count + quality bonus from each bike, capped at ${cap} minutes.` },
+      { type: 'chart', title: 'Energy by Collection', unit: ' min', bars: [
+        { label: '1 Common', value: 10 },
+        { label: '1 Legendary', value: 22 },
+        { label: '3 Common', value: 20 },
+        { label: '3 Legendary', value: Math.min(56, cap) },
+        { label: '5 Rare', value: Math.min(60, cap) },
+        { label: '5 Legendary', value: Math.min(95, cap), accent: true },
+        { label: '6+ Legendary', value: cap, accent: true },
+      ]},
+      { type: 'tip', text: 'Collecting more bikes is the best way to increase your energy. Higher quality bikes add extra energy per bike — for example, 3 Legendary bikes give you 56 minutes compared to just 20 for 3 Common bikes.' },
+    ],
+  };
+}
+
+// Luck multiplier per point (hardcoded constant, not a lever)
+const LUCK_MULTIPLIER = 0.003;
+
+function fmt(n: number, decimals = 2): string {
+  return n.toFixed(decimals);
+}
+
+function buildDecayRow(stat: number, baseDecay: number): [string, string, string] {
+  const decay = baseDecay / (1 + stat / 100);
+  return [String(stat), `${fmt(decay)}%`, `~${Math.round(100 / decay)} min`];
+}
+
+function buildBikeAttributesPage(p: GuideParams): GameplayPage {
+  const base = p.baseEarningRateCommon;
+  const earningRows: string[][] = [0, 10, 50, 100, 200].map((stat) => {
+    const mult = 1 + stat / 100;
+    return [String(stat), `${fmt(mult)}x`, `${fmt(base * mult, 1)} SAP/min`];
+  });
+
+  const dropRows: string[][] = [0, 10, 50, 100].map((luck) => {
+    const chance = p.toolboxBaseDropChance + luck * LUCK_MULTIPLIER;
+    return [String(luck), `${Math.round(chance * 100)}%`];
+  });
+
+  return {
+    slug: 'bike-attributes',
+    title: 'Bike Attributes',
+    content: [
+      { type: 'paragraph', text: 'Each balance bike has four core attributes that affect different aspects of gameplay. Attributes come from three sources: base stats (rolled at creation), level-up points you allocate, and bonuses from socketed parts.' },
+      { type: 'heading', text: 'Earning' },
+      { type: 'paragraph', text: 'Increases the SAT you earn per minute of walking. Every 100 points of Earning doubles your base rate.' },
+      { type: 'table', headers: ['Total Earning', 'Multiplier', 'Example (Common bike)'], rows: earningRows },
+      { type: 'heading', text: 'Luck' },
+      { type: 'paragraph', text: 'Improves your chances of receiving a toolbox drop each minute you walk, and increases the likelihood of higher-level toolboxes. Higher Luck means better odds, but drops are never guaranteed to be a specific level.' },
+      { type: 'table', headers: ['Total Luck', 'Drop Chance per Minute'], rows: dropRows },
+      { type: 'heading', text: 'Recovery' },
+      { type: 'paragraph', text: 'Slows down HP drain during walks so you can go longer between repairs. Each bike also has a one-time HP safety net that activates when HP gets critically low, fully restoring it — so new players won\'t lose their bike before they can find recovery parts.' },
+      { type: 'table', headers: ['Total Recovery', 'HP Decay/min', 'Full HP Lasts'], rows: [
+        buildDecayRow(0, p.hpDecayPerMinute),
+        buildDecayRow(10, p.hpDecayPerMinute),
+        buildDecayRow(50, p.hpDecayPerMinute),
+        buildDecayRow(100, p.hpDecayPerMinute),
+      ]},
+      { type: 'heading', text: 'Durability' },
+      { type: 'paragraph', text: 'Slows down wear and tear on your bike, reducing maintenance costs over time.' },
+      { type: 'table', headers: ['Total Durability', 'Wear Decay/min', 'Full Durability Lasts'], rows: [
+        buildDecayRow(0, p.durabilityDecayPerMinute),
+        buildDecayRow(10, p.durabilityDecayPerMinute),
+        buildDecayRow(50, p.durabilityDecayPerMinute),
+        buildDecayRow(100, p.durabilityDecayPerMinute),
+      ]},
+      { type: 'divider' },
+      { type: 'paragraph', text: 'When your bike levels up, you receive stat points that you can allocate to any of these four attributes. Choose wisely based on your playstyle!' },
+      { type: 'heading', text: 'Tips for Stat Allocation' },
+      { type: 'list', items: [
+        'Earning-focused builds maximize short-term SAT income.',
+        'Luck builds aim for valuable toolbox drops.',
+        'Recovery and Durability builds reduce ongoing costs and let you walk more efficiently.',
+        'A balanced build works well for casual players.',
+      ]},
+    ],
+  };
+}
 
 export const gameplaySections: GameplaySection[] = [
   // ─── 1. Getting Started ───────────────────────────────────────
@@ -118,55 +257,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'tip', text: 'Higher quality bikes also amplify the bonuses from socketed parts, making them even more valuable at end-game.' },
         ],
       },
-      {
-        slug: 'bike-attributes',
-        title: 'Bike Attributes',
-        content: [
-          { type: 'paragraph', text: 'Each balance bike has four core attributes that affect different aspects of gameplay. Attributes come from three sources: base stats (rolled at creation), level-up points you allocate, and bonuses from socketed parts.' },
-          { type: 'heading', text: 'Earning' },
-          { type: 'paragraph', text: 'Increases the SAT you earn per minute of walking. Every 100 points of Earning doubles your base rate.' },
-          { type: 'table', headers: ['Total Earning', 'Multiplier', 'Example (Common bike)'], rows: [
-            ['0', '1.00x', '5.0 SAP/min'],
-            ['10', '1.10x', '5.5 SAP/min'],
-            ['50', '1.50x', '7.5 SAP/min'],
-            ['100', '2.00x', '10.0 SAP/min'],
-            ['200', '3.00x', '15.0 SAP/min'],
-          ]},
-          { type: 'heading', text: 'Luck' },
-          { type: 'paragraph', text: 'Improves your chances of receiving a toolbox drop each minute you walk, and increases the likelihood of higher-level toolboxes. Higher Luck means better odds, but drops are never guaranteed to be a specific level.' },
-          { type: 'table', headers: ['Total Luck', 'Drop Chance per Minute'], rows: [
-            ['0', '2%'],
-            ['10', '5%'],
-            ['50', '17%'],
-            ['100', '32%'],
-          ]},
-          { type: 'heading', text: 'Recovery' },
-          { type: 'paragraph', text: 'Slows down HP drain during walks so you can go longer between repairs. Each bike also has a one-time HP safety net that activates when HP gets critically low, fully restoring it — so new players won\'t lose their bike before they can find recovery parts.' },
-          { type: 'table', headers: ['Total Recovery', 'HP Decay/min', 'Full HP Lasts'], rows: [
-            ['0', '0.50%', '~200 min'],
-            ['10', '0.45%', '~220 min'],
-            ['50', '0.33%', '~300 min'],
-            ['100', '0.25%', '~400 min'],
-          ]},
-          { type: 'heading', text: 'Durability' },
-          { type: 'paragraph', text: 'Slows down wear and tear on your bike, reducing maintenance costs over time.' },
-          { type: 'table', headers: ['Total Durability', 'Wear Decay/min', 'Full Durability Lasts'], rows: [
-            ['0', '0.80%', '~125 min'],
-            ['10', '0.73%', '~137 min'],
-            ['50', '0.53%', '~188 min'],
-            ['100', '0.40%', '~250 min'],
-          ]},
-          { type: 'divider' },
-          { type: 'paragraph', text: 'When your bike levels up, you receive stat points that you can allocate to any of these four attributes. Choose wisely based on your playstyle!' },
-          { type: 'heading', text: 'Tips for Stat Allocation' },
-          { type: 'list', items: [
-            'Earning-focused builds maximize short-term SAT income.',
-            'Luck builds aim for valuable toolbox drops.',
-            'Recovery and Durability builds reduce ongoing costs and let you walk more efficiently.',
-            'A balanced build works well for casual players.',
-          ]},
-        ],
-      },
+      buildBikeAttributesPage(DEFAULT_GUIDE_PARAMS),
       {
         slug: 'leveling-up',
         title: 'Leveling Up',
@@ -234,64 +325,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'tip', text: 'Focus on building a strong Earning attribute and walking consistently within your bike\'s speed zone for the best results.' },
         ],
       },
-      {
-        slug: 'energy',
-        title: 'Energy',
-        content: [
-          { type: 'paragraph', text: 'Energy determines how many minutes you can earn per day. Without energy, you can still walk, but you won\'t earn SAT.' },
-          { type: 'heading', text: 'Energy Basics' },
-          { type: 'list', items: [
-            'Energy is measured in minutes of earning time. Only minutes where you actively earn SAT consume energy — if your speed is out of range, you stop moving, or you pause your session, your energy is preserved.',
-            'It refills 25% every 6 hours — a full refill takes 24 hours.',
-            'Your total energy pool depends on how many bikes you own and their quality.',
-            'The maximum energy cap is 100 minutes per day.',
-            'Only bikes with HP remaining contribute to your energy pool.',
-          ]},
-          { type: 'heading', text: 'Base Energy by Bike Count' },
-          { type: 'paragraph', text: 'Your base energy grows as you collect more bikes. At key thresholds your base energy jumps up, and between thresholds it scales smoothly.' },
-          { type: 'table', headers: ['Bikes Owned', 'Base Energy'], rows: [
-            ['1', '10 min'],
-            ['3', '20 min'],
-            ['5', '35 min'],
-            ['9', '50 min'],
-            ['15', '75 min'],
-            ['30', '100 min'],
-          ]},
-          { type: 'chart', title: 'Base Energy by Bike Count', unit: ' min', bars: [
-            { label: '1 bike', value: 10 },
-            { label: '2 bikes', value: 15 },
-            { label: '3 bikes', value: 20 },
-            { label: '5 bikes', value: 35 },
-            { label: '7 bikes', value: 42 },
-            { label: '9 bikes', value: 50 },
-            { label: '12 bikes', value: 62 },
-            { label: '15 bikes', value: 75 },
-            { label: '20 bikes', value: 83 },
-            { label: '30 bikes', value: 100, accent: true },
-          ]},
-          { type: 'heading', text: 'Quality Bonus' },
-          { type: 'paragraph', text: 'On top of the base energy, each bike adds a flat bonus depending on its quality. Higher quality bikes contribute more bonus energy per bike.' },
-          { type: 'table', headers: ['Quality', 'Bonus per Bike'], rows: [
-            ['Common', '+0 min'],
-            ['Uncommon', '+2 min'],
-            ['Rare', '+5 min'],
-            ['Epic', '+8 min'],
-            ['Legendary', '+12 min'],
-          ]},
-          { type: 'heading', text: 'Example Scenarios' },
-          { type: 'paragraph', text: 'Your total energy = base energy from bike count + quality bonus from each bike, capped at 100 minutes.' },
-          { type: 'chart', title: 'Energy by Collection', unit: ' min', bars: [
-            { label: '1 Common', value: 10 },
-            { label: '1 Legendary', value: 22 },
-            { label: '3 Common', value: 20 },
-            { label: '3 Legendary', value: 56 },
-            { label: '5 Rare', value: 60 },
-            { label: '5 Legendary', value: 95, accent: true },
-            { label: '6+ Legendary', value: 100, accent: true },
-          ]},
-          { type: 'tip', text: 'Collecting more bikes is the best way to increase your energy. Higher quality bikes add extra energy per bike — for example, 3 Legendary bikes give you 56 minutes compared to just 20 for 3 Common bikes.' },
-        ],
-      },
+      buildEnergyPage(DEFAULT_GUIDE_PARAMS),
       {
         slug: 'speed-matching',
         title: 'Speed Matching',
@@ -918,6 +952,59 @@ export const gameplaySections: GameplaySection[] = [
   },
 ];
 
+/** Replace fee percentages in text content blocks */
+function replaceFeeInPage(page: GameplayPage, fee: number): GameplayPage {
+  const feeStr = `${fee}%`;
+  const needsUpdate = page.content.some((block) => {
+    if (block.type === 'list') return block.items.some((item) => item.includes('5%'));
+    if ('text' in block) return block.text.includes('5%');
+    return false;
+  });
+  if (!needsUpdate) return page;
+
+  return {
+    ...page,
+    content: page.content.map((block) => {
+      if (block.type === 'list') {
+        return { ...block, items: block.items.map((item) => item.replace(/5%/g, feeStr)) };
+      }
+      if ('text' in block && block.text.includes('5%')) {
+        return { ...block, text: block.text.replace(/5%/g, feeStr) };
+      }
+      return block;
+    }),
+  };
+}
+
+/** Build sections with dynamic economy params (for runtime use) */
+export function buildGameplaySections(params: GuideParams): GameplaySection[] {
+  return gameplaySections.map((section) => {
+    if (section.slug === 'walking-earning') {
+      return {
+        ...section,
+        pages: section.pages.map((page) =>
+          page.slug === 'energy' ? buildEnergyPage(params) : page,
+        ),
+      };
+    }
+    if (section.slug === 'bikes') {
+      return {
+        ...section,
+        pages: section.pages.map((page) =>
+          page.slug === 'bike-attributes' ? buildBikeAttributesPage(params) : page,
+        ),
+      };
+    }
+    if (section.slug === 'economy') {
+      return {
+        ...section,
+        pages: section.pages.map((page) => replaceFeeInPage(page, params.platformTaxPercent)),
+      };
+    }
+    return section;
+  });
+}
+
 /** Flat list of all pages with section context for prev/next navigation */
 export type FlatPage = {
   sectionSlug: string;
@@ -925,10 +1012,18 @@ export type FlatPage = {
   page: GameplayPage;
 };
 
-export const flatPages: FlatPage[] = gameplaySections.flatMap((s) =>
-  s.pages.map((page) => ({
-    sectionSlug: s.slug,
-    sectionTitle: s.title,
-    page,
-  })),
-);
+function toFlatPages(sections: GameplaySection[]): FlatPage[] {
+  return sections.flatMap((s) =>
+    s.pages.map((page) => ({
+      sectionSlug: s.slug,
+      sectionTitle: s.title,
+      page,
+    })),
+  );
+}
+
+export const flatPages: FlatPage[] = toFlatPages(gameplaySections);
+
+export function buildFlatPages(params: GuideParams): FlatPage[] {
+  return toFlatPages(buildGameplaySections(params));
+}

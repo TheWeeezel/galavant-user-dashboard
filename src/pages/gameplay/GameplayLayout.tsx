@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Outlet } from 'react-router';
 import { Menu, Cancel } from 'pixelarticons/react';
 import { GameplaySidebar } from './GameplaySidebar';
+import { GuideParamsProvider } from '../../contexts/GuideParamsContext';
 
 export function GameplayLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
+    <GuideParamsProvider>
  <div className="flex gap-0 min-h-[calc(100vh-4rem)]">
       {/* Mobile toggle */}
       <button
@@ -44,5 +46,6 @@ export function GameplayLayout() {
         <Outlet />
       </div>
     </div>
+    </GuideParamsProvider>
   );
 }

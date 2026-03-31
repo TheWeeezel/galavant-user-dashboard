@@ -95,6 +95,24 @@ export interface LeaderboardEntry {
   value: number;
 }
 
+// --- Guide params (public, for gameplay guide) ---
+
+export interface GuideParams {
+  maxEnergyCap: number;
+  energyRegenPercent: number;
+  energyRegenIntervalHours: number;
+  fullRechargeHours: number;
+  baseEarningRateCommon: number;
+  hpDecayPerMinute: number;
+  durabilityDecayPerMinute: number;
+  toolboxBaseDropChance: number;
+  platformTaxPercent: number;
+}
+
+export function fetchGuideParams() {
+  return fetchJson<GuideParams>('/economy/guide-params');
+}
+
 export function fetchStats() {
   return fetchJson<Stats>('/explorer/stats');
 }
