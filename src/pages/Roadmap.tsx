@@ -46,6 +46,12 @@ const PHASES: RoadmapPhase[] = [
         status: 'done',
       },
       {
+        title: 'Daily Missions Board',
+        description: '3 randomized daily missions that guide your session and reward completion with a bonus chest. A reason to open the app every single day.',
+        icon: Check,
+        status: 'done',
+      },
+      {
         title: 'Mainnet Launch',
         description: 'Full mainnet deployment on Bitcoin via OPNet. Live SAT token, on-chain NFT bikes, NativeSwap trading, and real BTC earnings.',
         icon: Flag,
@@ -57,12 +63,6 @@ const PHASES: RoadmapPhase[] = [
     name: 'Phase 2',
     label: 'Core Features',
     items: [
-      {
-        title: 'Daily Missions Board',
-        description: '3 randomized daily missions that guide your session and reward completion with a bonus chest. A reason to open the app every single day.',
-        icon: Check,
-        status: 'upcoming',
-      },
       {
         title: 'Sound Design',
         description: 'Chiptune soundtrack, satisfying SFX for earning ticks, level-ups, toolbox opens, and marketplace actions. Bringing the arcade to life.',
