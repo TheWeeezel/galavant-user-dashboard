@@ -1,3 +1,4 @@
+import { motion, type Variants } from 'framer-motion';
 import { Globe, Check, Clock, Lock, Zap, Music, Trophy, Heart, Users, Cloud, Flag, Gift } from 'pixelarticons/react';
 
 interface RoadmapItem {
@@ -121,6 +122,44 @@ const PHASES: RoadmapPhase[] = [
   },
 ];
 
+// ── Animation Variants ──────────────────────────────────────────────────────
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
+};
+
+const phaseStagger: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.15 } },
+};
+
+const cardFlyIn: Variants = {
+  hidden: { opacity: 0, y: 60, scale: 0.97 },
+  visible: {
+    opacity: 1, y: 0, scale: 1,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
+
+const dotReveal: Variants = {
+  hidden: { opacity: 0, scale: 0 },
+  visible: {
+    opacity: 1, scale: 1,
+    transition: { duration: 0.3, ease: 'easeOut' },
+  },
+};
+
+const lineGrow: Variants = {
+  hidden: { scaleY: 0 },
+  visible: {
+    scaleY: 1,
+    transition: { duration: 0.6, ease: 'easeOut' },
+  },
+};
+
+// ── Components ──────────────────────────────────────────────────────────────
+
 function StatusIcon({ status }: { status: RoadmapItem['status'] }) {
   if (status === 'done') return <Check className="w-3.5 h-3.5" />;
   if (status === 'current') return <Clock className="w-3.5 h-3.5" />;
@@ -128,10 +167,17 @@ function StatusIcon({ status }: { status: RoadmapItem['status'] }) {
 }
 
 export function Roadmap() {
+  const vp = { once: true, margin: '-60px' };
+
   return (
     <div className="mx-auto max-w-3xl px-4 md:px-8 py-12 space-y-10">
       {/* Header */}
-      <div className="space-y-3">
+      <motion.div
+        className="space-y-3"
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+      >
         <div className="flex items-center gap-4">
           <Globe className="w-10 h-10 text-m2e-accent" />
           <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Roadmap</h1>
@@ -139,12 +185,19 @@ export function Roadmap() {
         <p className="text-m2e-text-secondary text-xl">
           Where we've been and where we're headed. The journey from testnet to world domination.
         </p>
-      </div>
+      </motion.div>
 
       {/* Phases */}
       <div className="space-y-10">
         {PHASES.map((phase) => (
-          <div key={phase.name} className="space-y-4">
+          <motion.div
+            key={phase.name}
+            className="space-y-4"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={vp}
+          >
             {/* Phase Header */}
             <div className="flex items-center gap-3">
               <span className="px-3 py-1 text-xs uppercase tracking-widest bg-m2e-accent text-m2e-text-on-accent pixel-border border-m2e-accent-dark">
@@ -156,18 +209,37 @@ export function Roadmap() {
             </div>
 
             {/* Timeline */}
-            <div className="relative space-y-4">
+            <motion.div
+              className="relative space-y-4"
+              variants={phaseStagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={vp}
+            >
               {/* Vertical line */}
-              <div className="absolute left-[19px] top-4 bottom-4 w-[2px] bg-m2e-border" />
+              <motion.div
+                className="absolute left-[19px] top-4 bottom-4 w-[2px] bg-m2e-border origin-top"
+                variants={lineGrow}
+              />
 
               {phase.items.map((item) => {
                 const config = STATUS_CONFIG[item.status];
                 return (
-                  <div key={item.title} className="relative pl-12">
+                  <motion.div
+                    key={item.title}
+                    className="relative pl-12"
+                    variants={cardFlyIn}
+                  >
                     {/* Timeline dot */}
-                    <div className={`absolute left-2.5 top-5 w-5 h-5 rounded-full border-2 ${config.dotClass}`} />
+                    <motion.div
+                      className={`absolute left-2.5 top-5 w-5 h-5 rounded-full border-2 ${config.dotClass}`}
+                      variants={dotReveal}
+                    />
 
-                    <div className={`pixel-card p-5 space-y-3 ${config.cardClass}`}>
+                    <motion.div
+                      className={`pixel-card p-5 space-y-3 ${config.cardClass}`}
+                      whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                    >
                       {/* Title row */}
                       <div className="flex items-center justify-between flex-wrap gap-2">
                         <div className="flex items-center gap-3">
@@ -184,17 +256,23 @@ export function Roadmap() {
                       <p className="text-lg text-m2e-text-secondary leading-relaxed">
                         {item.description}
                       </p>
-                    </div>
-                  </div>
+                    </motion.div>
+                  </motion.div>
                 );
               })}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         ))}
       </div>
 
       {/* Footer */}
-      <div className="pixel-card p-6 text-center space-y-3">
+      <motion.div
+        className="pixel-card p-6 text-center space-y-3"
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={vp}
+      >
         <p className="text-lg text-m2e-text-secondary">
           Have ideas or feedback? Let us know in the community.
         </p>
@@ -216,7 +294,7 @@ export function Roadmap() {
             X / Twitter
           </a>
         </div>
-      </div>
+      </motion.div>
 
       {/* Bottom text */}
       <p className="text-center text-xs text-m2e-text-muted uppercase tracking-wider pt-4">

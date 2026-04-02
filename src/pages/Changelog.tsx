@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { motion, type Variants } from 'framer-motion';
 import { Notes, Zap, Debug, Redo, Download } from 'pixelarticons/react';
 import type { ChangeType, ChangelogData, VersionEntry } from '../types/changelog';
 
@@ -62,6 +63,44 @@ function buildShareMessage(entry: VersionEntry): string {
   return lines.join('\n');
 }
 
+// ── Animation Variants ──────────────────────────────────────────────────────
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
+};
+
+const stagger: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
+const cardFlyIn: Variants = {
+  hidden: { opacity: 0, y: 60, scale: 0.97 },
+  visible: {
+    opacity: 1, y: 0, scale: 1,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
+
+const dotReveal: Variants = {
+  hidden: { opacity: 0, scale: 0 },
+  visible: {
+    opacity: 1, scale: 1,
+    transition: { duration: 0.3, ease: 'easeOut' },
+  },
+};
+
+const lineGrow: Variants = {
+  hidden: { scaleY: 0 },
+  visible: {
+    scaleY: 1,
+    transition: { duration: 0.8, ease: 'easeOut' },
+  },
+};
+
+// ── Component ───────────────────────────────────────────────────────────────
+
 export function Changelog() {
   const [data, setData] = useState<ChangelogData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -110,38 +149,50 @@ export function Changelog() {
       .finally(() => setLoading(false));
   }, []);
 
+  const vp = { once: true, margin: '-60px' };
+
   return (
- <div className="mx-auto max-w-3xl px-4 md:px-8 py-12 space-y-10">
+    <div className="mx-auto max-w-3xl px-4 md:px-8 py-12 space-y-10">
       {/* Header */}
- <div className="space-y-3">
- <div className="flex items-center gap-4">
- <Notes className="w-10 h-10 text-m2e-accent" />
- <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Changelog</h1>
+      <motion.div
+        className="space-y-3"
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+      >
+        <div className="flex items-center gap-4">
+          <Notes className="w-10 h-10 text-m2e-accent" />
+          <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Changelog</h1>
         </div>
- <p className="text-m2e-text-secondary text-xl">
+        <p className="text-m2e-text-secondary text-xl">
           All notable updates to Galavant. Each version includes new features, improvements, and bug fixes.
         </p>
-      </div>
+      </motion.div>
 
       {loading ? (
- <div className="text-m2e-text-muted text-sm">Loading changelog...</div>
+        <div className="text-m2e-text-muted text-sm">Loading changelog...</div>
       ) : error ? (
- <div className="text-red-400 text-sm">Failed to load changelog</div>
+        <div className="text-red-400 text-sm">Failed to load changelog</div>
       ) : data ? (
         <>
           {/* Download Section */}
- <div className="pixel-card p-6 space-y-4">
- <div className="flex items-center gap-3">
- <Download className="w-7 h-7 text-m2e-accent" />
- <h2 className="text-xl tracking-wide">Download Galavant</h2>
+          <motion.div
+            className="pixel-card p-6 space-y-4"
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
+            <div className="flex items-center gap-3">
+              <Download className="w-7 h-7 text-m2e-accent" />
+              <h2 className="text-xl tracking-wide">Download Galavant</h2>
             </div>
- <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3">
               {data.testflightUrl && (
                 <a
                   href={data.testflightUrl}
                   target="_blank"
                   rel="noopener noreferrer"
- className="pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-base px-6 py-3"
+                  className="pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-base px-6 py-3"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
@@ -154,7 +205,7 @@ export function Changelog() {
                   href={data.versions[0].apkUrl}
                   target="_blank"
                   rel="noopener noreferrer"
- className="pixel-btn inline-flex items-center gap-2 text-base px-6 py-3 bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50"
+                  className="pixel-btn inline-flex items-center gap-2 text-base px-6 py-3 bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -166,36 +217,55 @@ export function Changelog() {
                 </a>
               )}
             </div>
-          </div>
+          </motion.div>
 
           {/* Timeline */}
- <div className="relative space-y-6">
+          <motion.div
+            className="relative space-y-6"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={vp}
+          >
             {/* Vertical line */}
- <div className="absolute left-[19px] top-6 bottom-6 w-[2px] bg-m2e-border" />
+            <motion.div
+              className="absolute left-[19px] top-6 bottom-6 w-[2px] bg-m2e-border origin-top"
+              variants={lineGrow}
+            />
 
             {data.versions.map((entry, i) => (
- <div key={entry.version} className="relative pl-12">
+              <motion.div
+                key={entry.version}
+                className="relative pl-12"
+                variants={cardFlyIn}
+              >
                 {/* Timeline dot */}
- <div className={`absolute left-2.5 top-5 w-5 h-5 rounded-full border-2 ${
-                  i === 0
-                    ? 'bg-m2e-accent border-m2e-accent-dark'
-                    : 'bg-m2e-card border-m2e-border'
-                }`} />
+                <motion.div
+                  className={`absolute left-2.5 top-5 w-5 h-5 rounded-full border-2 ${
+                    i === 0
+                      ? 'bg-m2e-accent border-m2e-accent-dark'
+                      : 'bg-m2e-card border-m2e-border'
+                  }`}
+                  variants={dotReveal}
+                />
 
- <div className="pixel-card p-5 space-y-4">
+                <motion.div
+                  className="pixel-card p-5 space-y-4"
+                  whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                >
                   {/* Version header */}
- <div className="flex items-center justify-between flex-wrap gap-2">
- <div className="flex items-center gap-3">
- <span className="text-xl text-m2e-accent tracking-wide">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl text-m2e-accent tracking-wide">
                         v{entry.version}
                       </span>
                       {i === 0 && (
- <span className="px-2 py-0.5 text-[10px] uppercase tracking-widest bg-m2e-accent text-m2e-text-on-accent pixel-border">
+                        <span className="px-2 py-0.5 text-[10px] uppercase tracking-widest bg-m2e-accent text-m2e-text-on-accent pixel-border">
                           Latest
                         </span>
                       )}
                     </div>
- <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                       <span className="text-xs text-m2e-text-muted uppercase tracking-wider">
                         {entry.date}
                       </span>
@@ -228,39 +298,39 @@ export function Changelog() {
                   </div>
 
                   {/* Title */}
- <h3 className="text-lg text-m2e-text">
+                  <h3 className="text-lg text-m2e-text">
                     {entry.title}
                   </h3>
 
                   {/* Divider */}
- <div className="h-[2px] bg-m2e-border" />
+                  <div className="h-[2px] bg-m2e-border" />
 
                   {/* Changes */}
- <ul className="space-y-2.5">
+                  <ul className="space-y-2.5">
                     {entry.changes.map((change, j) => {
                       const config = CHANGE_CONFIG[change.type];
                       return (
- <li key={j} className="flex items-start gap-3">
- <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] uppercase tracking-widest pixel-border whitespace-nowrap mt-0.5 ${config.bg} ${config.color} border-current`}>
- <config.Icon className="w-3 h-3" />
+                        <li key={j} className="flex items-start gap-3">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] uppercase tracking-widest pixel-border whitespace-nowrap mt-0.5 ${config.bg} ${config.color} border-current`}>
+                            <config.Icon className="w-3 h-3" />
                             {config.label}
                           </span>
- <span className="text-lg text-m2e-text-secondary leading-relaxed">
+                          <span className="text-lg text-m2e-text-secondary leading-relaxed">
                             {change.text}
                           </span>
                         </li>
                       );
                     })}
                   </ul>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </>
       ) : null}
 
       {/* Footer */}
- <p className="text-center text-xs text-m2e-text-muted uppercase tracking-wider pt-4">
+      <p className="text-center text-xs text-m2e-text-muted uppercase tracking-wider pt-4">
         Galavant &mdash; Walk to Earn on Bitcoin via OPNet
       </p>
     </div>
