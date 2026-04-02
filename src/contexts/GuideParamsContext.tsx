@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchGuideParams, type GuideParams } from '../api';
 
 const DEFAULTS: GuideParams = {
-  maxEnergyCap: 60,
+  maxEnergyCap: 200,
   energyRegenPercent: 25,
   energyRegenIntervalHours: 6,
   fullRechargeHours: 24,
