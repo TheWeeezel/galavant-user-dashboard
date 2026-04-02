@@ -659,7 +659,7 @@ export const gameplaySections: GameplaySection[] = [
             'Bikes must be at 100% durability to be listed — repair first if needed.',
             'A 5% fee is deducted from the sale price when an item sells.',
             'You can have up to 20 active listings at once.',
-            'Cancel listings at any time to get your item back.',
+            'Cancel listings to get your item back. Listings tied to a daily mission may have a short cooldown before they can be cancelled.',
           ]},
           { type: 'heading', text: 'Buying' },
           { type: 'list', items: [
