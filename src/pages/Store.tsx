@@ -7,21 +7,9 @@ import {
   fetchMainWallet,
   storeBuyPrepare,
   storeBuySubmit,
-  type StoreListingInfo,
 } from '../api';
 import { formatSats } from '../utils/format';
-import { config } from '../config';
-
-const BIKE_TYPE_DESCRIPTIONS: Record<string, string> = {
-  commuter: 'A reliable daily rider. Balanced stats for casual walks.',
-  touring: 'Built for distance. Higher recovery and durability.',
-  racing: 'Speed-focused. Best earning potential per minute.',
-  electric: 'Premium all-rounder. Strong base stats across the board.',
-};
-
-function bikeImageUrl(bikeType: string): string {
-  return `${config.apiUrl}/art/bases/bike-${bikeType.toLowerCase()}.png`;
-}
+import { ListingCard } from '../components/ListingCard';
 
 export function StoreContent({ onLoginRequest }: { onLoginRequest?: () => void }) {
   const queryClient = useQueryClient();
@@ -116,82 +104,26 @@ export function StoreContent({ onLoginRequest }: { onLoginRequest?: () => void }
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {store.listings.map((listing) => (
-          <StoreBikeCard
-            key={listing.type}
-            listing={listing}
-            onBuy={() => handleBuy(listing.type)}
-            isBuying={buyingType === listing.type}
-            disabled={purchaseMutation.isPending || (!isReady && isAuthenticated)}
-            btcBalance={mainWallet?.btcBalance}
-            isAuthenticated={isAuthenticated}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function StoreBikeCard({
-  listing,
-  onBuy,
-  isBuying,
-  disabled,
-  btcBalance,
-  isAuthenticated,
-}: {
-  listing: StoreListingInfo;
-  onBuy: () => void;
-  isBuying: boolean;
-  disabled?: boolean;
-  btcBalance?: string;
-  isAuthenticated: boolean;
-}) {
-  const FEE_BUFFER = 100_000;
-  const canAfford = !isAuthenticated || !btcBalance || BigInt(btcBalance) >= BigInt(listing.priceSats + FEE_BUFFER);
-  const isDisabled = disabled || !listing.available || (isAuthenticated && !canAfford);
-
-  return (
-    <div className="pixel-card overflow-hidden hover:border-m2e-accent-dark transition-colors flex flex-col">
-      {/* Image */}
-      <div className="relative aspect-square bg-m2e-bg-alt border-b-2 border-m2e-border flex items-center justify-center p-4">
-        <img
-          src={bikeImageUrl(listing.type)}
-          alt={listing.displayName}
-          className="w-full h-full object-contain pixel-render"
-          loading="lazy"
-        />
-        {/* Price tag */}
-        <span className="absolute top-2 right-2 px-2 py-0.5 text-xs bg-m2e-accent text-m2e-text-on-accent pixel-border shadow-sm tracking-wide border-m2e-accent-dark">
-          {formatSats(String(listing.priceSats))} BTC
-        </span>
-        {/* Quality badge */}
-        <span className="absolute top-2 left-2 px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide pixel-badge-common">
-          {listing.quality}
-        </span>
-      </div>
-
-      {/* Info */}
-      <div className="p-3 space-y-2 flex flex-col flex-1">
-        <div className="flex items-center justify-between">
-          <span className="text-sm uppercase tracking-wide text-m2e-text">{listing.displayName}</span>
-        </div>
-        <p className="text-xs text-m2e-text-muted flex-1">
-          {BIKE_TYPE_DESCRIPTIONS[listing.type] ?? 'A balance bike for your adventures.'}
-        </p>
-
-        {isAuthenticated && btcBalance && !canAfford && (
-          <p className="text-[10px] text-m2e-danger">Insufficient BTC</p>
-        )}
-
-        <button
-          onClick={onBuy}
-          disabled={isDisabled}
-          className="pixel-btn pixel-btn-primary w-full py-2 text-xs disabled:opacity-50"
-        >
-          {isBuying ? 'Purchasing...' : !listing.available ? 'Sold Out' : !isAuthenticated ? 'Login to Buy' : 'Buy with BTC'}
-        </button>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
+        {store.listings.map((listing) => {
+          const FEE_BUFFER = 100_000;
+          const btcBalance = mainWallet?.btcBalance;
+          const canAfford =
+            !isAuthenticated ||
+            !btcBalance ||
+            BigInt(btcBalance) >= BigInt(listing.priceSats + FEE_BUFFER);
+          return (
+            <ListingCard
+              key={listing.type}
+              storeListing={listing}
+              onBuy={() => handleBuy(listing.type)}
+              isBuying={buyingType === listing.type}
+              disabled={purchaseMutation.isPending || (!isReady && isAuthenticated)}
+              canAfford={canAfford}
+              isAuthenticated={isAuthenticated}
+            />
+          );
+        })}
       </div>
     </div>
   );

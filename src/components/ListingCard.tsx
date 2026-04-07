@@ -1,5 +1,6 @@
+import type { ReactNode } from 'react';
 import { config } from '../config';
-import type { MarketplaceListing } from '../api';
+import type { MarketplaceListing, StoreListingInfo } from '../api';
 
 const qualityColors: Record<string, string> = {
   common: 'pixel-badge-common',
@@ -15,6 +16,22 @@ const itemTypeLabels: Record<string, string> = {
   tool: 'Minting Tool',
 };
 
+// In-game bike descriptions sourced from gameplay-content.ts (Bikes → Bike Types).
+// "Best for" wording — qualitative, no economy secrets.
+const BIKE_TYPE_BEST_FOR: Record<string, string> = {
+  commuter: 'Leisurely walkers',
+  touring: 'Brisk walkers',
+  racing: 'Power walkers',
+  electric: 'Any walker',
+};
+
+const BIKE_TYPE_RANGE: Record<string, string> = {
+  commuter: '2 – 5 km/h',
+  touring: '5 – 9 km/h',
+  racing: '10 – 18 km/h',
+  electric: '2 – 18 km/h',
+};
+
 function resolveImageUrl(listing: MarketplaceListing): string | null {
   if (listing.item?.imageUrl) {
     const url = listing.item.imageUrl;
@@ -27,6 +44,10 @@ function resolveImageUrl(listing: MarketplaceListing): string | null {
     return `${config.apiUrl}/art/bases/part-${listing.item.type.toLowerCase()}-lv${listing.item.level}.png`;
   }
   return null;
+}
+
+function bikeImageUrl(bikeType: string): string {
+  return `${config.apiUrl}/art/bases/bike-${bikeType.toLowerCase()}.png`;
 }
 
 function formatPrice(satoshis: number): string {
@@ -45,56 +66,175 @@ function timeAgo(dateStr: string): string {
   return `${days}d ago`;
 }
 
-export function ListingCard({ listing, onClick }: { listing: MarketplaceListing; onClick?: () => void }) {
-  const imageUrl = resolveImageUrl(listing);
-  const quality = listing.item?.quality;
-  const itemLabel = itemTypeLabels[listing.itemType] ?? listing.itemType;
+interface CardShellProps {
+  imageUrl: string | null;
+  fallbackLabel: string;
+  title: string;
+  subtitleLeft?: ReactNode;
+  subtitleRight?: ReactNode;
+  quality?: string | null;
+  priceTag: string;
+  priceUnit: string;
+  description?: string | null;
+  metaLeft?: ReactNode;
+  metaRight?: ReactNode;
+  footer?: ReactNode;
+  onClick?: () => void;
+}
 
+function CardShell({
+  imageUrl,
+  fallbackLabel,
+  title,
+  subtitleLeft,
+  subtitleRight,
+  quality,
+  priceTag,
+  priceUnit,
+  description,
+  metaLeft,
+  metaRight,
+  footer,
+  onClick,
+}: CardShellProps) {
   return (
- <div className={`pixel-card overflow-hidden hover:border-m2e-accent-dark transition-colors ${onClick ? 'cursor-pointer' : ''}`} onClick={onClick}>
+    <div
+      className={`pixel-card overflow-hidden hover:border-m2e-accent-dark transition-colors flex flex-col ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       {/* Image or placeholder */}
- <div className="relative aspect-[16/9] bg-m2e-bg-alt border-b-2 border-m2e-border flex items-center justify-center">
+      <div className="relative aspect-[16/9] bg-m2e-bg-alt border-b-2 border-m2e-border flex items-center justify-center">
         {imageUrl ? (
           <img
             src={imageUrl}
-            alt={`${listing.itemType} listing`}
- className="w-full h-full object-cover pixel-render"
+            alt={fallbackLabel}
+            className="w-full h-full object-contain pixel-render"
             loading="lazy"
           />
         ) : (
- <span className="text-3xl text-m2e-text-muted uppercase tracking-widest">
-            {itemLabel}
+          <span className="text-3xl text-m2e-text-muted uppercase tracking-widest">
+            {fallbackLabel}
           </span>
         )}
         {/* Price tag */}
- <span className="absolute top-2 right-2 px-2 py-0.5 text-xs bg-m2e-accent text-m2e-text-on-accent pixel-border shadow-sm tracking-wide border-m2e-accent-dark">
-          {formatPrice(listing.priceSatoshis)} SAP
+        <span className="absolute top-2 right-2 px-2 py-0.5 text-xs bg-m2e-accent text-m2e-text-on-accent pixel-border shadow-sm tracking-wide border-m2e-accent-dark">
+          {priceTag} {priceUnit}
         </span>
       </div>
 
       {/* Info */}
- <div className="p-3 space-y-2">
- <div className="flex items-center justify-between">
- <span className="text-sm uppercase tracking-wide text-m2e-text">
-            {listing.item?.type ? `${listing.item.type}` : itemLabel}
-          </span>
+      <div className="p-3 space-y-2 flex flex-col flex-1">
+        <div className="flex items-center justify-between">
+          <span className="text-sm uppercase tracking-wide text-m2e-text">{title}</span>
           {quality && (
- <span className={`px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide border-opacity-50 ${qualityColors[quality] ?? qualityColors.common}`}>
+            <span className={`px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide border-opacity-50 ${qualityColors[quality] ?? qualityColors.common}`}>
               {quality}
             </span>
           )}
         </div>
 
- <div className="flex items-center justify-between text-xs text-m2e-text-muted tracking-wide uppercase">
-          <span>{itemLabel}</span>
-          {listing.item?.level && <span>Lv. {listing.item.level}</span>}
-        </div>
+        {(subtitleLeft || subtitleRight) && (
+          <div className="flex items-center justify-between text-xs text-m2e-text-muted tracking-wide uppercase">
+            <span>{subtitleLeft}</span>
+            {subtitleRight && <span>{subtitleRight}</span>}
+          </div>
+        )}
 
- <div className="flex items-center justify-between text-xs text-m2e-text-muted">
- {listing.sellerName && <span className="truncate max-w-[100px]">by {listing.sellerName}</span>}
-          <span>{timeAgo(listing.createdAt)}</span>
-        </div>
+        {description && (
+          <p className="text-xs text-m2e-text-muted flex-1">{description}</p>
+        )}
+
+        {(metaLeft || metaRight) && (
+          <div className="flex items-center justify-between text-xs text-m2e-text-muted">
+            {metaLeft ? <span className="truncate max-w-[100px]">{metaLeft}</span> : <span />}
+            {metaRight && <span>{metaRight}</span>}
+          </div>
+        )}
+
+        {footer}
       </div>
     </div>
+  );
+}
+
+type ListingCardProps =
+  | {
+      listing: MarketplaceListing;
+      onClick?: () => void;
+    }
+  | {
+      storeListing: StoreListingInfo;
+      onBuy: () => void;
+      isBuying?: boolean;
+      disabled?: boolean;
+      canAfford?: boolean;
+      isAuthenticated?: boolean;
+    };
+
+export function ListingCard(props: ListingCardProps) {
+  // ── Store mode (BTC) ─────────────────────────────────────
+  if ('storeListing' in props) {
+    const { storeListing, onBuy, isBuying, disabled, canAfford = true, isAuthenticated = false } = props;
+    const typeKey = storeListing.type.toLowerCase();
+    const bestFor = BIKE_TYPE_BEST_FOR[typeKey];
+    const range = BIKE_TYPE_RANGE[typeKey];
+    const description = bestFor && range ? `${bestFor} · ${range}` : bestFor ?? null;
+    const isDisabled = disabled || !storeListing.available || (isAuthenticated && !canAfford);
+
+    return (
+      <CardShell
+        imageUrl={bikeImageUrl(storeListing.type)}
+        fallbackLabel={storeListing.displayName}
+        title={storeListing.displayName}
+        subtitleLeft="Balance Bike"
+        quality={storeListing.quality}
+        priceTag={formatPrice(storeListing.priceSats)}
+        priceUnit="BTC"
+        description={description}
+        footer={
+          <>
+            {isAuthenticated && !canAfford && (
+              <p className="text-[10px] text-m2e-danger">Insufficient BTC</p>
+            )}
+            <button
+              onClick={onBuy}
+              disabled={isDisabled}
+              className="pixel-btn pixel-btn-primary w-full py-2 text-xs disabled:opacity-50"
+            >
+              {isBuying
+                ? 'Purchasing...'
+                : !storeListing.available
+                ? 'Sold Out'
+                : !isAuthenticated
+                ? 'Login to Buy'
+                : 'Buy with BTC'}
+            </button>
+          </>
+        }
+      />
+    );
+  }
+
+  // ── Marketplace mode (SAP) ───────────────────────────────
+  const { listing, onClick } = props;
+  const imageUrl = resolveImageUrl(listing);
+  const quality = listing.item?.quality;
+  const itemLabel = itemTypeLabels[listing.itemType] ?? listing.itemType;
+  const title = listing.item?.type ? listing.item.type : itemLabel;
+
+  return (
+    <CardShell
+      imageUrl={imageUrl}
+      fallbackLabel={itemLabel}
+      title={title}
+      subtitleLeft={itemLabel}
+      subtitleRight={listing.item?.level ? `Lv. ${listing.item.level}` : undefined}
+      quality={quality}
+      priceTag={formatPrice(listing.priceSatoshis)}
+      priceUnit="SAP"
+      metaLeft={listing.sellerName ? `by ${listing.sellerName}` : undefined}
+      metaRight={timeAgo(listing.createdAt)}
+      onClick={onClick}
+    />
   );
 }
