@@ -1,17 +1,87 @@
 {
+  "playStoreUrl": "https://play.google.com/apps/testing/com.m2e.opnet",
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
+    {
+      "version": "0.0.19",
+      "date": "2026-04-08",
+      "title": "Luck Overhaul & Various UI Improvements",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Toolboxes now appear directly on the home screen — open, boost, or unlock new slots without leaving home"
+        },
+        {
+          "type": "feature",
+          "text": "Rare Gilded and Prismatic toolbox modifiers reward above-average drops"
+        },
+        {
+          "type": "feature",
+          "text": "New Total Score bar on the live activity screen with an overflow zone past Lv.5"
+        },
+        {
+          "type": "feature",
+          "text": "Reroll one daily mission per day if you don't like what you got"
+        },
+        {
+          "type": "improvement",
+          "text": "Luck Overhaul: your bike's Luck now drives both how often toolboxes drop and the quality of what's inside, and the bike you ride when a box drops decides what's inside"
+        },
+        {
+          "type": "improvement",
+          "text": "Live activity screen redesign: sync indicator moved up next to GPS, Total Score bar replaces the old drop chance display"
+        },
+        {
+          "type": "improvement",
+          "text": "Cleaner bike preview cards on home and inventory (HP and durability badges hidden for a tidier layout)"
+        },
+        {
+          "type": "improvement",
+          "text": "Forge upgrade triangle layout polish for a less cramped feel"
+        },
+        {
+          "type": "improvement",
+          "text": "Bike store types renamed to Commuter, Touring, and Racing"
+        },
+        {
+          "type": "improvement",
+          "text": "Higher energy cap for multi-bike collectors"
+        },
+        {
+          "type": "improvement",
+          "text": "SAT renamed to SAP across the app"
+        },
+        {
+          "type": "fix",
+          "text": "Marketplace listings linked to a daily mission can no longer be cancelled early"
+        }
+      ]
+    },
     {
       "version": "0.0.18",
       "date": "2026-03-31",
       "title": "Daily Missions & Gameplay Guide",
-      "apkUrl": "https://github.com/TheWeeezel/galavant-releases/releases/download/v0.0.18/galavant-v0.0.18.apk",
       "changes": [
-        { "type": "feature", "text": "Daily missions — complete daily challenges and build streaks for bonus rewards" },
-        { "type": "improvement", "text": "Back buttons added to web-redirect screens for easier navigation" },
-        { "type": "improvement", "text": "General UI polish and consistency improvements" },
-        { "type": "fix", "text": "Missions correctly show only tasks you can actually complete right now" },
-        { "type": "fix", "text": "Deposit balance updates are now handled more reliably" }
+        {
+          "type": "feature",
+          "text": "Daily missions — complete daily challenges and build streaks for bonus rewards"
+        },
+        {
+          "type": "improvement",
+          "text": "Back buttons added to web-redirect screens for easier navigation"
+        },
+        {
+          "type": "improvement",
+          "text": "General UI polish and consistency improvements"
+        },
+        {
+          "type": "fix",
+          "text": "Missions correctly show only tasks you can actually complete right now"
+        },
+        {
+          "type": "fix",
+          "text": "Deposit balance updates are now handled more reliably"
+        }
       ]
     },
     {
@@ -19,11 +89,26 @@
       "date": "2026-03-27",
       "title": "Bike Store & Stability",
       "changes": [
-        { "type": "feature", "text": "Bike Store — buy bikes directly with BTC from the home screen and store page" },
-        { "type": "feature", "text": "Wallet recovery prompts appear automatically when keys are missing before a purchase" },
-        { "type": "improvement", "text": "Bike purchases are now signed on-device for improved security" },
-        { "type": "improvement", "text": "Purchased bikes are available immediately as in-game items (export to NFT later)" },
-        { "type": "fix", "text": "iOS app crash fix" }
+        {
+          "type": "feature",
+          "text": "Bike Store — buy bikes directly with BTC from the home screen and store page"
+        },
+        {
+          "type": "feature",
+          "text": "Wallet recovery prompts appear automatically when keys are missing before a purchase"
+        },
+        {
+          "type": "improvement",
+          "text": "Bike purchases are now signed on-device for improved security"
+        },
+        {
+          "type": "improvement",
+          "text": "Purchased bikes are available immediately as in-game items (export to NFT later)"
+        },
+        {
+          "type": "fix",
+          "text": "iOS app crash fix"
+        }
       ]
     },
     {
@@ -31,13 +116,34 @@
       "date": "2026-03-25",
       "title": "Speed, Style & Live Sync",
       "changes": [
-        { "type": "feature", "text": "Real-time balance, energy, and swap status updates — no more manual refreshing" },
-        { "type": "feature", "text": "Bike detail floating action bar — all actions (Equip, Level Up, Sell, Export, Breed) always visible at a glance" },
-        { "type": "improvement", "text": "Bike images load significantly faster with optimized mobile formats and loading indicators" },
-        { "type": "improvement", "text": "Buttons and cards redesigned for a cleaner, more consistent look across the app" },
-        { "type": "improvement", "text": "HP restore parts rebalanced so higher-level parts always outperform multiple lower-level ones" },
-        { "type": "fix", "text": "Swap Phase 2 completion no longer fails for users with limited UTXOs" },
-        { "type": "fix", "text": "Swap sign button no longer appears before the transaction is ready" }
+        {
+          "type": "feature",
+          "text": "Real-time balance, energy, and swap status updates — no more manual refreshing"
+        },
+        {
+          "type": "feature",
+          "text": "Bike detail floating action bar — all actions (Equip, Level Up, Sell, Export, Breed) always visible at a glance"
+        },
+        {
+          "type": "improvement",
+          "text": "Bike images load significantly faster with optimized mobile formats and loading indicators"
+        },
+        {
+          "type": "improvement",
+          "text": "Buttons and cards redesigned for a cleaner, more consistent look across the app"
+        },
+        {
+          "type": "improvement",
+          "text": "HP restore parts rebalanced so higher-level parts always outperform multiple lower-level ones"
+        },
+        {
+          "type": "fix",
+          "text": "Swap Phase 2 completion no longer fails for users with limited UTXOs"
+        },
+        {
+          "type": "fix",
+          "text": "Swap sign button no longer appears before the transaction is ready"
+        }
       ]
     },
     {
@@ -45,14 +151,38 @@
       "date": "2026-03-22",
       "title": "Pause, Social Rewards & Swap Fixes",
       "changes": [
-        { "type": "feature", "text": "Pause and resume rides — take a break without ending your activity" },
-        { "type": "feature", "text": "Social rewards — link your X account and earn SAP for following, liking, and retweeting" },
-        { "type": "feature", "text": "SAT token now displays its icon on-chain" },
-        { "type": "improvement", "text": "Swap flow redesigned with clearer step-by-step progress and signing prompts" },
-        { "type": "improvement", "text": "Background swap monitoring automatically tracks pending transactions" },
-        { "type": "fix", "text": "GPS drift no longer incorrectly earns rewards while stationary" },
-        { "type": "fix", "text": "SAT/BTC swap transactions now complete correctly" },
-        { "type": "fix", "text": "Ride timer correctly excludes paused time" }
+        {
+          "type": "feature",
+          "text": "Pause and resume rides — take a break without ending your activity"
+        },
+        {
+          "type": "feature",
+          "text": "Social rewards — link your X account and earn SAP for following, liking, and retweeting"
+        },
+        {
+          "type": "feature",
+          "text": "SAT token now displays its icon on-chain"
+        },
+        {
+          "type": "improvement",
+          "text": "Swap flow redesigned with clearer step-by-step progress and signing prompts"
+        },
+        {
+          "type": "improvement",
+          "text": "Background swap monitoring automatically tracks pending transactions"
+        },
+        {
+          "type": "fix",
+          "text": "GPS drift no longer incorrectly earns rewards while stationary"
+        },
+        {
+          "type": "fix",
+          "text": "SAT/BTC swap transactions now complete correctly"
+        },
+        {
+          "type": "fix",
+          "text": "Ride timer correctly excludes paused time"
+        }
       ]
     },
     {
@@ -60,15 +190,42 @@
       "date": "2026-03-20",
       "title": "Marketplace Filters, UI Refresh & Wallet Fixes",
       "changes": [
-        { "type": "feature", "text": "Marketplace filter drawer with level and mint count range sliders" },
-        { "type": "feature", "text": "Profile page redesigned with Account, Stats, and Referrals tabs" },
-        { "type": "feature", "text": "Wallet screen redesigned with visual action cards" },
-        { "type": "improvement", "text": "Marketplace now displays bikes, parts, and tools in separate grids" },
-        { "type": "improvement", "text": "Improved UI consistency and styling across the app" },
-        { "type": "fix", "text": "SAT/BTC swaps now recover properly after server restarts" },
-        { "type": "fix", "text": "Swap status updates no longer show false errors" },
-        { "type": "fix", "text": "Wallet key sync works correctly across address formats" },
-        { "type": "fix", "text": "Mobile keyboard invisible characters no longer break wallet recovery import" }
+        {
+          "type": "feature",
+          "text": "Marketplace filter drawer with level and mint count range sliders"
+        },
+        {
+          "type": "feature",
+          "text": "Profile page redesigned with Account, Stats, and Referrals tabs"
+        },
+        {
+          "type": "feature",
+          "text": "Wallet screen redesigned with visual action cards"
+        },
+        {
+          "type": "improvement",
+          "text": "Marketplace now displays bikes, parts, and tools in separate grids"
+        },
+        {
+          "type": "improvement",
+          "text": "Improved UI consistency and styling across the app"
+        },
+        {
+          "type": "fix",
+          "text": "SAT/BTC swaps now recover properly after server restarts"
+        },
+        {
+          "type": "fix",
+          "text": "Swap status updates no longer show false errors"
+        },
+        {
+          "type": "fix",
+          "text": "Wallet key sync works correctly across address formats"
+        },
+        {
+          "type": "fix",
+          "text": "Mobile keyboard invisible characters no longer break wallet recovery import"
+        }
       ]
     },
     {
@@ -76,16 +233,46 @@
       "date": "2026-03-19",
       "title": "Wallet Recovery, Route Maps & Cleanup",
       "changes": [
-        { "type": "feature", "text": "GPS route map on ride detail screen — see your ride path on an interactive map" },
-        { "type": "feature", "text": "Wallet Settings screen with recovery phrase backup, import, and reset options" },
-        { "type": "feature", "text": "Wallet recovery prompt on swap, deposit, and profile screens when keys are missing" },
-        { "type": "improvement", "text": "Marketplace sell modal now shows bike and part cards instead of plain text" },
-        { "type": "improvement", "text": "SAT token renamed from \"SAT Move-to-Earn\" to \"Satoshis Activity Token\"" },
-        { "type": "improvement", "text": "Improved error messages across all screens — raw technical errors are no longer shown to users" },
-        { "type": "fix", "text": "Android app crash when viewing ride history on the map" },
-        { "type": "fix", "text": "Android push notifications now display correctly for toolbox drops" },
-        { "type": "fix", "text": "Wallet recovery import now verifies your address to prevent accidental overwrites" },
-        { "type": "fix", "text": "Bike type names standardized across the app" }
+        {
+          "type": "feature",
+          "text": "GPS route map on ride detail screen — see your ride path on an interactive map"
+        },
+        {
+          "type": "feature",
+          "text": "Wallet Settings screen with recovery phrase backup, import, and reset options"
+        },
+        {
+          "type": "feature",
+          "text": "Wallet recovery prompt on swap, deposit, and profile screens when keys are missing"
+        },
+        {
+          "type": "improvement",
+          "text": "Marketplace sell modal now shows bike and part cards instead of plain text"
+        },
+        {
+          "type": "improvement",
+          "text": "SAT token renamed from \"SAT Move-to-Earn\" to \"Satoshis Activity Token\""
+        },
+        {
+          "type": "improvement",
+          "text": "Improved error messages across all screens — raw technical errors are no longer shown to users"
+        },
+        {
+          "type": "fix",
+          "text": "Android app crash when viewing ride history on the map"
+        },
+        {
+          "type": "fix",
+          "text": "Android push notifications now display correctly for toolbox drops"
+        },
+        {
+          "type": "fix",
+          "text": "Wallet recovery import now verifies your address to prevent accidental overwrites"
+        },
+        {
+          "type": "fix",
+          "text": "Bike type names standardized across the app"
+        }
       ]
     },
     {
@@ -93,20 +280,62 @@
       "date": "2026-03-18",
       "title": "HP Lifeline, Anti-Cheat & Activity Hardening",
       "changes": [
-        { "type": "feature", "text": "HP Lifeline safety net — if your bike's HP drops critically low after a ride, it gets a one-time automatic repair" },
-        { "type": "feature", "text": "New \"Trigger HP Lifeline\" task with SAP reward" },
-        { "type": "feature", "text": "Smarter anti-cheat detection for stationary phones" },
-        { "type": "feature", "text": "Toolbox drops now require actual movement during your ride" },
-        { "type": "improvement", "text": "Breeding balance updated — cross-tier breeding now favors the lower-quality parent" },
-        { "type": "improvement", "text": "Energy calculation no longer counts bikes listed on the marketplace or exported" },
-        { "type": "improvement", "text": "Activity tracking is more resilient to app crashes and network issues" },
-        { "type": "improvement", "text": "Android back button no longer exits the live activity screen" },
-        { "type": "improvement", "text": "Ride timer now syncs with the server for accurate elapsed time" },
-        { "type": "improvement", "text": "Home screen detects active rides faster for quicker resume" },
-        { "type": "fix", "text": "Currency labels corrected to \"SAP\" throughout the marketplace" },
-        { "type": "fix", "text": "Wallet keys now sync properly after Google sign-in" },
-        { "type": "fix", "text": "Marketplace purchases no longer fail when seller has no balance entry" },
-        { "type": "fix", "text": "Improved error messages when activities fail to start or stop" }
+        {
+          "type": "feature",
+          "text": "HP Lifeline safety net — if your bike's HP drops critically low after a ride, it gets a one-time automatic repair"
+        },
+        {
+          "type": "feature",
+          "text": "New \"Trigger HP Lifeline\" task with SAP reward"
+        },
+        {
+          "type": "feature",
+          "text": "Smarter anti-cheat detection for stationary phones"
+        },
+        {
+          "type": "feature",
+          "text": "Toolbox drops now require actual movement during your ride"
+        },
+        {
+          "type": "improvement",
+          "text": "Breeding balance updated — cross-tier breeding now favors the lower-quality parent"
+        },
+        {
+          "type": "improvement",
+          "text": "Energy calculation no longer counts bikes listed on the marketplace or exported"
+        },
+        {
+          "type": "improvement",
+          "text": "Activity tracking is more resilient to app crashes and network issues"
+        },
+        {
+          "type": "improvement",
+          "text": "Android back button no longer exits the live activity screen"
+        },
+        {
+          "type": "improvement",
+          "text": "Ride timer now syncs with the server for accurate elapsed time"
+        },
+        {
+          "type": "improvement",
+          "text": "Home screen detects active rides faster for quicker resume"
+        },
+        {
+          "type": "fix",
+          "text": "Currency labels corrected to \"SAP\" throughout the marketplace"
+        },
+        {
+          "type": "fix",
+          "text": "Wallet keys now sync properly after Google sign-in"
+        },
+        {
+          "type": "fix",
+          "text": "Marketplace purchases no longer fail when seller has no balance entry"
+        },
+        {
+          "type": "fix",
+          "text": "Improved error messages when activities fail to start or stop"
+        }
       ]
     },
     {
@@ -114,15 +343,42 @@
       "date": "2026-03-17",
       "title": "Ride Recovery & Local-First Tracking",
       "changes": [
-        { "type": "feature", "text": "Activity history screen to view past rides" },
-        { "type": "feature", "text": "Crash recovery for interrupted activities — ride data is saved locally and can be resumed" },
-        { "type": "feature", "text": "Faster wallet operations with prepared transaction caching" },
-        { "type": "improvement", "text": "GPS tracking now saves data locally first for better reliability" },
-        { "type": "improvement", "text": "Android live tracking improved with native foreground service" },
-        { "type": "improvement", "text": "Toolbox rewards now based on actual riding time instead of total session time" },
-        { "type": "fix", "text": "Login now works correctly across different address formats" },
-        { "type": "fix", "text": "Marketplace listing modal scroll behavior fixed" },
-        { "type": "fix", "text": "Improved bike image display" }
+        {
+          "type": "feature",
+          "text": "Activity history screen to view past rides"
+        },
+        {
+          "type": "feature",
+          "text": "Crash recovery for interrupted activities — ride data is saved locally and can be resumed"
+        },
+        {
+          "type": "feature",
+          "text": "Faster wallet operations with prepared transaction caching"
+        },
+        {
+          "type": "improvement",
+          "text": "GPS tracking now saves data locally first for better reliability"
+        },
+        {
+          "type": "improvement",
+          "text": "Android live tracking improved with native foreground service"
+        },
+        {
+          "type": "improvement",
+          "text": "Toolbox rewards now based on actual riding time instead of total session time"
+        },
+        {
+          "type": "fix",
+          "text": "Login now works correctly across different address formats"
+        },
+        {
+          "type": "fix",
+          "text": "Marketplace listing modal scroll behavior fixed"
+        },
+        {
+          "type": "fix",
+          "text": "Improved bike image display"
+        }
       ]
     },
     {
@@ -130,7 +386,10 @@
       "date": "2026-03-16",
       "title": "Update Dialog Addon",
       "changes": [
-        { "type": "improvement", "text": "Improved text readability and accessibility across the app" }
+        {
+          "type": "improvement",
+          "text": "Improved text readability and accessibility across the app"
+        }
       ]
     },
     {
@@ -138,11 +397,26 @@
       "date": "2026-03-16",
       "title": "Bike Economy & Testing Rewards",
       "changes": [
-        { "type": "feature", "text": "Additional testing rewards for early testers" },
-        { "type": "feature", "text": "Choose your own bike when getting started" },
-        { "type": "improvement", "text": "Revamped bike economic model for better balance" },
-        { "type": "improvement", "text": "Improved GPS logging accuracy" },
-        { "type": "fix", "text": "Internal stability improvements" }
+        {
+          "type": "feature",
+          "text": "Additional testing rewards for early testers"
+        },
+        {
+          "type": "feature",
+          "text": "Choose your own bike when getting started"
+        },
+        {
+          "type": "improvement",
+          "text": "Revamped bike economic model for better balance"
+        },
+        {
+          "type": "improvement",
+          "text": "Improved GPS logging accuracy"
+        },
+        {
+          "type": "fix",
+          "text": "Internal stability improvements"
+        }
       ]
     },
     {
@@ -150,13 +424,34 @@
       "date": "2026-03-15",
       "title": "Satoshi Activity Points",
       "changes": [
-        { "type": "feature", "text": "Part bonuses now visible on Bike Detail and Level Up screens" },
-        { "type": "feature", "text": "Your own listings are marked in the Marketplace" },
-        { "type": "feature", "text": "App prompts you to update when a new version is available" },
-        { "type": "improvement", "text": "\"SAT Points\" renamed to \"SAP\" (Satoshi Activity Points) everywhere" },
-        { "type": "fix", "text": "Socket unequip no longer crashes the app on iOS" },
-        { "type": "fix", "text": "Energy cap now applied correctly during earning" },
-        { "type": "fix", "text": "Max energy updates properly when staking or unstaking" }
+        {
+          "type": "feature",
+          "text": "Part bonuses now visible on Bike Detail and Level Up screens"
+        },
+        {
+          "type": "feature",
+          "text": "Your own listings are marked in the Marketplace"
+        },
+        {
+          "type": "feature",
+          "text": "App prompts you to update when a new version is available"
+        },
+        {
+          "type": "improvement",
+          "text": "\"SAT Points\" renamed to \"SAP\" (Satoshi Activity Points) everywhere"
+        },
+        {
+          "type": "fix",
+          "text": "Socket unequip no longer crashes the app on iOS"
+        },
+        {
+          "type": "fix",
+          "text": "Energy cap now applied correctly during earning"
+        },
+        {
+          "type": "fix",
+          "text": "Max energy updates properly when staking or unstaking"
+        }
       ]
     },
     {
@@ -164,7 +459,10 @@
       "date": "2026-03-13",
       "title": "Google Sign-In Fix",
       "changes": [
-        { "type": "fix", "text": "Google Sign-In on preview/production builds (missing EAS environment variables)" }
+        {
+          "type": "fix",
+          "text": "Google Sign-In on preview/production builds (missing EAS environment variables)"
+        }
       ]
     },
     {
@@ -172,15 +470,42 @@
       "date": "2026-03-13",
       "title": "Wallets, Tasks & Native Sign-In",
       "changes": [
-        { "type": "feature", "text": "Wallet import functionality" },
-        { "type": "feature", "text": "Task system with API endpoints" },
-        { "type": "feature", "text": "Referral system introduction" },
-        { "type": "feature", "text": "Whitepaper link in Profile" },
-        { "type": "improvement", "text": "Native Google Sign-In replaces browser-based flow" },
-        { "type": "improvement", "text": "Emission interval changed to 30 seconds (from 1 minute)" },
-        { "type": "improvement", "text": "New auth structure" },
-        { "type": "fix", "text": "Unload from sockets crash" },
-        { "type": "fix", "text": "Removed GPS penalty for short walks" }
+        {
+          "type": "feature",
+          "text": "Wallet import functionality"
+        },
+        {
+          "type": "feature",
+          "text": "Task system with API endpoints"
+        },
+        {
+          "type": "feature",
+          "text": "Referral system introduction"
+        },
+        {
+          "type": "feature",
+          "text": "Whitepaper link in Profile"
+        },
+        {
+          "type": "improvement",
+          "text": "Native Google Sign-In replaces browser-based flow"
+        },
+        {
+          "type": "improvement",
+          "text": "Emission interval changed to 30 seconds (from 1 minute)"
+        },
+        {
+          "type": "improvement",
+          "text": "New auth structure"
+        },
+        {
+          "type": "fix",
+          "text": "Unload from sockets crash"
+        },
+        {
+          "type": "fix",
+          "text": "Removed GPS penalty for short walks"
+        }
       ]
     },
     {
@@ -188,15 +513,42 @@
       "date": "2026-03-12",
       "title": "Staking, Swaps & Breeding",
       "changes": [
-        { "type": "feature", "text": "SAT staking with milestone tiers (Iron to Legend)" },
-        { "type": "feature", "text": "SAT/BTC swap via NativeSwap integration" },
-        { "type": "feature", "text": "Bike and part breeding system" },
-        { "type": "feature", "text": "Equipment upgrade system" },
-        { "type": "feature", "text": "Earning bonuses from streak, holding ratio & staking" },
-        { "type": "feature", "text": "Changelog page on customer dashboard" },
-        { "type": "improvement", "text": "Dark mode support across all app screens" },
-        { "type": "improvement", "text": "Loyalty streak tracking with tier badges" },
-        { "type": "fix", "text": "Energy recovery timer accuracy" }
+        {
+          "type": "feature",
+          "text": "SAT staking with milestone tiers (Iron to Legend)"
+        },
+        {
+          "type": "feature",
+          "text": "SAT/BTC swap via NativeSwap integration"
+        },
+        {
+          "type": "feature",
+          "text": "Bike and part breeding system"
+        },
+        {
+          "type": "feature",
+          "text": "Equipment upgrade system"
+        },
+        {
+          "type": "feature",
+          "text": "Earning bonuses from streak, holding ratio & staking"
+        },
+        {
+          "type": "feature",
+          "text": "Changelog page on customer dashboard"
+        },
+        {
+          "type": "improvement",
+          "text": "Dark mode support across all app screens"
+        },
+        {
+          "type": "improvement",
+          "text": "Loyalty streak tracking with tier badges"
+        },
+        {
+          "type": "fix",
+          "text": "Energy recovery timer accuracy"
+        }
       ]
     },
     {
@@ -204,14 +556,38 @@
       "date": "2026-02-25",
       "title": "Marketplace & Conversions",
       "changes": [
-        { "type": "feature", "text": "Marketplace for buying and selling bikes & parts" },
-        { "type": "feature", "text": "SAP to SAT Token conversion" },
-        { "type": "feature", "text": "Mystery box drops from activities" },
-        { "type": "feature", "text": "Toolbox opening with random rewards" },
-        { "type": "feature", "text": "Leaderboard rankings" },
-        { "type": "improvement", "text": "Renamed entities: Sneakers to Bikes, Gems to Parts" },
-        { "type": "improvement", "text": "Google account linking for cross-device sign-in" },
-        { "type": "fix", "text": "Wallet balance display rounding" }
+        {
+          "type": "feature",
+          "text": "Marketplace for buying and selling bikes & parts"
+        },
+        {
+          "type": "feature",
+          "text": "SAP to SAT Token conversion"
+        },
+        {
+          "type": "feature",
+          "text": "Mystery box drops from activities"
+        },
+        {
+          "type": "feature",
+          "text": "Toolbox opening with random rewards"
+        },
+        {
+          "type": "feature",
+          "text": "Leaderboard rankings"
+        },
+        {
+          "type": "improvement",
+          "text": "Renamed entities: Sneakers to Bikes, Gems to Parts"
+        },
+        {
+          "type": "improvement",
+          "text": "Google account linking for cross-device sign-in"
+        },
+        {
+          "type": "fix",
+          "text": "Wallet balance display rounding"
+        }
       ]
     },
     {
@@ -219,14 +595,38 @@
       "date": "2026-02-15",
       "title": "Initial Release",
       "changes": [
-        { "type": "feature", "text": "Bike-to-earn activity tracking with GPS" },
-        { "type": "feature", "text": "Bike inventory with quality tiers" },
-        { "type": "feature", "text": "Part socketing for earning boosts" },
-        { "type": "feature", "text": "Energy system with daily recovery" },
-        { "type": "feature", "text": "SAP earning from rides" },
-        { "type": "feature", "text": "Wallet generation and OPNet integration" },
-        { "type": "feature", "text": "Bike leveling system" },
-        { "type": "feature", "text": "Profile with lifetime stats" }
+        {
+          "type": "feature",
+          "text": "Bike-to-earn activity tracking with GPS"
+        },
+        {
+          "type": "feature",
+          "text": "Bike inventory with quality tiers"
+        },
+        {
+          "type": "feature",
+          "text": "Part socketing for earning boosts"
+        },
+        {
+          "type": "feature",
+          "text": "Energy system with daily recovery"
+        },
+        {
+          "type": "feature",
+          "text": "SAP earning from rides"
+        },
+        {
+          "type": "feature",
+          "text": "Wallet generation and OPNet integration"
+        },
+        {
+          "type": "feature",
+          "text": "Bike leveling system"
+        },
+        {
+          "type": "feature",
+          "text": "Profile with lifetime stats"
+        }
       ]
     }
   ]
