@@ -16,15 +16,7 @@ const itemTypeLabels: Record<string, string> = {
   tool: 'Minting Tool',
 };
 
-// In-game bike descriptions sourced from gameplay-content.ts (Bikes → Bike Types).
-// "Best for" wording — qualitative, no economy secrets.
-const BIKE_TYPE_BEST_FOR: Record<string, string> = {
-  commuter: 'Leisurely walkers',
-  touring: 'Brisk walkers',
-  racing: 'Power walkers',
-  electric: 'Any walker',
-};
-
+// Optimal km/h speed range per bike type, sourced from gameplay-content.ts (Bikes → Bike Types).
 const BIKE_TYPE_RANGE: Record<string, string> = {
   commuter: '2 – 5 km/h',
   touring: '5 – 9 km/h',
@@ -176,9 +168,7 @@ export function ListingCard(props: ListingCardProps) {
   if ('storeListing' in props) {
     const { storeListing, onBuy, isBuying, disabled, canAfford = true, isAuthenticated = false } = props;
     const typeKey = storeListing.type.toLowerCase();
-    const bestFor = BIKE_TYPE_BEST_FOR[typeKey];
-    const range = BIKE_TYPE_RANGE[typeKey];
-    const description = bestFor && range ? `${bestFor} · ${range}` : bestFor ?? null;
+    const description = BIKE_TYPE_RANGE[typeKey] ?? null;
     const isDisabled = disabled || !storeListing.available || (isAuthenticated && !canAfford);
 
     return (
