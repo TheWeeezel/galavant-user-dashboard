@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef, useId } from 'react';
-import { Cancel } from 'pixelarticons/react';
+import { Cancel, Check } from 'pixelarticons/react';
 import { config } from '../config';
 
 /**
@@ -292,10 +292,14 @@ function AndroidWhitelistDialog({ playStoreUrl, onClose }: DialogProps) {
 
         {step === 'submitted' && (
           <div className="space-y-4 text-center py-2">
-            <div className="text-3xl">✅</div>
+            <div className="flex justify-center">
+              <div className="w-14 h-14 flex items-center justify-center border-2 border-m2e-success bg-m2e-success/10">
+                <Check className="w-10 h-10 text-m2e-success" />
+              </div>
+            </div>
             <h3 className="text-lg uppercase tracking-wide text-m2e-text">Application received!</h3>
             <p className="text-sm text-m2e-text-secondary">
-              We'll add <span className="font-mono text-m2e-text">{email.trim()}</span> to the Galavant closed testers list shortly. You'll get an email from Google Play when you're approved — that can take up to a day.
+              We'll add <span className="font-mono text-m2e-text">{email.trim()}</span> to the Galavant closed testers list shortly. We'll email you once you've been added — that can take up to a day.
             </p>
             <p className="text-xs text-m2e-text-muted">
               In the meantime, you can also play on iOS via TestFlight or use the marketplace on the web.
