@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Human, Coins, Zap, Redo, Copy, Check, Logout } from 'pixelarticons/react';
+import { useWalletConnect } from '@btc-vision/walletconnect';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
 import { StatCard } from '../components/StatCard';
@@ -30,9 +31,25 @@ function getPartImageUrl(type: string, level: number): string {
 
 export function Profile() {
   const { isAuthenticated, isRestoring, isLoading, user, logout } = useAuth();
+  const { disconnect: disconnectWallet } = useWalletConnect();
   const [showLogin, setShowLogin] = useState(false);
   const [copied, setCopied] = useState(false);
   const [selectedBikeId, setSelectedBikeId] = useState<string | null>(null);
+
+  // Logout must also disconnect the wallet from the extension. Otherwise the
+  // wallet stays connected after logout, and the next "Connect Wallet" click in
+  // the LoginModal finds walletAddress immediately (via its 300ms poll) and
+  // re-logs the user into the SAME account before any wallet picker can appear.
+  // Result: the user can never switch to a different wallet without manually
+  // disconnecting the extension first.
+  const handleLogout = useCallback(() => {
+    try {
+      disconnectWallet();
+    } catch (err) {
+      console.warn('[Profile] wallet disconnect failed:', err);
+    }
+    logout();
+  }, [disconnectWallet, logout]);
 
   console.log('[Profile] render — isAuthenticated:', isAuthenticated, 'isRestoring:', isRestoring, 'isLoading:', isLoading, 'user:', user?.nickname ?? null);
 
@@ -297,7 +314,7 @@ export function Profile() {
       </div>
 
       {/* Logout */}
- <button onClick={logout} className="pixel-btn pixel-btn-danger w-full px-4 py-3 text-sm">
+ <button onClick={handleLogout} className="pixel-btn pixel-btn-danger w-full px-4 py-3 text-sm">
  <Logout className="w-5 h-5 mr-2" />
         Logout
       </button>
