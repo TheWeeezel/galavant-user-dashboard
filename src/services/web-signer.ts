@@ -1,11 +1,10 @@
 /**
  * Web-based transaction signing using the OPNet wallet extension.
  * The wallet extension holds keys -- only signed TX hex is sent to the server.
- * This mirrors packages/app/services/signer.ts but uses UnisatSigner instead of a stored mnemonic.
+ * Mirrors packages/app/services/signer.ts but routes through window.opnet.web3.
  */
 import { CallResult } from 'opnet';
 import { fromHex, type Network, type Satoshi } from '@btc-vision/bitcoin';
-import type { UnisatSigner } from '@btc-vision/transaction';
 
 export interface SignedTransactionData {
   fundingTx: string | null;
@@ -13,9 +12,14 @@ export interface SignedTransactionData {
 }
 
 /**
- * Sign a prepared transaction using the wallet browser extension.
+ * Sign a prepared transaction using the OP_WALLET browser extension.
  *
- * @param signer - UnisatSigner (or OPWalletSigner for OP_WALLET)
+ * Per OPNet rules, the frontend MUST pass `signer: null` and `mldsaSigner: null`.
+ * The library auto-detects `window.opnet.web3` and forwards the request to the
+ * wallet, which holds the keys and handles all signing. Passing a signer object
+ * causes the wallet's pageProvider to reject the request with
+ * "signer is not allowed in interaction parameters".
+ *
  * @param offlineBufferHex - Hex-encoded offline buffer from server's prepare endpoint
  * @param refundAddress - User's p2tr address (for change outputs)
  * @param maxSatToSpend - Maximum satoshis the TX can spend (as string)
@@ -24,7 +28,6 @@ export interface SignedTransactionData {
  * @param extraOutputs - Additional outputs (LP payments, tax, etc.)
  */
 export async function signPreparedTransactionWeb(
-  signer: UnisatSigner,
   offlineBufferHex: string,
   refundAddress: string,
   maxSatToSpend: string,
@@ -36,9 +39,11 @@ export async function signPreparedTransactionWeb(
   const buffer = fromHex(offlineBufferHex);
   const callResult = CallResult.fromOfflineBuffer(buffer);
 
-  // Sign with the wallet extension (signer=wallet, mldsaSigner=null -- wallet handles MLDSA)
+  // signer: null is REQUIRED on frontend. CallResult.signTransaction strips the
+  // signer field entirely when null, and the lib then routes through OP_WALLET's
+  // window.opnet.web3.signInteraction(). The wallet rejects any non-null signer.
   const signedTx = await callResult.signTransaction({
-    signer,
+    signer: null,
     mldsaSigner: null,
     refundTo: refundAddress,
     maximumAllowedSatToSpend: BigInt(maxSatToSpend),
