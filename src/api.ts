@@ -379,6 +379,10 @@ export function linkTwitter(username: string) {
   });
 }
 
+export function unlinkTwitter() {
+  return fetchAuthJson<{ success: boolean }>('/social/unlink-twitter', { method: 'POST' });
+}
+
 export function fetchSocialTweets() {
   return fetchAuthJson<{ tweets: SocialTweet[] }>('/social/tweets');
 }

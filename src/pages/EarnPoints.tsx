@@ -12,6 +12,7 @@ import {
   fetchSocialStatus,
   fetchSocialTweets,
   linkTwitter,
+  unlinkTwitter,
   claimFollow,
   claimLike,
   claimRetweet,
@@ -86,6 +87,14 @@ export function EarnPoints() {
     },
   });
 
+  const unlinkTwitterMutation = useMutation({
+    mutationFn: unlinkTwitter,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['socialStatus'] });
+      queryClient.invalidateQueries({ queryKey: ['socialTweets'] });
+    },
+  });
+
   const referralLink = referralData?.referralCode
     ? `${window.location.origin}?ref=${referralData.referralCode}`
     : null;
@@ -99,6 +108,10 @@ export function EarnPoints() {
   };
 
   const socialTweets = socialTweetsData?.tweets ?? [];
+  const TWEETS_PER_PAGE = 16;
+  const [tweetPage, setTweetPage] = useState(0);
+  const totalTweetPages = Math.max(1, Math.ceil(socialTweets.length / TWEETS_PER_PAGE));
+  const visibleTweets = socialTweets.slice(tweetPage * TWEETS_PER_PAGE, (tweetPage + 1) * TWEETS_PER_PAGE);
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6">
@@ -174,52 +187,61 @@ export function EarnPoints() {
       {/* Social Tasks */}
       <div className="pixel-card p-5 space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-m2e-info/10 flex items-center justify-center">
-            <ExternalLink className="w-6 h-6 text-m2e-info" />
+          <div className="flex-1 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-m2e-info/10 flex items-center justify-center">
+              <ExternalLink className="w-6 h-6 text-m2e-info" />
+            </div>
+            <h2 className="text-2xl uppercase tracking-wide text-m2e-text">
+              Social Tasks
+            </h2>
           </div>
-          <h2 className="text-2xl uppercase tracking-wide text-m2e-text">
-            Social Tasks
-          </h2>
-        </div>
-        <p className="text-lg text-m2e-text-secondary">
-          Engage with Galavant on X (Twitter) to earn SAP. Link your account, follow <span className="text-m2e-accent">@GalavantBTC</span>, and interact with our posts — each follow, like, and retweet earns you <span className="text-m2e-accent font-bold">10 SAP</span>. New tweets are added regularly, so keep checking back for fresh earning opportunities.
-        </p>
 
-        {!isAuthenticated ? (
-          <button onClick={() => setShowLogin(true)} className="pixel-btn pixel-btn-primary px-4 py-2 text-sm">
-            Login to Start Earning
-          </button>
-        ) : !socialStatus?.twitterLinked ? (
-          /* Link Twitter */
-          <div className="space-y-2">
-            <p className="text-sm text-m2e-text-secondary">Link your X account to claim social rewards:</p>
-            <div className="flex items-center gap-2">
+          {/* X account connection — top right of card header */}
+          {!isAuthenticated ? (
+            <button onClick={() => setShowLogin(true)} className="pixel-btn pixel-btn-primary px-3 py-1 text-xs shrink-0">
+              Login
+            </button>
+          ) : !socialStatus?.twitterLinked ? (
+            <div className="flex items-center gap-2 shrink-0">
               <input
                 type="text"
                 value={twitterHandle}
                 onChange={(e) => setTwitterHandle(e.target.value)}
                 placeholder="@username"
-                className="flex-1 pixel-border border-m2e-border bg-m2e-bg-alt px-3 py-2 text-sm text-m2e-text placeholder:text-m2e-text-muted"
+                className="w-32 pixel-border border-m2e-border bg-m2e-bg-alt px-2 py-1 text-xs text-m2e-text placeholder:text-m2e-text-muted"
               />
               <button
                 onClick={() => linkTwitterMutation.mutate(twitterHandle)}
                 disabled={!twitterHandle.trim() || linkTwitterMutation.isPending}
-                className="pixel-btn pixel-btn-primary px-4 py-2 text-sm disabled:opacity-50"
+                className="pixel-btn pixel-btn-primary px-3 py-1 text-xs disabled:opacity-50"
               >
-                {linkTwitterMutation.isPending ? 'Linking...' : 'Link'}
+                {linkTwitterMutation.isPending ? '...' : 'Link'}
               </button>
             </div>
-            {linkTwitterMutation.isError && (
-              <p className="text-xs text-m2e-danger">{(linkTwitterMutation.error as Error).message}</p>
-            )}
-          </div>
-        ) : (
-          /* Twitter linked — show tasks */
-          <div className="space-y-4">
-            <p className="text-sm text-m2e-text-muted">
-              Linked as <span className="text-m2e-text font-mono">@{socialStatus.twitterUsername}</span>
-            </p>
+          ) : (
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-xs text-m2e-text font-mono">@{socialStatus.twitterUsername}</span>
+              <button
+                onClick={() => { if (confirm('Unlink your X account?')) unlinkTwitterMutation.mutate(); }}
+                disabled={unlinkTwitterMutation.isPending}
+                className="pixel-btn pixel-btn-secondary px-2 py-1 text-xs disabled:opacity-50"
+              >
+                Unlink
+              </button>
+            </div>
+          )}
+        </div>
 
+        {linkTwitterMutation.isError && (
+          <p className="text-xs text-m2e-danger">{(linkTwitterMutation.error as Error).message}</p>
+        )}
+
+        <p className="text-lg text-m2e-text-secondary">
+          Engage with Galavant on X (Twitter) to earn SAP. Follow <span className="text-m2e-accent">@GalavantBTC</span> and interact with our posts — each follow, like, and retweet earns you <span className="text-m2e-accent font-bold">10 SAP</span>.
+        </p>
+
+        {isAuthenticated && socialStatus?.twitterLinked && (
+          <div className="space-y-4">
             {/* Follow Task */}
             <div className="pixel-border border-m2e-border p-3 flex items-center justify-between gap-3">
               <div className="flex-1">
@@ -254,73 +276,117 @@ export function EarnPoints() {
               <p className="text-xs text-m2e-danger">{(claimFollowMutation.error as Error).message}</p>
             )}
 
-            {/* Tweet Interactions */}
+            {/* Tweet Interactions — Card Grid + Pagination */}
             {socialTweets.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <p className="text-sm uppercase tracking-wide text-m2e-text-secondary">
                   Like & Retweet to Earn
                 </p>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {socialTweets.map((tweet) => (
-                    <div key={tweet.twitterId} className="pixel-border border-m2e-border p-3 space-y-2">
-                      <p className="text-sm text-m2e-text line-clamp-2">{tweet.content}</p>
-                      <div className="flex items-center gap-3 text-xs text-m2e-text-muted">
-                        <span className="flex items-center gap-1">
-                          <Heart className="w-3 h-3" /> {tweet.likes}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Repeat className="w-3 h-3" /> {tweet.retweets}
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2">
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {visibleTweets.map((tweet) => {
+                    const visited = visitedTweets.has(tweet.twitterId);
+                    return (
+                      <div
+                        key={tweet.twitterId}
+                        className="pixel-card p-3 flex flex-col gap-2"
+                      >
+                        {/* Tweet body — 3 lines max */}
+                        <p className="text-xs text-m2e-text line-clamp-3 flex-1 leading-relaxed">
+                          {tweet.content}
+                        </p>
+
+                        {/* Metrics row */}
+                        <div className="flex items-center gap-3 text-xs text-m2e-text-muted">
+                          <span className="flex items-center gap-1">
+                            <Heart className="w-3 h-3" /> {tweet.likes}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Repeat className="w-3 h-3" /> {tweet.retweets}
+                          </span>
+                        </div>
+
+                        {/* Open on X link */}
                         <a
                           href={`https://x.com/GalavantBTC/status/${tweet.twitterId}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => setVisitedTweets((prev) => new Set(prev).add(tweet.twitterId))}
-                          className="pixel-btn pixel-btn-outline px-2 py-1 text-xs no-underline inline-flex items-center gap-1"
+                          className="pixel-btn pixel-btn-outline px-2 py-1 text-xs no-underline inline-flex items-center gap-1 justify-center"
                         >
                           Open on X <ExternalLink className="w-3 h-3" />
                         </a>
-                        {tweet.likeClaimed ? (
-                          <span className="text-xs text-m2e-success flex items-center gap-1">
-                            <Check className="w-3 h-3" /> Like claimed
-                          </span>
-                        ) : !visitedTweets.has(tweet.twitterId) ? (
-                          <span className="text-xs text-m2e-text-muted italic">
-                            Open tweet to like & claim
-                          </span>
-                        ) : (
-                          <button
-                            onClick={() => claimLikeMutation.mutate(tweet.twitterId)}
-                            disabled={claimLikeMutation.isPending}
-                            className="pixel-btn pixel-btn-primary px-2 py-1 text-xs disabled:opacity-50"
-                          >
-                            Claim Like (10 SAP)
-                          </button>
-                        )}
-                        {tweet.retweetClaimed ? (
-                          <span className="text-xs text-m2e-success flex items-center gap-1">
-                            <Check className="w-3 h-3" /> Retweet claimed
-                          </span>
-                        ) : (
-                          <button
-                            onClick={() => claimRetweetMutation.mutate(tweet.twitterId)}
-                            disabled={claimRetweetMutation.isPending}
-                            className="pixel-btn pixel-btn-primary px-2 py-1 text-xs disabled:opacity-50"
-                          >
-                            Claim Retweet (10 SAP)
-                          </button>
-                        )}
+
+                        {/* Claim buttons */}
+                        <div className="flex gap-2">
+                          {tweet.likeClaimed ? (
+                            <span className="flex-1 text-center text-xs text-m2e-success flex items-center justify-center gap-1">
+                              <Check className="w-3 h-3" /> Liked
+                            </span>
+                          ) : visited ? (
+                            <button
+                              onClick={() => claimLikeMutation.mutate(tweet.twitterId)}
+                              disabled={claimLikeMutation.isPending}
+                              className="flex-1 pixel-btn pixel-btn-primary px-2 py-1 text-xs disabled:opacity-50"
+                            >
+                              <Heart className="w-3 h-3 inline mr-1" />10 SAP
+                            </button>
+                          ) : (
+                            <span className="flex-1 text-center text-xs text-m2e-text-muted italic">
+                              Like
+                            </span>
+                          )}
+
+                          {tweet.retweetClaimed ? (
+                            <span className="flex-1 text-center text-xs text-m2e-success flex items-center justify-center gap-1">
+                              <Check className="w-3 h-3" /> RT'd
+                            </span>
+                          ) : visited ? (
+                            <button
+                              onClick={() => claimRetweetMutation.mutate(tweet.twitterId)}
+                              disabled={claimRetweetMutation.isPending}
+                              className="flex-1 pixel-btn pixel-btn-primary px-2 py-1 text-xs disabled:opacity-50"
+                            >
+                              <Repeat className="w-3 h-3 inline mr-1" />10 SAP
+                            </button>
+                          ) : (
+                            <span className="flex-1 text-center text-xs text-m2e-text-muted italic">
+                              RT
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
-                {claimLikeMutation.isError && (
-                  <p className="text-xs text-m2e-danger">{(claimLikeMutation.error as Error).message}</p>
+
+                {/* Pagination */}
+                {totalTweetPages > 1 && (
+                  <div className="flex items-center justify-center gap-4 pt-2">
+                    <button
+                      onClick={() => setTweetPage((p) => Math.max(0, p - 1))}
+                      disabled={tweetPage === 0}
+                      className="pixel-btn pixel-btn-secondary px-3 py-1 text-xs disabled:opacity-40"
+                    >
+                      Prev
+                    </button>
+                    <span className="text-xs text-m2e-text-muted">
+                      Page {tweetPage + 1} of {totalTweetPages}
+                    </span>
+                    <button
+                      onClick={() => setTweetPage((p) => Math.min(totalTweetPages - 1, p + 1))}
+                      disabled={tweetPage >= totalTweetPages - 1}
+                      className="pixel-btn pixel-btn-secondary px-3 py-1 text-xs disabled:opacity-40"
+                    >
+                      Next
+                    </button>
+                  </div>
                 )}
-                {claimRetweetMutation.isError && (
-                  <p className="text-xs text-m2e-danger">{(claimRetweetMutation.error as Error).message}</p>
+
+                {(claimLikeMutation.isError || claimRetweetMutation.isError) && (
+                  <p className="text-xs text-m2e-danger text-center">
+                    {(claimLikeMutation.error as Error)?.message ?? (claimRetweetMutation.error as Error)?.message}
+                  </p>
                 )}
               </div>
             )}
