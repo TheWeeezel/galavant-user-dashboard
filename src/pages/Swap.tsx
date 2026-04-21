@@ -137,6 +137,7 @@ function BuyTab() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['swap-orders'] });
       queryClient.invalidateQueries({ queryKey: ['main-wallet'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet-transactions'] });
       setSuccess(`Swap complete! Received ${formatTokens(data.tokensReceived)} SAT`);
       setError(null);
     },
