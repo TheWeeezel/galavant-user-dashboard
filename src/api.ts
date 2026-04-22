@@ -705,11 +705,32 @@ export function depositTokensPrepare(amount: string) {
   });
 }
 
+export interface DepositSubmitResult {
+  status: 'pending';
+  depositId: string;
+  tokensDeposited: string;
+  txHash: string;
+}
+
 export function depositTokensSubmit(prepareId: string, signedTx: SignedTx) {
-  return fetchAuthJson<{ pointsCredited: number; tokensDeposited: string; txHash: string }>('/convert/deposit/submit', {
+  return fetchAuthJson<DepositSubmitResult>('/convert/deposit/submit', {
     method: 'POST',
     body: JSON.stringify({ prepareId, signedTx }),
   });
+}
+
+export interface PendingDeposit {
+  id: string;
+  txHash: string;
+  amount: number;
+  status: 'pending' | 'confirmed' | 'failed';
+  error: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export function fetchPendingDeposits() {
+  return fetchAuthJson<PendingDeposit[]>('/wallet/pending-deposits');
 }
 
 // --- Staking ---
