@@ -134,17 +134,13 @@ export function Wallet() {
               amount={mainLoading ? '…' : mainWallet ? formatTokens(mainWallet.satTokenBalance) : '0'}
               unit="SAT"
               note={balanceUpdating ? 'syncing' : undefined}
-              icon={<Coins className="w-10 h-10 text-m2e-text-secondary" />}
+              icon={<img src="/assets/token-gold.png" alt="SAT" className="w-10 h-10 pixel-render" />}
             />
             <BigBalance
               label="BTC"
               amount={mainLoading ? '…' : mainWallet ? formatSats(mainWallet.btcBalance) : '0'}
               unit="sats"
-              icon={
-                <svg className="w-10 h-10 text-m2e-warning" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M11.767 19.089c4.924.868 9.593-2.535 10.461-7.599.868-5.064-2.543-9.857-7.615-10.724-5.072-.868-9.857 2.525-10.735 7.598-.868 5.063 2.536 9.857 7.609 10.725h.28zm2.218-6.242c-.312.88-1.03 1.215-2.155 1.062l-.63-.193-.428 2.04-1.246-.315.428-2.04-1.026-.257-.428 2.04-1.245-.315.428-2.04-2.562-.644.383-1.515s.93.269.93.245c.525.133.77-.186.867-.392l.677-3.232c.036-.09.046-.187.03-.282-.046-.305-.229-.466-.572-.544-.012-.022-.929-.234-.929-.234l.29-1.415 2.562.644.428-2.041 1.245.315-.428 2.04 1.025.257.429-2.04 1.245.315-.428 2.04c1.562.434 2.691 1.082 2.435 2.559-.175.993-.723 1.405-1.44 1.471.943.471 1.407 1.226 1.105 2.497z"/>
-                </svg>
-              }
+              icon={<img src="/assets/token-btc.png" alt="BTC" className="w-10 h-10 pixel-render" />}
             />
           </div>
         </motion.section>
