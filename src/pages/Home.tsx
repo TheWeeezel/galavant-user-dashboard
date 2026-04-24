@@ -21,12 +21,36 @@ import {
   Music, Cloud, Lock, Clock,
   ArrowDown, ChevronLeft, ChevronRight,
 } from 'pixelarticons/react';
-import { fetchStats, fetchLeaderboard, fetchMarketplace } from '../api';
+import { fetchStats, fetchLeaderboard, fetchMarketplace, fetchNfts, type MintedNft } from '../api';
 import { NftDetailModal } from '../components/NftDetailModal';
 import { ListingCard } from '../components/ListingCard';
 import { AndroidWhitelistButton } from '../components/AndroidWhitelistButton';
 import { formatDistance } from '../utils/format';
+import { config } from '../config';
 import type { ChangelogData } from '../types/changelog';
+
+const RARITY_RANK: Record<string, number> = {
+  legendary: 5,
+  epic: 4,
+  rare: 3,
+  uncommon: 2,
+  common: 1,
+};
+
+const RARITY_STYLE: Record<string, { label: string; ring: string; chip: string; glow: string }> = {
+  legendary: { label: 'Legendary', ring: 'ring-m2e-legendary/40', chip: 'bg-m2e-legendary/20 text-m2e-legendary border-m2e-legendary', glow: 'drop-shadow-[0_0_24px_rgba(212,146,10,0.45)]' },
+  epic:      { label: 'Epic',      ring: 'ring-m2e-epic/40',      chip: 'bg-m2e-epic/20 text-m2e-epic border-m2e-epic',            glow: 'drop-shadow-[0_0_20px_rgba(136,85,187,0.4)]'  },
+  rare:      { label: 'Rare',      ring: 'ring-m2e-rare/40',      chip: 'bg-m2e-rare/20 text-m2e-rare border-m2e-rare',            glow: 'drop-shadow-[0_0_18px_rgba(68,136,204,0.4)]'  },
+  uncommon:  { label: 'Uncommon',  ring: 'ring-m2e-uncommon/40',  chip: 'bg-m2e-uncommon/20 text-m2e-uncommon border-m2e-uncommon', glow: 'drop-shadow-[0_0_14px_rgba(59,165,93,0.35)]'  },
+  common:    { label: 'Common',    ring: 'ring-m2e-common/40',    chip: 'bg-m2e-common/20 text-m2e-common border-m2e-common',       glow: 'drop-shadow-[0_8px_0_rgba(0,0,0,0.15)]'       },
+};
+
+function resolveBikeImage(bike: MintedNft): string {
+  if (bike.imageUrl) {
+    return bike.imageUrl.startsWith('/') ? `${config.apiUrl}${bike.imageUrl}` : bike.imageUrl;
+  }
+  return `${config.apiUrl}/art/bases/bike-${bike.type.toLowerCase()}.png`;
+}
 
 type LeaderboardMetric = 'distance' | 'earnings';
 type LeaderboardPeriod = 'daily' | 'weekly' | 'all_time';
@@ -46,29 +70,24 @@ function formatSat(n: number): string {
 
 // ── Data ────────────────────────────────────────────────────────────────────
 
-const PILLARS: { kicker: string; title: string; tagline: string; image: string; icon: React.ComponentType<any> }[] = [
-  {
-    kicker: '01 / MOVE',
-    title: 'WALK.',
-    tagline: 'Every step is an on-chain action.',
-    image: '/assets/landing/feature-earn.png',
-    icon: Human,
-  },
-  {
-    kicker: '02 / STACK',
-    title: 'EARN.',
-    tagline: 'Real sats. Real economy. Zero gas.',
-    image: '/assets/landing/feature-ride.png',
-    icon: Coins,
-  },
-  {
-    kicker: '03 / DOMINATE',
-    title: 'CONQUER.',
-    tagline: 'Leaderboards. Bikes. Glory.',
-    image: '/assets/landing/feature-trade.png',
-    icon: Trophy,
-  },
-];
+type PillarVisual =
+  | { kind: 'bike'; bike: MintedNft }
+  | { kind: 'tokens' }
+  | { kind: 'fallback'; src: string };
+
+interface PillarData {
+  kicker: string;
+  title: string;
+  tagline: string;
+  icon: React.ComponentType<any>;
+  visual: PillarVisual;
+}
+
+const PILLAR_META = [
+  { kicker: '01 / MOVE',     title: 'WALK.',    tagline: 'Balance bikes on your feet. Every step on-chain.', icon: Human,  fallback: '/assets/landing/feature-earn.png' },
+  { kicker: '02 / STACK',    title: 'EARN.',    tagline: 'SAP per minute. Convert to SAT. Real sats.',       icon: Coins,  fallback: '/assets/landing/feature-ride.png' },
+  { kicker: '03 / DOMINATE', title: 'CONQUER.', tagline: 'Legendary bikes. Leaderboards. Glory.',            icon: Trophy, fallback: '/assets/landing/feature-trade.png' },
+] as const;
 
 const COMPARISON_DATA: { label: string; icon: React.ComponentType<any>; other: string; galavant: string }[] = [
   { label: 'Blockchain', icon: Globe, other: 'Solana, BNB, L2s', galavant: 'Bitcoin Layer 1' },
@@ -229,6 +248,39 @@ export function Home() {
     queryFn: () => fetchMarketplace({ page: 1, limit: 6, sortBy: mpSort }),
     retry: false,
   });
+
+  // Featured bikes for the pillars section (real NFTs sorted by rarity+level)
+  const featuredBikes = useQuery({
+    queryKey: ['home-featured-bikes'],
+    queryFn: () => fetchNfts(1, 30),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const pillars: PillarData[] = useMemo(() => {
+    const nfts = featuredBikes.data?.nfts ?? [];
+    const ranked = [...nfts].sort((a, b) => {
+      const ra = RARITY_RANK[a.quality] ?? 0;
+      const rb = RARITY_RANK[b.quality] ?? 0;
+      if (rb !== ra) return rb - ra;
+      return (b.level ?? 0) - (a.level ?? 0);
+    });
+    const conquerBike = ranked[0] ?? null;
+    const walkBike = ranked.find(b => b.id !== conquerBike?.id) ?? null;
+
+    const walkVisual: PillarVisual = walkBike
+      ? { kind: 'bike', bike: walkBike }
+      : { kind: 'fallback', src: PILLAR_META[0].fallback };
+    const earnVisual: PillarVisual = { kind: 'tokens' };
+    const conquerVisual: PillarVisual = conquerBike
+      ? { kind: 'bike', bike: conquerBike }
+      : { kind: 'fallback', src: PILLAR_META[2].fallback };
+
+    return [
+      { ...PILLAR_META[0], visual: walkVisual },
+      { ...PILLAR_META[1], visual: earnVisual },
+      { ...PILLAR_META[2], visual: conquerVisual },
+    ];
+  }, [featuredBikes.data]);
 
   // Comparison carousel — track leftmost visible card
   useEffect(() => {
@@ -422,14 +474,14 @@ export function Home() {
             className="flex w-[300vw] h-full"
             style={reducedMotion ? undefined : { x: pillarsXSpring }}
           >
-            {PILLARS.map((p, i) => (
-              <PillarPanel key={p.title} pillar={p} index={i} total={PILLARS.length} />
+            {pillars.map((p, i) => (
+              <PillarPanel key={p.title} pillar={p} index={i} total={pillars.length} />
             ))}
           </motion.div>
 
           {/* Progress dots */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
-            {PILLARS.map((_, i) => (
+            {pillars.map((_, i) => (
               <PillarDot key={i} index={i} progress={pillarsProgress} />
             ))}
           </div>
@@ -445,7 +497,7 @@ export function Home() {
       <section className="md:hidden px-4 py-12 space-y-8 pixel-noise-bg">
         <div className="section-label justify-center mx-auto w-fit">01 · Loop</div>
         <div className="space-y-6">
-          {PILLARS.map((p, i) => (
+          {pillars.map((p, i) => (
             <PillarMobile key={p.title} pillar={p} index={i} />
           ))}
         </div>
@@ -986,7 +1038,7 @@ function LiveTicker({ items }: { items: string[] }) {
 }
 
 function PillarPanel({ pillar, index, total }: {
-  pillar: typeof PILLARS[number];
+  pillar: PillarData;
   index: number;
   total: number;
 }) {
@@ -1010,20 +1062,14 @@ function PillarPanel({ pillar, index, total }: {
           </div>
         </div>
         <div className="flex justify-center lg:justify-end order-1 lg:order-2">
-          <motion.img
-            src={pillar.image}
-            alt={pillar.title}
-            className="w-60 md:w-80 lg:w-[28rem] h-auto pixel-render drop-shadow-[0_8px_0_rgba(0,0,0,0.15)]"
-            animate={{ y: [0, -10, 0], rotate: [0, 1.5, 0, -1.5, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          />
+          <PillarVisual visual={pillar.visual} size="lg" title={pillar.title} />
         </div>
       </div>
     </div>
   );
 }
 
-function PillarMobile({ pillar, index }: { pillar: typeof PILLARS[number]; index: number }) {
+function PillarMobile({ pillar, index }: { pillar: PillarData; index: number }) {
   return (
     <motion.div
       className="pixel-card p-6 flex flex-col items-center gap-4 text-center"
@@ -1033,14 +1079,110 @@ function PillarMobile({ pillar, index }: { pillar: typeof PILLARS[number]; index
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       <div className="text-[10px] tracking-[0.35em] uppercase text-m2e-accent">{pillar.kicker}</div>
-      <img
-        src={pillar.image}
-        alt={pillar.title}
-        className="w-40 h-40 object-contain pixel-render"
-      />
+      <PillarVisual visual={pillar.visual} size="sm" title={pillar.title} />
       <h3 className="text-5xl uppercase leading-none text-m2e-text text-chroma-soft">{pillar.title}</h3>
       <p className="text-base text-m2e-text-secondary leading-snug max-w-xs">{pillar.tagline}</p>
     </motion.div>
+  );
+}
+
+function PillarVisual({ visual, size, title }: {
+  visual: PillarVisual;
+  size: 'sm' | 'lg';
+  title: string;
+}) {
+  const large = size === 'lg';
+
+  if (visual.kind === 'bike') {
+    const bike = visual.bike;
+    const style = RARITY_STYLE[bike.quality] ?? RARITY_STYLE.common;
+    const image = resolveBikeImage(bike);
+    return (
+      <div className={`relative flex flex-col items-center gap-3 ${large ? '' : ''}`}>
+        <div className={`relative ${large ? 'w-60 md:w-80 lg:w-[28rem]' : 'w-40'}`}>
+          <motion.img
+            src={image}
+            alt={`${bike.quality} ${bike.type} bike`}
+            className={`w-full h-auto pixel-render ${style.glow}`}
+            animate={{ y: [0, -10, 0], rotate: [0, 1.5, 0, -1.5, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          {/* rarity halo */}
+          <div
+            className={`absolute inset-0 -z-10 rounded-full blur-2xl opacity-50`}
+            style={{
+              background:
+                bike.quality === 'legendary' ? 'radial-gradient(ellipse, rgba(212,146,10,0.4), transparent 70%)' :
+                bike.quality === 'epic'      ? 'radial-gradient(ellipse, rgba(136,85,187,0.35), transparent 70%)' :
+                bike.quality === 'rare'      ? 'radial-gradient(ellipse, rgba(68,136,204,0.3), transparent 70%)' :
+                bike.quality === 'uncommon'  ? 'radial-gradient(ellipse, rgba(59,165,93,0.3), transparent 70%)' :
+                'radial-gradient(ellipse, rgba(138,138,138,0.2), transparent 70%)',
+            }}
+          />
+        </div>
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          <span className={`px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border ${style.chip} border-opacity-60`}>
+            {style.label}
+          </span>
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border">
+            {bike.type}
+          </span>
+          {bike.level > 0 && (
+            <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border">
+              Lv. {bike.level}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (visual.kind === 'tokens') {
+    const coinSize = large ? 'w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56' : 'w-24 h-24';
+    return (
+      <div className="relative flex flex-col items-center gap-3">
+        <div className={`relative ${large ? 'w-64 md:w-80 lg:w-[28rem] h-56 md:h-72 lg:h-80' : 'w-44 h-32'}`}>
+          {/* SAT (gold) — back/right */}
+          <motion.img
+            src="/assets/token-gold.png"
+            alt="SAT token"
+            className={`absolute ${coinSize} pixel-render drop-shadow-[0_0_24px_rgba(212,146,10,0.5)]`}
+            style={{ top: '10%', right: '8%' }}
+            animate={{ y: [0, -12, 0], rotate: [-6, 2, -6] }}
+            transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          {/* SAP (silver) — front/left */}
+          <motion.img
+            src="/assets/token-silver.png"
+            alt="SAP token"
+            className={`absolute ${coinSize} pixel-render drop-shadow-[0_0_20px_rgba(196,184,156,0.5)]`}
+            style={{ bottom: '5%', left: '5%' }}
+            animate={{ y: [0, -8, 0], rotate: [4, -3, 4] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border flex items-center gap-1.5">
+            <img src="/assets/token-silver.png" alt="" className="w-3 h-3 pixel-render" /> SAP
+          </span>
+          <span className="text-m2e-text-muted">×</span>
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border flex items-center gap-1.5">
+            <img src="/assets/token-gold.png" alt="" className="w-3 h-3 pixel-render" /> SAT
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback — original landing asset
+  return (
+    <motion.img
+      src={visual.src}
+      alt={title}
+      className={`${large ? 'w-60 md:w-80 lg:w-[28rem]' : 'w-40 h-40 object-contain'} h-auto pixel-render drop-shadow-[0_8px_0_rgba(0,0,0,0.15)]`}
+      animate={{ y: [0, -10, 0], rotate: [0, 1.5, 0, -1.5, 0] }}
+      transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+    />
   );
 }
 
