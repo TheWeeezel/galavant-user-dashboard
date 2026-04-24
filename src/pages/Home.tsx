@@ -73,6 +73,7 @@ function formatSat(n: number): string {
 type PillarVisual =
   | { kind: 'bike'; bike: MintedNft }
   | { kind: 'tokens' }
+  | { kind: 'loot' }
   | { kind: 'fallback'; src: string };
 
 interface PillarData {
@@ -84,9 +85,9 @@ interface PillarData {
 }
 
 const PILLAR_META = [
-  { kicker: '01 / MOVE',     title: 'WALK.',    tagline: 'Balance bikes on your feet. Every step on-chain.', icon: Human,  fallback: '/assets/landing/feature-earn.png' },
+  { kicker: '01 / MOVE',     title: 'WALK.',    tagline: 'Your balance bike. On chain. On your feet.',       icon: Human,  fallback: '/assets/floating/bike.png' },
   { kicker: '02 / STACK',    title: 'EARN.',    tagline: 'SAP per minute. Convert to SAT. Real sats.',       icon: Coins,  fallback: '/assets/landing/feature-ride.png' },
-  { kicker: '03 / DOMINATE', title: 'CONQUER.', tagline: 'Legendary bikes. Leaderboards. Glory.',            icon: Trophy, fallback: '/assets/landing/feature-trade.png' },
+  { kicker: '03 / DOMINATE', title: 'CONQUER.', tagline: 'Legendary gear. Gems. Tools. Trophies.',           icon: Trophy, fallback: '/assets/landing/feature-trade.png' },
 ] as const;
 
 const COMPARISON_DATA: { label: string; icon: React.ComponentType<any>; other: string; galavant: string }[] = [
@@ -264,21 +265,16 @@ export function Home() {
       if (rb !== ra) return rb - ra;
       return (b.level ?? 0) - (a.level ?? 0);
     });
-    const conquerBike = ranked[0] ?? null;
-    const walkBike = ranked.find(b => b.id !== conquerBike?.id) ?? null;
+    const bestBike = ranked[0] ?? null;
 
-    const walkVisual: PillarVisual = walkBike
-      ? { kind: 'bike', bike: walkBike }
+    const walkVisual: PillarVisual = bestBike
+      ? { kind: 'bike', bike: bestBike }
       : { kind: 'fallback', src: PILLAR_META[0].fallback };
-    const earnVisual: PillarVisual = { kind: 'tokens' };
-    const conquerVisual: PillarVisual = conquerBike
-      ? { kind: 'bike', bike: conquerBike }
-      : { kind: 'fallback', src: PILLAR_META[2].fallback };
 
     return [
       { ...PILLAR_META[0], visual: walkVisual },
-      { ...PILLAR_META[1], visual: earnVisual },
-      { ...PILLAR_META[2], visual: conquerVisual },
+      { ...PILLAR_META[1], visual: { kind: 'tokens' } },
+      { ...PILLAR_META[2], visual: { kind: 'loot' } },
     ];
   }, [featuredBikes.data]);
 
@@ -1169,6 +1165,64 @@ function PillarVisual({ visual, size, title }: {
           <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border flex items-center gap-1.5">
             <img src="/assets/token-gold.png" alt="" className="w-3 h-3 pixel-render" /> SAT
           </span>
+        </div>
+      </div>
+    );
+  }
+
+  if (visual.kind === 'loot') {
+    const stageSize = large ? 'w-72 md:w-96 lg:w-[32rem] h-64 md:h-80 lg:h-96' : 'w-48 h-40';
+    const gemSize = large ? 'w-32 md:w-40 lg:w-48' : 'w-20';
+    const toolSize = large ? 'w-28 md:w-36 lg:w-44' : 'w-16';
+    const partSize = large ? 'w-24 md:w-32 lg:w-40' : 'w-14';
+    return (
+      <div className="relative flex flex-col items-center gap-3">
+        <div className={`relative ${stageSize}`}>
+          {/* Rainbow halo behind everything */}
+          <div
+            className="absolute inset-0 -z-10 blur-3xl opacity-60"
+            style={{
+              background:
+                'conic-gradient(from 0deg, rgba(212,146,10,0.35), rgba(136,85,187,0.35), rgba(68,136,204,0.3), rgba(232,129,26,0.35), rgba(212,146,10,0.35))',
+            }}
+          />
+
+          {/* Gem — top/center, biggest, leading sparkle */}
+          <motion.img
+            src="/assets/floating/gem.png"
+            alt="Legendary gem"
+            className={`absolute ${gemSize} pixel-render drop-shadow-[0_0_28px_rgba(212,146,10,0.55)]`}
+            style={{ top: '2%', left: '50%', translate: '-50% 0' }}
+            animate={{ y: [0, -14, 0], rotate: [-4, 4, -4] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+
+          {/* Tool — bottom-left */}
+          <motion.img
+            src="/assets/floating/tool.png"
+            alt="Minting tool"
+            className={`absolute ${toolSize} pixel-render drop-shadow-[0_0_22px_rgba(232,129,26,0.55)]`}
+            style={{ bottom: '4%', left: '4%' }}
+            animate={{ y: [0, -10, 0], rotate: [6, -6, 6] }}
+            transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+          />
+
+          {/* Part (Lv 9) — bottom-right */}
+          <motion.img
+            src="/parts/part-earning-lv9.png"
+            alt="Level 9 earning part"
+            className={`absolute ${partSize} pixel-render drop-shadow-[0_0_20px_rgba(136,85,187,0.55)]`}
+            style={{ bottom: '8%', right: '4%' }}
+            animate={{ y: [0, -8, 0], rotate: [-5, 5, -5] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
+          />
+        </div>
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-legendary/15 text-m2e-legendary border-m2e-legendary/50">Gems</span>
+          <span className="text-m2e-text-muted">·</span>
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-accent/15 text-m2e-accent border-m2e-accent/50">Tools</span>
+          <span className="text-m2e-text-muted">·</span>
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-epic/15 text-m2e-epic border-m2e-epic/50">Lv 9 Parts</span>
         </div>
       </div>
     );
