@@ -87,7 +87,7 @@ interface PillarData {
 const PILLAR_META = [
   { kicker: '01 / MOVE',     title: 'WALK.',    tagline: 'Your balance bike. On chain. On your feet.',       icon: Human,  fallback: '/assets/floating/bike.png' },
   { kicker: '02 / STACK',    title: 'EARN.',    tagline: 'SAP per minute. Convert to SAT. Real sats.',       icon: Coins,  fallback: '/assets/landing/feature-ride.png' },
-  { kicker: '03 / DOMINATE', title: 'CONQUER.', tagline: 'Legendary gear. Gems. Tools. Trophies.',           icon: Trophy, fallback: '/assets/landing/feature-trade.png' },
+  { kicker: '03 / DOMINATE', title: 'CONQUER.', tagline: 'Lv 9 parts. Toolboxes. Legendary tools.',          icon: Trophy, fallback: '/assets/landing/feature-trade.png' },
 ] as const;
 
 const COMPARISON_DATA: { label: string; icon: React.ComponentType<any>; other: string; galavant: string }[] = [
@@ -1172,9 +1172,9 @@ function PillarVisual({ visual, size, title }: {
 
   if (visual.kind === 'loot') {
     const stageSize = large ? 'w-72 md:w-96 lg:w-[32rem] h-64 md:h-80 lg:h-96' : 'w-48 h-40';
-    const gemSize = large ? 'w-32 md:w-40 lg:w-48' : 'w-20';
-    const toolSize = large ? 'w-28 md:w-36 lg:w-44' : 'w-16';
-    const partSize = large ? 'w-24 md:w-32 lg:w-40' : 'w-14';
+    const luckSize = large ? 'w-32 md:w-40 lg:w-48' : 'w-20';
+    const toolboxSize = large ? 'w-32 md:w-40 lg:w-48' : 'w-20';
+    const toolSize = large ? 'w-24 md:w-32 lg:w-40' : 'w-14';
     return (
       <div className="relative flex flex-col items-center gap-3">
         <div className={`relative ${stageSize}`}>
@@ -1187,42 +1187,42 @@ function PillarVisual({ visual, size, title }: {
             }}
           />
 
-          {/* Gem — top/center, biggest, leading sparkle */}
+          {/* Lv 9 Luck part — top/center, legendary sparkle */}
           <motion.img
-            src="/assets/floating/gem.png"
-            alt="Legendary gem"
-            className={`absolute ${gemSize} pixel-render drop-shadow-[0_0_28px_rgba(212,146,10,0.55)]`}
-            style={{ top: '2%', left: '50%', translate: '-50% 0' }}
-            animate={{ y: [0, -14, 0], rotate: [-4, 4, -4] }}
+            src="/parts/part-luck-lv9.png"
+            alt="Legendary luck part"
+            className={`absolute ${luckSize} pixel-render drop-shadow-[0_0_28px_rgba(212,146,10,0.65)]`}
+            style={{ top: '0%', left: '50%', translate: '-50% 0' }}
+            animate={{ y: [0, -14, 0], rotate: [-3, 3, -3] }}
             transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
           />
 
-          {/* Tool — bottom-left */}
+          {/* Toolbox — bottom-left */}
           <motion.img
-            src="/assets/floating/tool.png"
-            alt="Minting tool"
-            className={`absolute ${toolSize} pixel-render drop-shadow-[0_0_22px_rgba(232,129,26,0.55)]`}
-            style={{ bottom: '4%', left: '4%' }}
-            animate={{ y: [0, -10, 0], rotate: [6, -6, 6] }}
+            src="/assets/floating/toolbox-lv5.png"
+            alt="Legendary toolbox"
+            className={`absolute ${toolboxSize} pixel-render drop-shadow-[0_0_22px_rgba(204,51,51,0.5)]`}
+            style={{ bottom: '2%', left: '2%' }}
+            animate={{ y: [0, -10, 0], rotate: [4, -4, 4] }}
             transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
           />
 
-          {/* Part (Lv 9) — bottom-right */}
+          {/* Tool — bottom-right */}
           <motion.img
-            src="/parts/part-earning-lv9.png"
-            alt="Level 9 earning part"
-            className={`absolute ${partSize} pixel-render drop-shadow-[0_0_20px_rgba(136,85,187,0.55)]`}
-            style={{ bottom: '8%', right: '4%' }}
-            animate={{ y: [0, -8, 0], rotate: [-5, 5, -5] }}
+            src="/assets/floating/tool.png"
+            alt="Minting tool"
+            className={`absolute ${toolSize} pixel-render drop-shadow-[0_0_20px_rgba(232,129,26,0.55)]`}
+            style={{ bottom: '10%', right: '4%' }}
+            animate={{ y: [0, -8, 0], rotate: [-6, 6, -6] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-center">
-          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-legendary/15 text-m2e-legendary border-m2e-legendary/50">Gems</span>
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-legendary/15 text-m2e-legendary border-m2e-legendary/50">Lv 9 Parts</span>
+          <span className="text-m2e-text-muted">·</span>
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-danger/15 text-m2e-danger border-m2e-danger/50">Toolboxes</span>
           <span className="text-m2e-text-muted">·</span>
           <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-accent/15 text-m2e-accent border-m2e-accent/50">Tools</span>
-          <span className="text-m2e-text-muted">·</span>
-          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-epic/15 text-m2e-epic border-m2e-epic/50">Lv 9 Parts</span>
         </div>
       </div>
     );

@@ -110,7 +110,10 @@ type RepeatMode = 'off' | 'all' | 'one';
 export function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const activeTrackRef = useRef<HTMLButtonElement | null>(null);
-  const [trackIdx, setTrackIdx] = useState(0);
+  // Pick a random starting track on each page load
+  const [trackIdx, setTrackIdx] = useState(() =>
+    tracklist.length > 0 ? Math.floor(Math.random() * tracklist.length) : 0,
+  );
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
