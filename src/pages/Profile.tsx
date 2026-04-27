@@ -10,7 +10,7 @@ import { useWalletConnect } from '@btc-vision/walletconnect';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
 import { NftDetailModal } from '../components/NftDetailModal';
-import { fetchSpendingWallet, fetchUserBikes, fetchUserParts } from '../api';
+import { fetchSpendingWallet, fetchUserBikes, fetchUserParts, fetchWalletNfts } from '../api';
 import type { UserBike, UserPart } from '../api';
 import { MissionProfileCard } from '../components/MissionProfileCard';
 import { config } from '../config';
@@ -72,11 +72,20 @@ export function Profile() {
     enabled: isAuthenticated,
   });
 
+  const { data: nftBikes } = useQuery({
+    queryKey: ['walletNfts'],
+    queryFn: fetchWalletNfts,
+    enabled: isAuthenticated,
+  });
+
   const { data: parts } = useQuery({
     queryKey: ['userParts'],
     queryFn: fetchUserParts,
     enabled: isAuthenticated,
   });
+
+  const selectedBike: UserBike | null =
+    (bikes?.find((b) => b.id === selectedBikeId) ?? nftBikes?.bikes?.find((b) => b.id === selectedBikeId)) ?? null;
 
   if (isRestoring) {
     return (
@@ -339,6 +348,68 @@ export function Profile() {
           )}
         </motion.section>
 
+        {/* NFTs (exported bikes on-chain) */}
+        {nftBikes && nftBikes.bikes.length > 0 && (
+          <motion.section
+            className="space-y-3"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center justify-between">
+              <div className="section-label">Inventory · NFTs</div>
+              <span className="text-xs uppercase tracking-[0.25em] text-m2e-text-muted">{nftBikes.bikes.length} on-chain</span>
+            </div>
+            <motion.div
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+              variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.05 } } }}
+              initial="hidden"
+              animate="visible"
+            >
+              {nftBikes.bikes.map((bike: UserBike) => {
+                const imageUrl = bike.imageUrl
+                  ? (bike.imageUrl.startsWith('/') ? `${config.apiUrl}${bike.imageUrl}` : bike.imageUrl)
+                  : `${config.apiUrl}/art/bases/bike-${bike.type.toLowerCase()}.png`;
+                const qualityBadge = `pixel-badge-${bike.quality}`;
+                return (
+                  <motion.div
+                    key={bike.id}
+                    variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}
+                    whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                    className="pixel-card overflow-hidden hover:border-m2e-accent-dark transition-colors cursor-pointer"
+                    onClick={() => setSelectedBikeId(bike.id)}
+                  >
+                    <div className="relative aspect-[16/9] bg-m2e-bg-alt border-b-2 border-m2e-border flex items-center justify-center">
+                      <img
+                        src={imageUrl}
+                        alt={`${bike.type} bike`}
+                        className="w-full h-full object-cover pixel-render"
+                        loading="lazy"
+                      />
+                      <span className="absolute top-2 right-2 px-2 py-0.5 text-[10px] bg-m2e-info/20 text-m2e-info pixel-border shadow-sm tracking-wide border-m2e-info/50">
+                        On-chain
+                      </span>
+                    </div>
+                    <div className="p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm uppercase tracking-wide text-m2e-text">{bike.type}</span>
+                        <span className={`px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide border-opacity-50 ${qualityBadge}`}>
+                          {bike.quality}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[10px] text-m2e-text-muted tracking-[0.25em] uppercase">
+                        <span>#{bike.tokenId}</span>
+                        <span>Lv. {bike.level}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </motion.section>
+        )}
+
         {/* Parts inventory */}
         <motion.section
           className="space-y-3"
@@ -409,7 +480,11 @@ export function Profile() {
         </motion.section>
 
         {selectedBikeId && (
-          <NftDetailModal nftId={selectedBikeId} onClose={() => setSelectedBikeId(null)} />
+          <NftDetailModal
+            nftId={selectedBikeId}
+            onClose={() => setSelectedBikeId(null)}
+            ownerBike={selectedBike}
+          />
         )}
       </div>
     </>

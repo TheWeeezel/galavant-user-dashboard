@@ -24,7 +24,7 @@ async function fetchAuthJson<T>(path: string, options: RequestInit = {}): Promis
   const res = await fetch(`${config.apiUrl}${path}`, { ...options, headers });
   if (!res.ok) {
     const body = await res.json().catch(() => null);
-    throw new Error(body?.error ?? `API error: ${res.status}`);
+    throw new Error(body?.message ?? body?.error ?? `API error: ${res.status}`);
   }
   return res.json();
 }
@@ -74,7 +74,8 @@ export interface MintedNft {
   ownerId: string;
 }
 
-export interface MintedNftDetail extends MintedNft {
+export interface MintedNftDetail extends Omit<MintedNft, 'tokenId'> {
+  tokenId: number | null;
   maxMints: number;
   durability: number;
   hp: number;
@@ -772,6 +773,14 @@ export function unstake(stakeId: string) {
 }
 
 // --- Blockchain / NFT ---
+
+export interface BlockchainFees {
+  nftExportFeeSap: number;
+}
+
+export function fetchBlockchainFees() {
+  return fetchJson<BlockchainFees>('/blockchain/fees');
+}
 
 export function mintBikeNft(bikeId: string) {
   return fetchAuthJson<{ tokenId: string; txHash: string; imageUrl: string }>('/blockchain/mint-bike', {
