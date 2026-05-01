@@ -1,14 +1,14 @@
 /**
- * Galavant on Android is in open testing on Google Play. The link below opens
- * the public testing opt-in page — anyone with a Google account can click
- * "Become a tester" and then install the app from the Play Store.
+ * Galavant on Android is in open testing on Google Play. The Play Store
+ * listing URL works for everyone in supported countries — Play handles the
+ * "Become a tester" opt-in implicitly when the user installs.
  *
  * Visual variants:
  *   - default: matches the big "Download on iOS" CTA button
  *   - compact: matches the smaller secondary buttons used on inline cards
  */
 
-const PLAY_STORE_TESTING_URL = 'https://play.google.com/apps/testing/com.m2e.opnet';
+const PLAY_STORE_LISTING_URL = 'https://play.google.com/store/apps/details?id=com.m2e.opnet';
 
 interface Props {
   /**
@@ -37,7 +37,7 @@ export function AndroidPlayStoreButton({ playStoreUrl, variant = 'default', clas
 
   return (
     <a
-      href={playStoreUrl ?? PLAY_STORE_TESTING_URL}
+      href={playStoreUrl ?? PLAY_STORE_LISTING_URL}
       target="_blank"
       rel="noopener noreferrer"
       className={`${buttonClass}${className ? ` ${className}` : ''}`}

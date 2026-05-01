@@ -15,8 +15,8 @@ export interface VersionEntry {
 export interface ChangelogData {
   testflightUrl: string;
   /**
-   * Google Play open-testing opt-in URL. Optional — the AndroidPlayStoreButton
-   * has a hardcoded fallback to https://play.google.com/apps/testing/com.m2e.opnet.
+   * Google Play Store listing URL. Optional — the AndroidPlayStoreButton has
+   * a hardcoded fallback to https://play.google.com/store/apps/details?id=com.m2e.opnet.
    */
   playStoreUrl?: string;
   versions: VersionEntry[];
