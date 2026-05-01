@@ -173,12 +173,12 @@ export function EarnPoints() {
             {/* Testing Tasks */}
             <MissionCard
               kicker="Mission 01"
-              reward="Up to 2,300 SAP"
+              reward="Up to 2,200 SAP"
               icon={Gift}
               iconTint="accent"
               title="Testing Tasks"
               description={
-                <>Complete 16 testnet tasks. Your points count toward the <span className="text-m2e-accent">mainnet airdrop allocation</span>.</>
+                <>Complete 15 testnet tasks. Your points count toward the <span className="text-m2e-accent">mainnet airdrop allocation</span>.</>
               }
             >
               <Link to="/tasks" className="pixel-btn pixel-btn-primary px-5 py-2.5 text-sm">
