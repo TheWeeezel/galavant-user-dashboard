@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { Coins, ExternalLink, Copy, Check, Human, Gift, Repeat, Heart } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
-import { AndroidWhitelistButton } from '../components/AndroidWhitelistButton';
+import { AndroidPlayStoreButton } from '../components/AndroidPlayStoreButton';
 import type { ChangelogData } from '../types/changelog';
 import {
   fetchReferralCode,
@@ -178,7 +178,7 @@ export function EarnPoints() {
                 iOS
               </a>
             )}
-            <AndroidWhitelistButton playStoreUrl={changelogData?.playStoreUrl} variant="compact" />
+            <AndroidPlayStoreButton playStoreUrl={changelogData?.playStoreUrl} variant="compact" />
 
           </div>
         </div>

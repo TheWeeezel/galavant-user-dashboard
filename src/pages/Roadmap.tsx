@@ -53,6 +53,12 @@ const PHASES: RoadmapPhase[] = [
         status: 'done',
       },
       {
+        title: 'Sound Design',
+        description: 'Arcade-style SFX for coin pickups, chest opens, level-ups, mission completions, forge results, and more. Sound on/off toggle in Profile.',
+        icon: Music,
+        status: 'done',
+      },
+      {
         title: 'Mainnet Launch',
         description: 'Full mainnet deployment on Bitcoin via OPNet. Live SAT token, on-chain NFT bikes, NativeSwap trading, and real BTC earnings.',
         icon: Flag,
@@ -64,12 +70,6 @@ const PHASES: RoadmapPhase[] = [
     name: 'Phase 2',
     label: 'Core Features',
     items: [
-      {
-        title: 'Sound Design',
-        description: 'Chiptune soundtrack, satisfying SFX for earning ticks, level-ups, toolbox opens, and marketplace actions. Bringing the arcade to life.',
-        icon: Music,
-        status: 'upcoming',
-      },
       {
         title: 'Achievements & Personal Bests',
         description: 'Track your longest ride, biggest earning session, and highest streak. Unlock achievement badges displayed on your profile for all to see.',

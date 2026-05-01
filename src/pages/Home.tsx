@@ -21,7 +21,7 @@ import { StatCard } from '../components/StatCard';
 import { NftDetailModal } from '../components/NftDetailModal';
 import { LeaderboardRow } from '../components/LeaderboardRow';
 import { ListingCard } from '../components/ListingCard';
-import { AndroidWhitelistButton } from '../components/AndroidWhitelistButton';
+import { AndroidPlayStoreButton } from '../components/AndroidPlayStoreButton';
 import { formatDistance } from '../utils/format';
 import type { ChangelogData } from '../types/changelog';
 
@@ -64,8 +64,8 @@ const ONBOARDING_STEPS = [
 const ROADMAP_ITEMS: { title: string; icon: React.ComponentType<any>; status: 'done' | 'current' | 'upcoming' }[] = [
   { title: 'Testnet', icon: Zap, status: 'done' },
   { title: 'Daily Missions', icon: Check, status: 'done' },
+  { title: 'Sound Design', icon: Music, status: 'done' },
   { title: 'Mainnet Launch', icon: Flag, status: 'current' },
-  { title: 'Sound Design', icon: Music, status: 'upcoming' },
   { title: 'Achievements', icon: Trophy, status: 'upcoming' },
   { title: 'Bike Legacy', icon: Heart, status: 'upcoming' },
   { title: 'Guilds / Crews', icon: Users, status: 'upcoming' },
@@ -709,7 +709,7 @@ export function Home() {
                 Download on iOS
               </a>
             )}
-            <AndroidWhitelistButton playStoreUrl={changelog.data?.playStoreUrl} />
+            <AndroidPlayStoreButton playStoreUrl={changelog.data?.playStoreUrl} />
 
           </div>
 

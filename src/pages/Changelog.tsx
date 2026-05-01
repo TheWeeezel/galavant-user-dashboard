@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { Notes, Zap, Debug, Redo, Download } from 'pixelarticons/react';
 import type { ChangeType, ChangelogData, VersionEntry } from '../types/changelog';
-import { AndroidWhitelistButton } from '../components/AndroidWhitelistButton';
+import { AndroidPlayStoreButton } from '../components/AndroidPlayStoreButton';
 
 const CHANGE_CONFIG: Record<ChangeType, { label: string; color: string; bg: string; Icon: React.ComponentType<any> }> = {
   feature: { label: 'NEW', color: 'text-m2e-success', bg: 'bg-m2e-success/15', Icon: Zap },
@@ -201,7 +201,7 @@ export function Changelog() {
                   Download on iOS
                 </a>
               )}
-              <AndroidWhitelistButton playStoreUrl={data.playStoreUrl} />
+              <AndroidPlayStoreButton playStoreUrl={data.playStoreUrl} />
 
             </div>
           </motion.div>
