@@ -111,8 +111,8 @@ const ONBOARDING_STEPS = [
 const ROADMAP_ITEMS: { title: string; icon: React.ComponentType<any>; status: 'done' | 'current' | 'upcoming' }[] = [
   { title: 'Testnet', icon: Zap, status: 'done' },
   { title: 'Daily Missions', icon: Check, status: 'done' },
+  { title: 'Sound Design', icon: Music, status: 'done' },
   { title: 'Mainnet Launch', icon: Flag, status: 'current' },
-  { title: 'Sound Design', icon: Music, status: 'upcoming' },
   { title: 'Achievements', icon: Trophy, status: 'upcoming' },
   { title: 'Bike Legacy', icon: Heart, status: 'upcoming' },
   { title: 'Guilds / Crews', icon: Users, status: 'upcoming' },
