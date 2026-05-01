@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -6,6 +6,10 @@ import {
   useScroll,
   useTransform,
   useReducedMotion,
+  useSpring,
+  useMotionValue,
+  useInView,
+  animate,
   type Variants,
 } from 'framer-motion';
 import {
@@ -15,15 +19,38 @@ import {
   Download, Login, Gift, Human,
   Cancel, Check, Globe, Flag,
   Music, Cloud, Lock, Clock,
+  ArrowDown, ChevronLeft, ChevronRight,
 } from 'pixelarticons/react';
-import { fetchStats, fetchLeaderboard, fetchMarketplace } from '../api';
-import { StatCard } from '../components/StatCard';
+import { fetchStats, fetchLeaderboard, fetchMarketplace, fetchNfts, type MintedNft } from '../api';
 import { NftDetailModal } from '../components/NftDetailModal';
-import { LeaderboardRow } from '../components/LeaderboardRow';
 import { ListingCard } from '../components/ListingCard';
-import { AndroidWhitelistButton } from '../components/AndroidWhitelistButton';
+import { AndroidPlayStoreButton } from '../components/AndroidPlayStoreButton';
 import { formatDistance } from '../utils/format';
+import { config } from '../config';
 import type { ChangelogData } from '../types/changelog';
+
+const RARITY_RANK: Record<string, number> = {
+  legendary: 5,
+  epic: 4,
+  rare: 3,
+  uncommon: 2,
+  common: 1,
+};
+
+const RARITY_STYLE: Record<string, { label: string; ring: string; chip: string; glow: string }> = {
+  legendary: { label: 'Legendary', ring: 'ring-m2e-legendary/40', chip: 'bg-m2e-legendary/20 text-m2e-legendary border-m2e-legendary', glow: 'drop-shadow-[0_0_24px_rgba(212,146,10,0.45)]' },
+  epic:      { label: 'Epic',      ring: 'ring-m2e-epic/40',      chip: 'bg-m2e-epic/20 text-m2e-epic border-m2e-epic',            glow: 'drop-shadow-[0_0_20px_rgba(136,85,187,0.4)]'  },
+  rare:      { label: 'Rare',      ring: 'ring-m2e-rare/40',      chip: 'bg-m2e-rare/20 text-m2e-rare border-m2e-rare',            glow: 'drop-shadow-[0_0_18px_rgba(68,136,204,0.4)]'  },
+  uncommon:  { label: 'Uncommon',  ring: 'ring-m2e-uncommon/40',  chip: 'bg-m2e-uncommon/20 text-m2e-uncommon border-m2e-uncommon', glow: 'drop-shadow-[0_0_14px_rgba(59,165,93,0.35)]'  },
+  common:    { label: 'Common',    ring: 'ring-m2e-common/40',    chip: 'bg-m2e-common/20 text-m2e-common border-m2e-common',       glow: 'drop-shadow-[0_8px_0_rgba(0,0,0,0.15)]'       },
+};
+
+function resolveBikeImage(bike: MintedNft): string {
+  if (bike.imageUrl) {
+    return bike.imageUrl.startsWith('/') ? `${config.apiUrl}${bike.imageUrl}` : bike.imageUrl;
+  }
+  return `${config.apiUrl}/art/bases/bike-${bike.type.toLowerCase()}.png`;
+}
 
 type LeaderboardMetric = 'distance' | 'earnings';
 type LeaderboardPeriod = 'daily' | 'weekly' | 'all_time';
@@ -43,6 +70,26 @@ function formatSat(n: number): string {
 
 // ── Data ────────────────────────────────────────────────────────────────────
 
+type PillarVisual =
+  | { kind: 'bike'; bike: MintedNft }
+  | { kind: 'tokens' }
+  | { kind: 'loot' }
+  | { kind: 'fallback'; src: string };
+
+interface PillarData {
+  kicker: string;
+  title: string;
+  tagline: string;
+  icon: React.ComponentType<any>;
+  visual: PillarVisual;
+}
+
+const PILLAR_META = [
+  { kicker: '01 / MOVE',     title: 'WALK.',    tagline: 'Your balance bike. On chain. On your feet.',       icon: Human,  fallback: '/assets/floating/bike.png' },
+  { kicker: '02 / STACK',    title: 'EARN.',    tagline: 'SAP per minute. Convert to SAT. Real sats.',       icon: Coins,  fallback: '/assets/landing/feature-ride.png' },
+  { kicker: '03 / DOMINATE', title: 'CONQUER.', tagline: 'Lv 9 parts. Toolboxes. Legendary tools.',          icon: Trophy, fallback: '/assets/landing/feature-trade.png' },
+] as const;
+
 const COMPARISON_DATA: { label: string; icon: React.ComponentType<any>; other: string; galavant: string }[] = [
   { label: 'Blockchain', icon: Globe, other: 'Solana, BNB, L2s', galavant: 'Bitcoin Layer 1' },
   { label: 'Economy Mgmt', icon: Chart, other: 'None — mint and pray', galavant: 'AI Central Banker + human approval' },
@@ -55,10 +102,10 @@ const COMPARISON_DATA: { label: string; icon: React.ComponentType<any>; other: s
 ];
 
 const ONBOARDING_STEPS = [
-  { icon: Download, title: 'Download', description: 'Get the app on iOS or Android' },
-  { icon: Login, title: 'Sign In', description: 'Create your account and wallet' },
-  { icon: Gift, title: 'Free NFT', description: 'Claim your starter balance bike' },
-  { icon: Human, title: 'Start Walking', description: 'Move to earn SAP' },
+  { icon: Download, title: 'Download', description: 'iOS or Android' },
+  { icon: Login, title: 'Sign In', description: 'Account + wallet' },
+  { icon: Gift, title: 'Free NFT', description: 'Starter bike' },
+  { icon: Human, title: 'Walk', description: 'Earn SAP' },
 ];
 
 const ROADMAP_ITEMS: { title: string; icon: React.ComponentType<any>; status: 'done' | 'current' | 'upcoming' }[] = [
@@ -75,6 +122,20 @@ const ROADMAP_ITEMS: { title: string; icon: React.ComponentType<any>; status: 'd
 ];
 
 const HERO_WORDS = ['WALK.', 'EARN.', 'CONQUER.'];
+
+// Repeated several times for an unbroken marquee
+const TICKER_ITEMS = [
+  'WALK TO EARN',
+  'ON BITCOIN LAYER 1',
+  'ZERO GAS FEES',
+  'AI CENTRAL BANKER',
+  'REAL ECONOMY',
+  'DAILY MISSIONS',
+  'BALANCE BIKES',
+  'MLDSA SECURED',
+  'PUBLIC HEALTH SCORE',
+  'LEADERBOARDS',
+];
 
 // ── Animation Variants ──────────────────────────────────────────────────────
 
@@ -99,9 +160,43 @@ const staggerItem: Variants = {
 };
 
 const wordReveal: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0, y: 40, filter: 'blur(6px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
 };
+
+// ── Count-up number ─────────────────────────────────────────────────────────
+
+function CountUp({
+  value,
+  duration = 1.6,
+  format = (n) => Math.round(n).toLocaleString(),
+}: {
+  value: number;
+  duration?: number;
+  format?: (n: number) => string;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const mv = useMotionValue(0);
+  const [display, setDisplay] = useState(format(0));
+  const reducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (!inView) return;
+    if (reducedMotion) {
+      setDisplay(format(value));
+      return;
+    }
+    const controls = animate(mv, value, {
+      duration,
+      ease: [0.22, 1, 0.36, 1],
+      onUpdate: (v) => setDisplay(format(v)),
+    });
+    return () => controls.stop();
+  }, [inView, value, duration, format, mv, reducedMotion]);
+
+  return <span ref={ref}>{display}</span>;
+}
 
 // ── Main Component ──────────────────────────────────────────────────────────
 
@@ -114,6 +209,7 @@ export function Home() {
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
+  const pillarsRef = useRef<HTMLDivElement>(null);
   const dragState = useRef({ active: false, startX: 0, scrollStart: 0, velX: 0, lastX: 0, lastT: 0 });
   const reducedMotion = useReducedMotion();
 
@@ -122,9 +218,18 @@ export function Home() {
     target: heroRef,
     offset: ['start start', 'end start'],
   });
-  const heroImageY = useTransform(heroProgress, [0, 1], [0, 150]);
-  const heroContentY = useTransform(heroProgress, [0, 1], [0, -30]);
-  const heroOpacity = useTransform(heroProgress, [0, 0.8], [1, 0]);
+  const heroImageY = useTransform(heroProgress, [0, 1], [0, 180]);
+  const heroImageScale = useTransform(heroProgress, [0, 1], [1.15, 1.28]);
+  const heroContentY = useTransform(heroProgress, [0, 1], [0, -40]);
+  const heroOpacity = useTransform(heroProgress, [0, 0.85], [1, 0]);
+
+  // Pillars horizontal scroll (pinned section)
+  const { scrollYProgress: pillarsProgress } = useScroll({
+    target: pillarsRef,
+    offset: ['start start', 'end end'],
+  });
+  const pillarsX = useTransform(pillarsProgress, [0, 1], ['0%', '-66.667%']);
+  const pillarsXSpring = useSpring(pillarsX, { damping: 20, stiffness: 60, mass: 0.3 });
 
   // Queries
   const changelog = useQuery<ChangelogData>({
@@ -145,7 +250,35 @@ export function Home() {
     retry: false,
   });
 
-  // Carousel: track which card is leftmost visible
+  // Featured bikes for the pillars section (real NFTs sorted by rarity+level)
+  const featuredBikes = useQuery({
+    queryKey: ['home-featured-bikes'],
+    queryFn: () => fetchNfts(1, 30),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const pillars: PillarData[] = useMemo(() => {
+    const nfts = featuredBikes.data?.nfts ?? [];
+    const ranked = [...nfts].sort((a, b) => {
+      const ra = RARITY_RANK[a.quality] ?? 0;
+      const rb = RARITY_RANK[b.quality] ?? 0;
+      if (rb !== ra) return rb - ra;
+      return (b.level ?? 0) - (a.level ?? 0);
+    });
+    const bestBike = ranked[0] ?? null;
+
+    const walkVisual: PillarVisual = bestBike
+      ? { kind: 'bike', bike: bestBike }
+      : { kind: 'fallback', src: PILLAR_META[0].fallback };
+
+    return [
+      { ...PILLAR_META[0], visual: walkVisual },
+      { ...PILLAR_META[1], visual: { kind: 'tokens' } },
+      { ...PILLAR_META[2], visual: { kind: 'loot' } },
+    ];
+  }, [featuredBikes.data]);
+
+  // Comparison carousel — track leftmost visible card
   useEffect(() => {
     const container = carouselRef.current;
     if (!container) return;
@@ -161,7 +294,6 @@ export function Home() {
     return () => container.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Arrows: scroll by one card width
   const scrollCarouselBy = useCallback((direction: number) => {
     const container = carouselRef.current;
     if (!container || !container.children[0]) return;
@@ -169,7 +301,6 @@ export function Home() {
     container.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
   }, []);
 
-  // Dots: scroll to a specific card
   const scrollCarouselTo = useCallback((index: number) => {
     const container = carouselRef.current;
     if (!container || !container.children[index]) return;
@@ -177,7 +308,7 @@ export function Home() {
     container.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
   }, []);
 
-  // Drag-to-scroll with momentum (mouse only — touch uses native scroll)
+  // Mouse drag-to-scroll with momentum
   const onDragStart = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === 'touch') return;
     const container = carouselRef.current;
@@ -212,7 +343,6 @@ export function Home() {
     if (!container) return;
     container.style.cursor = '';
     container.style.userSelect = '';
-    // Momentum coast
     const momentum = -ds.velX * 800;
     if (Math.abs(momentum) > 50) {
       container.scrollBy({ left: momentum, behavior: 'smooth' });
@@ -221,26 +351,54 @@ export function Home() {
 
   const vp = { once: true, margin: '-80px' };
 
+  const tickerTwice = useMemo(() => [...TICKER_ITEMS, ...TICKER_ITEMS], []);
+
+  const economyState = stats.data?.economyState ?? 'Healthy';
+  const stateStyle = economyStateColors[economyState] ?? economyStateColors.Healthy;
+
   return (
     <>
-      {/* ── Hero ────────────────────────────────────────────────── */}
-      <div ref={heroRef} className="mb-8 md:mb-12">
-        <div className="relative w-full aspect-[3/4] sm:aspect-[5/4] md:aspect-video overflow-hidden shadow-[0_8px_30px_-5px_rgba(0,0,0,0.15)] group z-10">
+      {/* ══════════════════════════════════════════════════════════════════════
+          1 / HERO — Cold open
+          ══════════════════════════════════════════════════════════════════════ */}
+      <div ref={heroRef} className="relative">
+        <div className="relative w-full h-[92vh] min-h-[560px] overflow-hidden scanlines vignette">
           <motion.img
             src="/assets/landing/galavant-hero.png"
-            alt="Galavant Hero"
+            alt="Galavant"
             className="absolute inset-0 w-full h-full object-cover pixel-render will-change-transform"
-            style={reducedMotion ? undefined : { y: heroImageY, scale: 1.15 }}
+            style={reducedMotion ? undefined : { y: heroImageY, scale: heroImageScale }}
           />
 
-          <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
+          {/* Scan-beam sweep */}
+          {!reducedMotion && (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-[2]">
+              <div className="absolute inset-x-0 h-24 bg-gradient-to-b from-transparent via-white/8 to-transparent animate-scan-sweep" />
+            </div>
+          )}
+
+          {/* Bottom grade */}
+          <div className="absolute bottom-0 left-0 right-0 h-[55%] bg-gradient-to-t from-black via-black/70 to-transparent pointer-events-none z-[3]" />
 
           <motion.div
-            className="absolute inset-0 flex flex-col items-center justify-end text-center px-4 pb-4 md:pb-6 lg:px-6 lg:pb-10"
+            className="absolute inset-0 flex flex-col items-center justify-end text-center px-4 pb-10 md:pb-16 lg:px-6 z-[5]"
             style={reducedMotion ? undefined : { y: heroContentY, opacity: heroOpacity }}
           >
+            {/* Kicker strip */}
+            <motion.div
+              className="flex items-center gap-3 mb-4 md:mb-6 text-[10px] md:text-xs tracking-[0.4em] uppercase text-m2e-accent"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <span className="inline-block w-8 h-[2px] bg-m2e-accent" />
+              Walk-To-Earn · On Bitcoin
+              <span className="inline-block w-8 h-[2px] bg-m2e-accent" />
+            </motion.div>
+
+            {/* Headline */}
             <motion.h1
-              className="text-4xl md:text-5xl lg:text-7xl text-white mb-1 lg:mb-3 drop-shadow-[4px_4px_0_rgba(0,0,0,1)] tracking-wider uppercase flex flex-wrap justify-center gap-x-3 lg:gap-x-5"
+              className="text-5xl md:text-7xl lg:text-9xl text-white mb-4 md:mb-6 tracking-wider uppercase flex flex-wrap justify-center gap-x-3 md:gap-x-6 text-chroma-hero leading-[0.95]"
               variants={staggerSlow}
               initial="hidden"
               animate="visible"
@@ -253,12 +411,12 @@ export function Home() {
             </motion.h1>
 
             <motion.p
-              className="text-lg md:text-xl lg:text-3xl text-gray-200 mb-3 lg:mb-6 max-w-3xl drop-shadow-[2px_2px_0_rgba(0,0,0,1)] leading-snug"
+              className="text-base md:text-2xl lg:text-3xl text-gray-100 mb-6 md:mb-10 max-w-3xl text-pixel-shadow leading-snug"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.6 }}
             >
-              The first Walk-to-Earn game with balance bikes on Bitcoin via OPNet.
+              Move to earn SAP. <span className="text-m2e-accent">Zero gas.</span> Real sats. On Bitcoin.
             </motion.p>
 
             <motion.div
@@ -268,72 +426,179 @@ export function Home() {
               transition={{ delay: 1.2, duration: 0.6 }}
             >
               <a
-                href="#ready-to-start"
-                className="pixel-btn pixel-btn-primary text-base lg:text-xl px-6 py-3 lg:px-8 lg:py-4 hover:scale-105 transition-transform animate-glow-pulse"
+                href="#endgame"
+                className="pixel-btn pixel-btn-primary text-sm md:text-lg lg:text-xl px-6 py-3 lg:px-8 lg:py-4 hover:scale-105 transition-transform animate-glow-pulse"
               >
-                Start Riding
+                Press Start
               </a>
               <Link
                 to="/gameplay"
-                className="pixel-btn pixel-btn-secondary text-base lg:text-xl px-6 py-3 lg:px-8 lg:py-4 hover:scale-105 transition-transform bg-white text-m2e-text border-white"
+                className="pixel-btn pixel-btn-secondary text-sm md:text-lg lg:text-xl px-6 py-3 lg:px-8 lg:py-4 hover:scale-105 transition-transform bg-white text-m2e-text border-white"
               >
-                Guide
+                Read Guide
               </Link>
+            </motion.div>
+
+            {/* Scroll hint */}
+            <motion.div
+              className="absolute bottom-3 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/70"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.8, duration: 0.8 }}
+            >
+              <span className="text-[10px] tracking-[0.3em] uppercase">Scroll</span>
+              <motion.div
+                animate={reducedMotion ? undefined : { y: [0, 6, 0] }}
+                transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <ArrowDown className="w-4 h-4" />
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>
+
+        {/* Live ticker — bolted under the hero */}
+        <LiveTicker items={tickerTwice} />
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 pb-12 space-y-24 relative">
+      {/* ══════════════════════════════════════════════════════════════════════
+          2 / PILLARS — Walk. Earn. Conquer. (horizontal-pinned on desktop)
+          ══════════════════════════════════════════════════════════════════════ */}
+      <section ref={pillarsRef} className="relative hidden md:block" style={{ height: '300vh' }}>
+        <div className="sticky top-0 h-screen overflow-hidden flex items-center pixel-noise-bg">
+          <motion.div
+            className="flex w-[300vw] h-full"
+            style={reducedMotion ? undefined : { x: pillarsXSpring }}
+          >
+            {pillars.map((p, i) => (
+              <PillarPanel key={p.title} pillar={p} index={i} total={pillars.length} />
+            ))}
+          </motion.div>
 
-        {/* ── Features ─────────────────────────────────────────── */}
-        <motion.section
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8"
-          variants={stagger}
-          initial="hidden"
-          whileInView="visible"
-          viewport={vp}
-        >
-          <FeatureCard title="Earn" description="Walk, jog, or run to earn SAP. The more you move, the more you earn." icon={Coins} />
-          <FeatureCard title="Ride" description="Equip your bike and explore the world. Upgrade your gear to maximize efficiency." icon={SpeedFast} />
-          <FeatureCard title="Trade" description="Buy, sell, and trade bikes and parts on the marketplace. Build your empire." icon={Store} />
-          <FeatureCard title="Collect" description="Mint unique balance bikes and parts. Build your NFT collection on Bitcoin." icon={Image} />
-        </motion.section>
+          {/* Progress dots */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+            {pillars.map((_, i) => (
+              <PillarDot key={i} index={i} progress={pillarsProgress} />
+            ))}
+          </div>
 
-        {/* ── Why Galavant (Comparison Carousel) ─────────────── */}
+          {/* Section label */}
+          <div className="absolute top-6 left-6 md:top-8 md:left-10 z-20 section-label">
+            01 · Loop
+          </div>
+        </div>
+      </section>
+
+      {/* Mobile vertical pillars */}
+      <section className="md:hidden px-4 py-12 space-y-8 pixel-noise-bg">
+        <div className="section-label justify-center mx-auto w-fit">01 · Loop</div>
+        <div className="space-y-6">
+          {pillars.map((p, i) => (
+            <PillarMobile key={p.title} pillar={p} index={i} />
+          ))}
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-7xl px-4 pb-12 space-y-24 md:space-y-32 relative">
+
+        {/* ══════════════════════════════════════════════════════════════════
+            3 / LIVE STATS — count-up numbers
+            ══════════════════════════════════════════════════════════════════ */}
         <motion.section
-          className="space-y-8"
+          className="space-y-8 pt-16"
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={vp}
         >
-          <div className="space-y-3 text-center">
-            <h2 className="text-3xl md:text-4xl tracking-wide text-m2e-text uppercase">Not Your Average M2E</h2>
-            <p className="text-xl text-m2e-text-secondary max-w-3xl mx-auto">See what separates Galavant from every other move-to-earn game.</p>
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <div className="space-y-2">
+              <div className="section-label">02 · Live</div>
+              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
+                World<br className="md:hidden" /><span className="text-m2e-accent"> in Motion</span>
+              </h2>
+            </div>
+            <p className="text-base md:text-xl text-m2e-text-secondary max-w-md">
+              Every second, walkers somewhere are earning on-chain. Live from the network.
+            </p>
+          </div>
+
+          {stats.isLoading ? (
+            <SkeletonRow />
+          ) : stats.error ? (
+            <div className="text-m2e-danger text-sm">Failed to load stats</div>
+          ) : stats.data ? (() => {
+            const d = stats.data;
+            const avgWalk = d.avgDistancePerActivity ?? 0;
+            const sold = d.totalSold ?? 0;
+            const vol = d.totalVolume ?? 0;
+            return (
+              <motion.div
+                className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5"
+                variants={stagger}
+                initial="hidden"
+                whileInView="visible"
+                viewport={vp}
+              >
+                <BigStat icon={Users} label="Walkers" value={d.totalUsers ?? 0} />
+                <BigStat icon={MapPin} label="Total Distance" value={d.totalDistance ?? 0} format={(n) => formatDistance(n)} />
+                <BigStat icon={Coins} label="SAP Earned" value={d.totalSapEarned ?? 0} format={(n) => formatSat(n)} />
+                <BigStat icon={Zap} label="Activities" value={d.totalActivities ?? 0} />
+                <BigStat icon={Image} label="Minted NFTs" value={d.totalMintedNfts ?? 0} />
+                <BigStat icon={SpeedFast} label="Avg Walk" value={avgWalk} format={(n) => n > 0 ? formatDistance(n) : '—'} />
+                <BigStat icon={Trophy} label="Items Sold" value={sold} />
+                <BigStat icon={Fire} label="Volume" value={vol} format={(n) => n > 0 ? `${formatSat(n)} SAP` : '—'} />
+              </motion.div>
+            );
+          })() : null}
+        </motion.section>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            4 / THE DIFFERENCE — horizontal-snap comparison
+            ══════════════════════════════════════════════════════════════════ */}
+        <motion.section
+          className="space-y-10"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={vp}
+        >
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <div className="space-y-2">
+              <div className="section-label">03 · The Difference</div>
+              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
+                Not Another<br /><span className="text-m2e-accent">Ponzi Sim.</span>
+              </h2>
+            </div>
+            <div className="flex items-center gap-6 text-sm uppercase tracking-widest">
+              <span className="text-m2e-danger/80 line-through decoration-2 flex items-center gap-1.5">
+                <Cancel className="w-4 h-4" /> Them
+              </span>
+              <span className="text-m2e-accent flex items-center gap-1.5">
+                <Check className="w-4 h-4" /> Galavant
+              </span>
+            </div>
           </div>
 
           <div className="relative">
-            {/* Arrow nav — desktop only */}
             <button
               onClick={() => scrollCarouselBy(-1)}
-              className={`hidden md:flex absolute left-2 top-[calc(50%-28px)] z-10 w-10 h-10 items-center justify-center bg-m2e-card/90 backdrop-blur-sm border-2 border-m2e-border rounded-lg pixel-shadow-sm hover:bg-m2e-accent hover:text-white hover:border-m2e-accent-dark transition-colors ${carouselIndex === 0 ? 'opacity-30 pointer-events-none' : ''}`}
+              className={`hidden md:flex absolute left-2 top-[calc(50%-28px)] z-10 w-11 h-11 items-center justify-center bg-m2e-card border-2 border-m2e-border rounded-lg pixel-shadow-sm hover:bg-m2e-accent hover:text-white hover:border-m2e-accent-dark transition-colors ${carouselIndex === 0 ? 'opacity-30 pointer-events-none' : ''}`}
               aria-label="Previous"
             >
-              <span className="text-xl leading-none select-none">&lsaquo;</span>
+              <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={() => scrollCarouselBy(1)}
-              className={`hidden md:flex absolute right-2 top-[calc(50%-28px)] z-10 w-10 h-10 items-center justify-center bg-m2e-card/90 backdrop-blur-sm border-2 border-m2e-border rounded-lg pixel-shadow-sm hover:bg-m2e-accent hover:text-white hover:border-m2e-accent-dark transition-colors ${carouselIndex >= COMPARISON_DATA.length - 1 ? 'opacity-30 pointer-events-none' : ''}`}
+              className={`hidden md:flex absolute right-2 top-[calc(50%-28px)] z-10 w-11 h-11 items-center justify-center bg-m2e-card border-2 border-m2e-border rounded-lg pixel-shadow-sm hover:bg-m2e-accent hover:text-white hover:border-m2e-accent-dark transition-colors ${carouselIndex >= COMPARISON_DATA.length - 1 ? 'opacity-30 pointer-events-none' : ''}`}
               aria-label="Next"
             >
-              <span className="text-xl leading-none select-none">&rsaquo;</span>
+              <ChevronRight className="w-5 h-5" />
             </button>
 
-            {/* Scrollable card track */}
             <motion.div
               ref={carouselRef}
-              className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 cursor-grab active:cursor-grabbing"
+              className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 cursor-grab active:cursor-grabbing snap-x snap-mandatory"
               onPointerDown={onDragStart}
               onPointerMove={onDragMove}
               onPointerUp={onDragEnd}
@@ -343,21 +608,18 @@ export function Home() {
               whileInView="visible"
               viewport={{ once: true, margin: '-40px' }}
             >
-              {COMPARISON_DATA.map((item) => (
-                <ComparisonCard key={item.label} {...item} />
+              {COMPARISON_DATA.map((item, i) => (
+                <ComparisonCard key={item.label} index={i} {...item} />
               ))}
             </motion.div>
 
-            {/* Dot indicators */}
             <div className="flex justify-center gap-1.5 mt-6">
               {COMPARISON_DATA.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => scrollCarouselTo(i)}
                   className={`rounded-full transition-all duration-300 ${
-                    i === carouselIndex
-                      ? 'w-6 h-2 bg-m2e-accent'
-                      : 'w-2 h-2 bg-m2e-border hover:bg-m2e-accent/50'
+                    i === carouselIndex ? 'w-6 h-2 bg-m2e-accent' : 'w-2 h-2 bg-m2e-border hover:bg-m2e-accent/50'
                   }`}
                   aria-label={`Go to card ${i + 1}`}
                 />
@@ -370,12 +632,81 @@ export function Home() {
               to="/gameplay/economic-governance/how-decisions-are-made"
               className="pixel-btn pixel-btn-secondary text-sm px-6 py-3 inline-flex items-center gap-2"
             >
-              Learn How Our Economy Works
+              How the economy actually works
             </Link>
           </div>
         </motion.section>
 
-        {/* ── Roadmap ──────────────────────────────────────────── */}
+        {/* ══════════════════════════════════════════════════════════════════
+            5 / HIGH SCORES — arcade-style leaderboard
+            ══════════════════════════════════════════════════════════════════ */}
+        <motion.section
+          className="space-y-8"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={vp}
+        >
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-2">
+              <div className="section-label">04 · High Scores</div>
+              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
+                Top Riders<span className="text-m2e-accent animate-blink">_</span>
+              </h2>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Pills
+                value={lbMetric}
+                onChange={(v) => setLbMetric(v as LeaderboardMetric)}
+                options={[
+                  ['distance', 'Distance'],
+                  ['earnings', 'Earnings'],
+                ]}
+              />
+              <Pills
+                value={lbPeriod}
+                onChange={(v) => setLbPeriod(v as LeaderboardPeriod)}
+                options={[
+                  ['daily', 'Daily'],
+                  ['weekly', 'Weekly'],
+                  ['all_time', 'All Time'],
+                ]}
+              />
+            </div>
+          </div>
+
+          <div className="relative pixel-card p-0 overflow-hidden">
+            {/* Arcade title bar */}
+            <div className="bg-m2e-text text-m2e-accent px-5 py-3 border-b-2 border-m2e-border flex items-center justify-between">
+              <span className="text-xs md:text-sm tracking-[0.3em] uppercase">&gt; Score Board</span>
+              <span className="text-xs tracking-widest uppercase flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-m2e-success animate-pulse-ring" />
+                Live
+              </span>
+            </div>
+
+            <div className="scanlines-light">
+              {leaderboard.isLoading ? (
+                <div className="p-10 text-m2e-text-muted text-sm text-center">Loading scores…</div>
+              ) : leaderboard.error ? (
+                <div className="p-10 text-m2e-danger text-sm text-center">Failed to load leaderboard</div>
+              ) : leaderboard.data && leaderboard.data.length > 0 ? (
+                <div>
+                  {leaderboard.data.slice(0, 10).map((entry, i) => (
+                    <ArcadeRow key={entry.userId} entry={entry} metric={lbMetric} index={i} />
+                  ))}
+                </div>
+              ) : (
+                <div className="p-10 text-m2e-text-muted text-sm text-center">No entries yet — be the first.</div>
+              )}
+            </div>
+          </div>
+        </motion.section>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            6 / ECONOMY PULSE — health score
+            ══════════════════════════════════════════════════════════════════ */}
         <motion.section
           className="space-y-10"
           variants={fadeUp}
@@ -383,9 +714,104 @@ export function Home() {
           whileInView="visible"
           viewport={vp}
         >
-          <div className="space-y-2 text-center">
-            <h2 className="text-3xl md:text-4xl tracking-wide text-m2e-text uppercase">What's Coming</h2>
-            <p className="text-xl text-m2e-text-secondary">A glimpse at the road ahead.</p>
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <div className="space-y-2">
+              <div className="section-label">05 · Pulse</div>
+              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
+                Economy<br className="md:hidden" /> <span className="text-m2e-accent">Live.</span>
+              </h2>
+            </div>
+            <p className="text-base md:text-xl text-m2e-text-secondary max-w-md">
+              Most games hide it. We publish it. Real-time health, right here.
+            </p>
+          </div>
+
+          {stats.data && stats.data.economyHealthScore != null ? (
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={vp}
+            >
+              {/* Health gauge */}
+              <motion.div variants={staggerItem} className="pixel-card p-6 flex flex-col items-center text-center gap-3 md:col-span-1 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-m2e-accent/5 to-transparent pointer-events-none" />
+                <div className="relative z-10 flex flex-col items-center gap-3">
+                  <div className="relative w-32 h-32 flex items-center justify-center">
+                    <HealthGauge score={stats.data.economyHealthScore} state={economyState} />
+                  </div>
+                  <div className="text-xs text-m2e-text-muted uppercase tracking-widest">Health Score</div>
+                  <span className={`inline-block px-3 py-1 text-xs uppercase tracking-widest pixel-border ${stateStyle.bg} ${stateStyle.text}`}>
+                    {stateStyle.label}
+                  </span>
+                </div>
+              </motion.div>
+
+              {/* Listings */}
+              <motion.div variants={staggerItem} className="pixel-card p-6 flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-lg bg-m2e-accent/15 border border-m2e-accent/30 flex items-center justify-center">
+                    <Store className="w-6 h-6 text-m2e-accent" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-m2e-text-muted uppercase tracking-widest">Active Listings</div>
+                    <div className="text-4xl md:text-5xl text-m2e-text leading-none">
+                      <CountUp value={stats.data.activeListings ?? 0} />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1" />
+                <div className="text-sm text-m2e-text-secondary flex items-center justify-between">
+                  <span>Avg price</span>
+                  <span className="text-m2e-accent font-mono">
+                    {(stats.data.avgListingPrice ?? 0) > 0 ? `${formatSat(stats.data.avgListingPrice)} SAP` : '—'}
+                  </span>
+                </div>
+              </motion.div>
+
+              {/* Floor price */}
+              <motion.div variants={staggerItem} className="pixel-card p-6 flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-lg bg-m2e-accent/15 border border-m2e-accent/30 flex items-center justify-center">
+                    <Scale className="w-6 h-6 text-m2e-accent" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-m2e-text-muted uppercase tracking-widest">Floor Price</div>
+                    <div className="text-4xl md:text-5xl text-m2e-text leading-none">
+                      <CountUp value={stats.data.floorPrice ?? 0} format={(n) => n > 0 ? formatSat(n) : '—'} />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1" />
+                <div className="text-sm text-m2e-text-secondary">
+                  Cheapest active listing in SAP
+                </div>
+              </motion.div>
+            </motion.div>
+          ) : null}
+        </motion.section>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            7 / ROADMAP — quest log
+            ══════════════════════════════════════════════════════════════════ */}
+        <motion.section
+          className="space-y-10"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={vp}
+        >
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <div className="space-y-2">
+              <div className="section-label">06 · Quest Log</div>
+              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
+                What's<br className="md:hidden" /> <span className="text-m2e-accent">Coming.</span>
+              </h2>
+            </div>
+            <p className="text-base md:text-xl text-m2e-text-secondary max-w-md">
+              Unlocked, now-playing, coming-soon. A glimpse at the road ahead.
+            </p>
           </div>
 
           <motion.div
@@ -402,12 +828,15 @@ export function Home() {
                 <motion.div
                   key={item.title}
                   variants={staggerItem}
-                  whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                  className={`pixel-card p-3 flex flex-col items-center text-center gap-2 ${
-                    isCurrent ? 'ring-2 ring-m2e-accent/30' : ''
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className={`pixel-card p-3 flex flex-col items-center text-center gap-2 relative overflow-hidden ${
+                    isCurrent ? 'ring-2 ring-m2e-accent/40' : ''
                   } ${isDone ? 'opacity-70' : ''}`}
                 >
-                  <item.icon className={`w-7 h-7 ${isDone ? 'text-m2e-success' : isCurrent ? 'text-m2e-accent' : 'text-m2e-text-muted'}`} />
+                  {isCurrent && (
+                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-m2e-accent/0 via-m2e-accent to-m2e-accent/0" />
+                  )}
+                  <item.icon className={`w-8 h-8 ${isDone ? 'text-m2e-success' : isCurrent ? 'text-m2e-accent' : 'text-m2e-text-muted'}`} />
                   <span className="text-sm uppercase tracking-wider text-m2e-text leading-tight">{item.title}</span>
                   <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] uppercase tracking-widest pixel-border ${
                     isDone
@@ -432,57 +861,11 @@ export function Home() {
           </div>
         </motion.section>
 
-        {/* ── Global Stats ─────────────────────────────────────── */}
+        {/* ══════════════════════════════════════════════════════════════════
+            8 / MARKETPLACE — on sale now
+            ══════════════════════════════════════════════════════════════════ */}
         <motion.section
-          className="space-y-10"
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={vp}
-        >
-          <div className="space-y-2">
-            <h2 className="text-3xl md:text-4xl tracking-wide text-m2e-text uppercase">Global Stats</h2>
-            <p className="text-xl text-m2e-text-secondary">The current state of the Galavant ecosystem.</p>
-          </div>
-          {stats.isLoading ? (
-            <div className="text-m2e-text-muted text-sm">Loading stats...</div>
-          ) : stats.error ? (
-            <div className="text-red-400 text-sm">Failed to load stats</div>
-          ) : stats.data ? (() => {
-            const d = stats.data;
-            const avgWalk = d.avgDistancePerActivity ?? 0;
-            const sold = d.totalSold ?? 0;
-            const vol = d.totalVolume ?? 0;
-            return (
-              <motion.div
-                className="grid grid-cols-2 md:grid-cols-4 gap-4"
-                variants={stagger}
-                initial="hidden"
-                whileInView="visible"
-                viewport={vp}
-              >
-                {[
-                  { icon: Users, label: 'Walkers', value: (d.totalUsers ?? 0).toLocaleString() },
-                  { icon: MapPin, label: 'Total Distance', value: formatDistance(d.totalDistance ?? 0) },
-                  { icon: Coins, label: 'SAP Earned', value: formatSat(d.totalSapEarned ?? 0) },
-                  { icon: Zap, label: 'Activities', value: (d.totalActivities ?? 0).toLocaleString() },
-                  { icon: Image, label: 'Minted NFTs', value: (d.totalMintedNfts ?? 0).toLocaleString() },
-                  { icon: SpeedFast, label: 'Avg Walk', value: avgWalk > 0 ? formatDistance(avgWalk) : '\u2014' },
-                  { icon: Trophy, label: 'Items Sold', value: sold.toLocaleString() },
-                  { icon: Fire, label: 'Volume Traded', value: vol > 0 ? `${formatSat(vol)} SAP` : '\u2014' },
-                ].map((s) => (
-                  <motion.div key={s.label} variants={staggerItem}>
-                    <StatCard icon={s.icon} label={s.label} value={s.value} />
-                  </motion.div>
-                ))}
-              </motion.div>
-            );
-          })() : null}
-        </motion.section>
-
-        {/* ── Leaderboard ──────────────────────────────────────── */}
-        <motion.section
-          className="space-y-10"
+          className="space-y-8"
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
@@ -490,266 +873,141 @@ export function Home() {
         >
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
-              <h2 className="text-3xl md:text-4xl tracking-wide text-m2e-text uppercase flex items-center gap-3">
-                <Chart className="w-10 h-10 text-m2e-accent" />
-                Leaderboard
+              <div className="section-label">07 · On Sale</div>
+              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
+                The<br className="md:hidden" /> <span className="text-m2e-accent">Market.</span>
               </h2>
-              <p className="text-xl text-m2e-text-secondary">Top performers in the Galavant ecosystem.</p>
             </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex bg-m2e-card p-1 rounded-lg border border-m2e-border">
-                {(['distance', 'earnings'] as const).map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => setLbMetric(m)}
-                    className={`px-4 py-2 pixel-btn text-sm capitalize ${
-                      lbMetric === m ? 'pixel-btn-primary' : 'pixel-btn-secondary border-transparent bg-transparent hover:bg-m2e-card-alt'
-                    }`}
-                  >
-                    {m}
-                  </button>
-                ))}
-              </div>
-
-              <div className="flex bg-m2e-card p-1 rounded-lg border border-m2e-border">
-                {([
-                  ['daily', 'Daily'],
-                  ['weekly', 'Weekly'],
-                  ['all_time', 'All Time'],
-                ] as const).map(([key, label]) => (
-                  <button
-                    key={key}
-                    onClick={() => setLbPeriod(key)}
-                    className={`px-4 py-2 pixel-btn text-sm ${
-                      lbPeriod === key ? 'pixel-btn-primary' : 'pixel-btn-secondary border-transparent bg-transparent hover:bg-m2e-card-alt'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-m2e-border bg-m2e-card/30 overflow-hidden">
-            {leaderboard.isLoading ? (
-              <div className="p-6 text-m2e-text-muted text-sm">Loading leaderboard...</div>
-            ) : leaderboard.error ? (
-              <div className="p-6 text-red-400 text-sm">Failed to load leaderboard</div>
-            ) : leaderboard.data && leaderboard.data.length > 0 ? (
-              leaderboard.data.slice(0, 10).map((entry) => (
-                <LeaderboardRow key={entry.userId} entry={entry} metric={lbMetric} />
-              ))
-            ) : (
-              <div className="p-6 text-m2e-text-muted text-sm">No entries yet</div>
-            )}
-          </div>
-        </motion.section>
-
-        {/* ── Live Economy & Marketplace ─────────────────────────── */}
-        <motion.section
-          className="space-y-10"
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={vp}
-        >
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-2">
-              <h2 className="text-3xl md:text-4xl tracking-wide text-m2e-text uppercase">Live Economy & Marketplace</h2>
-              <p className="text-xl text-m2e-text-secondary">Real-time economy health and what's for sale right now.</p>
-            </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex gap-2 bg-m2e-card p-1 rounded-lg border border-m2e-border">
-                {([
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+              <Pills
+                value={mpSort}
+                onChange={(v) => setMpSort(v as MarketplaceSort)}
+                options={[
                   ['newest', 'Newest'],
                   ['price_asc', 'Cheapest'],
                   ['price_desc', 'Priciest'],
-                ] as const).map(([key, label]) => (
-                  <button
-                    key={key}
-                    onClick={() => setMpSort(key)}
-                    className={`px-4 py-2 pixel-btn text-sm ${
-                      mpSort === key ? 'pixel-btn-primary' : 'pixel-btn-secondary border-transparent bg-transparent hover:bg-m2e-card-alt'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-              <Link to="/market" className="px-6 py-3 text-sm uppercase tracking-wider pixel-btn pixel-btn-secondary whitespace-nowrap">
+                ]}
+              />
+              <Link to="/market" className="pixel-btn pixel-btn-secondary px-5 py-3 text-sm whitespace-nowrap inline-flex items-center gap-2">
+                <ShoppingCart className="w-4 h-4" />
                 View All
               </Link>
             </div>
           </div>
 
-          {/* Economy health cards */}
-          {stats.data && stats.data.economyHealthScore != null && (
+          {marketplace.isLoading ? (
+            <div className="text-m2e-text-muted text-sm">Loading marketplace…</div>
+          ) : marketplace.error ? (
+            <div className="text-m2e-danger text-sm">Failed to load marketplace</div>
+          ) : marketplace.data && marketplace.data.listings.length > 0 ? (
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-3 gap-6"
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
               variants={stagger}
               initial="hidden"
               whileInView="visible"
               viewport={vp}
             >
-              <motion.div variants={staggerItem} className="pixel-card p-5 space-y-3">
-                <div className="flex items-center gap-3">
-                  <Heart className="w-8 h-8 text-m2e-accent" />
-                  <div>
-                    <div className="text-xs text-m2e-text-muted uppercase tracking-widest">Economy Health</div>
-                    <div className="text-3xl text-m2e-text">{stats.data.economyHealthScore}</div>
-                  </div>
-                </div>
-                {(() => {
-                  const state = economyStateColors[stats.data!.economyState] ?? economyStateColors.Healthy;
-                  return (
-                    <span className={`inline-block px-3 py-1 text-xs uppercase tracking-widest pixel-border ${state.bg} ${state.text}`}>
-                      {state.label}
-                    </span>
-                  );
-                })()}
-              </motion.div>
-
-              <motion.div variants={staggerItem} className="pixel-card p-5 space-y-3">
-                <div className="flex items-center gap-3">
-                  <Store className="w-8 h-8 text-m2e-accent" />
-                  <div>
-                    <div className="text-xs text-m2e-text-muted uppercase tracking-widest">Active Listings</div>
-                    <div className="text-3xl text-m2e-text">{stats.data.activeListings ?? 0}</div>
-                  </div>
-                </div>
-                <div className="text-xs text-m2e-text-secondary">
-                  Avg price: <span className="text-m2e-accent">{(stats.data.avgListingPrice ?? 0) > 0 ? `${formatSat(stats.data.avgListingPrice)} SAP` : '\u2014'}</span>
-                </div>
-              </motion.div>
-
-              <motion.div variants={staggerItem} className="pixel-card p-5 space-y-3">
-                <div className="flex items-center gap-3">
-                  <Scale className="w-8 h-8 text-m2e-accent" />
-                  <div>
-                    <div className="text-xs text-m2e-text-muted uppercase tracking-widest">Floor Price</div>
-                    <div className="text-3xl text-m2e-text">
-                      {(stats.data.floorPrice ?? 0) > 0 ? `${formatSat(stats.data.floorPrice)}` : '\u2014'}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-xs text-m2e-text-secondary">
-                  Cheapest active listing in SAP
-                </div>
-              </motion.div>
+              {marketplace.data.listings.slice(0, 6).map((listing) => (
+                <motion.div
+                  key={listing.id}
+                  variants={staggerItem}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                >
+                  <ListingCard
+                    listing={listing}
+                    onClick={listing.itemType === 'bike' ? () => setSelectedNftId(listing.itemId) : undefined}
+                  />
+                </motion.div>
+              ))}
             </motion.div>
-          )}
-
-          {/* Marketplace listings */}
-          {marketplace.isLoading ? (
-            <div className="text-m2e-text-muted text-sm">Loading marketplace...</div>
-          ) : marketplace.error ? (
-            <div className="text-red-400 text-sm">Failed to load marketplace</div>
-          ) : marketplace.data && marketplace.data.listings.length > 0 ? (
-            <>
-              <motion.div
-                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
-                variants={stagger}
-                initial="hidden"
-                whileInView="visible"
-                viewport={vp}
-              >
-                {marketplace.data.listings.slice(0, 6).map((listing) => (
-                  <motion.div key={listing.id} variants={staggerItem}>
-                    <ListingCard
-                      listing={listing}
-                      onClick={listing.itemType === 'bike' ? () => setSelectedNftId(listing.itemId) : undefined}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
-              {marketplace.data.total > 6 && (
-                <div className="text-center">
-                  <Link to="/market" className="pixel-btn pixel-btn-secondary text-sm px-6 py-3 inline-flex items-center gap-2">
-                    <ShoppingCart className="w-5 h-5" />
-                    View All Listings
-                  </Link>
-                </div>
-              )}
-            </>
           ) : (
-            <div className="pixel-card p-8 text-center">
+            <div className="pixel-card p-12 text-center">
               <Store className="w-12 h-12 text-m2e-text-muted mx-auto mb-3" />
-              <div className="text-m2e-text-muted text-sm">No listings yet &mdash; be the first to list!</div>
+              <div className="text-m2e-text-muted text-sm">No listings yet — be the first to list.</div>
             </div>
           )}
         </motion.section>
 
-        {/* ── Ready to Start ──────────────────────────────────── */}
+        {/* ══════════════════════════════════════════════════════════════════
+            9 / ENDGAME — Insert Coin
+            ══════════════════════════════════════════════════════════════════ */}
         <motion.section
-          id="ready-to-start"
-          className="scroll-mt-24 space-y-12 text-center py-8"
+          id="endgame"
+          className="scroll-mt-24 space-y-10 py-12 relative"
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={vp}
         >
-          <div className="space-y-3">
-            <h2 className="text-4xl md:text-5xl tracking-wide text-m2e-text">Ready to Start the Game?</h2>
-            <p className="text-m2e-text-secondary text-xl md:text-2xl max-w-2xl mx-auto">Download Galavant and start earning today.</p>
-          </div>
+          <div className="pixel-corners pixel-card p-8 md:p-14 text-center relative overflow-hidden">
+            <div className="absolute inset-0 pixel-grid-bg opacity-40 pointer-events-none" />
+            <div className="relative z-10 space-y-8">
+              <div className="space-y-3">
+                <div className="section-label justify-center w-fit mx-auto">08 · Endgame</div>
+                <h2 className="text-4xl md:text-7xl text-m2e-text uppercase tracking-wide text-chroma-soft leading-none">
+                  Insert Coin<br />
+                  <span className="text-m2e-accent">To Continue.</span>
+                </h2>
+                <p className="text-m2e-text-secondary text-lg md:text-2xl max-w-2xl mx-auto">
+                  Download Galavant and start earning today.
+                </p>
+              </div>
 
-          <div className="flex flex-wrap justify-center gap-6">
-            {changelog.data?.testflightUrl && (
-              <a
-                href={changelog.data.testflightUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-base px-6 py-3 animate-glow-pulse"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-                Download on iOS
-              </a>
-            )}
-            <AndroidWhitelistButton playStoreUrl={changelog.data?.playStoreUrl} />
+              <div className="flex flex-wrap justify-center gap-4">
+                {changelog.data?.testflightUrl && (
+                  <a
+                    href={changelog.data.testflightUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-base px-6 py-3 animate-glow-pulse"
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                    </svg>
+                    Download on iOS
+                  </a>
+                )}
+                <AndroidPlayStoreButton playStoreUrl={changelog.data?.playStoreUrl} />
+              </div>
 
-          </div>
+              <div className="pt-2">
+                <Link to="/market" className="text-m2e-accent hover:underline text-base uppercase tracking-wider">
+                  Or buy your first bike on the web &rarr;
+                </Link>
+              </div>
 
-          <div className="flex justify-center pt-2">
-            <Link
-              to="/marketplace"
-              className="text-m2e-accent hover:underline text-lg uppercase tracking-wider"
-            >
-              Or buy your first bike on the web &rarr;
-            </Link>
-          </div>
-
-          <motion.div
-            className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 text-center mt-16"
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={vp}
-          >
-            {ONBOARDING_STEPS.map((step, i) => (
               <motion.div
-                key={step.title}
-                variants={staggerItem}
-                className="flex flex-col items-center gap-1"
+                className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 pt-6"
+                variants={stagger}
+                initial="hidden"
+                whileInView="visible"
+                viewport={vp}
               >
-                <motion.div
-                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-m2e-accent/15 border-4 border-m2e-accent flex items-center justify-center pixel-shadow-sm"
-                  whileHover={{ scale: 1.1, rotate: 5, transition: { duration: 0.2 } }}
-                >
-                  <step.icon className="w-8 h-8 sm:w-10 sm:h-10 text-m2e-accent" />
-                </motion.div>
-                <div className="text-xs sm:text-sm text-m2e-text-muted uppercase tracking-widest">Step {i + 1}</div>
-                <div className="text-lg sm:text-2xl text-m2e-text">{step.title}</div>
-                <p className="text-sm sm:text-lg text-m2e-text-secondary leading-snug">{step.description}</p>
+                {ONBOARDING_STEPS.map((step, i) => (
+                  <motion.div
+                    key={step.title}
+                    variants={staggerItem}
+                    className="flex flex-col items-center gap-2 relative"
+                  >
+                    {i < ONBOARDING_STEPS.length - 1 && (
+                      <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-[2px] border-t-2 border-dashed border-m2e-border" />
+                    )}
+                    <motion.div
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-m2e-card border-4 border-m2e-accent flex items-center justify-center pixel-shadow-sm relative z-10"
+                      whileHover={{ scale: 1.1, rotate: 5, transition: { duration: 0.2 } }}
+                    >
+                      <step.icon className="w-8 h-8 sm:w-10 sm:h-10 text-m2e-accent" />
+                    </motion.div>
+                    <div className="text-xs text-m2e-text-muted uppercase tracking-widest">Step {i + 1}</div>
+                    <div className="text-lg sm:text-2xl text-m2e-text uppercase">{step.title}</div>
+                    <p className="text-sm sm:text-base text-m2e-text-secondary leading-snug">{step.description}</p>
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
-          </motion.div>
+            </div>
+          </div>
         </motion.section>
 
-        {/* NFT Detail Modal */}
         {selectedNftId && (
           <NftDetailModal nftId={selectedNftId} onClose={() => setSelectedNftId(null)} />
         )}
@@ -760,57 +1018,307 @@ export function Home() {
 
 // ── Sub-Components ──────────────────────────────────────────────────────────
 
-function FeatureCard({ title, description, icon: Icon }: { title: string; description: string; icon: React.ComponentType<any> }) {
+function LiveTicker({ items }: { items: string[] }) {
+  return (
+    <div className="relative bg-m2e-text text-m2e-accent border-y-2 border-m2e-border overflow-hidden py-3">
+      <div className="flex gap-10 whitespace-nowrap animate-marquee will-change-transform">
+        {items.map((item, i) => (
+          <span key={i} className="flex items-center gap-10 text-sm md:text-base uppercase tracking-[0.2em]">
+            <span className="w-2 h-2 bg-m2e-accent inline-block" />
+            {item}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PillarPanel({ pillar, index, total }: {
+  pillar: PillarData;
+  index: number;
+  total: number;
+}) {
+  return (
+    <div
+      className="w-screen h-screen flex-shrink-0 flex items-center justify-center px-8 lg:px-20 relative"
+      style={{ backgroundColor: index % 2 === 0 ? 'var(--color-m2e-bg)' : 'var(--color-m2e-bg-alt)' }}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl w-full">
+        <div className="space-y-6 order-2 lg:order-1">
+          <div className="text-xs tracking-[0.35em] uppercase text-m2e-accent">{pillar.kicker}</div>
+          <h3 className="text-[20vw] md:text-[14vw] lg:text-[10vw] xl:text-[9rem] uppercase leading-[0.85] text-m2e-text text-chroma-soft">
+            {pillar.title}
+          </h3>
+          <p className="text-2xl md:text-3xl lg:text-4xl text-m2e-text-secondary leading-tight max-w-md">
+            {pillar.tagline}
+          </p>
+          <div className="flex items-center gap-3 text-sm text-m2e-text-muted uppercase tracking-widest">
+            <pillar.icon className="w-5 h-5 text-m2e-accent" />
+            {index + 1} / {total}
+          </div>
+        </div>
+        <div className="flex justify-center lg:justify-end order-1 lg:order-2">
+          <PillarVisual visual={pillar.visual} size="lg" title={pillar.title} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PillarMobile({ pillar, index }: { pillar: PillarData; index: number }) {
   return (
     <motion.div
-      variants={staggerItem}
-      whileHover={{ y: -6, transition: { duration: 0.2 } }}
-      className="bg-m2e-card-alt border-2 border-m2e-border rounded-xl p-3 sm:p-6 flex flex-col items-center text-center pixel-shadow hover:bg-m2e-card hover:border-m2e-accent-dark transition-colors group cursor-default"
+      className="pixel-card p-6 flex flex-col items-center gap-4 text-center"
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <div className="w-16 h-16 sm:w-24 sm:h-24 mb-2 sm:mb-4 bg-m2e-bg rounded-full flex items-center justify-center border-2 border-m2e-border overflow-hidden pixel-shadow-sm group-hover:scale-110 transition-transform">
-        <Icon className="w-8 h-8 sm:w-12 sm:h-12 text-m2e-accent" />
-      </div>
-      <h3 className="text-lg sm:text-2xl text-m2e-text mb-1 sm:mb-2 uppercase tracking-wide">{title}</h3>
-      <p className="text-m2e-text-secondary text-sm sm:text-lg leading-snug sm:leading-relaxed">{description}</p>
+      <div className="text-[10px] tracking-[0.35em] uppercase text-m2e-accent">{pillar.kicker}</div>
+      <PillarVisual visual={pillar.visual} size="sm" title={pillar.title} />
+      <h3 className="text-5xl uppercase leading-none text-m2e-text text-chroma-soft">{pillar.title}</h3>
+      <p className="text-base text-m2e-text-secondary leading-snug max-w-xs">{pillar.tagline}</p>
     </motion.div>
   );
 }
 
-function ComparisonCard({ label, icon: Icon, other, galavant }: {
-  label: string;
+function PillarVisual({ visual, size, title }: {
+  visual: PillarVisual;
+  size: 'sm' | 'lg';
+  title: string;
+}) {
+  const large = size === 'lg';
+
+  if (visual.kind === 'bike') {
+    const bike = visual.bike;
+    const style = RARITY_STYLE[bike.quality] ?? RARITY_STYLE.common;
+    const image = resolveBikeImage(bike);
+    return (
+      <div className={`relative flex flex-col items-center gap-3 ${large ? '' : ''}`}>
+        <div className={`relative ${large ? 'w-60 md:w-80 lg:w-[28rem]' : 'w-40'}`}>
+          <motion.img
+            src={image}
+            alt={`${bike.quality} ${bike.type} bike`}
+            className={`w-full h-auto pixel-render ${style.glow}`}
+            animate={{ y: [0, -10, 0], rotate: [0, 1.5, 0, -1.5, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          {/* rarity halo */}
+          <div
+            className={`absolute inset-0 -z-10 rounded-full blur-2xl opacity-50`}
+            style={{
+              background:
+                bike.quality === 'legendary' ? 'radial-gradient(ellipse, rgba(212,146,10,0.4), transparent 70%)' :
+                bike.quality === 'epic'      ? 'radial-gradient(ellipse, rgba(136,85,187,0.35), transparent 70%)' :
+                bike.quality === 'rare'      ? 'radial-gradient(ellipse, rgba(68,136,204,0.3), transparent 70%)' :
+                bike.quality === 'uncommon'  ? 'radial-gradient(ellipse, rgba(59,165,93,0.3), transparent 70%)' :
+                'radial-gradient(ellipse, rgba(138,138,138,0.2), transparent 70%)',
+            }}
+          />
+        </div>
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          <span className={`px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border ${style.chip} border-opacity-60`}>
+            {style.label}
+          </span>
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border">
+            {bike.type}
+          </span>
+          {bike.level > 0 && (
+            <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border">
+              Lv. {bike.level}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (visual.kind === 'tokens') {
+    const coinSize = large ? 'w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56' : 'w-24 h-24';
+    return (
+      <div className="relative flex flex-col items-center gap-3">
+        <div className={`relative ${large ? 'w-64 md:w-80 lg:w-[28rem] h-56 md:h-72 lg:h-80' : 'w-44 h-32'}`}>
+          {/* SAT (gold) — back/right */}
+          <motion.img
+            src="/assets/token-gold.png"
+            alt="SAT token"
+            className={`absolute ${coinSize} pixel-render drop-shadow-[0_0_24px_rgba(212,146,10,0.5)]`}
+            style={{ top: '10%', right: '8%' }}
+            animate={{ y: [0, -12, 0], rotate: [-6, 2, -6] }}
+            transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          {/* SAP (silver) — front/left */}
+          <motion.img
+            src="/assets/token-silver.png"
+            alt="SAP token"
+            className={`absolute ${coinSize} pixel-render drop-shadow-[0_0_20px_rgba(196,184,156,0.5)]`}
+            style={{ bottom: '5%', left: '5%' }}
+            animate={{ y: [0, -8, 0], rotate: [4, -3, 4] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border flex items-center gap-1.5">
+            <img src="/assets/token-silver.png" alt="" className="w-3 h-3 pixel-render" /> SAP
+          </span>
+          <span className="text-m2e-text-muted">×</span>
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border flex items-center gap-1.5">
+            <img src="/assets/token-gold.png" alt="" className="w-3 h-3 pixel-render" /> SAT
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  if (visual.kind === 'loot') {
+    const stageSize = large ? 'w-72 md:w-96 lg:w-[32rem] h-64 md:h-80 lg:h-96' : 'w-48 h-40';
+    const luckSize = large ? 'w-32 md:w-40 lg:w-48' : 'w-20';
+    const toolboxSize = large ? 'w-32 md:w-40 lg:w-48' : 'w-20';
+    const toolSize = large ? 'w-24 md:w-32 lg:w-40' : 'w-14';
+    return (
+      <div className="relative flex flex-col items-center gap-3">
+        <div className={`relative ${stageSize}`}>
+          {/* Rainbow halo behind everything */}
+          <div
+            className="absolute inset-0 -z-10 blur-3xl opacity-60"
+            style={{
+              background:
+                'conic-gradient(from 0deg, rgba(212,146,10,0.35), rgba(136,85,187,0.35), rgba(68,136,204,0.3), rgba(232,129,26,0.35), rgba(212,146,10,0.35))',
+            }}
+          />
+
+          {/* Lv 9 Luck part — top/center, legendary sparkle */}
+          <motion.img
+            src="/parts/part-luck-lv9.png"
+            alt="Legendary luck part"
+            className={`absolute ${luckSize} pixel-render drop-shadow-[0_0_28px_rgba(212,146,10,0.65)]`}
+            style={{ top: '0%', left: '50%', translate: '-50% 0' }}
+            animate={{ y: [0, -14, 0], rotate: [-3, 3, -3] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+
+          {/* Toolbox — bottom-left */}
+          <motion.img
+            src="/assets/floating/toolbox-lv5.png"
+            alt="Legendary toolbox"
+            className={`absolute ${toolboxSize} pixel-render drop-shadow-[0_0_22px_rgba(204,51,51,0.5)]`}
+            style={{ bottom: '2%', left: '2%' }}
+            animate={{ y: [0, -10, 0], rotate: [4, -4, 4] }}
+            transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+          />
+
+          {/* Tool — bottom-right */}
+          <motion.img
+            src="/assets/floating/tool.png"
+            alt="Minting tool"
+            className={`absolute ${toolSize} pixel-render drop-shadow-[0_0_20px_rgba(232,129,26,0.55)]`}
+            style={{ bottom: '10%', right: '4%' }}
+            animate={{ y: [0, -8, 0], rotate: [-6, 6, -6] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
+          />
+        </div>
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-legendary/15 text-m2e-legendary border-m2e-legendary/50">Lv 9 Parts</span>
+          <span className="text-m2e-text-muted">·</span>
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-danger/15 text-m2e-danger border-m2e-danger/50">Toolboxes</span>
+          <span className="text-m2e-text-muted">·</span>
+          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-accent/15 text-m2e-accent border-m2e-accent/50">Tools</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback — original landing asset
+  return (
+    <motion.img
+      src={visual.src}
+      alt={title}
+      className={`${large ? 'w-60 md:w-80 lg:w-[28rem]' : 'w-40 h-40 object-contain'} h-auto pixel-render drop-shadow-[0_8px_0_rgba(0,0,0,0.15)]`}
+      animate={{ y: [0, -10, 0], rotate: [0, 1.5, 0, -1.5, 0] }}
+      transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+    />
+  );
+}
+
+function PillarDot({ index, progress }: { index: number; progress: ReturnType<typeof useScroll>['scrollYProgress'] }) {
+  const active = useTransform(progress, (v) => {
+    const section = Math.floor(v * 3);
+    return Math.min(2, Math.max(0, section)) === index;
+  });
+  const [isActive, setIsActive] = useState(index === 0);
+  useEffect(() => active.on('change', setIsActive), [active]);
+
+  return (
+    <motion.span
+      className="block h-2 rounded-full transition-all duration-300"
+      animate={{
+        width: isActive ? 32 : 8,
+        backgroundColor: isActive ? 'var(--color-m2e-accent)' : 'var(--color-m2e-border)',
+      }}
+    />
+  );
+}
+
+function BigStat({ icon: Icon, label, value, format }: {
   icon: React.ComponentType<any>;
-  other: string;
-  galavant: string;
+  label: string;
+  value: number;
+  format?: (n: number) => string;
 }) {
   return (
     <motion.div
       variants={staggerItem}
-      className="min-w-[80vw] sm:min-w-[340px] lg:min-w-[360px] snap-start flex-shrink-0"
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      className="pixel-card p-4 md:p-5 flex flex-col gap-2 relative overflow-hidden"
+    >
+      <div className="flex items-center justify-between">
+        <Icon className="w-6 h-6 text-m2e-accent" />
+        <span className="text-[9px] text-m2e-text-muted uppercase tracking-[0.3em]">{label}</span>
+      </div>
+      <div className="text-3xl md:text-4xl lg:text-5xl text-m2e-text leading-none tracking-wider">
+        {format ? <CountUp value={value} format={format} /> : <CountUp value={value} />}
+      </div>
+    </motion.div>
+  );
+}
+
+function ComparisonCard({ label, icon: Icon, other, galavant, index }: {
+  label: string;
+  icon: React.ComponentType<any>;
+  other: string;
+  galavant: string;
+  index: number;
+}) {
+  return (
+    <motion.div
+      variants={staggerItem}
+      className="min-w-[80vw] sm:min-w-[360px] lg:min-w-[380px] snap-start flex-shrink-0"
     >
       <motion.div
-        className="pixel-card p-5 space-y-4 h-full transition-colors hover:border-m2e-accent-dark"
+        className="pixel-card p-5 space-y-4 h-full transition-colors hover:border-m2e-accent-dark relative overflow-hidden"
         whileHover={{ y: -4, transition: { duration: 0.2 } }}
       >
-        {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-m2e-accent/15 border border-m2e-accent/30 flex items-center justify-center flex-shrink-0">
+        <div className="absolute top-3 right-4 text-5xl text-m2e-border/60 leading-none pointer-events-none">
+          {String(index + 1).padStart(2, '0')}
+        </div>
+
+        <div className="flex items-center gap-3 relative">
+          <div className="w-11 h-11 rounded-lg bg-m2e-accent/15 border border-m2e-accent/30 flex items-center justify-center flex-shrink-0">
             <Icon className="w-5 h-5 text-m2e-accent" />
           </div>
-          <h3 className="text-base sm:text-lg uppercase tracking-wider text-m2e-text leading-tight">{label}</h3>
+          <h3 className="text-lg uppercase tracking-wider text-m2e-text leading-tight">{label}</h3>
         </div>
 
-        {/* Others — dimmed */}
-        <div className="p-3 rounded-lg bg-m2e-danger/5 border border-m2e-danger/15">
-          <div className="text-xs uppercase tracking-[0.15em] text-m2e-danger/70 mb-1.5">Others</div>
+        <div className="p-3 rounded-lg bg-m2e-danger/5 border border-m2e-danger/20 relative">
+          <div className="text-[10px] uppercase tracking-[0.25em] text-m2e-danger/70 mb-1.5">Them</div>
           <div className="flex items-start gap-2">
             <Cancel className="w-4 h-4 text-m2e-danger shrink-0 mt-1" />
-            <span className="text-base text-m2e-text-muted leading-snug">{other}</span>
+            <span className="text-base text-m2e-text-muted leading-snug line-through decoration-m2e-danger/40">{other}</span>
           </div>
         </div>
 
-        {/* Galavant — highlighted */}
-        <div className="p-3 rounded-lg bg-m2e-accent/10 border border-m2e-accent/25 ring-1 ring-m2e-accent/10">
-          <div className="text-xs uppercase tracking-[0.15em] text-m2e-accent mb-1.5">Galavant</div>
+        <div className="p-3 rounded-lg bg-m2e-accent/10 border border-m2e-accent/30 ring-1 ring-m2e-accent/10 relative">
+          <div className="text-[10px] uppercase tracking-[0.25em] text-m2e-accent mb-1.5">Galavant</div>
           <div className="flex items-start gap-2">
             <Check className="w-4 h-4 text-m2e-success shrink-0 mt-1" />
             <span className="text-base text-m2e-text leading-snug">{galavant}</span>
@@ -818,5 +1326,118 @@ function ComparisonCard({ label, icon: Icon, other, galavant }: {
         </div>
       </motion.div>
     </motion.div>
+  );
+}
+
+function Pills<T extends string>({ value, onChange, options }: {
+  value: T;
+  onChange: (v: T) => void;
+  options: readonly (readonly [T, string])[];
+}) {
+  return (
+    <div className="flex bg-m2e-card p-1 rounded-lg border border-m2e-border">
+      {options.map(([key, label]) => (
+        <button
+          key={key}
+          onClick={() => onChange(key)}
+          className={`px-4 py-2 pixel-btn text-sm ${
+            value === key ? 'pixel-btn-primary' : 'pixel-btn-secondary border-transparent bg-transparent hover:bg-m2e-card-alt'
+          }`}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function ArcadeRow({ entry, metric, index }: {
+  entry: { userId: string; rank: number; nickname?: string | null; value: number };
+  metric: 'distance' | 'earnings';
+  index: number;
+}) {
+  const formattedValue =
+    metric === 'distance'
+      ? formatDistance(entry.value)
+      : `${entry.value.toLocaleString()} SAP`;
+
+  const isPodium = entry.rank <= 3;
+  const rankLabel = String(entry.rank).padStart(2, '0');
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: index * 0.04 }}
+      className={`flex items-center gap-4 px-5 py-4 border-b border-m2e-border/40 last:border-0 hover:bg-m2e-accent/5 transition-colors ${
+        isPodium ? 'bg-m2e-accent/5' : ''
+      }`}
+    >
+      <span className={`w-10 text-2xl md:text-3xl leading-none ${
+        entry.rank === 1 ? 'text-m2e-accent' : entry.rank === 2 ? 'text-m2e-accent-dark' : entry.rank === 3 ? 'text-m2e-warning' : 'text-m2e-text-muted'
+      }`}>
+        {rankLabel}
+      </span>
+      {isPodium && (
+        <span className="text-xl">
+          {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : '🥉'}
+        </span>
+      )}
+      <span className="flex-1 text-sm md:text-base truncate text-m2e-text uppercase tracking-wider">
+        {entry.nickname ?? 'Anonymous'}
+      </span>
+      <span className="text-base md:text-lg font-mono text-m2e-accent tracking-wide">
+        {formattedValue}
+      </span>
+    </motion.div>
+  );
+}
+
+function HealthGauge({ score, state }: { score: number; state: string }) {
+  const pct = Math.max(0, Math.min(100, score));
+  const circumference = 2 * Math.PI * 54;
+  const offset = circumference - (pct / 100) * circumference;
+  const color =
+    state === 'Healthy' ? 'var(--color-m2e-success)' :
+    state === 'Stressed' ? 'var(--color-m2e-danger)' :
+    'var(--color-m2e-warning)';
+
+  return (
+    <div className="relative w-32 h-32">
+      <svg width="128" height="128" viewBox="0 0 128 128" className="-rotate-90">
+        <circle cx="64" cy="64" r="54" stroke="var(--color-m2e-border)" strokeWidth="8" fill="none" />
+        <motion.circle
+          cx="64"
+          cy="64"
+          r="54"
+          stroke={color}
+          strokeWidth="8"
+          fill="none"
+          strokeLinecap="butt"
+          strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          whileInView={{ strokeDashoffset: offset }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-4xl md:text-5xl text-m2e-text leading-none">
+          <CountUp value={score} duration={1.4} />
+        </span>
+        <span className="text-[9px] text-m2e-text-muted uppercase tracking-[0.3em]">/ 100</span>
+      </div>
+    </div>
+  );
+}
+
+function SkeletonRow() {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="pixel-card p-5 h-24 animate-pulse bg-m2e-card-alt" />
+      ))}
+    </div>
   );
 }

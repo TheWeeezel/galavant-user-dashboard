@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, type Variants } from 'framer-motion';
-import { Notes, Zap, Debug, Redo, Download } from 'pixelarticons/react';
+import { Zap, Debug, Redo, Download, Link as LinkIcon } from 'pixelarticons/react';
 import type { ChangeType, ChangelogData, VersionEntry } from '../types/changelog';
-import { AndroidWhitelistButton } from '../components/AndroidWhitelistButton';
+import { AndroidPlayStoreButton } from '../components/AndroidPlayStoreButton';
 
 const CHANGE_CONFIG: Record<ChangeType, { label: string; color: string; bg: string; Icon: React.ComponentType<any> }> = {
   feature: { label: 'NEW', color: 'text-m2e-success', bg: 'bg-m2e-success/15', Icon: Zap },
@@ -21,17 +21,20 @@ function formatDate(dateStr: string): string {
   return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
+function formatShortDate(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' }).toUpperCase();
+}
+
 function buildShareMessage(entry: VersionEntry): string {
   const lines: string[] = [];
-
-  lines.push(`\u{1F680} Galavant Update \u2014 v${entry.version}`);
+  lines.push(`\u{1F680} Galavant Update — v${entry.version}`);
   lines.push('');
   lines.push(`\u{1F4C5} ${formatDate(entry.date)}`);
   lines.push('');
   lines.push(`${entry.title}`);
   lines.push('https://galavant.run/changelog');
 
-  // Group changes by type
   const grouped: Record<ChangeType, string[]> = { feature: [], improvement: [], fix: [] };
   for (const change of entry.changes) {
     grouped[change.type].push(change.text);
@@ -116,7 +119,7 @@ export function Changelog() {
         await navigator.share({ text: message });
         return;
       } catch {
-        // User cancelled or share failed — fall through to clipboard
+        // fall through to clipboard
       }
     }
 
@@ -125,7 +128,6 @@ export function Changelog() {
       setCopiedVersion(entry.version);
       setTimeout(() => setCopiedVersion(null), 2000);
     } catch {
-      // Fallback for older browsers
       const textarea = document.createElement('textarea');
       textarea.value = message;
       textarea.style.position = 'fixed';
@@ -152,174 +154,251 @@ export function Changelog() {
 
   const vp = { once: true, margin: '-60px' };
 
-  return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-12 space-y-10">
-      {/* Header */}
-      <motion.div
-        className="space-y-3"
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-      >
-        <div className="flex items-center gap-4">
-          <Notes className="w-10 h-10 text-m2e-accent" />
-          <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Changelog</h1>
-        </div>
-        <p className="text-m2e-text-secondary text-xl">
-          All notable updates to Galavant. Each version includes new features, improvements, and bug fixes.
-        </p>
-      </motion.div>
+  // Totals for the top metrics strip
+  const totals = useMemo(() => {
+    if (!data) return { versions: 0, features: 0, fixes: 0, improvements: 0 };
+    let features = 0, fixes = 0, improvements = 0;
+    for (const v of data.versions) {
+      for (const c of v.changes) {
+        if (c.type === 'feature') features++;
+        else if (c.type === 'fix') fixes++;
+        else improvements++;
+      }
+    }
+    return { versions: data.versions.length, features, fixes, improvements };
+  }, [data]);
 
-      {loading ? (
-        <div className="text-m2e-text-muted text-sm">Loading changelog...</div>
-      ) : error ? (
-        <div className="text-red-400 text-sm">Failed to load changelog</div>
-      ) : data ? (
-        <>
-          {/* Download Section */}
+  const latestVersion = data?.versions[0];
+
+  return (
+    <>
+      {/* Hero strip */}
+      <div className="border-b-2 border-m2e-border bg-m2e-text text-white relative overflow-hidden scanlines-light">
+        <div className="mx-auto max-w-5xl px-4 md:px-8 py-10 md:py-14 relative z-10">
           <motion.div
-            className="pixel-card p-6 space-y-4"
+            className="space-y-4"
             variants={fadeUp}
             initial="hidden"
             animate="visible"
           >
-            <div className="flex items-center gap-3">
-              <Download className="w-7 h-7 text-m2e-accent" />
-              <h2 className="text-xl tracking-wide">Download Galavant</h2>
+            <div className="section-label">
+              08 · Patch Notes
             </div>
-            <div className="flex flex-wrap gap-3">
-              {data.testflightUrl && (
-                <a
-                  href={data.testflightUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-base px-6 py-3"
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                  </svg>
-                  Download on iOS
-                </a>
-              )}
-              <AndroidWhitelistButton playStoreUrl={data.playStoreUrl} />
-
-            </div>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl uppercase tracking-wide text-chroma-hero leading-[0.9]">
+              Patch<br />
+              <span className="text-m2e-accent">Notes.</span>
+            </h1>
+            <p className="text-white/70 text-lg md:text-xl max-w-2xl">
+              Every shipped fix, feature, and improvement — in chronological order, freshest first.
+            </p>
+            {latestVersion && (
+              <div className="flex flex-wrap items-center gap-3 pt-2 text-xs md:text-sm uppercase tracking-widest">
+                <span className="px-3 py-1.5 pixel-border bg-m2e-accent text-m2e-text-on-accent border-m2e-accent-dark">
+                  Now Playing · v{latestVersion.version}
+                </span>
+                <span className="text-white/60">{formatShortDate(latestVersion.date)}</span>
+                <span className="text-white/60">·</span>
+                <span className="text-white/80 truncate max-w-[60vw]">{latestVersion.title}</span>
+              </div>
+            )}
           </motion.div>
+        </div>
+      </div>
 
-          {/* Timeline */}
+      <div className="mx-auto max-w-5xl px-4 md:px-8 py-10 md:py-14 space-y-12">
+        {/* Metrics strip */}
+        {!loading && !error && data && (
           <motion.div
-            className="relative space-y-6"
+            className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
             variants={stagger}
             initial="hidden"
-            whileInView="visible"
-            viewport={vp}
+            animate="visible"
           >
-            {/* Vertical line */}
-            <motion.div
-              className="absolute left-[19px] top-6 bottom-6 w-[2px] bg-m2e-border origin-top"
-              variants={lineGrow}
-            />
+            <MetricChip label="Versions" value={totals.versions} color="text-m2e-accent" />
+            <MetricChip label="Features" value={totals.features} color="text-m2e-success" />
+            <MetricChip label="Fixes" value={totals.fixes} color="text-m2e-danger" />
+            <MetricChip label="Improvements" value={totals.improvements} color="text-m2e-info" />
+          </motion.div>
+        )}
 
-            {data.versions.map((entry, i) => (
+        {loading ? (
+          <div className="text-m2e-text-muted text-sm">Loading patch log…</div>
+        ) : error ? (
+          <div className="text-m2e-danger text-sm">Failed to load changelog</div>
+        ) : data ? (
+          <>
+            {/* Download Section */}
+            <motion.div
+              className="pixel-card p-6 md:p-8 space-y-4 relative overflow-hidden"
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+            >
+              <div className="absolute inset-0 pixel-grid-bg opacity-40 pointer-events-none" />
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-lg bg-m2e-accent/15 border-2 border-m2e-accent/40 flex items-center justify-center pixel-shadow-sm">
+                    <Download className="w-7 h-7 text-m2e-accent" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-m2e-text-muted uppercase tracking-widest">Latest Build</div>
+                    <h2 className="text-2xl md:text-3xl tracking-wide uppercase">Get the App</h2>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {data.testflightUrl && (
+                    <a
+                      href={data.testflightUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-sm px-5 py-3"
+                    >
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                      </svg>
+                      iOS
+                    </a>
+                  )}
+                  <AndroidPlayStoreButton playStoreUrl={data.playStoreUrl} />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Timeline */}
+            <div className="space-y-6">
+              <div className="section-label">Log · Newest First</div>
               <motion.div
-                key={entry.version}
-                className="relative pl-12"
-                variants={cardFlyIn}
+                className="relative space-y-6"
+                variants={stagger}
+                initial="hidden"
+                whileInView="visible"
+                viewport={vp}
               >
-                {/* Timeline dot */}
+                {/* Vertical line */}
                 <motion.div
-                  className={`absolute left-2.5 top-5 w-5 h-5 rounded-full border-2 ${
-                    i === 0
-                      ? 'bg-m2e-accent border-m2e-accent-dark'
-                      : 'bg-m2e-card border-m2e-border'
-                  }`}
-                  variants={dotReveal}
+                  className="absolute left-[19px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-m2e-accent via-m2e-border to-m2e-border origin-top"
+                  variants={lineGrow}
                 />
 
-                <motion.div
-                  className="pixel-card p-5 space-y-4"
-                  whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                >
-                  {/* Version header */}
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl text-m2e-accent tracking-wide">
-                        v{entry.version}
-                      </span>
-                      {i === 0 && (
-                        <span className="px-2 py-0.5 text-[10px] uppercase tracking-widest bg-m2e-accent text-m2e-text-on-accent pixel-border">
-                          Latest
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-m2e-text-muted uppercase tracking-wider">
-                        {entry.date}
-                      </span>
-                      <button
-                        onClick={() => handleShare(entry)}
-                        className={`inline-flex items-center gap-1 px-2 py-1 text-[10px] uppercase tracking-widest pixel-border transition-colors ${
-                          copiedVersion === entry.version
-                            ? 'bg-m2e-success/15 text-m2e-success border-current'
-                            : 'bg-m2e-bg-alt text-m2e-text-muted border-m2e-border hover:text-m2e-accent hover:border-m2e-accent'
-                        }`}
-                        title="Share this update"
-                      >
-                        {copiedVersion === entry.version ? (
-                          <>
-                            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            Copied
-                          </>
-                        ) : (
-                          <>
-                            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M18 16c-.8 0-1.4.4-2 .8l-7-4v-1.6l7-4c.5.4 1.2.8 2 .8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3v.8l-7 4C7.5 9.4 6.8 9 6 9c-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.4 2-.8l7 4v.8c0 1.7 1.3 3 3 3s3-1.3 3-3-1.3-3-3-3z"/>
-                            </svg>
-                            Share
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
+                {data.versions.map((entry, i) => (
+                  <motion.div
+                    key={entry.version}
+                    className="relative pl-12"
+                    variants={cardFlyIn}
+                  >
+                    {/* Timeline dot */}
+                    <motion.div
+                      className={`absolute left-2.5 top-5 w-5 h-5 rounded-full border-2 ${
+                        i === 0
+                          ? 'bg-m2e-accent border-m2e-accent-dark animate-pulse-ring'
+                          : 'bg-m2e-card border-m2e-border'
+                      }`}
+                      variants={dotReveal}
+                    />
 
-                  {/* Title */}
-                  <h3 className="text-lg text-m2e-text">
-                    {entry.title}
-                  </h3>
+                    <motion.div
+                      className="pixel-card p-5 md:p-6 space-y-4 relative overflow-hidden"
+                      whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                    >
+                      {/* Version number ghost */}
+                      <div className="absolute -top-2 -right-2 text-7xl md:text-8xl text-m2e-border/30 leading-none pointer-events-none select-none">
+                        {String(i + 1).padStart(2, '0')}
+                      </div>
 
-                  {/* Divider */}
-                  <div className="h-[2px] bg-m2e-border" />
-
-                  {/* Changes */}
-                  <ul className="space-y-2.5">
-                    {entry.changes.map((change, j) => {
-                      const config = CHANGE_CONFIG[change.type];
-                      return (
-                        <li key={j} className="flex items-start gap-3">
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] uppercase tracking-widest pixel-border whitespace-nowrap mt-0.5 ${config.bg} ${config.color} border-current`}>
-                            <config.Icon className="w-3 h-3" />
-                            {config.label}
+                      {/* Version header */}
+                      <div className="flex items-center justify-between flex-wrap gap-2 relative">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl md:text-3xl text-m2e-accent tracking-wide text-chroma-soft leading-none">
+                            v{entry.version}
                           </span>
-                          <span className="text-lg text-m2e-text-secondary leading-relaxed">
-                            {change.text}
+                          {i === 0 && (
+                            <span className="px-2 py-0.5 text-[10px] uppercase tracking-widest bg-m2e-accent text-m2e-text-on-accent pixel-border border-m2e-accent-dark flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-white animate-blink" />
+                              Latest
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-m2e-text-muted uppercase tracking-[0.25em]">
+                            {formatShortDate(entry.date)}
                           </span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </motion.div>
+                          <button
+                            onClick={() => handleShare(entry)}
+                            className={`inline-flex items-center gap-1 px-2 py-1 text-[10px] uppercase tracking-widest pixel-border transition-colors ${
+                              copiedVersion === entry.version
+                                ? 'bg-m2e-success/15 text-m2e-success border-current'
+                                : 'bg-m2e-bg-alt text-m2e-text-muted border-m2e-border hover:text-m2e-accent hover:border-m2e-accent'
+                            }`}
+                            title="Share this update"
+                          >
+                            {copiedVersion === entry.version ? (
+                              <>
+                                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                                  <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                Copied
+                              </>
+                            ) : (
+                              <>
+                                <LinkIcon className="w-3 h-3" />
+                                Share
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-lg md:text-xl text-m2e-text relative">
+                        {entry.title}
+                      </h3>
+
+                      {/* Divider */}
+                      <div className="h-[2px] bg-gradient-to-r from-m2e-accent via-m2e-border to-transparent" />
+
+                      {/* Changes */}
+                      <ul className="space-y-2.5 relative">
+                        {entry.changes.map((change, j) => {
+                          const config = CHANGE_CONFIG[change.type];
+                          return (
+                            <li key={j} className="flex items-start gap-3">
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] uppercase tracking-widest pixel-border whitespace-nowrap mt-0.5 ${config.bg} ${config.color} border-current`}>
+                                <config.Icon className="w-3 h-3" />
+                                {config.label}
+                              </span>
+                              <span className="text-base md:text-lg text-m2e-text-secondary leading-relaxed">
+                                {change.text}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </motion.div>
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
-          </motion.div>
-        </>
-      ) : null}
+            </div>
+          </>
+        ) : null}
 
-      {/* Footer */}
-      <p className="text-center text-xs text-m2e-text-muted uppercase tracking-wider pt-4">
-        Galavant &mdash; Walk to Earn on Bitcoin via OPNet
-      </p>
-    </div>
+        <p className="text-center text-xs text-m2e-text-muted uppercase tracking-widest pt-4">
+          &gt; END OF LOG · Walk to Earn on Bitcoin via OPNet
+        </p>
+      </div>
+    </>
+  );
+}
+
+function MetricChip({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="pixel-card p-4 flex flex-col items-start gap-1"
+    >
+      <div className={`text-3xl md:text-4xl leading-none ${color}`}>
+        {value.toLocaleString()}
+      </div>
+      <div className="text-[10px] text-m2e-text-muted uppercase tracking-[0.3em]">{label}</div>
+    </motion.div>
   );
 }

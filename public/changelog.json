@@ -1,7 +1,50 @@
 {
-  "playStoreUrl": "https://play.google.com/store/apps/details?id=com.m2e.opnet",
+  "playStoreUrl": "https://play.google.com/apps/testing/com.m2e.opnet",
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
+    {
+      "version": "0.0.20",
+      "date": "2026-04-30",
+      "title": "Arcade Sounds & Open Beta on Android",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Arcade-style sound effects throughout the app: coin pickup, chest open, level-up, mission complete, forge success/fail, toolbox drop, HP lifeline, activity start, purchase, breed success, equip — with a sound on/off toggle under Profile"
+        },
+        {
+          "type": "feature",
+          "text": "Galavant is now available on Android via Google Play open testing — install directly from the Play Store, no whitelist needed"
+        },
+        {
+          "type": "fix",
+          "text": "Background GPS sync on Android now reliably continues during walks and rides"
+        },
+        {
+          "type": "fix",
+          "text": "Duration timer no longer skips seconds during activities"
+        },
+        {
+          "type": "fix",
+          "text": "Nicknames can now contain spaces"
+        },
+        {
+          "type": "fix",
+          "text": "Part listings on the marketplace show seller status"
+        },
+        {
+          "type": "fix",
+          "text": "Android push notifications now appear reliably on the home screen"
+        },
+        {
+          "type": "fix",
+          "text": "Logout fully clears session state; new-wallet flow works correctly after logout"
+        },
+        {
+          "type": "fix",
+          "text": "Remaining \"SAT\" labels updated to \"SAP\" in upgrade and boost screens"
+        }
+      ]
+    },
     {
       "version": "0.0.19",
       "date": "2026-04-08",
