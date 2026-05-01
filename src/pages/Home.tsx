@@ -24,7 +24,7 @@ import {
 import { fetchStats, fetchLeaderboard, fetchMarketplace, fetchNfts, type MintedNft } from '../api';
 import { NftDetailModal } from '../components/NftDetailModal';
 import { ListingCard } from '../components/ListingCard';
-import { AndroidWhitelistButton } from '../components/AndroidWhitelistButton';
+import { AndroidPlayStoreButton } from '../components/AndroidPlayStoreButton';
 import { formatDistance } from '../utils/format';
 import { config } from '../config';
 import type { ChangelogData } from '../types/changelog';
@@ -967,7 +967,7 @@ export function Home() {
                     Download on iOS
                   </a>
                 )}
-                <AndroidWhitelistButton playStoreUrl={changelog.data?.playStoreUrl} />
+                <AndroidPlayStoreButton playStoreUrl={changelog.data?.playStoreUrl} />
               </div>
 
               <div className="pt-2">
