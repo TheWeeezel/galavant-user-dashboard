@@ -10,7 +10,7 @@ export function PrivacyPolicy() {
           <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Privacy Policy</h1>
         </div>
         <p className="text-m2e-text-secondary text-xl">
-          Last updated: March 30, 2026
+          Last updated: May 4, 2026
         </p>
       </div>
 
@@ -49,13 +49,38 @@ export function PrivacyPolicy() {
               Galavant is a walk-to-earn application. To provide core gameplay functionality, we collect:
             </p>
             <ul className="list-disc list-inside space-y-1 pl-2">
-              <li>GPS location data during active walking sessions</li>
+              <li>Precise GPS location data during active walking, jogging, or riding sessions</li>
               <li>Step count and movement data from device sensors</li>
               <li>Session duration and distance traveled</li>
             </ul>
             <p>
-              Location data is only collected while you are actively using the app's walking feature.
-              We do not track your location in the background when you are not on an active session.
+              Location data is only collected while you have an active session in progress. You start
+              a session by tapping the START button in the app, and end it by tapping STOP. Outside of
+              an active session — including when you are simply browsing the app, the marketplace,
+              your wallet, or any non-activity feature — your location is not collected at any time.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="text-xl text-m2e-accent">Background Location</h3>
+            <p>
+              While a session is active, Galavant continues to collect GPS location data when the app
+              is in the background — for example, when your screen is off or you switch to another
+              app. This is necessary so that your walk, jog, or ride keeps earning rewards without
+              requiring you to keep the app open and visible the entire time. A persistent
+              notification is shown for the duration of the session to make this clearly visible to
+              you.
+            </p>
+            <p>
+              Background location collection automatically stops as soon as you end the session, or
+              if the session is otherwise terminated (energy depleted, server stop, app fully closed
+              after a session ends). We never use background location for advertising, profiling, or
+              any purpose other than verifying and rewarding your in-session activity.
+            </p>
+            <p>
+              You can revoke location and background location permission at any time in your device
+              settings. If revoked, you will not be able to start new sessions until the permission
+              is restored.
             </p>
           </div>
 

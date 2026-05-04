@@ -3,6 +3,29 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.21",
+      "date": "2026-05-04",
+      "title": "Clearer Location Disclosure",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "New onboarding screen explains exactly when and how Galavant uses your location, including background tracking during active walks and rides"
+        },
+        {
+          "type": "feature",
+          "text": "Visible disclosure on the welcome screen so you know upfront how location is used"
+        },
+        {
+          "type": "improvement",
+          "text": "Permission flow now shows an explicit Allow / Not now choice before the iOS or Android system prompt, with clear context about what is and isn't tracked"
+        },
+        {
+          "type": "improvement",
+          "text": "Privacy policy updated to accurately describe how location data is collected during sessions and never outside them"
+        }
+      ]
+    },
+    {
       "version": "0.0.20",
       "date": "2026-04-30",
       "title": "Arcade Sounds & Open Beta on Android",
