@@ -47,10 +47,10 @@ function buildEnergyPage(p: GuideParams): GameplayPage {
     slug: 'energy',
     title: 'Energy',
     content: [
-      { type: 'paragraph', text: 'Energy determines how many minutes you can earn per day. Without energy, you can still walk, but you won\'t earn SAT.' },
+      { type: 'paragraph', text: 'Energy determines how many minutes you can earn per day. Without energy, you can still walk, but you won\'t earn SAP.' },
       { type: 'heading', text: 'Energy Basics' },
       { type: 'list', items: [
-        'Energy is measured in minutes of earning time. Only minutes where you actively earn SAT consume energy — if your speed is out of range, you stop moving, or you pause your session, your energy is preserved.',
+        'Energy is measured in minutes of earning time. Only minutes where you actively earn SAP consume energy — if your speed is out of range, you stop moving, or you pause your session, your energy is preserved.',
         `It refills ${p.energyRegenPercent}% every ${p.energyRegenIntervalHours} hours — a full refill takes ${p.fullRechargeHours} hours.`,
         'Your total energy pool depends on how many bikes you own and their quality.',
         `The maximum energy cap is ${cap} minutes per day.`,
@@ -133,7 +133,7 @@ function buildBikeAttributesPage(p: GuideParams): GameplayPage {
     content: [
       { type: 'paragraph', text: 'Each balance bike has four core attributes that affect different aspects of gameplay. Attributes come from three sources: base stats (rolled at creation), level-up points you allocate, and bonuses from socketed parts.' },
       { type: 'heading', text: 'Earning' },
-      { type: 'paragraph', text: 'Increases the SAT you earn per minute of walking. Every 100 points of Earning doubles your base rate.' },
+      { type: 'paragraph', text: 'Increases the SAP you earn per minute of walking. Every 100 points of Earning doubles your base rate.' },
       { type: 'table', headers: ['Total Earning', 'Multiplier', 'Example (Common bike)'], rows: earningRows },
       { type: 'heading', text: 'Luck' },
       { type: 'paragraph', text: 'Improves your chances of receiving a toolbox drop each minute you walk, and increases the likelihood of higher-level toolboxes. Higher Luck means better odds, but drops are never guaranteed to be a specific level.' },
@@ -158,7 +158,7 @@ function buildBikeAttributesPage(p: GuideParams): GameplayPage {
       { type: 'paragraph', text: 'When your bike levels up, you receive stat points that you can allocate to any of these four attributes. Choose wisely based on your playstyle!' },
       { type: 'heading', text: 'Tips for Stat Allocation' },
       { type: 'list', items: [
-        'Earning-focused builds maximize short-term SAT income.',
+        'Earning-focused builds maximize short-term SAP income.',
         'Luck builds aim for valuable toolbox drops.',
         'Recovery and Durability builds reduce ongoing costs and let you walk more efficiently.',
         'A balanced build works well for casual players.',
@@ -196,7 +196,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'your-first-walk',
         title: 'Your First Walk',
         content: [
-          { type: 'paragraph', text: 'Ready to start earning? Here\'s how to go from zero to your first SAT in just a few minutes.' },
+          { type: 'paragraph', text: 'Ready to start earning? Here\'s how to go from zero to your first SAP in just a few minutes.' },
           { type: 'heading', text: 'Step by Step' },
           { type: 'list', items: [
             'Open the Galavant app and create your wallet.',
@@ -206,7 +206,7 @@ export const gameplaySections: GameplaySection[] = [
             'Tap the "Walk" button to start a session.',
             'Head outside and walk at a pace that matches your bike type.',
             'Need a break? Tap Pause to freeze your session — no energy is consumed while paused. Tap Resume when you\'re ready to continue.',
-            'When you\'re done, stop the session and collect your SAT earnings!',
+            'When you\'re done, stop the session and collect your SAP earnings!',
           ]},
           { type: 'tip', text: 'Make sure you have good GPS signal before starting. Indoor movement and treadmills won\'t count.' },
           { type: 'heading', text: 'What You Need' },
@@ -246,7 +246,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'bike-quality',
         title: 'Bike Quality',
         content: [
-          { type: 'paragraph', text: 'Every balance bike has a quality tier that determines its overall power. Higher quality bikes have better base stats, earn more SAT, and contribute more daily energy.' },
+          { type: 'paragraph', text: 'Every balance bike has a quality tier that determines its overall power. Higher quality bikes have better base stats, earn more SAP, and contribute more daily energy.' },
           { type: 'table', headers: ['Quality', 'Description'], rows: [
             ['Common', 'Standard bikes — a great starting point for new walkers.'],
             ['Uncommon', 'Slightly better stats and energy than Common.'],
@@ -330,7 +330,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'speed-matching',
         title: 'Speed Matching',
         content: [
-          { type: 'paragraph', text: 'Each bike type has an optimal speed zone. Walking within this zone earns you full SAT. Walking outside of it reduces your rewards.' },
+          { type: 'paragraph', text: 'Each bike type has an optimal speed zone. Walking within this zone earns you full SAP. Walking outside of it reduces your rewards.' },
           { type: 'heading', text: 'Speed Zones by Bike Type' },
           { type: 'table', headers: ['Bike Type', 'Full Range', 'Optimal Range', 'Best For'], rows: [
             ['Commuter', '2 – 6 km/h', '2 – 5 km/h', 'Slow to normal walking'],
@@ -378,7 +378,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Parts are components that boost your balance bike\'s attributes. Each part enhances one specific stat — earning, luck, recovery, or durability.' },
           { type: 'heading', text: 'Part Types' },
           { type: 'table', headers: ['Part Type', 'Boosted Attribute'], rows: [
-            ['Earning Part', 'Increases SAT earned per minute'],
+            ['Earning Part', 'Increases SAP earned per minute'],
             ['Luck Part', 'Improves toolbox drop chances'],
             ['Recovery Part', 'Reduces HP drain while walking'],
             ['Durability Part', 'Reduces wear on your bike'],
