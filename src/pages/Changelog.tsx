@@ -318,7 +318,7 @@ export function Changelog() {
 
       {/* Footer */}
       <p className="text-center text-xs text-m2e-text-muted uppercase tracking-wider pt-4">
-        Galavant &mdash; Walk to Earn on Bitcoin via OPNet
+        Galavant &mdash; Walk to Earn on Bitcoin
       </p>
     </div>
   );

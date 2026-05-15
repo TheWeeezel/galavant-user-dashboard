@@ -143,7 +143,7 @@ export function LoginModal({ open, onClose }: LoginModalProps) {
         {/* Wallet Connect */}
  <div className="space-y-3">
  <p className="text-sm uppercase tracking-wider text-m2e-text-secondary">
-            Connect with OPNet Wallet
+            Connect with Bitcoin Wallet
           </p>
           <button
             onClick={handleWalletConnect}

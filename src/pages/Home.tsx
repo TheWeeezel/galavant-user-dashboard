@@ -258,7 +258,7 @@ export function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.6 }}
             >
-              The first Walk-to-Earn game with balance bikes on Bitcoin via OPNet.
+              The first Walk-to-Earn game with balance bikes on Bitcoin.
             </motion.p>
 
             <motion.div

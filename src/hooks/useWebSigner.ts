@@ -21,7 +21,7 @@ export function useWebSigner() {
   const signTransaction = useCallback(
     async (prepare: PrepareResult): Promise<SignedTransactionData> => {
       if (!walletAddress) {
-        throw new Error('Wallet not connected — connect your OPNet wallet to sign transactions');
+        throw new Error('Wallet not connected — connect your Bitcoin wallet to sign transactions');
       }
       if (!network) throw new Error('Network not available');
 

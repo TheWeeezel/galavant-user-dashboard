@@ -60,7 +60,7 @@ const PHASES: RoadmapPhase[] = [
       },
       {
         title: 'Mainnet Launch',
-        description: 'Full mainnet deployment on Bitcoin via OPNet. Live SAT token, on-chain NFT bikes, NativeSwap trading, and real BTC earnings.',
+        description: 'Full mainnet deployment on Bitcoin. Live SAT token, on-chain NFT bikes, NativeSwap trading, and real BTC earnings.',
         icon: Flag,
         status: 'current',
       },
@@ -298,7 +298,7 @@ export function Roadmap() {
 
       {/* Bottom text */}
       <p className="text-center text-xs text-m2e-text-muted uppercase tracking-wider pt-4">
-        Galavant &mdash; Walk to Earn on Bitcoin via OPNet
+        Galavant &mdash; Walk to Earn on Bitcoin
       </p>
     </div>
   );

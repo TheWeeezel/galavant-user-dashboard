@@ -164,7 +164,7 @@ export function Layout() {
             </a>
           </div>
  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-4 pt-4 border-t border-m2e-border/50 w-full text-sm text-m2e-text-muted uppercase tracking-wide">
-            <span>Powered by OPNet on Bitcoin</span>
+            <span>Built on Bitcoin</span>
             <span className="hidden sm:inline text-m2e-border">|</span>
             <span>Galavant &mdash; Walk. Earn. Conquer.</span>
             <span className="hidden sm:inline text-m2e-border">|</span>

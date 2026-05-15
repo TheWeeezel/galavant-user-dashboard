@@ -38,7 +38,7 @@ export function PrivacyPolicy() {
             <p>When you create an account or sign in, we may collect:</p>
             <ul className="list-disc list-inside space-y-1 pl-2">
               <li>Google account profile information (name, email, profile picture) when using Google Sign-In</li>
-              <li>Wallet addresses when connecting a Bitcoin/OPNet wallet</li>
+              <li>Wallet addresses when connecting a Bitcoin wallet</li>
               <li>Username or nickname you choose within the app</li>
             </ul>
           </div>
@@ -127,7 +127,7 @@ export function PrivacyPolicy() {
           <ul className="list-disc list-inside space-y-2 pl-2">
             <li>
               <strong className="text-m2e-text">Blockchain transactions:</strong> Wallet addresses and transaction data are
-              publicly visible on the Bitcoin/OPNet blockchain by nature of the technology.
+              publicly visible on the Bitcoin blockchain by nature of the technology.
             </li>
             <li>
               <strong className="text-m2e-text">Leaderboards:</strong> Your nickname, walking stats, and rankings may be
@@ -256,7 +256,7 @@ export function PrivacyPolicy() {
 
       {/* Footer */}
       <p className="text-center text-xs text-m2e-text-muted uppercase tracking-wider pt-4">
-        Galavant &mdash; Walk to Earn on Bitcoin via OPNet
+        Galavant &mdash; Walk to Earn on Bitcoin
       </p>
     </div>
   );
