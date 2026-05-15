@@ -3,6 +3,61 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.22",
+      "date": "2026-05-15",
+      "title": "Maintenance Matters",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Bike Condition system — well-maintained bikes earn full SAP, worn bikes earn progressively less. Higher Durability stat (helmet parts) keeps your earn rate up longer between repairs"
+        },
+        {
+          "type": "feature",
+          "text": "Bike repairs now take real wall-clock time. The bike is locked from activities during the repair, with Boost-Skip (pay extra SAP) or Cancel (refund) options"
+        },
+        {
+          "type": "feature",
+          "text": "Sound effect when you earn SAP during a walk"
+        },
+        {
+          "type": "improvement",
+          "text": "Speedometer's optimal-speed arc tints green → yellow → red based on your bike's condition, so you can see your live earning rate at a glance"
+        },
+        {
+          "type": "improvement",
+          "text": "Home screen shows a \"Bike is repairing\" banner with countdown when your equipped bike is mid-repair, so you don't tap into a locked-bike error"
+        },
+        {
+          "type": "improvement",
+          "text": "Marketplace listing browser now supports infinite scrolling and improved filters"
+        },
+        {
+          "type": "improvement",
+          "text": "Legendary breed chance from Epic+Legendary parents raised to 15% (was 5%) and from Uncommon+Legendary to 10% (was 5%) — a Legendary parent now properly contributes"
+        },
+        {
+          "type": "improvement",
+          "text": "\"OPNet\" mentions removed from network labels, address labels, and welcome copy — the product runs on Bitcoin"
+        },
+        {
+          "type": "fix",
+          "text": "Repair errors are now surfaced — tapping Repair when the server rejects (active session, insufficient SAP, already repairing) shows a clear dialog instead of silently failing"
+        },
+        {
+          "type": "fix",
+          "text": "Live earning-rate badge no longer shows \"FULL RATE\" while the bike is actually worn — reflects current durability immediately"
+        },
+        {
+          "type": "fix",
+          "text": "Repair slider on slightly-worn bikes (durability 99–100%) no longer rejects every valid target"
+        },
+        {
+          "type": "fix",
+          "text": "Notification when energy refills now shows the correct message"
+        }
+      ]
+    },
+    {
       "version": "0.0.21",
       "date": "2026-05-04",
       "title": "Clearer Location Disclosure",
