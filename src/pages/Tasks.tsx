@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  Login, Human, Download, Upload,
+  Login, Human, Download,
   Store, ShoppingCart, Coins,
   SpeedFast, Zap, Heart,
   Redo, Fire, Gift, Check,
@@ -26,7 +26,6 @@ const CATEGORY_ORDER = ['getting_started', 'marketplace', 'bike_progression', 'e
 const TASK_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   create_wallet: Login,
   connect_google: Human,
-  import_wallet: Upload,
   fund_wallet: Download,
   list_marketplace: Store,
   buy_marketplace: ShoppingCart,
