@@ -76,142 +76,147 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* Base Pixel Utilities */
-.pixel-border {
-  border-width: var(--border-width-pixel);
-  border-style: solid;
-  border-radius: var(--radius-pixel);
-}
+/* These are component classes, not utilities. They live in @layer components so a
+   Tailwind utility on the same element wins — unlayered CSS beats every layer, which
+   silently killed things like `pixel-card border-m2e-danger` and `hover:border-*`. */
+@layer components {
+  /* Base Pixel Utilities */
+  .pixel-border {
+    border-width: var(--border-width-pixel);
+    border-style: solid;
+    border-radius: var(--radius-pixel);
+  }
 
-.pixel-border-md {
-  border-width: var(--border-width-pixel);
-  border-style: solid;
-  border-radius: var(--radius-pixel-md);
-}
+  .pixel-border-md {
+    border-width: var(--border-width-pixel);
+    border-style: solid;
+    border-radius: var(--radius-pixel-md);
+  }
 
-.pixel-shadow {
-  box-shadow: 4px 4px 0px 0px var(--color-m2e-shadow);
-}
+  .pixel-shadow {
+    box-shadow: 4px 4px 0px 0px var(--color-m2e-shadow);
+  }
 
-.pixel-shadow-sm {
-  box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow);
-}
+  .pixel-shadow-sm {
+    box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow);
+  }
 
-.pixel-icon-btn {
-  @apply flex items-center justify-center rounded-sm transition-colors;
-}
+  .pixel-icon-btn {
+    @apply flex items-center justify-center rounded-sm transition-colors;
+  }
 
-/* Button & Card variants to emulate the app's 3D look */
-.pixel-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 400;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  border-radius: var(--radius-pixel);
-  border-style: solid;
-  border-width: var(--border-width-pixel);
-  border-bottom-width: calc(var(--border-width-pixel) + 3px);
-  box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow);
-  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
-  transition: opacity 0.1s ease;
-  cursor: pointer;
-}
+  /* Button & Card variants to emulate the app's 3D look */
+  .pixel-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-radius: var(--radius-pixel);
+    border-style: solid;
+    border-width: var(--border-width-pixel);
+    border-bottom-width: calc(var(--border-width-pixel) + 3px);
+    box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow);
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
+    transition: opacity 0.1s ease;
+    cursor: pointer;
+  }
 
-.pixel-btn:active {
-  opacity: 0.7; /* Matches activeOpacity={0.7} in React Native */
-}
+  .pixel-btn:active {
+    opacity: 0.7; /* Matches activeOpacity={0.7} in React Native */
+  }
 
-.pixel-btn-primary {
-  background-color: var(--color-m2e-accent);
-  color: var(--color-m2e-text-on-accent);
-  border-color: var(--color-m2e-accent-dark);
-  border-top-color: rgba(255, 255, 255, 0.25);
-}
+  .pixel-btn-primary {
+    background-color: var(--color-m2e-accent);
+    color: var(--color-m2e-text-on-accent);
+    border-color: var(--color-m2e-accent-dark);
+    border-top-color: rgba(255, 255, 255, 0.25);
+  }
 
-.pixel-btn-secondary {
-  background-color: var(--color-m2e-card-alt);
-  color: var(--color-m2e-text);
-  border-color: var(--color-m2e-border);
-  border-top-color: rgba(255, 255, 255, 0.4); /* Matches slight shine on top */
-}
+  .pixel-btn-secondary {
+    background-color: var(--color-m2e-card-alt);
+    color: var(--color-m2e-text);
+    border-color: var(--color-m2e-border);
+    border-top-color: rgba(255, 255, 255, 0.4); /* Matches slight shine on top */
+  }
 
-.pixel-btn-outline {
-  background-color: transparent;
-  color: var(--color-m2e-accent);
-  border-color: var(--color-m2e-accent);
-}
-.pixel-btn-outline:hover {
-  background-color: rgba(120, 102, 213, 0.1);
-}
+  .pixel-btn-outline {
+    background-color: transparent;
+    color: var(--color-m2e-accent);
+    border-color: var(--color-m2e-accent);
+  }
+  .pixel-btn-outline:hover {
+    background-color: rgba(120, 102, 213, 0.1);
+  }
 
-.pixel-btn-danger {
-  background-color: var(--color-m2e-danger);
-  color: var(--color-m2e-text-on-accent);
-  border-color: #991F1F;
-  border-top-color: rgba(255, 255, 255, 0.2);
-}
+  .pixel-btn-danger {
+    background-color: var(--color-m2e-danger);
+    color: var(--color-m2e-text-on-accent);
+    border-color: #991F1F;
+    border-top-color: rgba(255, 255, 255, 0.2);
+  }
 
-.pixel-card {
-  background-color: var(--color-m2e-card);
-  border-radius: var(--radius-pixel-md);
-  border-style: solid;
-  border-width: var(--border-width-pixel);
-  border-bottom-width: calc(var(--border-width-pixel) + 2px);
-  border-color: var(--color-m2e-border);
-  border-top-color: var(--color-m2e-border-light);
-  box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow);
-}
+  .pixel-card {
+    background-color: var(--color-m2e-card);
+    border-radius: var(--radius-pixel-md);
+    border-style: solid;
+    border-width: var(--border-width-pixel);
+    border-bottom-width: calc(var(--border-width-pixel) + 2px);
+    border-color: var(--color-m2e-border);
+    border-top-color: var(--color-m2e-border-light);
+    box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow);
+  }
 
-.pixel-badge-common {
-  background-color: color-mix(in srgb, var(--color-m2e-common) 18%, var(--color-m2e-bg));
-  color: var(--color-m2e-common);
-  border-color: var(--color-m2e-common);
-}
-.pixel-badge-uncommon {
-  background-color: color-mix(in srgb, var(--color-m2e-uncommon) 18%, var(--color-m2e-bg));
-  color: var(--color-m2e-uncommon);
-  border-color: var(--color-m2e-uncommon);
-}
-.pixel-badge-rare {
-  background-color: color-mix(in srgb, var(--color-m2e-rare) 18%, var(--color-m2e-bg));
-  color: var(--color-m2e-rare);
-  border-color: var(--color-m2e-rare);
-}
-.pixel-badge-epic {
-  background-color: color-mix(in srgb, var(--color-m2e-epic) 18%, var(--color-m2e-bg));
-  color: var(--color-m2e-epic);
-  border-color: var(--color-m2e-epic);
-}
-.pixel-badge-legendary {
-  background-color: color-mix(in srgb, var(--color-m2e-legendary) 18%, var(--color-m2e-bg));
-  color: var(--color-m2e-legendary);
-  border-color: var(--color-m2e-legendary);
-}
+  .pixel-badge-common {
+    background-color: color-mix(in srgb, var(--color-m2e-common) 18%, var(--color-m2e-bg));
+    color: var(--color-m2e-common);
+    border-color: var(--color-m2e-common);
+  }
+  .pixel-badge-uncommon {
+    background-color: color-mix(in srgb, var(--color-m2e-uncommon) 18%, var(--color-m2e-bg));
+    color: var(--color-m2e-uncommon);
+    border-color: var(--color-m2e-uncommon);
+  }
+  .pixel-badge-rare {
+    background-color: color-mix(in srgb, var(--color-m2e-rare) 18%, var(--color-m2e-bg));
+    color: var(--color-m2e-rare);
+    border-color: var(--color-m2e-rare);
+  }
+  .pixel-badge-epic {
+    background-color: color-mix(in srgb, var(--color-m2e-epic) 18%, var(--color-m2e-bg));
+    color: var(--color-m2e-epic);
+    border-color: var(--color-m2e-epic);
+  }
+  .pixel-badge-legendary {
+    background-color: color-mix(in srgb, var(--color-m2e-legendary) 18%, var(--color-m2e-bg));
+    color: var(--color-m2e-legendary);
+    border-color: var(--color-m2e-legendary);
+  }
 
-.pixel-render {
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
-}
+  .pixel-render {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
 
-@keyframes glitch-flicker {
-  0%, 100% { color: var(--color-m2e-accent); opacity: 1; }
-  4% { color: var(--color-m2e-text); opacity: 0.4; }
-  8% { color: var(--color-m2e-accent); opacity: 1; }
-  42% { color: var(--color-m2e-accent); opacity: 1; }
-  44% { color: var(--color-m2e-accent-dark); opacity: 0.6; }
-  46% { color: var(--color-m2e-text); opacity: 0.3; }
-  48% { color: var(--color-m2e-accent); opacity: 1; }
-  78% { color: var(--color-m2e-accent); opacity: 1; }
-  80% { color: var(--color-m2e-text); opacity: 0.4; }
-  82% { color: var(--color-m2e-accent-dark); opacity: 0.5; }
-  84% { color: var(--color-m2e-accent); opacity: 1; }
-}
+  @keyframes glitch-flicker {
+    0%, 100% { color: var(--color-m2e-accent); opacity: 1; }
+    4% { color: var(--color-m2e-text); opacity: 0.4; }
+    8% { color: var(--color-m2e-accent); opacity: 1; }
+    42% { color: var(--color-m2e-accent); opacity: 1; }
+    44% { color: var(--color-m2e-accent-dark); opacity: 0.6; }
+    46% { color: var(--color-m2e-text); opacity: 0.3; }
+    48% { color: var(--color-m2e-accent); opacity: 1; }
+    78% { color: var(--color-m2e-accent); opacity: 1; }
+    80% { color: var(--color-m2e-text); opacity: 0.4; }
+    82% { color: var(--color-m2e-accent-dark); opacity: 0.5; }
+    84% { color: var(--color-m2e-accent); opacity: 1; }
+  }
 
-.animate-glitch-flicker {
-  animation: glitch-flicker 3s steps(1) infinite;
+  .animate-glitch-flicker {
+    animation: glitch-flicker 3s steps(1) infinite;
+  }
 }
 
 /* Scrollbar hide for carousels */

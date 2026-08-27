@@ -627,89 +627,25 @@ export function Home() {
             </div>
           </div>
 
-          {/* The claims above are only worth anything if the mechanism is legible,
-              so the money flow and the agent's limits are stated outright. */}
-          <motion.div className="space-y-5" variants={fadeUp}>
-            <div className="space-y-2">
-              <div className="section-label">Where the money comes from</div>
-              <p className="text-lg text-m2e-text-secondary max-w-3xl">
-                Every payout traces back to revenue Galavant actually earned. Follow it end to end.
-              </p>
+          {/* One picture of where the money moves. The mechanics live in the guide. */}
+          <motion.div className="space-y-6" variants={fadeUp}>
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] items-stretch gap-3 md:gap-2">
+              <FlowNode icon={Store} label="Revenue" sub="Shop · trades · pool" />
+              <FlowArrow />
+              <FlowNode icon={Scale} label="Season budget" sub="Set aside up front" accent />
+              <FlowArrow />
+              <FlowNode icon={Coins} label="Your slice" sub="Burn WATTS, take a share" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <FlowStep
-                step="01"
-                icon={Store}
-                title="Revenue comes in"
-                body="Bikes and parts sold in the shop, commission on every player trade, and the staking pool's commission. Real money from real activity — nothing is minted to pay for it."
-              />
-              <FlowStep
-                step="02"
-                icon={Scale}
-                title="A share becomes the budget"
-                body="Each season a share of that revenue is set aside as an ENJ budget, before anyone is paid. Miss the minimum and the budget rolls into the next season rather than paying out something meaningless."
-              />
-              <FlowStep
-                step="03"
-                icon={Coins}
-                title="You claim your slice"
-                body="When the season closes, a redemption window opens. Burn your Earned WATTS to take a proportional share of that budget. Whatever is left funds the leaderboard prizes."
-              />
-            </div>
-
-            <div className="pixel-card p-5 md:p-6 flex items-start gap-4 border-m2e-accent">
-              <Lock className="w-6 h-6 text-m2e-accent shrink-0 mt-0.5" />
-              <p className="text-base md:text-lg text-m2e-text">
-                The budget is the ceiling. Galavant can only pay out what it earned, because there is
-                no Galavant token to print more of —{' '}
-                <span className="text-m2e-accent">your slice is funded by the business, not by the next player through the door.</span>
-              </p>
-            </div>
-
-            <p className="text-sm text-m2e-text-secondary max-w-3xl">
-              Two things shape your share: how much Earned WATTS you burn against everyone else's, and
-              how much ENJ you have staked in the pool — staking gates the window and weights what you
-              take from it. The rate floats every season, because it depends on that season's budget and
-              on how much the whole player base redeems. It is never fixed in advance, and we will never
-              quote you one.
+            <p className="text-lg md:text-2xl text-m2e-text text-center max-w-3xl mx-auto leading-snug">
+              The budget is the ceiling.{' '}
+              <span className="text-m2e-accent">Payouts come from revenue, never from the next player.</span>
             </p>
-          </motion.div>
 
-          <motion.div className="space-y-5" variants={fadeUp}>
-            <div className="space-y-2">
-              <div className="section-label">The fiscal agent</div>
-              <h3 className="text-2xl md:text-4xl uppercase tracking-wide text-m2e-text leading-none">
-                An AI keeps the books.<br />
-                <span className="text-m2e-accent">It cannot run off with them.</span>
-              </h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="pixel-card p-5 md:p-6 space-y-4">
-                <div className="flex items-center gap-2 text-sm uppercase tracking-widest text-m2e-success-deep">
-                  <Check className="w-4 h-4" /> What it does
-                </div>
-                <ul className="space-y-3">
-                  <AgentItem>Scores the economy's health every day and publishes the result on this page.</AgentItem>
-                  <AgentItem>Watches how much WATTS enters the game against how much is spent or burned.</AgentItem>
-                  <AgentItem>Proposes adjustments when things drift — earning rates, costs, and sinks.</AgentItem>
-                  <AgentItem>Runs a review at every season's close, before the budget is set and the window opens.</AgentItem>
-                </ul>
-              </div>
-
-              <div className="pixel-card p-5 md:p-6 space-y-4 border-m2e-danger/40">
-                <div className="flex items-center gap-2 text-sm uppercase tracking-widest text-m2e-danger">
-                  <Cancel className="w-4 h-4" /> What it cannot do
-                </div>
-                <ul className="space-y-3">
-                  <AgentItem barred>Change anything on its own. Every proposal waits on a human to approve it.</AgentItem>
-                  <AgentItem barred>Mint a token to cover a shortfall. There is no token to mint.</AgentItem>
-                  <AgentItem barred>Touch your WATTS, your bikes, or the ENJ in your own wallet.</AgentItem>
-                  <AgentItem barred>Pay out more than the season's revenue actually funded.</AgentItem>
-                </ul>
-              </div>
-            </div>
+            <p className="text-sm md:text-base text-m2e-text-secondary text-center max-w-2xl mx-auto">
+              An AI proposes the changes. A human approves every one. Neither can mint a token — there
+              isn't one.
+            </p>
           </motion.div>
 
           <div className="text-center">
@@ -1367,33 +1303,31 @@ function BigStat({ icon: Icon, label, value, format }: {
   );
 }
 
-function FlowStep({ step, icon: Icon, title, body }: {
-  step: string;
+function FlowNode({ icon: Icon, label, sub, accent }: {
   icon: React.ComponentType<any>;
-  title: string;
-  body: string;
+  label: string;
+  sub: string;
+  accent?: boolean;
 }) {
   return (
-    <div className="pixel-card p-5 md:p-6 space-y-3 relative overflow-hidden h-full">
-      <span className="absolute top-3 right-4 text-4xl md:text-5xl text-m2e-border/50 leading-none select-none">
-        {step}
-      </span>
-      <Icon className="w-8 h-8 text-m2e-accent" />
-      <h4 className="text-xl uppercase tracking-wide text-m2e-text leading-none">{title}</h4>
-      <p className="text-sm text-m2e-text-secondary leading-relaxed">{body}</p>
+    <div
+      className={`pixel-card px-4 py-6 flex flex-col items-center text-center gap-2 h-full ${
+        accent ? 'border-m2e-accent bg-m2e-accent-soft' : ''
+      }`}
+    >
+      <Icon className={`w-10 h-10 ${accent ? 'text-m2e-accent-dark' : 'text-m2e-accent'}`} />
+      <div className="text-lg md:text-xl uppercase tracking-wide text-m2e-text leading-none">{label}</div>
+      <div className="text-[11px] uppercase tracking-[0.2em] text-m2e-text-muted">{sub}</div>
     </div>
   );
 }
 
-function AgentItem({ children, barred }: { children: React.ReactNode; barred?: boolean }) {
+/** Points right on desktop, down once the strip stacks. */
+function FlowArrow() {
   return (
-    <li className="flex items-start gap-2.5 text-sm text-m2e-text-secondary leading-relaxed">
-      <span
-        className={`mt-2 w-1.5 h-1.5 shrink-0 ${barred ? 'bg-m2e-danger' : 'bg-m2e-success'}`}
-        aria-hidden
-      />
-      {children}
-    </li>
+    <div className="flex items-center justify-center text-m2e-border" aria-hidden>
+      <ChevronRight className="w-7 h-7 rotate-90 md:rotate-0" />
+    </div>
   );
 }
 
