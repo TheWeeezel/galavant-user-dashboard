@@ -771,6 +771,37 @@ export function unstake(stakeId: string) {
   });
 }
 
+// --- Enjin: link a real wallet + stake ENJ for an earning boost ---
+export function enjinLinkStart() {
+  return fetchAuthJson<{ url: string; qr: string; code: string; expires: string }>(
+    '/enjin/link/start',
+    { method: 'POST', body: JSON.stringify({}) },
+  );
+}
+
+export function enjinLinkStatus() {
+  return fetchAuthJson<{ linked: boolean; pending?: boolean; publicKey?: string }>(
+    '/enjin/link/status',
+  );
+}
+
+export function enjinStakingStatus() {
+  return fetchAuthJson<{
+    linked: boolean;
+    poolId: number;
+    staked?: boolean;
+    currentBondedEnj?: number;
+    avgBondedEnj30d?: number;
+    earningBoost?: number;
+    energyBonus?: number;
+    tier?: string;
+    timeWeightedBondedEnj?: number;
+    snapshotCount30d?: number;
+    lastSnapshotAt?: string | null;
+    slashingRisk?: string;
+  }>('/enjin/staking/status');
+}
+
 // --- Blockchain / NFT ---
 
 export function mintBikeNft(bikeId: string) {

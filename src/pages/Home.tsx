@@ -44,12 +44,12 @@ function formatSat(n: number): string {
 // ── Data ────────────────────────────────────────────────────────────────────
 
 const COMPARISON_DATA: { label: string; icon: React.ComponentType<any>; other: string; galavant: string }[] = [
-  { label: 'Blockchain', icon: Globe, other: 'Solana, BNB, L2s', galavant: 'Bitcoin Layer 1' },
+  { label: 'Blockchain', icon: Globe, other: 'Solana, BNB, L2s', galavant: 'Enjin Blockchain' },
   { label: 'Economy Mgmt', icon: Chart, other: 'None — mint and pray', galavant: 'AI Central Banker + human approval' },
   { label: 'Supply Control', icon: Fire, other: 'Unlimited or ignored', galavant: 'Active burns, buybacks & reserves' },
   { label: 'Stabilization', icon: Scale, other: 'Non-existent', galavant: 'Revenue-backed, auditable fund' },
   { label: 'Health Visibility', icon: Heart, other: 'Hidden or non-existent', galavant: 'Public real-time health score' },
-  { label: 'Asset Security', icon: Lock, other: 'Chain-dependent', galavant: "Secured by Bitcoin's hashrate" },
+  { label: 'Asset Security', icon: Lock, other: 'Chain-dependent', galavant: "Secured by Enjin's validators" },
   { label: 'Inflation Response', icon: Zap, other: 'Usually too late', galavant: 'Daily AI monitoring + tunable levers' },
   { label: 'Revenue Model', icon: Coins, other: 'Speculation-driven', galavant: 'Platform fees fund stability' },
 ];
@@ -58,7 +58,7 @@ const ONBOARDING_STEPS = [
   { icon: Download, title: 'Download', description: 'Get the app on iOS or Android' },
   { icon: Login, title: 'Sign In', description: 'Create your account and wallet' },
   { icon: Gift, title: 'Free NFT', description: 'Claim your starter balance bike' },
-  { icon: Human, title: 'Start Walking', description: 'Move to earn SAP' },
+  { icon: Human, title: 'Start Walking', description: 'Move to earn WATTS' },
 ];
 
 const ROADMAP_ITEMS: { title: string; icon: React.ComponentType<any>; status: 'done' | 'current' | 'upcoming' }[] = [
@@ -258,7 +258,7 @@ export function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.6 }}
             >
-              The first Walk-to-Earn game with balance bikes on Bitcoin.
+              The first Walk-to-Earn game with balance bikes on Enjin.
             </motion.p>
 
             <motion.div
@@ -294,10 +294,10 @@ export function Home() {
           whileInView="visible"
           viewport={vp}
         >
-          <FeatureCard title="Earn" description="Walk, jog, or run to earn SAP. The more you move, the more you earn." icon={Coins} />
+          <FeatureCard title="Earn" description="Walk, jog, or run to earn WATTS. The more you move, the more you earn." icon={Coins} />
           <FeatureCard title="Ride" description="Equip your bike and explore the world. Upgrade your gear to maximize efficiency." icon={SpeedFast} />
           <FeatureCard title="Trade" description="Buy, sell, and trade bikes and parts on the marketplace. Build your empire." icon={Store} />
-          <FeatureCard title="Collect" description="Mint unique balance bikes and parts. Build your NFT collection on Bitcoin." icon={Image} />
+          <FeatureCard title="Collect" description="Mint unique balance bikes and parts. Build your NFT collection on Enjin." icon={Image} />
         </motion.section>
 
         {/* ── Why Galavant (Comparison Carousel) ─────────────── */}
@@ -464,12 +464,12 @@ export function Home() {
                 {[
                   { icon: Users, label: 'Walkers', value: (d.totalUsers ?? 0).toLocaleString() },
                   { icon: MapPin, label: 'Total Distance', value: formatDistance(d.totalDistance ?? 0) },
-                  { icon: Coins, label: 'SAP Earned', value: formatSat(d.totalSapEarned ?? 0) },
+                  { icon: Coins, label: 'WATTS Earned', value: formatSat(d.totalSapEarned ?? 0) },
                   { icon: Zap, label: 'Activities', value: (d.totalActivities ?? 0).toLocaleString() },
                   { icon: Image, label: 'Minted NFTs', value: (d.totalMintedNfts ?? 0).toLocaleString() },
                   { icon: SpeedFast, label: 'Avg Walk', value: avgWalk > 0 ? formatDistance(avgWalk) : '\u2014' },
                   { icon: Trophy, label: 'Items Sold', value: sold.toLocaleString() },
-                  { icon: Fire, label: 'Volume Traded', value: vol > 0 ? `${formatSat(vol)} SAP` : '\u2014' },
+                  { icon: Fire, label: 'Volume Traded', value: vol > 0 ? `${formatSat(vol)} WATTS` : '\u2014' },
                 ].map((s) => (
                   <motion.div key={s.label} variants={staggerItem}>
                     <StatCard icon={s.icon} label={s.label} value={s.value} />
@@ -620,7 +620,7 @@ export function Home() {
                   </div>
                 </div>
                 <div className="text-xs text-m2e-text-secondary">
-                  Avg price: <span className="text-m2e-accent">{(stats.data.avgListingPrice ?? 0) > 0 ? `${formatSat(stats.data.avgListingPrice)} SAP` : '\u2014'}</span>
+                  Avg price: <span className="text-m2e-accent">{(stats.data.avgListingPrice ?? 0) > 0 ? `${formatSat(stats.data.avgListingPrice)} WATTS` : '\u2014'}</span>
                 </div>
               </motion.div>
 
@@ -635,7 +635,7 @@ export function Home() {
                   </div>
                 </div>
                 <div className="text-xs text-m2e-text-secondary">
-                  Cheapest active listing in SAP
+                  Cheapest active listing in WATTS
                 </div>
               </motion.div>
             </motion.div>

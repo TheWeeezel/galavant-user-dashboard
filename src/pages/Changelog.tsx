@@ -58,8 +58,8 @@ function buildShareMessage(entry: VersionEntry): string {
   lines.push('');
   lines.push('\u{1F381} All completed tasks will be rewarded with Bike Parts once we go live on Mainnet.');
   lines.push('');
-  lines.push('\u{1F426} Follow us on X: https://x.com/galavantBTC');
-  lines.push('\u{1F4AC} Join our Telegram: https://t.me/galavantBTC');
+  lines.push('\u{1F426} Follow us on X: https://x.com/galavanteer');
+  lines.push('\u{1F4AC} Join our Telegram: https://t.me/galavanteer');
 
   return lines.join('\n');
 }
@@ -318,7 +318,7 @@ export function Changelog() {
 
       {/* Footer */}
       <p className="text-center text-xs text-m2e-text-muted uppercase tracking-wider pt-4">
-        Galavant &mdash; Walk to Earn on Bitcoin
+        Galavant &mdash; Walk to Earn on Enjin
       </p>
     </div>
   );

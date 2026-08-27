@@ -60,7 +60,7 @@ const PHASES: RoadmapPhase[] = [
       },
       {
         title: 'Mainnet Launch',
-        description: 'Full mainnet deployment on Bitcoin. Live SAT token, on-chain NFT bikes, NativeSwap trading, and real BTC earnings.',
+        description: 'Full mainnet deployment on Enjin. Live SAT token, on-chain NFT bikes, on-chain trading, and real on-chain earnings.',
         icon: Flag,
         status: 'current',
       },
@@ -108,13 +108,13 @@ const PHASES: RoadmapPhase[] = [
     items: [
       {
         title: 'Zones & Territories',
-        description: 'Claim real-world hex zones by riding through them. Earn passive SAP from controlled territory. Contest rivals, defend your turf, and conquer the map.',
+        description: 'Claim real-world hex zones by riding through them. Earn passive WATTS from controlled territory. Contest rivals, defend your turf, and conquer the map.',
         icon: Globe,
         status: 'upcoming',
       },
       {
         title: 'Lucky Events',
-        description: 'Server-wide surprise events: Double Toolbox Hour, SAP Rain, Breeding Festivals. Push notifications bring everyone back for limited-time bonuses.',
+        description: 'Server-wide surprise events: Double Toolbox Hour, WATTS Rain, Breeding Festivals. Push notifications bring everyone back for limited-time bonuses.',
         icon: Gift,
         status: 'upcoming',
       },
@@ -278,7 +278,7 @@ export function Roadmap() {
         </p>
         <div className="flex items-center justify-center gap-3">
           <a
-            href="https://t.me/galavantBTC"
+            href="https://t.me/galavanteer"
             target="_blank"
             rel="noopener noreferrer"
             className="pixel-btn pixel-btn-secondary px-4 py-2 text-sm"
@@ -286,7 +286,7 @@ export function Roadmap() {
             Telegram
           </a>
           <a
-            href="https://x.com/galavantBTC"
+            href="https://x.com/galavanteer"
             target="_blank"
             rel="noopener noreferrer"
             className="pixel-btn pixel-btn-secondary px-4 py-2 text-sm"
@@ -298,7 +298,7 @@ export function Roadmap() {
 
       {/* Bottom text */}
       <p className="text-center text-xs text-m2e-text-muted uppercase tracking-wider pt-4">
-        Galavant &mdash; Walk to Earn on Bitcoin
+        Galavant &mdash; Walk to Earn on Enjin
       </p>
     </div>
   );

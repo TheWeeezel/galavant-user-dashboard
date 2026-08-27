@@ -12,6 +12,7 @@ import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { Wallet } from './pages/Wallet';
 import { Convert } from './pages/Convert';
 import { Staking } from './pages/Staking';
+import EnjStaking from './pages/EnjStaking';
 import { Swap } from './pages/Swap';
 import { Deposit } from './pages/Deposit';
 import { GameplayLayout } from './pages/gameplay/GameplayLayout';
@@ -42,6 +43,7 @@ export function App() {
           <Route path="wallet" element={<Wallet />} />
           <Route path="convert" element={<Convert />} />
           <Route path="staking" element={<Staking />} />
+          <Route path="enj-staking" element={<EnjStaking />} />
           <Route path="swap" element={<Swap />} />
           <Route path="deposit" element={<Deposit />} />
           <Route path="gameplay" element={<GameplayLayout />}>

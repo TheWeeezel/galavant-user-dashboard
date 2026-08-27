@@ -13,8 +13,8 @@
   --color-m2e-text: #2C2420;
   --color-m2e-text-secondary: #6B5C4D;
   --color-m2e-text-muted: #A89880;
-  --color-m2e-accent: #E8811A;
-  --color-m2e-accent-dark: #CC6E10;
+  --color-m2e-accent: #7866D5;
+  --color-m2e-accent-dark: #5F4FC0;
   --color-m2e-success: #3BA55D;
   --color-m2e-danger: #CC3333;
   --color-m2e-warning: #D4920A;
@@ -121,7 +121,7 @@ body {
   border-color: var(--color-m2e-accent);
 }
 .pixel-btn-outline:hover {
-  background-color: rgba(255, 77, 0, 0.1);
+  background-color: rgba(120, 102, 213, 0.1);
 }
 
 .pixel-btn-danger {
@@ -199,10 +199,10 @@ body {
 /* CTA glow pulse */
 @keyframes glow-pulse {
   0%, 100% {
-    box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow), 0 0 8px rgba(232, 129, 26, 0.25);
+    box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow), 0 0 8px rgba(120, 102, 213, 0.25);
   }
   50% {
-    box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow), 0 0 20px rgba(232, 129, 26, 0.5), 0 0 40px rgba(232, 129, 26, 0.15);
+    box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow), 0 0 20px rgba(120, 102, 213, 0.5), 0 0 40px rgba(120, 102, 213, 0.15);
   }
 }
 .animate-glow-pulse {

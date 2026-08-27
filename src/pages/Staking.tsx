@@ -164,7 +164,7 @@ export function Staking() {
                 <div key={s.id} className="bg-m2e-bg-alt border border-m2e-border-light rounded p-3 flex items-center justify-between">
                   <div>
                     <p className="text-lg">
-                      {s.amount.toLocaleString()} <span className="text-sm text-m2e-text-secondary">{s.type === 'tokens' ? 'SAT' : 'SAP'}</span>
+                      {s.amount.toLocaleString()} <span className="text-sm text-m2e-text-secondary">{s.type === 'tokens' ? 'SAT' : 'WATTS'}</span>
                     </p>
                     <p className="text-xs text-m2e-text-muted">
                       {s.lockPeriod}d lock &middot; {matured ? <span className="text-m2e-success">Matured</span> : `${days}d remaining`}
@@ -194,7 +194,7 @@ export function Staking() {
       >
         {unstakeTarget && (
           <>
-            <p>Unstake {unstakeTarget.amount.toLocaleString()} {unstakeTarget.type === 'tokens' ? 'SAT' : 'SAP'}?</p>
+            <p>Unstake {unstakeTarget.amount.toLocaleString()} {unstakeTarget.type === 'tokens' ? 'SAT' : 'WATTS'}?</p>
             {daysRemaining(unstakeTarget.endsAt) > 0 && (
               <p className="text-m2e-warning text-sm">
                 Early unstake incurs a penalty. {daysRemaining(unstakeTarget.endsAt)} days remaining.

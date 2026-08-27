@@ -205,7 +205,7 @@ export function ListingCard(props: ListingCardProps) {
     );
   }
 
-  // ── Marketplace mode (SAP) ───────────────────────────────
+  // ── Marketplace mode (WATTS) ───────────────────────────────
   const { listing, onClick } = props;
   const imageUrl = resolveImageUrl(listing);
   const quality = listing.item?.quality;
@@ -221,7 +221,7 @@ export function ListingCard(props: ListingCardProps) {
       subtitleRight={listing.item?.level ? `Lv. ${listing.item.level}` : undefined}
       quality={quality}
       priceTag={formatPrice(listing.priceSatoshis)}
-      priceUnit="SAP"
+      priceUnit="WATTS"
       metaLeft={listing.sellerName ? `by ${listing.sellerName}` : undefined}
       metaRight={timeAgo(listing.createdAt)}
       onClick={onClick}

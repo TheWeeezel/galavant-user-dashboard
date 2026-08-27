@@ -142,11 +142,11 @@ export function Marketplace() {
         <StoreContent onLoginRequest={() => setShowLogin(true)} />
       </section>
 
-      {/* ── Player Marketplace (SAP) ─────────────────────────────── */}
+      {/* ── Player Marketplace (WATTS) ─────────────────────────────── */}
       <div className="flex items-center gap-3 pt-4">
         <ShoppingCart className="w-6 h-6 text-m2e-accent" />
         <h2 className="text-2xl uppercase tracking-wide">Player Market</h2>
-        <span className="px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide bg-m2e-card border-m2e-border text-m2e-text-secondary">SAP</span>
+        <span className="px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide bg-m2e-card border-m2e-border text-m2e-text-secondary">WATTS</span>
       </div>
 
       {/* Item type chips */}
@@ -225,7 +225,7 @@ export function Marketplace() {
 
             {/* Price range */}
  <div className="space-y-2">
- <div className="text-xs uppercase tracking-widest text-m2e-text-muted">Price Range (SAP)</div>
+ <div className="text-xs uppercase tracking-widest text-m2e-text-muted">Price Range (WATTS)</div>
  <div className="flex items-center gap-2">
                 <input
                   type="number"

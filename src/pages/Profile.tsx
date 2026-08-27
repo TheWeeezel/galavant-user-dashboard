@@ -180,7 +180,7 @@ export function Profile() {
         />
         <StatCard
           icon={Coins}
-          label="SAP Earned"
+          label="WATTS Earned"
           value={(user.totalSapEarned ?? 0).toLocaleString()}
         />
         <StatCard
@@ -190,10 +190,10 @@ export function Profile() {
         />
       </div>
 
-      {/* SAP Balance */}
+      {/* WATTS Balance */}
  <div className="pixel-card p-5">
  <h2 className="text-sm uppercase tracking-widest text-m2e-text-secondary mb-3">
-          SAP Balance
+          WATTS Balance
         </h2>
  <div className="flex items-center justify-between">
           <div>
@@ -203,7 +203,7 @@ export function Profile() {
             >
               {spending?.sap?.toLocaleString() ?? '—'}
             </span>
- <span className="text-sm text-m2e-text-muted ml-2 uppercase">SAP</span>
+ <span className="text-sm text-m2e-text-muted ml-2 uppercase">WATTS</span>
           </div>
  <div className="flex gap-2">
             <Link

@@ -47,10 +47,10 @@ function buildEnergyPage(p: GuideParams): GameplayPage {
     slug: 'energy',
     title: 'Energy',
     content: [
-      { type: 'paragraph', text: 'Energy determines how many minutes you can earn per day. Without energy, you can still walk, but you won\'t earn SAP.' },
+      { type: 'paragraph', text: 'Energy determines how many minutes you can earn per day. Without energy, you can still walk, but you won\'t earn WATTS.' },
       { type: 'heading', text: 'Energy Basics' },
       { type: 'list', items: [
-        'Energy is measured in minutes of earning time. Only minutes where you actively earn SAP consume energy — if your speed is out of range, you stop moving, or you pause your session, your energy is preserved.',
+        'Energy is measured in minutes of earning time. Only minutes where you actively earn WATTS consume energy — if your speed is out of range, you stop moving, or you pause your session, your energy is preserved.',
         `It refills ${p.energyRegenPercent}% every ${p.energyRegenIntervalHours} hours — a full refill takes ${p.fullRechargeHours} hours.`,
         'Your total energy pool depends on how many bikes you own and their quality.',
         `The maximum energy cap is ${cap} minutes per day.`,
@@ -119,7 +119,7 @@ function buildBikeAttributesPage(p: GuideParams): GameplayPage {
   const base = p.baseEarningRateCommon;
   const earningRows: string[][] = [0, 10, 50, 100, 200].map((stat) => {
     const mult = 1 + stat / 100;
-    return [String(stat), `${fmt(mult)}x`, `${fmt(base * mult, 1)} SAP/min`];
+    return [String(stat), `${fmt(mult)}x`, `${fmt(base * mult, 1)} WATTS/min`];
   });
 
   const dropRows: string[][] = [0, 10, 50, 100].map((luck) => {
@@ -133,7 +133,7 @@ function buildBikeAttributesPage(p: GuideParams): GameplayPage {
     content: [
       { type: 'paragraph', text: 'Each balance bike has four core attributes that affect different aspects of gameplay. Attributes come from three sources: base stats (rolled at creation), level-up points you allocate, and bonuses from socketed parts.' },
       { type: 'heading', text: 'Earning' },
-      { type: 'paragraph', text: 'Increases the SAP you earn per minute of walking. Every 100 points of Earning doubles your base rate.' },
+      { type: 'paragraph', text: 'Increases the WATTS you earn per minute of walking. Every 100 points of Earning doubles your base rate.' },
       { type: 'table', headers: ['Total Earning', 'Multiplier', 'Example (Common bike)'], rows: earningRows },
       { type: 'heading', text: 'Luck' },
       { type: 'paragraph', text: 'Improves your chances of receiving a toolbox drop each minute you walk, and increases the likelihood of higher-level toolboxes. Higher Luck means better odds, but drops are never guaranteed to be a specific level.' },
@@ -159,7 +159,7 @@ function buildBikeAttributesPage(p: GuideParams): GameplayPage {
       { type: 'paragraph', text: 'When your bike levels up, you receive stat points that you can allocate to any of these four attributes. Choose wisely based on your playstyle!' },
       { type: 'heading', text: 'Tips for Stat Allocation' },
       { type: 'list', items: [
-        'Earning-focused builds maximize short-term SAP income.',
+        'Earning-focused builds maximize short-term WATTS income.',
         'Luck builds aim for valuable toolbox drops.',
         'Recovery builds reduce HP loss and the need for recovery parts.',
         'Durability builds keep your bike at peak earning rate longer and shorten repair times.',
@@ -180,35 +180,35 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'what-is-galavant',
         title: 'What is Galavant?',
         content: [
-          { type: 'paragraph', text: 'Galavant is a walk-to-earn game built on Bitcoin. Grab a balance bike, head outdoors, and earn Satoshi Activity Points (SAP) just by walking. Convert them into real value on the blockchain.' },
+          { type: 'paragraph', text: 'Galavant is a walk-to-earn game built on Enjin. Grab a balance bike, head outdoors, and earn WATTS just by walking. Convert them into real value on the blockchain.' },
           { type: 'heading', text: 'How It Works' },
           { type: 'list', items: [
             'Get a balance bike — purchase one from the marketplace or breed a new one.',
             'Walk outdoors — the app tracks your real-world movement via GPS.',
-            'Earn SAP — every minute of walking earns you SAP based on your bike and stats.',
+            'Earn WATTS — every minute of walking earns you WATTS based on your bike and stats.',
             'Level up — improve your bike, socket parts, and climb the leaderboards.',
-            'Go on-chain — convert SAP into SAT tokens (an OP_20 token on Bitcoin) and swap for BTC.',
+            'Go on-chain — convert WATTS into SAT tokens on the Enjin blockchain.',
           ]},
-          { type: 'tip', text: 'Galavant runs entirely on Bitcoin Layer 1. Your bikes and tokens are real on-chain assets.' },
+          { type: 'tip', text: 'Galavant runs on the Enjin blockchain. Your bikes and tokens are real on-chain assets.' },
           { type: 'heading', text: 'What Makes Galavant Different' },
-          { type: 'paragraph', text: 'Unlike other move-to-earn games, Galavant is built natively on Bitcoin — not a sidechain or L2. Your NFTs and tokens live on the most secure blockchain in the world. The game uses balance bikes — you walk with them, not pedal. It\'s designed for casual walkers and power walkers alike, with a sustainable economy that rewards genuine outdoor activity.' },
+          { type: 'paragraph', text: 'Unlike other move-to-earn games, Galavant is built on Enjin, a blockchain purpose-built for gaming assets. Your NFTs and tokens live on-chain, where you truly own them. The game uses balance bikes — you walk with them, not pedal. It\'s designed for casual walkers and power walkers alike, with a sustainable economy that rewards genuine outdoor activity.' },
         ],
       },
       {
         slug: 'your-first-walk',
         title: 'Your First Walk',
         content: [
-          { type: 'paragraph', text: 'Ready to start earning? Here\'s how to go from zero to your first SAP in just a few minutes.' },
+          { type: 'paragraph', text: 'Ready to start earning? Here\'s how to go from zero to your first WATTS in just a few minutes.' },
           { type: 'heading', text: 'Step by Step' },
           { type: 'list', items: [
             'Open the Galavant app and create your wallet.',
-            'Get your first balance bike — buy one from the Bike Store with BTC, browse the marketplace, or receive one from a friend.',
+            'Get your first balance bike — buy one from the Bike Store with ENJ, browse the marketplace, or receive one from a friend.',
             'Bike Store purchases go straight into your in-game inventory, so you can equip the bike immediately after payment.',
             'Equip your bike from the inventory screen.',
             'Tap the "Walk" button to start a session.',
             'Head outside and walk at a pace that matches your bike type.',
             'Need a break? Tap Pause to freeze your session — no energy is consumed while paused. Tap Resume when you\'re ready to continue.',
-            'When you\'re done, stop the session and collect your SAP earnings!',
+            'When you\'re done, stop the session and collect your WATTS earnings!',
           ]},
           { type: 'tip', text: 'Make sure you have good GPS signal before starting. Indoor movement and treadmills won\'t count.' },
           { type: 'heading', text: 'What You Need' },
@@ -248,7 +248,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'bike-quality',
         title: 'Bike Quality',
         content: [
-          { type: 'paragraph', text: 'Every balance bike has a quality tier that determines its overall power. Higher quality bikes have better base stats, earn more SAP, and contribute more daily energy.' },
+          { type: 'paragraph', text: 'Every balance bike has a quality tier that determines its overall power. Higher quality bikes have better base stats, earn more WATTS, and contribute more daily energy.' },
           { type: 'table', headers: ['Quality', 'Description'], rows: [
             ['Common', 'Standard bikes — a great starting point for new walkers.'],
             ['Uncommon', 'Slightly better stats and energy than Common.'],
@@ -314,11 +314,11 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'how-earning-works',
         title: 'How Earning Works',
         content: [
-          { type: 'paragraph', text: 'Earning SAP is the core loop of Galavant. Every minute you walk outdoors with an equipped balance bike, you earn SAP. The amount depends on several factors.' },
+          { type: 'paragraph', text: 'Earning WATTS is the core loop of Galavant. Every minute you walk outdoors with an equipped balance bike, you earn WATTS. The amount depends on several factors.' },
           { type: 'heading', text: 'What Affects Your Earnings' },
           { type: 'list', items: [
             'Bike quality — higher quality bikes have better earning potential.',
-            'Earning attribute — more points in Earning = more SAP per minute.',
+            'Earning attribute — more points in Earning = more WATTS per minute.',
             'Bike level — higher level bikes earn more.',
             'Speed matching — staying in your bike\'s optimal speed zone maximizes earnings.',
             'GPS signal quality — poor signal reduces earnings.',
@@ -332,7 +332,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'speed-matching',
         title: 'Speed Matching',
         content: [
-          { type: 'paragraph', text: 'Each bike type has an optimal speed zone. Walking within this zone earns you full SAP. Walking outside of it reduces your rewards.' },
+          { type: 'paragraph', text: 'Each bike type has an optimal speed zone. Walking within this zone earns you full WATTS. Walking outside of it reduces your rewards.' },
           { type: 'heading', text: 'Speed Zones by Bike Type' },
           { type: 'table', headers: ['Bike Type', 'Full Range', 'Optimal Range', 'Best For'], rows: [
             ['Commuter', '2 – 6 km/h', '2 – 5 km/h', 'Slow to normal walking'],
@@ -368,18 +368,18 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'bike-condition',
         title: 'Bike Condition & Repair',
         content: [
-          { type: 'paragraph', text: 'Every bike has a Bike Condition that ranges from 0% to 100%, shown as the durability bar on the bike detail screen. Condition affects how much SAP you earn — a bike in peak condition earns at full rate, while a worn-down bike earns progressively less per minute.' },
+          { type: 'paragraph', text: 'Every bike has a Bike Condition that ranges from 0% to 100%, shown as the durability bar on the bike detail screen. Condition affects how much WATTS you earn — a bike in peak condition earns at full rate, while a worn-down bike earns progressively less per minute.' },
           { type: 'heading', text: 'How Condition Affects Earnings' },
           { type: 'list', items: [
             'A freshly repaired bike earns at full rate.',
             'As you ride, your bike wears down and Condition gradually drops.',
             'Once Condition falls below the well-maintained zone, your earning rate decreases.',
-            'A heavily worn bike still earns SAP, but at a significantly reduced rate.',
+            'A heavily worn bike still earns WATTS, but at a significantly reduced rate.',
             'Repairing restores Condition to peak and returns you to full-rate earning.',
           ]},
           { type: 'heading', text: 'Repairs Take Time' },
           { type: 'paragraph', text: 'When you start a repair, your bike is locked from activities while it\'s being fixed. The amount of wall-clock time required depends on how much wear there is to undo — small top-up repairs are quick, full overhauls take longer.' },
-          { type: 'paragraph', text: 'If you\'re in a hurry, you can spend extra SAP to instantly skip the remaining wait, in the same way you can boost a level-up. The cost decays as the repair progresses, so a near-finished repair is much cheaper to skip than a freshly-started one.' },
+          { type: 'paragraph', text: 'If you\'re in a hurry, you can spend extra WATTS to instantly skip the remaining wait, in the same way you can boost a level-up. The cost decays as the repair progresses, so a near-finished repair is much cheaper to skip than a freshly-started one.' },
           { type: 'heading', text: 'Keeping Your Bike in Peak Condition' },
           { type: 'list', items: [
             'Higher Durability stat means slower wear per minute of walking.',
@@ -409,7 +409,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Parts are components that boost your balance bike\'s attributes. Each part enhances one specific stat — earning, luck, recovery, or durability.' },
           { type: 'heading', text: 'Part Types' },
           { type: 'table', headers: ['Part Type', 'Boosted Attribute'], rows: [
-            ['Earning Part', 'Increases SAP earned per minute'],
+            ['Earning Part', 'Increases WATTS earned per minute'],
             ['Luck Part', 'Improves toolbox drop chances'],
             ['Recovery Part', 'Reduces HP drain while walking'],
             ['Durability Part', 'Reduces wear on your bike'],
@@ -466,7 +466,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Toolboxes range from Level 1 (most common) to Level 5 (rarest). Higher levels contain better parts and a chance at minting tools.' },
           { type: 'table', headers: ['Level', 'Rarity', 'Description'], rows: [
             ['Lv. 1', 'Very Common', 'Basic rewards that help early progression.'],
-            ['Lv. 2', 'Common', 'A modest step up in parts and SAP rewards.'],
+            ['Lv. 2', 'Common', 'A modest step up in parts and WATTS rewards.'],
             ['Lv. 3', 'Uncommon', 'Stronger mid-tier rewards with occasional premium drops.'],
             ['Lv. 4', 'Rare', 'High-value rewards and better premium-drop potential.'],
             ['Lv. 5', 'Very Rare', 'The strongest rewards and the best chance at top-tier extras.'],
@@ -482,18 +482,18 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Each toolbox has a cooldown period that starts when it drops. You must wait for the timer to expire before opening. Higher-level toolboxes take longer — ranging from about 2 days for Lv. 1 up to about a week for Lv. 5.' },
           { type: 'tip', text: 'Extra inventory slots let you cool down multiple boxes in parallel, so you\'re always ready to open one while others count down.' },
           { type: 'heading', text: 'Speed Open' },
-          { type: 'paragraph', text: 'Don\'t want to wait? You can spend SAP to instantly skip the remaining cooldown. The cost scales with how much time is left — the more patient you are, the less it costs. This cost is in addition to the normal opening cost.' },
+          { type: 'paragraph', text: 'Don\'t want to wait? You can spend WATTS to instantly skip the remaining cooldown. The cost scales with how much time is left — the more patient you are, the less it costs. This cost is in addition to the normal opening cost.' },
           { type: 'heading', text: 'Live Drop Progress' },
           { type: 'paragraph', text: 'During a walk, the live activity screen shows your estimated toolbox drop progress — including your cumulative drop chance so far and the likely toolbox level based on your actual movement. If you stop moving, the estimated level reflects that. This updates in real time as your walk continues.' },
           { type: 'heading', text: 'Opening Costs' },
-          { type: 'paragraph', text: 'Every toolbox has an opening cost. Lower-level toolboxes are easier to open, while higher-level toolboxes may also require BTC in addition to SAP.' },
+          { type: 'paragraph', text: 'Every toolbox has an opening cost. Lower-level toolboxes are easier to open, while higher-level toolboxes may also require ENJ in addition to WATTS.' },
           { type: 'table', headers: ['Level', 'Cost Type'], rows: [
-            ['Lv. 1 - 3', 'SAP only'],
-            ['Lv. 4 - 5', 'SAP + BTC'],
+            ['Lv. 1 - 3', 'WATTS only'],
+            ['Lv. 4 - 5', 'WATTS + ENJ'],
           ]},
           { type: 'paragraph', text: 'This keeps early toolboxes accessible while making the highest-level boxes a more deliberate upgrade path.' },
           { type: 'heading', text: 'Contents by Level' },
-          { type: 'paragraph', text: 'Toolboxes can contain parts from any of the four part types, a small SAP bonus, and sometimes minting tools. Opening a toolbox always costs more SAP than the SAP you receive back — the real value is the parts and tools inside.' },
+          { type: 'paragraph', text: 'Toolboxes can contain parts from any of the four part types, a small WATTS bonus, and sometimes minting tools. Opening a toolbox always costs more WATTS than the WATTS you receive back — the real value is the parts and tools inside.' },
           { type: 'list', items: [
             'Any toolbox can help you build out your parts inventory.',
             'Higher-level toolboxes are better for chasing stronger part levels.',
@@ -524,7 +524,7 @@ export const gameplaySections: GameplaySection[] = [
             'Two bikes, each at level 5 or higher.',
             'Each bike can breed up to 7 times in its lifetime.',
             'There\'s a 48-hour cooldown between breeds for each bike.',
-            'Breeding costs BTC (gas), SAP, and 1 minting tool.',
+            'Breeding costs ENJ (gas), WATTS, and 1 minting tool.',
             'Costs increase with each subsequent breed for that bike.',
           ]},
           { type: 'tip', text: 'Plan your breeds carefully — each bike has limited breed count, and costs go up each time. Save your best bikes for when you\'re ready.' },
@@ -566,9 +566,9 @@ export const gameplaySections: GameplaySection[] = [
         title: 'Dashboard Login',
         content: [
           { type: 'paragraph', text: 'The Galavant dashboard lets you manage your account, view tasks, and access the marketplace from a browser. There are two ways to log in.' },
-          { type: 'heading', text: 'Bitcoin Wallet Extension' },
+          { type: 'heading', text: 'Wallet Extension' },
           { type: 'list', items: [
-            'Install the Bitcoin Wallet browser extension.',
+            'Install the wallet browser extension.',
             'Create a new wallet or import an existing one using your recovery phrase.',
             'On the dashboard, click "Connect Wallet" — the extension will prompt you to approve.',
           ]},
@@ -611,7 +611,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'How It Works' },
           { type: 'list', items: [
             'Set up your wallet in the mobile app (create new or import existing).',
-            'To access the dashboard: import the same recovery phrase into the Bitcoin wallet browser extension, then connect on the dashboard.',
+            'To access the dashboard: import the same recovery phrase into the wallet browser extension, then connect on the dashboard.',
             'Alternatively, link your Google account in the mobile app and use Google sign-in on the dashboard.',
             'Both methods connect you to the same account — your bikes, SAT balance, and progress are shared.',
           ]},
@@ -622,8 +622,8 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'exporting-bikes',
         title: 'Exporting Bikes',
         content: [
-          { type: 'paragraph', text: 'Bikes you buy from the Bike Store or earn in-game start as normal inventory bikes. Exporting is optional and only needed when you want to move a bike onto the Bitcoin blockchain.' },
-          { type: 'paragraph', text: 'Any bike with full HP can be exported as an on-chain NFT (BikeNFT). This puts your balance bike on the Bitcoin blockchain where it can be traded, sold, or transferred to other wallets.' },
+          { type: 'paragraph', text: 'Bikes you buy from the Bike Store or earn in-game start as normal inventory bikes. Exporting is optional and only needed when you want to move a bike onto the Enjin blockchain.' },
+          { type: 'paragraph', text: 'Any bike with full HP can be exported as an on-chain NFT (BikeNFT). This puts your balance bike on the Enjin blockchain where it can be traded, sold, or transferred to other wallets.' },
           { type: 'heading', text: 'How Exporting Works' },
           { type: 'list', items: [
             'Select a bike with full HP from your inventory.',
@@ -662,10 +662,11 @@ export const gameplaySections: GameplaySection[] = [
     pages: [
       {
         slug: 'sap-and-sat-tokens',
-        title: 'SAP & SAT Tokens',
+        title: 'WATTS & SAT Tokens',
         content: [
+          { type: 'tip', text: '⚠️ Galavant is migrating to a new blockchain. Token conversions and swaps are paused during the transition — your WATTS balance and everything you own in the game are unaffected. This page will be updated when the migration completes.' },
           { type: 'paragraph', text: 'Galavant has a dual-currency system designed for both casual players and crypto-savvy users.' },
-          { type: 'heading', text: 'Satoshi Activity Points (SAP)' },
+          { type: 'heading', text: 'WATTS' },
           { type: 'list', items: [
             'Earned by walking with your balance bike.',
             'Used for leveling, upgrades, marketplace trades, and breeding.',
@@ -674,13 +675,13 @@ export const gameplaySections: GameplaySection[] = [
           ]},
           { type: 'heading', text: 'SAT Token (On-Chain)' },
           { type: 'list', items: [
-            'An OP_20 token on Bitcoin with a fixed supply of 210 million.',
-            'Created by converting SAP into SAT tokens.',
+            'A token on Enjin with a fixed supply of 210 million.',
+            'Created by converting WATTS into SAT tokens.',
             'The conversion rate gets harder as more tokens are minted — early converters get the best rate.',
             'A 5% platform fee applies to conversions.',
-            'Can be swapped for BTC on NativeSwap.',
+            'Can be swapped for ENJ on-chain.',
           ]},
-          { type: 'tip', text: 'You don\'t need to convert to tokens to enjoy the game. SAP works for everything in-game. Converting to SAT tokens is optional for those who want on-chain value.' },
+          { type: 'tip', text: 'You don\'t need to convert to tokens to enjoy the game. WATTS works for everything in-game. Converting to SAT tokens is optional for those who want on-chain value.' },
           { type: 'heading', text: 'Token Supply Management' },
           { type: 'paragraph', text: 'The platform actively manages the SAT token supply to maintain a healthy economy. A portion of platform revenue goes into a stabilization fund used for token burns (permanently reducing supply) and buybacks (purchasing tokens on the open market). These operations are reviewed and approved by the team to ensure long-term token value stability.' },
         ],
@@ -689,10 +690,10 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'marketplace',
         title: 'Marketplace',
         content: [
-          { type: 'paragraph', text: 'The in-game marketplace lets you buy and sell bikes, parts, and minting tools using SAP.' },
+          { type: 'paragraph', text: 'The in-game marketplace lets you buy and sell bikes, parts, and minting tools using WATTS.' },
           { type: 'heading', text: 'Selling' },
           { type: 'list', items: [
-            'List any bike, part, or minting tool for a SAP price you choose.',
+            'List any bike, part, or minting tool for a WATTS price you choose.',
             'Bikes must be at 100% durability to be listed — repair first if needed.',
             'Listed bikes stay visible in your inventory, but bike-management actions stay locked until the listing is sold or cancelled.',
             'Listed parts stay visible too, but missions only count loose, unlisted parts and unlisted bikes as ready-to-use resources.',
@@ -713,10 +714,11 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'swapping',
         title: 'Swapping',
         content: [
-          { type: 'paragraph', text: 'Swap between BTC and SAT tokens using NativeSwap, a decentralized exchange on Bitcoin.' },
+          { type: 'tip', text: '⚠️ Swapping is paused while Galavant migrates to a new blockchain. This page will be updated when the migration completes.' },
+          { type: 'paragraph', text: 'Swap between ENJ and SAT tokens using a decentralized exchange on Enjin.' },
           { type: 'heading', text: 'Buying SAT Tokens' },
           { type: 'list', items: [
-            'Send BTC to reserve SAT tokens.',
+            'Send ENJ to reserve SAT tokens.',
             'Complete the swap to receive your tokens.',
             'This is a two-step process for security.',
             'A 5% platform fee applies.',
@@ -725,7 +727,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'list', items: [
             'Approve your tokens for the swap contract.',
             'List your SAT tokens for sale.',
-            'Receive BTC when a buyer matches your listing.',
+            'Receive ENJ when a buyer matches your listing.',
           ]},
           { type: 'paragraph', text: 'Swap rates are determined by the liquidity pool. Larger swaps may experience price impact.' },
         ],
@@ -773,7 +775,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Treasury Operations' },
           { type: 'list', items: [
             'Token Burns — SAT tokens can be permanently removed from circulation by sending them to an unspendable address. This reduces the total supply, which helps counteract inflation when too many tokens are entering the market.',
-            'Buybacks — The platform can use BTC reserves to purchase SAT tokens on the open market (NativeSwap). This creates buy pressure and supports the token price during periods of heavy selling.',
+            'Buybacks — The platform can use ENJ reserves to purchase SAT tokens on the open market. This creates buy pressure and supports the token price during periods of heavy selling.',
             'Hold — Sometimes the best action is no action. When the economy is stable, the central banker holds reserves and observes, ready to act if conditions change.',
           ]},
           { type: 'tip', text: 'Every treasury operation is proposed by the AI economy agent, reviewed by the team, and requires explicit admin approval before execution. The system is designed for careful, deliberate action — not reactive panic moves.' },
@@ -781,7 +783,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'The stabilization fund is built from a share of platform tax revenue collected on conversions, swaps, and marketplace trades. It accumulates over time and serves as a reserve that the central banking system can draw from when economic intervention is needed.' },
           { type: 'list', items: [
             'Revenue flows in continuously from platform activity.',
-            'The fund holds multiple currencies (SAT, BTC) to enable different types of operations.',
+            'The fund holds multiple currencies (SAT, ENJ) to enable different types of operations.',
             'Minimum reserve thresholds ensure the fund is never fully depleted.',
             'All fund movements are recorded and auditable.',
           ]},
@@ -796,27 +798,27 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Adjustable Economic Levers' },
           { type: 'paragraph', text: 'The following table shows the categories of parameters the team can tune. No exact values are listed — just what each lever controls and why it might be adjusted.' },
           { type: 'table', headers: ['Area', 'What Can Be Adjusted', 'Why It Might Change'], rows: [
-            ['Earning Rates', 'Base SAP earned per minute by bike quality', 'To balance inflation if too much SAP is entering the economy'],
+            ['Earning Rates', 'Base WATTS earned per minute by bike quality', 'To balance inflation if too much WATTS is entering the economy'],
             ['Energy System', 'Daily energy caps, regen speed, quality bonuses', 'To balance earning capacity as the player base grows'],
-            ['Conversion Rate', 'Difficulty of converting SAP into SAT tokens', 'To control token minting speed and protect token value'],
-            ['Repair & Maintenance', 'Cost to repair HP and durability', 'To calibrate how much SAP flows back out as a spending sink'],
-            ['Leveling Costs', 'SAP and BTC costs for leveling bikes', 'To ensure progression costs stay meaningful at all stages'],
+            ['Conversion Rate', 'Difficulty of converting WATTS into SAT tokens', 'To control token minting speed and protect token value'],
+            ['Repair & Maintenance', 'Cost to repair HP and durability', 'To calibrate how much WATTS flows back out as a spending sink'],
+            ['Leveling Costs', 'WATTS and ENJ costs for leveling bikes', 'To ensure progression costs stay meaningful at all stages'],
             ['Part Upgrades', 'Upgrade costs and success rates', 'To balance the part economy and prevent excess supply'],
-            ['Breeding Costs', 'BTC and SAP costs per breed attempt', 'To control the rate of new bike creation'],
+            ['Breeding Costs', 'ENJ and WATTS costs per breed attempt', 'To control the rate of new bike creation'],
             ['Toolbox System', 'Drop rates, cooldowns, opening costs', 'To manage the flow of parts and resources into the game'],
-            ['Marketplace Fees', 'Platform fee on trades', 'To adjust the SAP sink from player-to-player trading'],
+            ['Marketplace Fees', 'Platform fee on trades', 'To adjust the WATTS sink from player-to-player trading'],
             ['Staking Rewards', 'Earning boosts and energy bonuses from staking', 'To incentivize or moderate token locking behavior'],
             ['Loyalty Multipliers', 'Streak bonuses and holding rewards', 'To calibrate how much consistency is rewarded'],
             ['Treasury Operations', 'Burn rate, buyback rate, reserve thresholds', 'To manage SAT token supply and price stability'],
             ['Revenue Allocation', 'Share of tax revenue going to stabilization fund', 'To grow or maintain the fund that backs treasury operations'],
-            ['Swap Fees', 'Fees on SAT/BTC exchange', 'To manage trading friction and platform revenue'],
+            ['Swap Fees', 'Fees on SAT/ENJ exchange', 'To manage trading friction and platform revenue'],
           ]},
           { type: 'divider' },
           { type: 'heading', text: 'What Stays the Same' },
           { type: 'paragraph', text: 'Some things are fixed by design and will not change:' },
           { type: 'list', items: [
             'SAT token total supply — hard-capped at 210 million, enforced by the smart contract.',
-            'On-chain ownership — your bikes and tokens are real Bitcoin assets you control.',
+            'On-chain ownership — your bikes and tokens are real on-chain assets you control.',
             'Human approval requirement — no economy change happens without team review.',
             'Transparency — the economy health score remains public.',
           ]},
@@ -889,24 +891,43 @@ export const gameplaySections: GameplaySection[] = [
         ],
       },
       {
+        slug: 'enj-staking',
+        title: 'ENJ Staking',
+        content: [
+          { type: 'tip', text: '⚠️ New with the Enjin migration. This feature turns on when Galavant goes live on the Enjin blockchain.' },
+          { type: 'paragraph', text: 'Stake real ENJ in the Galavant Peloton nomination pool from your own Enjin Wallet and earn a permanent boost on everything you earn in the game. Your ENJ never leaves your wallet — you keep it and its on-chain staking yield; the in-game boost is a thank-you for staking with us.' },
+          { type: 'heading', text: 'How it works' },
+          { type: 'list', items: [
+            'Link your Enjin Wallet in the app (Staking → Stake ENJ for a boost). Linking only reads your public address — it never moves funds.',
+            'Stake ENJ into the Galavant Peloton pool from your wallet.',
+            'Your earning boost appears in the app within about an hour and grows with the amount you stake.',
+          ]},
+          { type: 'heading', text: 'Why the boost rewards commitment' },
+          { type: 'paragraph', text: 'Your boost is based on your average stake over the last two weeks, not a single moment. Staking a large amount for an instant and pulling it straight out does almost nothing — steady, committed stakers get the real reward.' },
+          { type: 'heading', text: 'The bigger the stake, the bigger the boost' },
+          { type: 'paragraph', text: 'The boost rises smoothly as you stake more, up to a maximum. Small stakes give a small boost; larger, longer-held stakes approach the cap. You always keep full control of your ENJ.' },
+          { type: 'tip', text: 'You earn your normal on-chain staking rewards on top of the in-game boost — staking in the Galavant pool works exactly like staking anywhere else, it just also powers up your game.' },
+        ],
+      },
+      {
         slug: 'social-rewards',
         title: 'Social Rewards',
         content: [
-          { type: 'paragraph', text: 'Earn SAP by engaging with Galavant on X (Twitter). Follow our account, like our posts, and retweet to earn rewards.' },
+          { type: 'paragraph', text: 'Earn WATTS by engaging with Galavant on X (Twitter). Follow our account, like our posts, and retweet to earn rewards.' },
           { type: 'heading', text: 'Getting Started' },
           { type: 'list', items: [
             'Go to the Earn More page and link your X username.',
-            'Follow @GalavantBTC to earn a one-time reward.',
+            'Follow @galavanteer to earn a one-time reward.',
             'Browse posted tweets and like or retweet them to earn additional rewards.',
           ]},
           { type: 'heading', text: 'How It Works' },
           { type: 'list', items: [
-            'Each like and retweet on a Galavant tweet earns you SAP.',
+            'Each like and retweet on a Galavant tweet earns you WATTS.',
             'You can only earn once per action per tweet — no double-dipping.',
             'Likes and retweets are verified through the Twitter API before rewards are credited.',
             'The follow reward is a one-time bonus for following our account.',
           ]},
-          { type: 'tip', text: 'Visit the Earn More page regularly — new tweets appear as they\'re posted, and each one is a fresh opportunity to earn SAP!' },
+          { type: 'tip', text: 'Visit the Earn More page regularly — new tweets appear as they\'re posted, and each one is a fresh opportunity to earn WATTS!' },
         ],
       },
       {
@@ -917,7 +938,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Leaderboard Categories' },
           { type: 'table', headers: ['Category', 'What It Tracks'], rows: [
             ['Distance', 'Total distance covered while walking'],
-            ['Earnings', 'Total SAP earned from walking'],
+            ['Earnings', 'Total WATTS earned from walking'],
           ]},
           { type: 'heading', text: 'Time Periods' },
           { type: 'list', items: [
@@ -942,7 +963,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'how-it-works',
         title: 'How Missions Work',
         content: [
-          { type: 'paragraph', text: 'Every day you receive 3 missions tailored to your current game state. Complete all 3 to unlock a Mission Chest filled with parts and SAP.' },
+          { type: 'paragraph', text: 'Every day you receive 3 missions tailored to your current game state. Complete all 3 to unlock a Mission Chest filled with parts and WATTS.' },
           { type: 'heading', text: 'Mission Types' },
           { type: 'list', items: [
             'Engagement — walking goals like "Ride for 15 minutes" or "Walk 2 km".',
@@ -960,14 +981,14 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'mission-chest',
         title: 'Mission Chest',
         content: [
-          { type: 'paragraph', text: 'Complete all 3 missions to unlock a Mission Chest. The chest contains parts, a small SAP bonus, and a rare chance at a minting tool.' },
+          { type: 'paragraph', text: 'Complete all 3 missions to unlock a Mission Chest. The chest contains parts, a small WATTS bonus, and a rare chance at a minting tool.' },
           { type: 'heading', text: 'Chest Contents' },
           { type: 'list', items: [
             'Parts (guaranteed) — 1 or more parts to help you progress.',
-            'SAP (guaranteed) — a small SAP bonus.',
+            'WATTS (guaranteed) — a small WATTS bonus.',
             'Minting Tool (rare) — valuable tools used for breeding new bikes.',
           ]},
-          { type: 'paragraph', text: 'Higher streak tiers increase chest quality — more parts, higher part levels, bigger SAP bonuses, and better minting tool odds.' },
+          { type: 'paragraph', text: 'Higher streak tiers increase chest quality — more parts, higher part levels, bigger WATTS bonuses, and better minting tool odds.' },
         ],
       },
       {

@@ -67,16 +67,31 @@ export function Wallet() {
         <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Wallet</h1>
       </div>
 
+      {/* Enjin Wallet — link a real wallet and stake ENJ for a boost */}
+      <Link
+        to="/enj-staking"
+        className="pixel-card p-5 flex items-center gap-4 hover:border-m2e-accent transition-colors"
+      >
+        <Zap className="w-8 h-8 text-m2e-accent shrink-0" />
+        <div className="flex-1">
+          <p className="text-lg uppercase tracking-wide">Enjin Wallet &amp; Staking</p>
+          <p className="text-sm text-m2e-text-secondary">
+            Link your Enjin Wallet and stake ENJ in the Galavant Peloton pool for an earning boost.
+          </p>
+        </div>
+        <ExternalLink className="w-5 h-5 text-m2e-text-muted shrink-0" />
+      </Link>
+
       {/* Recent swap reassurance */}
       {recentSwapNotice && <RecentSwapBanner tx={recentSwapNotice} />}
 
       {/* Balances */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <BalanceCard
-          label="SAP (In-Game)"
+          label="WATTS (In-Game)"
           amount={spendingLoading ? '...' : spending?.sap?.toLocaleString() ?? '0'}
-          unit="SAP"
-          icon={<img src="/assets/token-silver.png" alt="SAP" className="w-8 h-8" />}
+          unit="WATTS"
+          icon={<img src="/assets/token-silver.png" alt="WATTS" className="w-8 h-8" />}
           accent
         />
         <BalanceCard
@@ -104,13 +119,13 @@ export function Wallet() {
           to="/convert"
           icon={<Coins className="w-6 h-6" />}
           title="Convert"
-          description="Convert SAP points to SAT tokens"
+          description="Convert WATTS points to SAT tokens"
         />
         <ActionCard
           to="/deposit"
           icon={<ExternalLink className="w-6 h-6" />}
           title="Deposit"
-          description="Deposit SAT tokens back to SAP"
+          description="Deposit SAT tokens back to WATTS"
         />
         <ActionCard
           to="/staking"

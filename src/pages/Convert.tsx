@@ -67,7 +67,7 @@ export function Convert() {
       queryClient.invalidateQueries({ queryKey: ['spending-wallet'] });
       queryClient.invalidateQueries({ queryKey: ['conversion-pool'] });
       queryClient.invalidateQueries({ queryKey: ['conversion-history'] });
-      setSuccessMsg(`Converted ${data.pointsDebited} SAP to ${formatTokens(data.tokensReceived)} SAT`);
+      setSuccessMsg(`Converted ${data.pointsDebited} WATTS to ${formatTokens(data.tokensReceived)} SAT`);
       setErrorMsg(null);
       setAmount('');
     },
@@ -84,7 +84,7 @@ export function Convert() {
   if (!isAuthenticated) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-24 text-center">
-        <p className="text-m2e-text-secondary text-lg">Sign in to convert SAP to SAT tokens.</p>
+        <p className="text-m2e-text-secondary text-lg">Sign in to convert WATTS to SAT tokens.</p>
       </div>
     );
   }
@@ -94,7 +94,7 @@ export function Convert() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Redo className="w-10 h-10 text-m2e-accent" />
-        <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Convert SAP to SAT</h1>
+        <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Convert WATTS to SAT</h1>
       </div>
 
       {/* Alerts */}
@@ -107,13 +107,13 @@ export function Convert() {
 
       {/* Balance */}
       <div className="pixel-card p-5">
-        <p className="text-xs uppercase tracking-widest text-m2e-text-muted mb-1">Available SAP</p>
+        <p className="text-xs uppercase tracking-widest text-m2e-text-muted mb-1">Available WATTS</p>
         <p className="text-3xl text-m2e-accent">{wallet?.sap?.toLocaleString() ?? '0'}</p>
       </div>
 
       {/* Amount Input */}
       <div className="pixel-card p-5 space-y-3">
-        <p className="text-sm uppercase tracking-widest text-m2e-text-secondary">SAP to Convert</p>
+        <p className="text-sm uppercase tracking-widest text-m2e-text-secondary">WATTS to Convert</p>
         <div className="flex gap-3">
           <input
             type="number"
@@ -127,7 +127,7 @@ export function Convert() {
             Max
           </button>
         </div>
-        <p className="text-xs text-m2e-text-muted">Minimum: 100 SAP</p>
+        <p className="text-xs text-m2e-text-muted">Minimum: 100 WATTS</p>
       </div>
 
       {/* Preview */}
@@ -135,9 +135,9 @@ export function Convert() {
         <div className="pixel-card p-5 space-y-3">
           <p className="text-sm uppercase tracking-widest text-m2e-text-secondary">Conversion Preview</p>
           <div className="space-y-2">
-            <Row label="You send" value={`${parsedAmount.toLocaleString()} SAP`} />
+            <Row label="You send" value={`${parsedAmount.toLocaleString()} WATTS`} />
             <Row label="You receive" value={`${formatTokens(preview.expectedTokens)} SAT`} accent />
-            <Row label="Rate" value={`${preview.conversionRate.toFixed(1)} SAP / 1 SAT`} />
+            <Row label="Rate" value={`${preview.conversionRate.toFixed(1)} WATTS / 1 SAT`} />
             <Row label="Difficulty" value={`${preview.difficultyMultiplier.toFixed(2)}x`} />
             <Row label="Pool used" value={`${preview.poolUsedPercent.toFixed(1)}%`} />
           </div>
@@ -145,7 +145,7 @@ export function Convert() {
       )}
 
       {wallet && parsedAmount > wallet.sap && (
-        <p className="text-m2e-danger text-sm">Amount exceeds your SAP balance.</p>
+        <p className="text-m2e-danger text-sm">Amount exceeds your WATTS balance.</p>
       )}
 
       <button
@@ -180,7 +180,7 @@ export function Convert() {
               <div key={entry.id} className="bg-m2e-bg-alt border border-m2e-border-light rounded p-3">
                 <div className="flex justify-between mb-1">
                   <span className="text-m2e-accent">+{formatTokens(entry.tokensReceived)} SAT</span>
-                  <span className="text-m2e-danger">-{entry.pointsSpent.toLocaleString()} SAP</span>
+                  <span className="text-m2e-danger">-{entry.pointsSpent.toLocaleString()} WATTS</span>
                 </div>
                 {entry.txHash && (
                   <p className="text-[11px] text-m2e-text-muted font-mono truncate">TX: {entry.txHash}</p>

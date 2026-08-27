@@ -21,7 +21,7 @@ export function Deposit() {
     <div className="mx-auto max-w-3xl px-4 md:px-8 py-12 space-y-8">
       <div className="flex items-center gap-4">
         <ExternalLink className="w-10 h-10 text-m2e-accent" />
-        <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Deposit SAT to SAP</h1>
+        <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Deposit SAT to WATTS</h1>
       </div>
       {isAuthenticated ? (
         <WalletRequiredGuard>
@@ -104,8 +104,8 @@ function DepositContent() {
           disabled={formDisabled}
         />
         <p className="text-xs text-m2e-text-muted">
-          Your SAT tokens will be converted back to SAP points at the current difficulty rate.
-          SAP is credited only after the on-chain transaction is mined.
+          Your SAT tokens will be converted back to WATTS points at the current difficulty rate.
+          WATTS is credited only after the on-chain transaction is mined.
         </p>
 
         {exceedsBalance && !formDisabled && (
@@ -130,9 +130,9 @@ function DepositContent() {
         <p className="text-sm uppercase tracking-widest text-m2e-text-secondary">How Deposits Work</p>
         <ul className="space-y-2 text-sm text-m2e-text-secondary list-disc list-inside">
           <li>Send SAT tokens from your on-chain wallet back to the game</li>
-          <li>Receive SAP points at the current conversion difficulty rate</li>
+          <li>Receive WATTS points at the current conversion difficulty rate</li>
           <li>Your wallet extension will prompt you to sign the transaction</li>
-          <li>SAP is credited after the transaction is mined (usually 1-2 minutes)</li>
+          <li>WATTS is credited after the transaction is mined (usually 1-2 minutes)</li>
         </ul>
       </div>
     </div>
@@ -160,7 +160,7 @@ function ActiveDepositCard({ deposit }: { deposit: PendingDeposit }) {
           <p className="text-sm text-m2e-accent font-bold uppercase">Waiting for confirmation</p>
         </div>
         <p className="text-xs text-m2e-text-muted">
-          Your deposit transaction has been broadcast. SAP will be credited once the network confirms it —
+          Your deposit transaction has been broadcast. WATTS will be credited once the network confirms it —
           usually 1-2 minutes. You can safely leave this page and come back.
         </p>
         <a
@@ -183,7 +183,7 @@ function ConfirmedDepositCard({ deposit }: { deposit: PendingDeposit }) {
       <div className="flex-1 min-w-0">
         <p className="text-sm text-m2e-success font-bold uppercase tracking-wide">Deposit confirmed</p>
         <p className="text-xs text-m2e-text-secondary mt-1">
-          {formatTokens(deposit.amount.toString())} SAT credited as SAP.
+          {formatTokens(deposit.amount.toString())} SAT credited as WATTS.
         </p>
         <a
           href={txExplorerUrl(deposit.txHash)}
@@ -205,7 +205,7 @@ function FailedDepositCard({ deposit }: { deposit: PendingDeposit }) {
       <div className="flex-1 min-w-0">
         <p className="text-sm text-m2e-danger font-bold uppercase tracking-wide">Deposit failed</p>
         <p className="text-xs text-m2e-text-secondary mt-1">
-          {deposit.error ?? 'Transaction did not confirm. No SAP was credited.'}
+          {deposit.error ?? 'Transaction did not confirm. No WATTS was credited.'}
         </p>
         <a
           href={txExplorerUrl(deposit.txHash)}

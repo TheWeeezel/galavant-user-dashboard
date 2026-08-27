@@ -121,10 +121,10 @@ export function EarnPoints() {
           className="text-4xl md:text-5xl uppercase tracking-widest text-m2e-accent"
           style={{ textShadow: '1px 1px 0px var(--color-m2e-accent-dark)' }}
         >
-          Earn More SAP
+          Earn More WATTS
         </h1>
         <p className="text-xl text-m2e-text-secondary mt-2 max-w-lg mx-auto">
-          Multiple ways to earn SAP in the Galavant ecosystem — walk, engage, and refer friends.
+          Multiple ways to earn WATTS in the Galavant ecosystem — walk, engage, and refer friends.
         </p>
       </div>
 
@@ -141,7 +141,7 @@ export function EarnPoints() {
             </h2>
           </div>
           <p className="text-lg text-m2e-text-secondary">
-            Complete 16 testnet tasks to earn up to <span className="text-m2e-accent font-bold">2,300 SAP</span>. Your points will count toward the mainnet airdrop allocation.
+            Complete 16 testnet tasks to earn up to <span className="text-m2e-accent font-bold">2,300 WATTS</span>. Your points will count toward the mainnet airdrop allocation.
           </p>
           <Link
             to="/tasks"
@@ -162,7 +162,7 @@ export function EarnPoints() {
             </h2>
           </div>
           <p className="text-lg text-m2e-text-secondary">
-            Equip a bike and walk or run in the Galavant mobile app. Earn SAP every minute of activity based on your bike stats and bonuses.
+            Equip a bike and walk or run in the Galavant mobile app. Earn WATTS every minute of activity based on your bike stats and bonuses.
           </p>
           <div className="flex items-center gap-3">
             {changelogData?.testflightUrl && (
@@ -237,7 +237,7 @@ export function EarnPoints() {
         )}
 
         <p className="text-lg text-m2e-text-secondary">
-          Engage with Galavant on X (Twitter) to earn SAP. Follow <span className="text-m2e-accent">@GalavantBTC</span> and interact with our posts — each follow, like, and retweet earns you <span className="text-m2e-accent font-bold">10 SAP</span>.
+          Engage with Galavant on X (Twitter) to earn WATTS. Follow <span className="text-m2e-accent">@galavanteer</span> and interact with our posts — each follow, like, and retweet earns you <span className="text-m2e-accent font-bold">10 WATTS</span>.
         </p>
 
         {isAuthenticated && socialStatus?.twitterLinked && (
@@ -245,8 +245,8 @@ export function EarnPoints() {
             {/* Follow Task */}
             <div className="pixel-border border-m2e-border p-3 flex items-center justify-between gap-3">
               <div className="flex-1">
-                <p className="text-sm text-m2e-text">Follow @GalavantBTC</p>
-                <p className="text-xs text-m2e-text-muted">10 SAP reward</p>
+                <p className="text-sm text-m2e-text">Follow @galavanteer</p>
+                <p className="text-xs text-m2e-text-muted">10 WATTS reward</p>
               </div>
               {socialStatus.followClaimed ? (
                 <span className="pixel-border border-m2e-success bg-m2e-success/10 px-3 py-1 text-xs uppercase tracking-wide text-m2e-success flex items-center gap-1">
@@ -254,7 +254,7 @@ export function EarnPoints() {
                 </span>
               ) : !followClicked ? (
                 <a
-                  href="https://x.com/intent/follow?screen_name=GalavantBTC"
+                  href="https://x.com/intent/follow?screen_name=galavanteer"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setFollowClicked(true)}
@@ -268,7 +268,7 @@ export function EarnPoints() {
                   disabled={claimFollowMutation.isPending}
                   className="pixel-btn pixel-btn-primary px-3 py-1 text-xs disabled:opacity-50"
                 >
-                  {claimFollowMutation.isPending ? 'Claiming...' : 'Claim 10 SAP'}
+                  {claimFollowMutation.isPending ? 'Claiming...' : 'Claim 10 WATTS'}
                 </button>
               )}
             </div>
@@ -308,7 +308,7 @@ export function EarnPoints() {
 
                         {/* Open on X link */}
                         <a
-                          href={`https://x.com/GalavantBTC/status/${tweet.twitterId}`}
+                          href={`https://x.com/galavanteer/status/${tweet.twitterId}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => setVisitedTweets((prev) => new Set(prev).add(tweet.twitterId))}
@@ -329,7 +329,7 @@ export function EarnPoints() {
                               disabled={claimLikeMutation.isPending}
                               className="flex-1 pixel-btn pixel-btn-primary px-2 py-1 text-xs disabled:opacity-50"
                             >
-                              <Heart className="w-3 h-3 inline mr-1" />10 SAP
+                              <Heart className="w-3 h-3 inline mr-1" />10 WATTS
                             </button>
                           ) : (
                             <span className="flex-1 text-center text-xs text-m2e-text-muted italic">
@@ -347,7 +347,7 @@ export function EarnPoints() {
                               disabled={claimRetweetMutation.isPending}
                               className="flex-1 pixel-btn pixel-btn-primary px-2 py-1 text-xs disabled:opacity-50"
                             >
-                              <Repeat className="w-3 h-3 inline mr-1" />10 SAP
+                              <Repeat className="w-3 h-3 inline mr-1" />10 WATTS
                             </button>
                           ) : (
                             <span className="flex-1 text-center text-xs text-m2e-text-muted italic">
@@ -406,7 +406,7 @@ export function EarnPoints() {
           </h2>
         </div>
         <p className="text-lg text-m2e-text-secondary">
-          Share your referral link. Earn <span className="text-m2e-accent">50 SAP</span> when a friend signs up with Google and links their wallet.
+          Share your referral link. Earn <span className="text-m2e-accent">50 WATTS</span> when a friend signs up with Google and links their wallet.
         </p>
 
         {isAuthenticated ? (
@@ -452,7 +452,7 @@ export function EarnPoints() {
                 <div className="pixel-card p-3 text-center">
                   <span className="text-2xl text-m2e-accent">{referralStats.totalEarned}</span>
                   <p className="text-xs uppercase tracking-wide text-m2e-text-muted mt-1">
-                    SAP Earned
+                    WATTS Earned
                   </p>
                 </div>
               </div>
