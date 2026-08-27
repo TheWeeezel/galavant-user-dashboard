@@ -33,6 +33,11 @@
   --color-m2e-warning: #C98A12;       /* the one warm signal colour, kept warm on purpose */
   --color-m2e-warning-deep: #815707;
 
+  /* WATTS silver, sampled from token-silver.png. Currency-flavoured UI uses this
+     so the violet accent is free to mean one thing only: "you are here". */
+  --color-m2e-watts: #BAC5C7;
+  --color-m2e-watts-light: #D8E0E1;
+
   --color-m2e-info-soft: #D7E1EE;
   --color-m2e-info: #4A82C8;
   --color-m2e-info-deep: #244F86;

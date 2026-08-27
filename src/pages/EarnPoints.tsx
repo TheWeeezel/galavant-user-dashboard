@@ -274,7 +274,7 @@ export function EarnPoints() {
           )}
 
           <p className="text-base md:text-lg text-m2e-text-secondary">
-            Follow <span className="text-m2e-accent">@GalavantBTC</span>. Like and retweet our posts. Each action earns you <span className="text-m2e-accent">10 WATTS</span>.
+            Follow <span className="text-m2e-accent">@galavanteer</span>. Like and retweet our posts. Each action earns you <span className="text-m2e-accent">10 WATTS</span>.
           </p>
 
           {isAuthenticated && socialStatus?.twitterLinked && (
@@ -286,7 +286,7 @@ export function EarnPoints() {
                     <Users className="w-5 h-5 text-m2e-info" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-base text-m2e-text truncate">Follow @GalavantBTC</p>
+                    <p className="text-base text-m2e-text truncate">Follow @galavanteer</p>
                     <p className="text-[10px] text-m2e-text-muted uppercase tracking-[0.25em]">10 WATTS reward</p>
                   </div>
                 </div>
@@ -296,7 +296,7 @@ export function EarnPoints() {
                   </span>
                 ) : !followClicked ? (
                   <a
-                    href="https://x.com/intent/follow?screen_name=GalavantBTC"
+                    href="https://x.com/intent/follow?screen_name=galavanteer"
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setFollowClicked(true)}
@@ -348,7 +348,7 @@ export function EarnPoints() {
                           </div>
 
                           <a
-                            href={`https://x.com/GalavantBTC/status/${tweet.twitterId}`}
+                            href={`https://x.com/galavanteer/status/${tweet.twitterId}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() => setVisitedTweets((prev) => new Set(prev).add(tweet.twitterId))}

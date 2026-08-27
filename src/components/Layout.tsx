@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router';
-import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe, Coins, Zap } from 'pixelarticons/react';
+import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe, Coins } from 'pixelarticons/react';
 import { MusicPlayer } from './MusicPlayer';
 import { LoginModal } from './LoginModal';
 import { useAuth } from '../contexts/AuthContext';
-import { useWalletAuth } from '../hooks/useWalletAuth';
 
 export function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,15 +17,12 @@ export function Layout() {
     if (isAuthenticated) setShowLogin(false);
   }, [isAuthenticated]);
 
-  useWalletAuth();
-
   const navLinks = [
     { href: '/', label: 'Home', icon: Home, iconOnly: true },
     { href: '/gameplay', label: 'Guide', icon: BookOpen, iconOnly: true },
     { href: '/market', label: 'Market', icon: ShoppingCart, iconOnly: true },
     { href: '/changelog', label: 'Updates', icon: Notes, iconOnly: false },
     { href: '/roadmap', label: 'Roadmap', icon: Globe, iconOnly: false },
-    { href: '/enj-staking', label: 'Stake', icon: Zap, iconOnly: false },
   ] as const;
 
   const isActive = (href: string) => {
@@ -67,7 +63,7 @@ export function Layout() {
             ))}
 
             {isAuthenticated && (
-              <NavPill to="/earn" active={isActive('/earn')} accent glow>
+              <NavPill to="/earn" active={isActive('/earn')} watts glow>
                 <img src="/assets/token-silver.png" alt="WATTS" className="w-5 h-5 pixel-render" />
                 Earn WATTS
               </NavPill>
@@ -81,7 +77,7 @@ export function Layout() {
             )}
 
             {isAuthenticated ? (
-              <NavPill to="/profile" active={isActive('/profile')} accent>
+              <NavPill to="/profile" active={isActive('/profile')}>
                 <Human className="w-5 h-5" />
                 You
               </NavPill>
@@ -124,7 +120,7 @@ export function Layout() {
               <MobileLink
                 to="/earn"
                 active={isActive('/earn')}
-                accent
+                watts
                 onClick={() => setMenuOpen(false)}
               >
                 <img src="/assets/token-silver.png" alt="WATTS" className="w-5 h-5 pixel-render" />
@@ -145,7 +141,6 @@ export function Layout() {
               <MobileLink
                 to="/profile"
                 active={isActive('/profile')}
-                accent
                 onClick={() => setMenuOpen(false)}
               >
                 <Human className="w-5 h-5" />
@@ -219,21 +214,26 @@ export function Layout() {
   );
 }
 
-function NavPill({ to, active, accent, glow, title, children }: {
+/**
+ * Nav tone ladder — violet is reserved for "you are here", so exactly one item
+ * can ever carry it. `watts` marks the currency action in WATTS silver; every
+ * other item stays quiet until it becomes the current page.
+ */
+function NavPill({ to, active, watts, glow, title, children }: {
   to: string;
   active: boolean;
-  accent?: boolean;
+  watts?: boolean;
   glow?: boolean;
   title?: string;
   children: React.ReactNode;
 }) {
   const base = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-colors relative';
-  const tone = accent
-    ? 'text-m2e-accent hover:text-m2e-accent-dark'
-    : active
-      ? 'text-m2e-accent'
+  const tone = active
+    ? 'text-m2e-accent'
+    : watts
+      ? 'text-m2e-watts hover:text-m2e-watts-light'
       : 'text-white/70 hover:text-white';
-  const bg = active && !accent ? 'bg-white/10' : 'hover:bg-white/5';
+  const bg = active ? 'bg-white/10' : 'hover:bg-white/5';
   const glowCls = glow ? 'animate-glitch-flicker hover:animate-none' : '';
 
   return (
@@ -246,17 +246,17 @@ function NavPill({ to, active, accent, glow, title, children }: {
   );
 }
 
-function MobileLink({ to, active, accent, onClick, children }: {
+function MobileLink({ to, active, watts, onClick, children }: {
   to: string;
   active: boolean;
-  accent?: boolean;
+  watts?: boolean;
   onClick?: () => void;
   children: React.ReactNode;
 }) {
-  const tone = accent
-    ? 'text-m2e-accent'
-    : active
-      ? 'text-m2e-accent bg-white/10'
+  const tone = active
+    ? 'text-m2e-accent bg-white/10'
+    : watts
+      ? 'text-m2e-watts'
       : 'text-white/70 hover:text-white hover:bg-white/5';
   return (
     <Link

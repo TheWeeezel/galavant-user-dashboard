@@ -27,6 +27,9 @@ function resolveImageUrl(listing: MarketplaceListing): string | null {
   if (listing.itemType === 'part' && listing.item?.type && listing.item?.level) {
     return `${config.apiUrl}/art/bases/part-${listing.item.type.toLowerCase()}-lv${listing.item.level}.png`;
   }
+  if (listing.itemType === 'tool') {
+    return `${config.apiUrl}/art/bases/tool-minting.png`;
+  }
   return null;
 }
 
