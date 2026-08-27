@@ -94,7 +94,7 @@ export function Wallet() {
               <span className="text-m2e-accent">Wallet.</span>
             </h1>
             <div className="flex items-center gap-2 text-xs md:text-sm uppercase tracking-[0.25em] text-white/60">
-              <span className="w-2 h-2 rounded-full bg-m2e-success animate-pulse-ring" />
+              <span className="w-2 h-2 rounded-full bg-m2e-success animate-pulse-ring [--pulse-ring:var(--color-m2e-success)]" />
               Live · Synced on demand
             </div>
           </motion.div>
@@ -129,7 +129,7 @@ export function Wallet() {
               }
               unit="ENJ"
               note={link?.linked ? undefined : 'wallet not linked'}
-              icon={<Zap className="w-10 h-10 text-m2e-accent" />}
+              icon={<img src="/assets/token-enj.svg" alt="ENJ" className="w-10 h-10 pixel-render" />}
             />
           </div>
         </motion.section>
@@ -189,7 +189,7 @@ export function Wallet() {
                 &gt; Transaction Log
               </span>
               <span className="text-xs tracking-widest uppercase flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-m2e-success animate-pulse-ring" />
+                <span className="w-2 h-2 rounded-full bg-m2e-success animate-pulse-ring [--pulse-ring:var(--color-m2e-success)]" />
                 Live
               </span>
             </div>

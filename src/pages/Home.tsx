@@ -681,7 +681,7 @@ export function Home() {
             <div className="bg-m2e-text text-m2e-accent px-5 py-3 border-b-2 border-m2e-border flex items-center justify-between">
               <span className="text-xs md:text-sm tracking-[0.3em] uppercase">&gt; Score Board</span>
               <span className="text-xs tracking-widest uppercase flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-m2e-success animate-pulse-ring" />
+                <span className="w-2 h-2 rounded-full bg-m2e-success animate-pulse-ring [--pulse-ring:var(--color-m2e-success)]" />
                 Live
               </span>
             </div>
@@ -1139,16 +1139,14 @@ function PillarVisual({ visual, size, title }: {
       <div className="relative flex flex-col items-center gap-3">
         <div className={`relative ${large ? 'w-64 md:w-80 lg:w-[28rem] h-56 md:h-72 lg:h-80' : 'w-44 h-32'}`}>
           {/* ENJ — back/right */}
-          <motion.div
-            className={`absolute ${coinSize} rounded-full border-4 border-m2e-accent-dark bg-m2e-accent flex items-center justify-center drop-shadow-[0_0_24px_rgba(120,102,213,0.5)]`}
+          <motion.img
+            src="/assets/token-enj.svg"
+            alt="ENJ token"
+            className={`absolute ${coinSize} pixel-render drop-shadow-[0_0_24px_rgba(120,102,213,0.5)]`}
             style={{ top: '10%', right: '8%' }}
             animate={{ y: [0, -12, 0], rotate: [-6, 2, -6] }}
             transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <span className={`text-m2e-text-on-accent uppercase tracking-[0.15em] ${large ? 'text-2xl md:text-3xl' : 'text-xs'}`}>
-              ENJ
-            </span>
-          </motion.div>
+          />
           {/* WATTS (silver) — front/left */}
           <motion.img
             src="/assets/token-silver.png"
@@ -1165,7 +1163,7 @@ function PillarVisual({ visual, size, title }: {
           </span>
           <span className="text-m2e-text-muted">×</span>
           <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-m2e-accent border border-m2e-accent-dark" /> ENJ
+            <img src="/assets/token-enj.svg" alt="" className="w-3 h-3 pixel-render" /> ENJ
           </span>
         </div>
       </div>

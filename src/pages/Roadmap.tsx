@@ -22,14 +22,14 @@ interface RoadmapPhase {
 const STATUS_CONFIG: Record<RoadmapItem['status'], { badge: string; badgeClass: string; dotClass: string; cardClass: string; accent: string }> = {
   done: {
     badge: 'Cleared',
-    badgeClass: 'bg-m2e-success/15 text-m2e-success border-current',
-    dotClass: 'bg-m2e-success border-m2e-success',
+    badgeClass: 'bg-m2e-success-soft text-m2e-success-deep border-current',
+    dotClass: 'bg-m2e-success border-m2e-success-deep',
     cardClass: 'opacity-80',
-    accent: 'text-m2e-success',
+    accent: 'text-m2e-success-deep',
   },
   current: {
     badge: 'In Progress',
-    badgeClass: 'bg-m2e-accent/15 text-m2e-accent border-current',
+    badgeClass: 'bg-m2e-accent-soft text-m2e-accent-dark border-current',
     dotClass: 'bg-m2e-accent border-m2e-accent-dark animate-pulse-ring',
     cardClass: 'ring-2 ring-m2e-accent/40',
     accent: 'text-m2e-accent',
@@ -247,7 +247,7 @@ export function Roadmap() {
           initial="hidden"
           animate="visible"
         >
-          <QuestStat icon={Check} label="Cleared" value={totals.done} color="text-m2e-success" />
+          <QuestStat icon={Check} label="Cleared" value={totals.done} color="text-m2e-success-deep" />
           <QuestStat icon={Clock} label="In Progress" value={totals.current} color="text-m2e-accent" pulse />
           <QuestStat icon={Lock} label="Locked" value={totals.upcoming} color="text-m2e-text-muted" />
         </motion.div>
@@ -290,7 +290,7 @@ export function Roadmap() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`inline-flex items-center gap-1 px-2 py-1 text-[10px] uppercase tracking-widest pixel-border ${
-                      phaseComplete ? 'bg-m2e-success/15 text-m2e-success border-current' :
+                      phaseComplete ? 'bg-m2e-success-soft text-m2e-success-deep border-current' :
                       phaseActive ? 'bg-m2e-accent/15 text-m2e-accent border-current' :
                       'bg-m2e-bg-alt text-m2e-text-muted border-m2e-border'
                     }`}>
@@ -349,7 +349,7 @@ export function Roadmap() {
                           <div className="flex items-center justify-between flex-wrap gap-2 relative">
                             <div className="flex items-center gap-3">
                               <div className={`w-10 h-10 rounded-lg border flex items-center justify-center shrink-0 ${
-                                item.status === 'done' ? 'bg-m2e-success/15 border-m2e-success/30' :
+                                item.status === 'done' ? 'bg-m2e-success-soft border-m2e-success/40' :
                                 item.status === 'current' ? 'bg-m2e-accent/15 border-m2e-accent/40' :
                                 'bg-m2e-bg-alt border-m2e-border'
                               }`}>
