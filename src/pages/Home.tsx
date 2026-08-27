@@ -86,19 +86,19 @@ interface PillarData {
 
 const PILLAR_META = [
   { kicker: '01 / MOVE',     title: 'WALK.',    tagline: 'Your balance bike. On chain. On your feet.',       icon: Human,  fallback: '/assets/floating/bike.png' },
-  { kicker: '02 / STACK',    title: 'EARN.',    tagline: 'WATTS per minute. Convert to SAT on-chain.',       icon: Coins,  fallback: '/assets/landing/feature-ride.png' },
+  { kicker: '02 / STACK',    title: 'EARN.',    tagline: 'WATTS per minute. Redeem for ENJ each season.',    icon: Coins,  fallback: '/assets/landing/feature-ride.png' },
   { kicker: '03 / DOMINATE', title: 'CONQUER.', tagline: 'Lv 9 parts. Toolboxes. Legendary tools.',          icon: Trophy, fallback: '/assets/landing/feature-trade.png' },
 ] as const;
 
 const COMPARISON_DATA: { label: string; icon: React.ComponentType<any>; other: string; galavant: string }[] = [
   { label: 'Blockchain', icon: Globe, other: 'Solana, BNB, L2s', galavant: 'Enjin Blockchain' },
   { label: 'Economy Mgmt', icon: Chart, other: 'None — mint and pray', galavant: 'AI Central Banker + human approval' },
-  { label: 'Supply Control', icon: Fire, other: 'Unlimited or ignored', galavant: 'Active burns, buybacks & reserves' },
-  { label: 'Stabilization', icon: Scale, other: 'Non-existent', galavant: 'Revenue-backed, auditable fund' },
+  { label: 'Supply Control', icon: Fire, other: 'Unlimited or ignored', galavant: 'No mintable token — WATTS burns on redemption' },
+  { label: 'Stabilization', icon: Scale, other: 'Non-existent', galavant: 'Revenue-funded season budget' },
   { label: 'Health Visibility', icon: Heart, other: 'Hidden or non-existent', galavant: 'Public real-time health score' },
   { label: 'Asset Security', icon: Lock, other: 'Chain-dependent', galavant: "Secured by Enjin's validators" },
   { label: 'Inflation Response', icon: Zap, other: 'Usually too late', galavant: 'Daily AI monitoring + tunable levers' },
-  { label: 'Revenue Model', icon: Coins, other: 'Speculation-driven', galavant: 'Platform fees fund stability' },
+  { label: 'Revenue Model', icon: Coins, other: 'Speculation-driven', galavant: 'Platform revenue funds player payouts' },
 ];
 
 const ONBOARDING_STEPS = [
@@ -1138,15 +1138,17 @@ function PillarVisual({ visual, size, title }: {
     return (
       <div className="relative flex flex-col items-center gap-3">
         <div className={`relative ${large ? 'w-64 md:w-80 lg:w-[28rem] h-56 md:h-72 lg:h-80' : 'w-44 h-32'}`}>
-          {/* SAT (gold) — back/right */}
-          <motion.img
-            src="/assets/token-gold.png"
-            alt="SAT token"
-            className={`absolute ${coinSize} pixel-render drop-shadow-[0_0_24px_rgba(212,146,10,0.5)]`}
+          {/* ENJ — back/right */}
+          <motion.div
+            className={`absolute ${coinSize} rounded-full border-4 border-m2e-accent-dark bg-m2e-accent flex items-center justify-center drop-shadow-[0_0_24px_rgba(120,102,213,0.5)]`}
             style={{ top: '10%', right: '8%' }}
             animate={{ y: [0, -12, 0], rotate: [-6, 2, -6] }}
             transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-          />
+          >
+            <span className={`text-m2e-text-on-accent uppercase tracking-[0.15em] ${large ? 'text-2xl md:text-3xl' : 'text-xs'}`}>
+              ENJ
+            </span>
+          </motion.div>
           {/* WATTS (silver) — front/left */}
           <motion.img
             src="/assets/token-silver.png"
@@ -1163,7 +1165,7 @@ function PillarVisual({ visual, size, title }: {
           </span>
           <span className="text-m2e-text-muted">×</span>
           <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border flex items-center gap-1.5">
-            <img src="/assets/token-gold.png" alt="" className="w-3 h-3 pixel-render" /> SAT
+            <span className="w-3 h-3 rounded-full bg-m2e-accent border border-m2e-accent-dark" /> ENJ
           </span>
         </div>
       </div>

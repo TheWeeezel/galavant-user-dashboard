@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { config } from '../config';
-import type { MarketplaceListing, StoreListingInfo } from '../api';
+import type { MarketplaceListing } from '../api';
 
 const qualityColors: Record<string, string> = {
   common: 'pixel-badge-common',
@@ -14,14 +14,6 @@ const itemTypeLabels: Record<string, string> = {
   bike: 'Balance Bike',
   part: 'Part',
   tool: 'Minting Tool',
-};
-
-// Optimal km/h speed range per bike type, sourced from gameplay-content.ts (Bikes → Bike Types).
-const BIKE_TYPE_RANGE: Record<string, string> = {
-  commuter: '2 – 5 km/h',
-  touring: '5 – 9 km/h',
-  racing: '10 – 18 km/h',
-  electric: '2 – 18 km/h',
 };
 
 function resolveImageUrl(listing: MarketplaceListing): string | null {
@@ -38,14 +30,10 @@ function resolveImageUrl(listing: MarketplaceListing): string | null {
   return null;
 }
 
-function bikeImageUrl(bikeType: string): string {
-  return `${config.apiUrl}/art/bases/bike-${bikeType.toLowerCase()}.png`;
-}
-
-function formatPrice(satoshis: number): string {
-  if (satoshis >= 1_000_000) return `${(satoshis / 1_000_000).toFixed(1)}M`;
-  if (satoshis >= 1_000) return `${(satoshis / 1_000).toFixed(1)}K`;
-  return satoshis.toLocaleString();
+function formatPrice(watts: number): string {
+  if (watts >= 1_000_000) return `${(watts / 1_000_000).toFixed(1)}M`;
+  if (watts >= 1_000) return `${(watts / 1_000).toFixed(1)}K`;
+  return watts.toLocaleString();
 }
 
 function timeAgo(dateStr: string): string {
@@ -149,62 +137,12 @@ function CardShell({
   );
 }
 
-type ListingCardProps =
-  | {
-      listing: MarketplaceListing;
-      onClick?: () => void;
-    }
-  | {
-      storeListing: StoreListingInfo;
-      onBuy: () => void;
-      isBuying?: boolean;
-      disabled?: boolean;
-      canAfford?: boolean;
-      isAuthenticated?: boolean;
-    };
+type ListingCardProps = {
+  listing: MarketplaceListing;
+  onClick?: () => void;
+};
 
 export function ListingCard(props: ListingCardProps) {
-  // ── Store mode (BTC) ─────────────────────────────────────
-  if ('storeListing' in props) {
-    const { storeListing, onBuy, isBuying, disabled, canAfford = true, isAuthenticated = false } = props;
-    const typeKey = storeListing.type.toLowerCase();
-    const description = BIKE_TYPE_RANGE[typeKey] ?? null;
-    const isDisabled = disabled || !storeListing.available || (isAuthenticated && !canAfford);
-
-    return (
-      <CardShell
-        imageUrl={bikeImageUrl(storeListing.type)}
-        fallbackLabel={storeListing.displayName}
-        title={storeListing.displayName}
-        subtitleLeft="Balance Bike"
-        quality={storeListing.quality}
-        priceTag={formatPrice(storeListing.priceSats)}
-        priceUnit="BTC"
-        description={description}
-        footer={
-          <>
-            {isAuthenticated && !canAfford && (
-              <p className="text-[10px] text-m2e-danger">Insufficient BTC</p>
-            )}
-            <button
-              onClick={onBuy}
-              disabled={isDisabled}
-              className="pixel-btn pixel-btn-primary w-full py-2 text-xs disabled:opacity-50"
-            >
-              {isBuying
-                ? 'Purchasing...'
-                : !storeListing.available
-                ? 'Sold Out'
-                : !isAuthenticated
-                ? 'Login to Buy'
-                : 'Buy with BTC'}
-            </button>
-          </>
-        }
-      />
-    );
-  }
-
   // ── Marketplace mode (WATTS) ───────────────────────────────
   const { listing, onClick } = props;
   const imageUrl = resolveImageUrl(listing);

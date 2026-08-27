@@ -68,7 +68,7 @@ const PHASES: RoadmapPhase[] = [
       },
       {
         title: 'Mainnet Launch',
-        description: 'Full mainnet deployment on Enjin. Live SAT token, on-chain NFT bikes, on-chain trading, and real on-chain earnings.',
+        description: 'Full mainnet deployment on Enjin. On-chain NFT bikes, ENJ staking, player trading, and the first seasonal WATTS redemption.',
         icon: Flag,
         status: 'current',
       },

@@ -9,8 +9,6 @@ import {
 import { fetchMarketplace, fetchStats } from '../api';
 import { ListingCard } from '../components/ListingCard';
 import { NftDetailModal } from '../components/NftDetailModal';
-import { StoreContent } from './Store';
-import { LoginModal } from '../components/LoginModal';
 import { useAuth } from '../contexts/AuthContext';
 
 type ItemType = '' | 'bike' | 'part' | 'tool';
@@ -68,7 +66,6 @@ function Chip({ label, active, onClick }: { label: string; active: boolean; onCl
 export function Marketplace() {
   const { isAuthenticated } = useAuth();
   const [selectedNftId, setSelectedNftId] = useState<string | null>(null);
-  const [showLogin, setShowLogin] = useState(false);
   const [itemType, setItemType] = useState<ItemType>('');
   const [sortBy, setSortBy] = useState<SortBy>('newest');
   const [quality, setQuality] = useState('');
@@ -167,7 +164,7 @@ export function Marketplace() {
                 <span className="text-m2e-accent">Marketplace.</span>
               </h1>
               <p className="text-white/70 text-lg md:text-xl max-w-2xl">
-                Buy your first bike from the store. Trade player-owned bikes and parts below.
+                Trade player-owned bikes and parts with other riders. Every price is in WATTS.
               </p>
             </motion.div>
           </div>
@@ -189,31 +186,6 @@ export function Marketplace() {
       )}
 
       <div className="mx-auto max-w-7xl px-4 md:px-8 py-10 md:py-14 space-y-16">
-        {/* ── Bike Store (BTC) ──────────────────────────────────────── */}
-        <motion.section
-          className="space-y-5"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="flex items-end justify-between flex-wrap gap-4">
-            <div className="space-y-2">
-              <div className="section-label">Storefront</div>
-              <h2 className="text-3xl md:text-5xl uppercase tracking-wide text-m2e-text leading-none flex items-center gap-3">
-                Bike Store
-                <span className="px-3 py-1 text-sm md:text-base tracking-[0.25em] pixel-border bg-m2e-accent text-m2e-text-on-accent border-m2e-accent-dark">
-                  BTC
-                </span>
-              </h2>
-            </div>
-            <p className="text-base text-m2e-text-secondary max-w-md">
-              New to Galavant? Start here. Buy a bike with BTC and start earning today.
-            </p>
-          </div>
-          <StoreContent onLoginRequest={() => setShowLogin(true)} />
-        </motion.section>
-
         {/* ── Player Marketplace (WATTS) ─────────────────────────────── */}
         <motion.section
           className="space-y-6"
@@ -432,10 +404,6 @@ export function Marketplace() {
 
         {selectedNftId && (
           <NftDetailModal nftId={selectedNftId} onClose={() => setSelectedNftId(null)} />
-        )}
-
-        {!isAuthenticated && (
-          <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
         )}
       </div>
     </>

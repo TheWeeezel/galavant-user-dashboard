@@ -3,31 +3,18 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
-  Coins, Redo, Lock, ExternalLink, ChevronLeft, Copy, Check,
-  Download, Notes,
+  Coins, Zap, Lock, ExternalLink, ChevronLeft, Copy, Check,
+  ShoppingCart, Notes,
 } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchSpendingWallet, fetchMainWallet, fetchWalletTransactions, type WalletTransaction } from '../api';
-import { formatTokens, formatSats, formatTxAmount, txExplorerUrl } from '../utils/format';
-
-const RECENT_SWAP_WINDOW_MS = 30 * 60 * 1000;
-const BALANCE_PROPAGATION_WINDOW_MS = 5 * 60 * 1000;
-
-function parseTxTime(createdAt: string): number {
-  const t = new Date(createdAt).getTime();
-  return Number.isFinite(t) ? t : 0;
-}
-
-function findRecentSatSwap(txs: WalletTransaction[] | undefined, windowMs: number): WalletTransaction | null {
-  if (!txs?.length) return null;
-  const cutoff = Date.now() - windowMs;
-  for (const tx of txs) {
-    if (tx.type === 'swap' && tx.currency === 'sat_token' && tx.direction === 'in' && parseTxTime(tx.createdAt) >= cutoff) {
-      return tx;
-    }
-  }
-  return null;
-}
+import {
+  fetchSpendingWallet,
+  fetchWalletTransactions,
+  enjinLinkStatus,
+  enjinStakingStatus,
+  type WalletTransaction,
+} from '../api';
+import { formatTxAmount, txExplorerUrl } from '../utils/format';
 
 function formatTxTime(dateStr: string): string {
   const d = new Date(dateStr);
@@ -58,14 +45,19 @@ export function Wallet() {
     refetchInterval: 30_000,
   });
 
-  const recentSwapNotice = findRecentSatSwap(transactions, RECENT_SWAP_WINDOW_MS);
-  const balanceUpdating = findRecentSatSwap(transactions, BALANCE_PROPAGATION_WINDOW_MS) !== null;
-
-  const { data: mainWallet, isLoading: mainLoading } = useQuery({
-    queryKey: ['main-wallet'],
-    queryFn: fetchMainWallet,
+  const { data: link } = useQuery({
+    queryKey: ['enjin-link-status'],
+    queryFn: enjinLinkStatus,
     enabled: isAuthenticated,
-    refetchInterval: balanceUpdating ? 15_000 : false,
+    retry: false,
+  });
+
+  const { data: staking, isLoading: stakingLoading } = useQuery({
+    queryKey: ['enjin-staking-status'],
+    queryFn: enjinStakingStatus,
+    enabled: isAuthenticated && link?.linked === true,
+    retry: false,
+    refetchInterval: 60_000,
   });
 
   if (!isAuthenticated) {
@@ -103,16 +95,13 @@ export function Wallet() {
             </h1>
             <div className="flex items-center gap-2 text-xs md:text-sm uppercase tracking-[0.25em] text-white/60">
               <span className="w-2 h-2 rounded-full bg-m2e-success animate-pulse-ring" />
-              Live · Synced {balanceUpdating ? 'every 15s' : 'on demand'}
+              Live · Synced on demand
             </div>
           </motion.div>
         </div>
       </div>
 
       <div className="mx-auto max-w-5xl px-4 md:px-8 py-10 md:py-14 space-y-10">
-        {/* Recent swap reassurance */}
-        {recentSwapNotice && <RecentSwapBanner tx={recentSwapNotice} />}
-
         {/* Balances — oversized */}
         <motion.section
           className="space-y-4"
@@ -121,7 +110,7 @@ export function Wallet() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <div className="section-label">Balances</div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <BigBalance
               label="WATTS · In-Game"
               amount={spendingLoading ? '…' : spending?.sap?.toLocaleString() ?? '0'}
@@ -130,17 +119,17 @@ export function Wallet() {
               icon={<img src="/assets/token-silver.png" alt="WATTS" className="w-10 h-10 pixel-render" />}
             />
             <BigBalance
-              label="SAT Tokens"
-              amount={mainLoading ? '…' : mainWallet ? formatTokens(mainWallet.satTokenBalance) : '0'}
-              unit="SAT"
-              note={balanceUpdating ? 'syncing' : undefined}
-              icon={<img src="/assets/token-gold.png" alt="SAT" className="w-10 h-10 pixel-render" />}
-            />
-            <BigBalance
-              label="BTC"
-              amount={mainLoading ? '…' : mainWallet ? formatSats(mainWallet.btcBalance) : '0'}
-              unit="sats"
-              icon={<img src="/assets/token-btc.png" alt="BTC" className="w-10 h-10 pixel-render" />}
+              label="ENJ · Staked"
+              amount={
+                !link?.linked
+                  ? '—'
+                  : stakingLoading
+                    ? '…'
+                    : (staking?.currentBondedEnj ?? 0).toLocaleString()
+              }
+              unit="ENJ"
+              note={link?.linked ? undefined : 'wallet not linked'}
+              icon={<Zap className="w-10 h-10 text-m2e-accent" />}
             />
           </div>
         </motion.section>
@@ -154,16 +143,15 @@ export function Wallet() {
           transition={{ duration: 0.5 }}
         >
           <div className="section-label">Actions</div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <ActionCard to="/swap" Icon={Redo} title="Swap" description="BTC ↔ SAT" />
-            <ActionCard to="/convert" Icon={Coins} title="Convert" description="WATTS → SAT" />
-            <ActionCard to="/deposit" Icon={Download} title="Deposit" description="SAT → WATTS" />
-            <ActionCard to="/staking" Icon={Lock} title="Staking" description="Earn boosts" />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <ActionCard to="/enj-staking" Icon={Zap} title="Stake ENJ" description="Earning boost" />
+            <ActionCard to="/earn" Icon={Coins} title="Earn" description="Missions & walks" />
+            <ActionCard to="/market" Icon={ShoppingCart} title="Market" description="Spend WATTS" />
           </div>
         </motion.section>
 
         {/* Address */}
-        {mainWallet?.address && (
+        {link?.linked && link.publicKey && (
           <motion.section
             className="space-y-4"
             initial={{ opacity: 0, y: 30 }}
@@ -171,8 +159,8 @@ export function Wallet() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.5 }}
           >
-            <div className="section-label">Wallet Address</div>
-            <AddressBar address={mainWallet.address} />
+            <div className="section-label">Linked Enjin Wallet</div>
+            <AddressBar address={link.publicKey} />
           </motion.section>
         )}
 
@@ -209,7 +197,7 @@ export function Wallet() {
             <div className="scanlines-light">
               {!transactions?.length ? (
                 <div className="p-10 text-center text-m2e-text-muted text-sm">
-                  No transactions yet. Start walking, swapping or converting.
+                  No transactions yet. Start walking to earn your first WATTS.
                 </div>
               ) : (
                 <div>
@@ -360,36 +348,6 @@ function TxRow({ tx, index }: { tx: WalletTransaction; index: number }) {
           </a>
         )}
         <span>{formatTxTime(tx.createdAt)}</span>
-      </div>
-    </motion.div>
-  );
-}
-
-function RecentSwapBanner({ tx }: { tx: WalletTransaction }) {
-  const { value, unit } = formatTxAmount(tx.amount, tx.currency);
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="pixel-card p-4 border-m2e-success bg-m2e-success/10 flex items-start gap-3"
-    >
-      <div className="w-2 h-2 rounded-full bg-m2e-success mt-2 flex-shrink-0 animate-pulse-ring" />
-      <div className="flex-1 min-w-0">
-        <p className="text-sm text-m2e-success uppercase tracking-wider">Swap complete</p>
-        <p className="text-xs text-m2e-text-secondary mt-1">
-          {value} {unit} credited on-chain. Your wallet balance can take a few minutes to catch up.
-        </p>
-        {tx.onChainTxId && (
-          <a
-            href={txExplorerUrl(tx.onChainTxId)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[11px] text-m2e-accent hover:text-m2e-accent-dark mt-1"
-          >
-            View on explorer <ExternalLink className="w-3 h-3" />
-          </a>
-        )}
       </div>
     </motion.div>
   );

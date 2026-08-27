@@ -10,11 +10,7 @@ import { Tasks } from './pages/Tasks';
 import { Roadmap } from './pages/Roadmap';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { Wallet } from './pages/Wallet';
-import { Convert } from './pages/Convert';
-import { Staking } from './pages/Staking';
 import EnjStaking from './pages/EnjStaking';
-import { Swap } from './pages/Swap';
-import { Deposit } from './pages/Deposit';
 import { GameplayLayout } from './pages/gameplay/GameplayLayout';
 import { GameplayPage } from './pages/gameplay/GameplayPage';
 
@@ -41,11 +37,9 @@ export function App() {
           <Route path="roadmap" element={<Roadmap />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
           <Route path="wallet" element={<Wallet />} />
-          <Route path="convert" element={<Convert />} />
-          <Route path="staking" element={<Staking />} />
+          {/* ENJ staking is the only staking — /staking kept so old links still land */}
+          <Route path="staking" element={<EnjStaking />} />
           <Route path="enj-staking" element={<EnjStaking />} />
-          <Route path="swap" element={<Swap />} />
-          <Route path="deposit" element={<Deposit />} />
           <Route path="gameplay" element={<GameplayLayout />}>
             <Route index element={<GameplayPage />} />
             <Route path=":sectionSlug/:pageSlug" element={<GameplayPage />} />
