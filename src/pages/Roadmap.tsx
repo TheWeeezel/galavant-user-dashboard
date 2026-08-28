@@ -398,7 +398,7 @@ export function Roadmap() {
             </p>
             <div className="flex items-center justify-center gap-3 pt-2">
               <a
-                href="https://t.me/galavanteer"
+                href="https://t.me/+OPt8Hf68HDlhY2Jk"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="pixel-btn pixel-btn-secondary px-5 py-2.5 text-sm"

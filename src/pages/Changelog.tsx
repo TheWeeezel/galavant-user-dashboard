@@ -62,7 +62,7 @@ function buildShareMessage(entry: VersionEntry): string {
   lines.push('\u{1F381} All completed tasks will be rewarded with Bike Parts once we go live on Mainnet.');
   lines.push('');
   lines.push('\u{1F426} Follow us on X: https://x.com/galavanteer');
-  lines.push('\u{1F4AC} Join our Telegram: https://t.me/galavanteer');
+  lines.push('\u{1F4AC} Join our Telegram: https://t.me/+OPt8Hf68HDlhY2Jk');
 
   return lines.join('\n');
 }
