@@ -360,7 +360,7 @@ export function Home() {
       <div ref={heroRef} className="relative">
         <div className="relative w-full h-[92vh] min-h-[560px] overflow-hidden scanlines vignette">
           <motion.img
-            src="/assets/landing/galavant-hero.png"
+            src="/assets/landing/galavant-hero.webp"
             alt="Galavant"
             className="absolute inset-0 w-full h-full object-cover pixel-render will-change-transform"
             style={reducedMotion ? undefined : { y: heroImageY, scale: heroImageScale }}
