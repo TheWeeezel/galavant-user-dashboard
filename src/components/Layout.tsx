@@ -12,9 +12,12 @@ export function Layout() {
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState(false);
 
-  // Every page opens on a dark hero strip except the guide, which is a document
-  // and starts light — a scrim there smears over the sidebar instead of blending.
-  const overHero = !pathname.startsWith('/gameplay');
+  // Only the landing page has a full-bleed hero image behind the bar. There the
+  // header is lifted out of flow so the art runs underneath it and the scrim has
+  // something to dissolve into. Everywhere else the page opens on a flat
+  // bg-m2e-text strip that a solid bar continues seamlessly — fading over those
+  // just reveals the cream page behind and reads as a muddy seam.
+  const blendsIntoHero = pathname === '/';
 
   // Past the first few pixels the bar stops being part of the artwork and starts
   // being chrome over content, so it swaps from a fading scrim to a blurred pane.
@@ -52,9 +55,11 @@ export function Layout() {
       {/* Nav — melts into each page's hero at rest, becomes a blurred pane on scroll */}
       <header
         className={`sticky top-0 z-50 text-white relative transition-colors duration-300 ${
-          scrolled || !overHero
+          scrolled
             ? 'bg-m2e-text/75 backdrop-blur-md border-b border-white/10'
-            : 'bg-transparent border-b border-transparent'
+            : blendsIntoHero
+              ? 'bg-transparent border-b border-transparent'
+              : 'bg-m2e-text border-b border-white/10'
         }`}
       >
         {/* Blend layer. Taller than the bar so it keeps the nav legible at the top
@@ -62,7 +67,7 @@ export function Layout() {
         <div
           aria-hidden
           className={`absolute inset-x-0 top-0 h-[190%] pointer-events-none bg-gradient-to-b from-m2e-text via-m2e-text/80 to-transparent transition-opacity duration-300 ${
-            scrolled || !overHero ? 'opacity-0' : 'opacity-100'
+            scrolled || !blendsIntoHero ? 'opacity-0' : 'opacity-100'
           }`}
         />
 
@@ -195,7 +200,7 @@ export function Layout() {
 
       <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
 
-      <main className="flex-1 w-full">
+      <main className={`flex-1 w-full ${blendsIntoHero ? '-mt-16' : ''}`}>
         <Outlet />
       </main>
 
