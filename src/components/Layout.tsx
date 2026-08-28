@@ -80,8 +80,8 @@ export function Layout() {
           <Link to="/" className="flex items-center gap-2 group">
             <img src="/logo.png" alt="Galavant" className="h-12 w-12 md:h-14 md:w-14 pixel-render" />
             <span
-              className="hidden sm:inline text-m2e-accent text-xl md:text-2xl tracking-[0.25em] uppercase group-hover:animate-glitch-shift"
-              style={{ textShadow: '2px 2px 0px var(--color-m2e-accent-dark), 4px 4px 0px rgba(0,0,0,0.6)' }}
+              className="hidden sm:inline text-m2e-watts-light text-xl md:text-2xl tracking-[0.25em] uppercase group-hover:animate-glitch-shift"
+              style={{ textShadow: '2px 2px 0px var(--color-m2e-watts-deep), 4px 4px 0px rgba(0,0,0,0.7)' }}
             >
               Galavant
             </span>
@@ -123,7 +123,7 @@ export function Layout() {
             ) : (
               <button
                 onClick={() => setShowLogin(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-m2e-accent hover:bg-m2e-accent hover:text-m2e-text-on-accent transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-m2e-accent-light hover:bg-m2e-accent hover:text-m2e-text-on-accent transition-colors cursor-pointer [text-shadow:0_1px_2px_rgba(0,0,0,0.75)]"
               >
                 <Login className="w-5 h-5" />
                 Login
@@ -266,12 +266,14 @@ function NavPill({ to, active, watts, glow, title, children }: {
   title?: string;
   children: React.ReactNode;
 }) {
-  const base = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-colors relative';
+  const base =
+    'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-colors relative ' +
+    '[text-shadow:0_1px_2px_rgba(0,0,0,0.75)]';
   const tone = active
-    ? 'text-m2e-accent'
+    ? 'text-m2e-accent-light'
     : watts
       ? 'text-m2e-watts hover:text-m2e-watts-light'
-      : 'text-white/70 hover:text-white';
+      : 'text-white/90 hover:text-white';
   const bg = active ? 'bg-white/10' : 'hover:bg-white/5';
   const glowCls = glow ? 'animate-glitch-flicker hover:animate-none' : '';
 
@@ -279,7 +281,7 @@ function NavPill({ to, active, watts, glow, title, children }: {
     <Link to={to} title={title} className={`${base} ${tone} ${bg} ${glowCls}`}>
       {children}
       {active && (
-        <span className="absolute left-2 right-2 -bottom-0.5 h-[2px] bg-m2e-accent" />
+        <span className="absolute left-2 right-2 -bottom-0.5 h-[2px] bg-m2e-accent-light" />
       )}
     </Link>
   );

@@ -37,6 +37,11 @@
      so the violet accent is free to mean one thing only: "you are here". */
   --color-m2e-watts: #BAC5C7;
   --color-m2e-watts-light: #D8E0E1;
+  --color-m2e-watts-deep: #7E8A8F;    /* emboss under the chrome wordmark */
+
+  /* The accent is only 3.4:1 on the dark header chrome. This is the on-dark
+     variant, 5.6:1, used where violet sits on the bar rather than on cream. */
+  --color-m2e-accent-light: #9E92E4;
 
   --color-m2e-info-soft: #D7E1EE;
   --color-m2e-info: #4A82C8;
