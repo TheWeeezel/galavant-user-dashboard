@@ -99,7 +99,7 @@ const COMPARISON_DATA: { label: string; icon: React.ComponentType<any>; other: s
 
 const ONBOARDING_STEPS = [
   { icon: Download, title: 'Download', description: 'iOS or Android' },
-  { icon: Login, title: 'Sign In', description: 'Account + wallet' },
+  { icon: Login, title: 'Sign In', description: 'Google account' },
   { icon: Gift, title: 'Free NFT', description: 'Starter bike' },
   { icon: Human, title: 'Walk', description: 'Earn WATTS' },
 ];
@@ -381,21 +381,9 @@ export function Home() {
             className="absolute inset-0 flex flex-col items-center justify-end text-center px-4 pb-10 md:pb-16 lg:px-6 z-[5]"
             style={reducedMotion ? undefined : { y: heroContentY, opacity: heroOpacity }}
           >
-            {/* Kicker strip */}
-            <motion.div
-              className="flex items-center gap-3 mb-4 md:mb-6 text-[10px] md:text-xs tracking-[0.4em] uppercase text-m2e-accent"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <span className="inline-block w-8 h-[2px] bg-m2e-accent" />
-              Walk-To-Earn · On Enjin
-              <span className="inline-block w-8 h-[2px] bg-m2e-accent" />
-            </motion.div>
-
             {/* Headline */}
             <motion.h1
-              className="text-5xl md:text-7xl lg:text-9xl text-white mb-4 md:mb-6 tracking-wider uppercase flex flex-wrap justify-center gap-x-3 md:gap-x-6 text-chroma-hero leading-[0.95]"
+              className="text-4xl md:text-5xl lg:text-7xl text-white mb-4 md:mb-6 tracking-wider uppercase flex flex-wrap justify-center gap-x-3 md:gap-x-6 text-chroma-hero leading-[0.95]"
               variants={staggerSlow}
               initial="hidden"
               animate="visible"
