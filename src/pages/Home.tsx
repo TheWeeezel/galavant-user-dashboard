@@ -91,14 +91,10 @@ const PILLAR_META = [
 ] as const;
 
 const COMPARISON_DATA: { label: string; icon: React.ComponentType<any>; other: string; galavant: string }[] = [
-  { label: 'Blockchain', icon: Globe, other: 'Solana, BNB, L2s', galavant: 'Enjin Blockchain' },
-  { label: 'Economy Mgmt', icon: Chart, other: 'None — mint and pray', galavant: 'AI Central Banker + human approval' },
-  { label: 'Supply Control', icon: Fire, other: 'Unlimited or ignored', galavant: 'No mintable token — WATTS burns on redemption' },
-  { label: 'Stabilization', icon: Scale, other: 'Non-existent', galavant: 'Revenue-funded season budget' },
-  { label: 'Health Visibility', icon: Heart, other: 'Hidden or non-existent', galavant: 'Public real-time health score' },
-  { label: 'Asset Security', icon: Lock, other: 'Chain-dependent', galavant: "Secured by Enjin's validators" },
-  { label: 'Inflation Response', icon: Zap, other: 'Usually too late', galavant: 'Daily AI monitoring + tunable levers' },
-  { label: 'Revenue Model', icon: Coins, other: 'Speculation-driven', galavant: 'Platform revenue funds player payouts' },
+  { label: 'Where payouts come from', icon: Coins, other: 'New deposits and speculation', galavant: 'Platform revenue, capped by a season budget' },
+  { label: 'Supply control', icon: Fire, other: 'Unlimited or ignored', galavant: 'No token to mint — WATTS burns on redemption' },
+  { label: 'Economy management', icon: Chart, other: 'None — mint and pray', galavant: 'Actively managed, every change human-approved' },
+  { label: 'Health visibility', icon: Heart, other: 'Hidden or non-existent', galavant: 'Public health score, on this page' },
 ];
 
 const ONBOARDING_STEPS = [
@@ -643,8 +639,8 @@ export function Home() {
             </p>
 
             <p className="text-sm md:text-base text-m2e-text-secondary text-center max-w-2xl mx-auto">
-              An AI proposes the changes. A human approves every one. Neither can mint a token — there
-              isn't one.
+              An economy agent proposes the changes. A human approves every one. Neither can mint a
+              token — there isn't one.
             </p>
           </motion.div>
 
