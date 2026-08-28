@@ -86,7 +86,7 @@ function CardShell({
       onClick={onClick}
     >
       {/* Image or placeholder */}
-      <div className="relative aspect-[16/9] bg-m2e-bg-alt border-b-2 border-m2e-border flex items-center justify-center">
+      <div className="relative aspect-[16/9] bg-white border-b-2 border-m2e-border flex items-center justify-center">
         {imageUrl ? (
           <img
             src={imageUrl}

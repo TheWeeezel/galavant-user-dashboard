@@ -78,7 +78,7 @@ export function NftCard({ nft, onClick }: { nft: MintedNft; onClick?: () => void
   return (
  <div className="pixel-card overflow-hidden hover:border-m2e-accent-dark transition-colors cursor-pointer" onClick={onClick}>
       {/* Image */}
- <div className="relative aspect-[16/9] bg-m2e-bg-alt border-b-2 border-m2e-border">
+ <div className="relative aspect-[16/9] bg-white border-b-2 border-m2e-border">
         <img
           src={resolveImageUrl(nft)}
           alt={`${nft.type} #${nft.tokenId}`}
