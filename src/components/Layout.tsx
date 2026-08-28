@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router';
-import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe, Coins } from 'pixelarticons/react';
+import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe, Coins, Store, Trophy, Bookmark } from 'pixelarticons/react';
 import { MusicPlayer } from './MusicPlayer';
 import { LoginModal } from './LoginModal';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,6 +10,20 @@ export function Layout() {
   const [showLogin, setShowLogin] = useState(false);
   const { isAuthenticated, isRestoring, isLoading, user } = useAuth();
   const { pathname } = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+
+  // Every page opens on a dark hero strip except the guide, which is a document
+  // and starts light — a scrim there smears over the sidebar instead of blending.
+  const overHero = !pathname.startsWith('/gameplay');
+
+  // Past the first few pixels the bar stops being part of the artwork and starts
+  // being chrome over content, so it swaps from a fading scrim to a blurred pane.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   console.log('[Layout] render — isAuthenticated:', isAuthenticated, 'isRestoring:', isRestoring, 'isLoading:', isLoading, 'user:', user?.nickname ?? null, 'showLogin:', showLogin);
 
@@ -21,8 +35,11 @@ export function Layout() {
     { href: '/', label: 'Home', icon: Home, iconOnly: true },
     { href: '/gameplay', label: 'Guide', icon: BookOpen, iconOnly: true },
     { href: '/market', label: 'Market', icon: ShoppingCart, iconOnly: true },
+    { href: '/store', label: 'Shop', icon: Store, iconOnly: true },
+    { href: '/nft-market', label: 'NFTs', icon: Bookmark, iconOnly: true },
     { href: '/changelog', label: 'Updates', icon: Notes, iconOnly: false },
     { href: '/roadmap', label: 'Roadmap', icon: Globe, iconOnly: false },
+    { href: '/leaderboard', label: 'Scores', icon: Trophy, iconOnly: false },
   ] as const;
 
   const isActive = (href: string) => {
@@ -32,12 +49,29 @@ export function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-m2e-bg text-m2e-text">
-      {/* Nav — dark arcade chrome to flow into each page's hero */}
-      <header className="sticky top-0 z-50 bg-m2e-text text-white border-b border-white/10 relative overflow-hidden">
-        {/* Scanline overlay matching the heroes */}
-        <div className="absolute inset-0 pointer-events-none scanlines-light" />
+      {/* Nav — melts into each page's hero at rest, becomes a blurred pane on scroll */}
+      <header
+        className={`sticky top-0 z-50 text-white relative transition-colors duration-300 ${
+          scrolled || !overHero
+            ? 'bg-m2e-text/75 backdrop-blur-md border-b border-white/10'
+            : 'bg-transparent border-b border-transparent'
+        }`}
+      >
+        {/* Blend layer. Taller than the bar so it keeps the nav legible at the top
+            and then dissolves into the art below, instead of ending on a hard edge. */}
+        <div
+          aria-hidden
+          className={`absolute inset-x-0 top-0 h-[190%] pointer-events-none bg-gradient-to-b from-m2e-text via-m2e-text/80 to-transparent transition-opacity duration-300 ${
+            scrolled || !overHero ? 'opacity-0' : 'opacity-100'
+          }`}
+        />
 
-        <div className="mx-auto max-w-7xl flex items-center justify-between px-4 h-16 relative">
+        {/* Scanlines, clipped to the bar itself */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute inset-0 scanlines-light" />
+        </div>
+
+        <div className="mx-auto max-w-7xl flex items-center justify-between px-4 h-16 relative z-10">
           <Link to="/" className="flex items-center gap-2 group">
             <img src="/logo.png" alt="Galavant" className="h-12 w-12 md:h-14 md:w-14 pixel-render" />
             <span
