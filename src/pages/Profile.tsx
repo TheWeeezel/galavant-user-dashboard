@@ -75,7 +75,7 @@ export function Profile() {
 
   const { data: parts } = useQuery({
     queryKey: ['userParts'],
-    queryFn: fetchUserParts,
+    queryFn: () => fetchUserParts(),
     enabled: isAuthenticated,
   });
 

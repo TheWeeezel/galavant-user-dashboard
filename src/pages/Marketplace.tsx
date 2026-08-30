@@ -1,14 +1,16 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
   ShoppingCart, ChevronLeft, Cancel, Coins,
   Settings2, SortVertical, Check, Search,
 } from 'pixelarticons/react';
-import { fetchMarketplace, fetchStats } from '../api';
+import { fetchMarket, fetchStats, marketBuy, type MarketListing } from '../api';
 import { ListingCard } from '../components/ListingCard';
+import { MarketSellPanel } from '../components/MarketSellPanel';
 import { NftDetailModal } from '../components/NftDetailModal';
+import { LoginModal } from '../components/LoginModal';
 import { useAuth } from '../contexts/AuthContext';
 
 type ItemType = '' | 'bike' | 'part' | 'tool';
@@ -65,6 +67,10 @@ function Chip({ label, active, onClick }: { label: string; active: boolean; onCl
 
 export function Marketplace() {
   const { isAuthenticated } = useAuth();
+  // ONE market (task 7dc61fc3): browsing and listing live on the same page, and the browse
+  // feed carries ordinary in-game items and NFTs side by side.
+  const [tab, setTab] = useState<'browse' | 'sell'>('browse');
+  const [showLogin, setShowLogin] = useState(false);
   const [selectedNftId, setSelectedNftId] = useState<string | null>(null);
   const [itemType, setItemType] = useState<ItemType>('');
   const [sortBy, setSortBy] = useState<SortBy>('newest');
@@ -108,11 +114,19 @@ export function Marketplace() {
     setPage(1);
   }, []);
 
+  const qc = useQueryClient();
   const stats = useQuery({ queryKey: ['stats'], queryFn: fetchStats });
 
+  // Buying works the same on every card the market can actually settle: an off-chain item and
+  // an NFT bought for WATTS. An ENJ listing carries its own explanation instead of a button.
+  const buy = useMutation({
+    mutationFn: (id: string) => marketBuy(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['market'] }),
+  });
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['marketplace-page', itemType, sortBy, quality, bikeType, partType, partLevel, debouncedMin, debouncedMax, page],
-    queryFn: () => fetchMarketplace({
+    queryKey: ['market', itemType, sortBy, quality, bikeType, partType, partLevel, debouncedMin, debouncedMax, page],
+    queryFn: () => fetchMarket({
       page,
       limit: 24,
       sortBy,
@@ -164,7 +178,8 @@ export function Marketplace() {
                 <span className="text-m2e-accent">Marketplace.</span>
               </h1>
               <p className="text-white/70 text-lg md:text-xl max-w-2xl">
-                Trade player-owned bikes and parts with other riders. Every price is in WATTS.
+                One market for everything players own — in-game bikes, parts and tools, and
+                on-chain NFTs. Sellers set the price, in WATTS or in ENJ.
               </p>
             </motion.div>
           </div>
@@ -200,17 +215,46 @@ export function Marketplace() {
               <h2 className="text-3xl md:text-5xl uppercase tracking-wide text-m2e-text leading-none flex items-center gap-3">
                 Player Market
                 <span className="px-3 py-1 text-sm md:text-base tracking-[0.25em] pixel-border bg-m2e-card border-m2e-border text-m2e-text-secondary">
-                  WATTS
+                  WATTS · ENJ
                 </span>
               </h2>
             </div>
-            {data && (
+            {tab === 'browse' && data && (
               <div className="text-sm text-m2e-text-secondary">
                 <span className="text-m2e-accent text-xl">{data.total.toLocaleString()}</span> listings found
               </div>
             )}
           </div>
 
+          <div className="flex gap-2">
+            {(['browse', 'sell'] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`px-4 py-2 uppercase tracking-wide text-sm border-2 ${
+                  tab === t
+                    ? 'border-m2e-accent bg-m2e-accent/10 text-m2e-accent'
+                    : 'border-m2e-border text-m2e-text-secondary hover:border-m2e-text-secondary'
+                }`}
+              >
+                {t === 'browse' ? 'Browse' : 'Sell'}
+              </button>
+            ))}
+          </div>
+
+          {tab === 'sell' ? (
+            isAuthenticated ? (
+              <MarketSellPanel />
+            ) : (
+              <div className="pixel-card p-6 space-y-3">
+                <p className="text-m2e-text-secondary">Sign in to list your bikes, parts and NFTs.</p>
+                <button onClick={() => setShowLogin(true)} className="pixel-btn pixel-btn-primary px-4 py-2 text-sm">
+                  Sign in
+                </button>
+              </div>
+            )
+          ) : (
+          <>
           {/* Filter bay */}
           <div className="pixel-card p-0 overflow-hidden">
             {/* Item type row */}
@@ -356,6 +400,7 @@ export function Marketplace() {
                     <ListingCard
                       listing={listing}
                       onClick={listing.itemType === 'bike' ? () => setSelectedNftId(listing.itemId) : undefined}
+                      footer={<BuyFooter listing={listing} isAuthenticated={isAuthenticated} onNeedLogin={() => setShowLogin(true)} onBuy={() => buy.mutate(listing.id)} pending={buy.isPending && buy.variables === listing.id} />}
                     />
                   </motion.div>
                 ))}
@@ -400,13 +445,62 @@ export function Marketplace() {
               )}
             </div>
           )}
+          </>
+          )}
         </motion.section>
+
+        {buy.isError && <div className="pixel-card p-3 text-m2e-danger">{(buy.error as Error).message}</div>}
+        {buy.isSuccess && (
+          <div className="pixel-card p-3 text-m2e-success">
+            Paid. If it was an NFT, the token is being burned on-chain — the item lands in your inventory once it settles.
+          </div>
+        )}
 
         {selectedNftId && (
           <NftDetailModal nftId={selectedNftId} onClose={() => setSelectedNftId(null)} />
         )}
+
+        <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
       </div>
     </>
+  );
+}
+
+/**
+ * The buy action, or an honest reason there isn't one. An ENJ fill has to be signed from the
+ * buyer's own Enjin wallet and we cannot submit it yet (task 7b4cd59d) — the card says so and
+ * says whose limitation it is, rather than looking like a dead end. When the buyer-signs path
+ * lands, `canBuyHere` flips true on the server and this renders a live button with no copy change.
+ */
+function BuyFooter({
+  listing,
+  isAuthenticated,
+  onNeedLogin,
+  onBuy,
+  pending,
+}: {
+  listing: MarketListing;
+  isAuthenticated: boolean;
+  onNeedLogin: () => void;
+  onBuy: () => void;
+  pending: boolean;
+}) {
+  if (!listing.canBuyHere) {
+    return (
+      <div className="space-y-1 pt-1">
+        <div className="text-[11px] uppercase tracking-wide text-m2e-text-secondary">{listing.blockedLabel}</div>
+        <p className="text-[11px] text-m2e-text-muted">{listing.blockedNote}</p>
+      </div>
+    );
+  }
+  return (
+    <button
+      disabled={pending}
+      onClick={(e) => { e.stopPropagation(); isAuthenticated ? onBuy() : onNeedLogin(); }}
+      className="mt-1 px-3 py-2 border border-m2e-accent text-m2e-accent uppercase tracking-wide text-xs disabled:opacity-50"
+    >
+      {pending ? 'Buying…' : `Buy · ${listing.buyerLabel}`}
+    </button>
   );
 }
 

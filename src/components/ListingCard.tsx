@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { config } from '../config';
-import type { MarketplaceListing } from '../api';
+import type { MarketListing, MarketplaceListing } from '../api';
 
 const qualityColors: Record<string, string> = {
   common: 'pixel-badge-common',
@@ -16,7 +16,7 @@ const itemTypeLabels: Record<string, string> = {
   tool: 'Minting Tool',
 };
 
-function resolveImageUrl(listing: MarketplaceListing): string | null {
+function resolveImageUrl(listing: MarketplaceListing | MarketListing): string | null {
   if (listing.item?.imageUrl) {
     const url = listing.item.imageUrl;
     return url.startsWith('/') ? `${config.apiUrl}${url}` : url;
@@ -141,17 +141,31 @@ function CardShell({
 }
 
 type ListingCardProps = {
-  listing: MarketplaceListing;
+  /**
+   * Either shop's row. A merged row (`/market`) carries `currency` and says what the buyer
+   * walks away with; the legacy explorer feed on the home page carries only a WATTS price.
+   */
+  listing: MarketplaceListing | MarketListing;
   onClick?: () => void;
+  /** Rendered under the card — the buy action for a merged row. */
+  footer?: ReactNode;
 };
 
-export function ListingCard(props: ListingCardProps) {
-  // ── Marketplace mode (WATTS) ───────────────────────────────
-  const { listing, onClick } = props;
+function isMerged(l: MarketplaceListing | MarketListing): l is MarketListing {
+  return 'currency' in l;
+}
+
+export function ListingCard({ listing, onClick, footer }: ListingCardProps) {
   const imageUrl = resolveImageUrl(listing);
   const quality = listing.item?.quality;
   const itemLabel = itemTypeLabels[listing.itemType] ?? listing.itemType;
   const title = listing.item?.type ? listing.item.type : itemLabel;
+
+  const merged = isMerged(listing) ? listing : null;
+  const priceTag = merged
+    ? (merged.currency === 'watts' ? formatPrice(merged.priceWatts ?? 0) : String(merged.priceEnj))
+    : formatPrice((listing as MarketplaceListing).priceSatoshis);
+  const priceUnit = merged && merged.currency === 'enj' ? 'ENJ' : 'WATTS';
 
   return (
     <CardShell
@@ -161,10 +175,14 @@ export function ListingCard(props: ListingCardProps) {
       subtitleLeft={itemLabel}
       subtitleRight={listing.item?.level ? `Lv. ${listing.item.level}` : undefined}
       quality={quality}
-      priceTag={formatPrice(listing.priceSatoshis)}
-      priceUnit="WATTS"
+      priceTag={priceTag}
+      priceUnit={priceUnit}
+      // What the buyer actually receives — the one thing that separates the three kinds of
+      // card, so it belongs on the card and not in a legend somewhere.
+      description={merged?.buyerNote}
       metaLeft={listing.sellerName ? `by ${listing.sellerName}` : undefined}
       metaRight={timeAgo(listing.createdAt)}
+      footer={footer}
       onClick={onClick}
     />
   );

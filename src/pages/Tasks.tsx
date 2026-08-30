@@ -5,7 +5,7 @@ import {
   Store, ShoppingCart, Coins,
   SpeedFast, Zap, Heart,
   Redo, Gift, Check,
-  ExternalLink, Loader,
+  ExternalLink, Loader, Bug,
 } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
@@ -26,6 +26,7 @@ const CATEGORY_ORDER = ['getting_started', 'marketplace', 'bike_progression', 'e
 const TASK_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   create_wallet: Login,
   connect_google: Human,
+  report_issue: Bug,
   fund_wallet: Download,
   list_marketplace: Store,
   buy_marketplace: ShoppingCart,

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router';
-import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe, Coins, Store, Trophy, Bookmark } from 'pixelarticons/react';
+import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe, Coins, Store, Trophy } from 'pixelarticons/react';
 import { MusicPlayer } from './MusicPlayer';
 import { LoginModal } from './LoginModal';
 import { useAuth } from '../contexts/AuthContext';
@@ -37,7 +37,6 @@ export function Layout() {
     { href: '/gameplay', label: 'Guide', icon: BookOpen, iconOnly: true },
     { href: '/market', label: 'Market', icon: ShoppingCart, iconOnly: true },
     { href: '/store', label: 'Shop', icon: Store, iconOnly: true },
-    { href: '/nft-market', label: 'NFTs', icon: Bookmark, iconOnly: true },
     { href: '/changelog', label: 'Updates', icon: Notes, iconOnly: false },
     { href: '/roadmap', label: 'Roadmap', icon: Globe, iconOnly: false },
     { href: '/leaderboard', label: 'Scores', icon: Trophy, iconOnly: false },
@@ -258,6 +257,9 @@ export function Layout() {
             <span>Powered by Enjin</span>
             <span className="hidden sm:inline text-white/20">|</span>
             <span>Galavant · Walk. Earn. Conquer.</span>
+            <span className="hidden sm:inline text-white/20">|</span>
+            {/* On every page, because a stuck player is never on the page you expected. */}
+            <Link to="/report" className="hover:text-m2e-accent transition-colors">Report a Problem</Link>
             <span className="hidden sm:inline text-white/20">|</span>
             <Link to="/privacy" className="hover:text-m2e-accent transition-colors">Privacy Policy</Link>
           </div>

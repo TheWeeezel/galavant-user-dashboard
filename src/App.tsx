@@ -7,12 +7,12 @@ import { Changelog } from './pages/Changelog';
 import { Profile } from './pages/Profile';
 import { EarnPoints } from './pages/EarnPoints';
 import { Tasks } from './pages/Tasks';
+import { Report } from './pages/Report';
 import { Roadmap } from './pages/Roadmap';
 import { Leaderboard } from './pages/Leaderboard';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { Wallet } from './pages/Wallet';
 import Store from './pages/Store';
-import NftMarket from './pages/NftMarket';
 import { GameplayLayout } from './pages/gameplay/GameplayLayout';
 import { GameplayPage } from './pages/gameplay/GameplayPage';
 
@@ -36,12 +36,15 @@ export function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="earn" element={<EarnPoints />} />
           <Route path="tasks" element={<Tasks />} />
+          <Route path="report" element={<Report />} />
           <Route path="roadmap" element={<Roadmap />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
           <Route path="wallet" element={<Wallet />} />
           <Route path="store" element={<Store />} />
-          <Route path="nft-market" element={<NftMarket />} />
+          {/* ONE market (task 7dc61fc3): the NFT "Trading Post" merged into /market. Kept so
+              old links land on the merged shop rather than 404ing. */}
+          <Route path="nft-market" element={<Navigate to="/market" replace />} />
           <Route path="shop" element={<Navigate to="/store" replace />} />
           {/* ENJ staking is the only staking — /staking kept so old links still land */}
           {/* Staking now lives inside the Wallet (account) page. */}

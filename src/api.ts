@@ -243,6 +243,8 @@ export interface UserBike {
   partSockets: PartSocket[];
   imageUrl: string | null;
   isEquipped: boolean;
+  /** True while the bike sits on the market — in either shop; both share `bikes.isListed`. */
+  isListed: boolean;
   durability: number;
   hp: number;
 }
@@ -253,6 +255,9 @@ export interface UserPart {
   level: number;
   socketedInBike: string | null;
   socketSlot: number | null;
+  /** Non-null = the part is its own NFT, and frozen out of gameplay until imported. */
+  tokenId: number | null;
+  isListed: boolean;
 }
 
 export interface ReferralStats {
@@ -311,8 +316,8 @@ export function fetchUserBikes() {
   return fetchAuthJson<UserBike[]>('/bikes');
 }
 
-export function fetchUserParts() {
-  return fetchAuthJson<UserPart[]>('/parts/inventory');
+export function fetchUserParts(includeListed = false) {
+  return fetchAuthJson<UserPart[]>(`/parts/inventory${includeListed ? '?includeListed=true' : ''}`);
 }
 
 export function fetchReferralCode() {
@@ -345,6 +350,19 @@ export function fetchTestingTasks() {
 
 export function claimTestingTask(taskId: string) {
   return fetchAuthJson<{ reward: number }>(`/tasks/${taskId}/claim`, { method: 'POST' });
+}
+
+// --- Problem Reports ---
+
+/**
+ * Send a problem report. `platform` is stamped here so the owner can tell a browser report
+ * apart from a phone one without the player having to say so.
+ */
+export function submitReport(description: string) {
+  return fetchAuthJson<{ reportId: string }>('/reports', {
+    method: 'POST',
+    body: JSON.stringify({ description, screen: 'dashboard', platform: 'web' }),
+  });
 }
 
 // --- Bonus Claims ---
@@ -655,68 +673,106 @@ export function getListingDetail(id: string) {
   return fetchAuthJson<MarketplaceListing>(`/marketplace/${id}`);
 }
 
-// --- NFT marketplace (on-chain NFTs: sell for ENJ, or sell for WATTS which burns the NFT) ---
-export interface NftListing {
+// --- THE market (task 7dc61fc3): one feed over both shops -------------------
+// The in-game WATTS marketplace and the NFT Trading Post used to be two separate shop
+// windows for what is, to a player, one item. `/market` merges the PRESENTATION and the
+// entry points; the two services behind it are still separate.
+
+/** One card in the merged feed — an ordinary in-game item or an NFT, priced in WATTS or ENJ. */
+export interface MarketListing {
+  /** Namespaced: `game~<uuid>` or `nft~<uuid>`. The same id works for detail, buy and cancel. */
   id: string;
-  /** 'bike' | 'part' — the NFT marketplace carries both. */
-  itemType: 'bike' | 'part';
+  source: 'game' | 'nft';
+  itemType: string;
   itemId: string;
-  tokenId: number;
-  sellerId: string;
-  saleType: 'enj' | 'watts';
-  priceEnj: string | null;
+  isNft: boolean;
+  tokenId: number | null;
+  currency: 'watts' | 'enj';
   priceWatts: number | null;
-  status: 'active' | 'settling' | 'sold' | 'cancelled' | 'failed';
+  priceEnj: string | null;
+  /** The three outcomes a buyer must tell apart. */
+  buyerOutcome: 'in_game_item' | 'nft_burned_to_item' | 'nft_transferred';
+  buyerLabel: string;
+  buyerNote: string;
+  /** False when we cannot take the money here; `blockedLabel`/`blockedNote` say why. */
+  canBuyHere: boolean;
+  blockedLabel: string | null;
+  blockedNote: string | null;
+  status: string;
+  sellerId: string;
+  sellerName: string | null;
   createdAt: string;
-  bikeType?: string;
-  quality?: string;
-  level?: number;
-  imageUrl?: string | null;
-  partType?: string;
-  partLevel?: number;
+  item: MarketplaceItem | null;
 }
 
-export function fetchNftListings() {
-  return fetchJson<{ listings: NftListing[] }>('/nft-marketplace/listings');
+export interface MarketResponse {
+  listings: MarketListing[];
+  total: number;
+  page: number;
+  totalPages: number;
 }
 
-/** The signed-in player's own listings, including ones mid-settlement. */
-export function fetchMyNftListings() {
-  return fetchAuthJson<{ listings: NftListing[] }>('/nft-marketplace/mine');
+/** The live cut per route, plus the two warnings a listing screen has to print. */
+export interface MarketPolicy {
+  rates: { taxRate: number; royaltyRate: number };
+  cuts: Record<'item_watts' | 'nft_watts' | 'nft_enj', { taxRate: number; royaltyRate: number; totalRate: number }>;
+  currencyCopy: Record<'watts' | 'enj', string>;
+  outcomeCopy: Record<string, { label: string; detail: string }>;
+  enj: {
+    buyEnabled: boolean;
+    buyLabel: string;
+    buyNote: string;
+    listingDeposit: string;
+    listingDepositWarning: string;
+  };
+  offChainEnjRefusal: string;
 }
 
-export function fetchNftListing(id: string) {
-  return fetchAuthJson<{ listing: NftListing }>(`/nft-marketplace/listing/${id}`);
+export function fetchMarket(filters: MarketplaceFilters = {}) {
+  const params = new URLSearchParams();
+  params.set('page', String(filters.page ?? 1));
+  params.set('limit', String(filters.limit ?? 24));
+  if (filters.sortBy) params.set('sortBy', filters.sortBy);
+  if (filters.itemType) params.set('itemType', filters.itemType);
+  if (filters.quality) params.set('quality', filters.quality);
+  if (filters.bikeType) params.set('bikeType', filters.bikeType);
+  if (filters.partType) params.set('partType', filters.partType);
+  if (filters.partLevel !== undefined) params.set('partLevel', String(filters.partLevel));
+  if (filters.minPrice !== undefined) params.set('minPrice', String(filters.minPrice));
+  if (filters.maxPrice !== undefined) params.set('maxPrice', String(filters.maxPrice));
+  return fetchJson<MarketResponse>(`/market?${params}`);
 }
 
-export function nftListForWatts(itemType: 'bike' | 'part', itemId: string, priceWatts: number) {
-  return fetchAuthJson<{ success: boolean; listingId: string }>(
-    '/nft-marketplace/list/watts',
-    { method: 'POST', body: JSON.stringify({ itemType, itemId, priceWatts }) },
+export function fetchMarketPolicy() {
+  return fetchJson<MarketPolicy>('/market/policy');
+}
+
+export function fetchMyMarketListings() {
+  return fetchAuthJson<{ listings: MarketListing[] }>('/market/mine');
+}
+
+export function marketList(body: {
+  itemType: string;
+  itemId: string;
+  currency: 'watts' | 'enj';
+  priceWatts?: number;
+  priceEnj?: string;
+}) {
+  return fetchAuthJson<{ success: boolean; id: string; netProceedsWatts?: number; netProceedsEnj?: string }>(
+    '/market/list',
+    { method: 'POST', body: JSON.stringify(body) },
   );
 }
 
-export function nftListForEnj(itemType: 'bike' | 'part', itemId: string, priceEnj: string) {
-  return fetchAuthJson<{ success: boolean; listingId: string }>(
-    '/nft-marketplace/list/enj',
-    { method: 'POST', body: JSON.stringify({ itemType, itemId, priceEnj }) },
-  );
+export function marketBuy(id: string) {
+  return fetchAuthJson<{ success: boolean; status?: string }>(`/market/${id}/buy`, { method: 'POST' });
 }
 
-export function nftCancelListing(listingId: string) {
-  return fetchAuthJson<{ success: boolean }>(
-    '/nft-marketplace/cancel',
-    { method: 'POST', body: JSON.stringify({ listingId }) },
-  );
+export function marketCancel(id: string) {
+  return fetchAuthJson<{ success: boolean }>(`/market/${id}/cancel`, { method: 'POST' });
 }
 
-export function nftBuyWithWatts(listingId: string) {
-  return fetchAuthJson<{ success: boolean; status: string }>(
-    '/nft-marketplace/buy/watts',
-    { method: 'POST', body: JSON.stringify({ listingId }) },
-  );
-}
-
+// --- NFT self-custody: move a managed-wallet NFT out to the player's own wallet ---
 export function nftSweepToSelf(itemType: 'bike' | 'part', itemId: string) {
   return fetchAuthJson<{ success: boolean }>(
     '/nft-marketplace/sweep',
