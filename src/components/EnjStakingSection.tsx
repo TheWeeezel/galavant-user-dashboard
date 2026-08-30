@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Zap, ExternalLink, Clock } from 'pixelarticons/react';
 import {
@@ -47,16 +47,40 @@ export function EnjStakingSection() {
   // der Download-Seite und haelt das fuer einen Fehler. Auf dem Desktop ist der QR-Code der richtige
   // Weg — er kommt aus demselben Aufruf und wird mit dem Handy gescannt. Nur auf einem Touch-Geraet,
   // wo die App tatsaechlich da sein kann, wird der Deep Link geoeffnet.
-  const [linkInfo, setLinkInfo] = useState<{ url: string; qr: string; code: string } | null>(null);
+  //
+  // `expires` wird mitgefuehrt, weil der Server es liefert und es vorher weggeworfen wurde: ein
+  // Code ohne sichtbare Restlaufzeit sieht auch dann noch gueltig aus, wenn er laengst tot ist,
+  // und der Spieler haelt das ergebnislose Warten fuer einen Fehler der Wallet.
+  const [linkInfo, setLinkInfo] = useState<{ url: string; qr: string; code: string; expires: string } | null>(null);
+  // Der Verknuepfungscode ist ein Einmalgeheimnis. Wer ihn abfotografiert — ueber die Schulter, in
+  // einem geteilten Bildschirm, auf einem Screenshot — haengt SEINE Wallet an dieses Konto: kein
+  // Sitzungsdiebstahl (Login ist Google-only), aber der eine Verknuepfungsplatz ist dann besetzt.
+  // Darum liegt er verdeckt. WICHTIG: der QR-Code traegt DASSELBE Geheimnis wie die Ziffern, nur
+  // maschinenlesbar — beide gehoeren hinter denselben Schalter, sonst ist es Theater.
+  const [codeVisible, setCodeVisible] = useState(false);
   const startLink = useMutation({
     mutationFn: enjinLinkStart,
     onSuccess: (data) => {
-      setLinkInfo({ url: data.url, qr: data.qr, code: data.code });
+      setLinkInfo({ url: data.url, qr: data.qr, code: data.code, expires: data.expires });
+      setCodeVisible(false);
       const mobil = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (mobil && data.url) window.open(data.url, '_blank', 'noopener');
       link.refetch();
     },
   });
+
+  // Sekundentakt nur solange ueberhaupt ein Code offen ist — sonst laeuft ein Timer auf jeder
+  // Wallet-Seite ohne Anzeige, die er aktualisieren koennte.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!linkInfo) return;
+    // Sofort nachziehen: `now` steht sonst noch auf dem Zeitpunkt des Seitenaufbaus, und wer erst
+    // nach Minuten auf den Knopf drueckt, saehe eine Sekunde lang eine zu grosse Restlaufzeit.
+    setNow(Date.now());
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [linkInfo]);
+  const restlaufzeit = linkInfo ? remainingMmSs(linkInfo.expires, now) : null;
 
   // Ohne diesen Weg ist eine Verknuepfung eine Sackgasse: enjin_public_key ist EINDEUTIG, wer also die
   // falsche Wallet verknuepft hat oder mehrere besitzt, kaeme sonst nie an die richtige. Loest nur die
@@ -67,6 +91,7 @@ export function EnjStakingSection() {
     onSuccess: () => {
       setConfirmUnlink(false);
       setLinkInfo(null);
+      setCodeVisible(false);
       link.refetch();
       staking.refetch();
     },
@@ -126,26 +151,57 @@ export function EnjStakingSection() {
             Link your Enjin Wallet to stake into the <span className="text-m2e-accent">Galavant Peloton</span> pool
             and earn a permanent boost on everything you earn. Linking only reads your public address — it never moves funds.
           </p>
+          {/*
+            Gesperrt, solange eine Verknuepfung aussteht — jeder Klick erzeugt sonst einen frischen
+            Einmalcode und laesst den vorigen, dessen Freigabe der Spieler vielleicht gerade in der
+            Wallet antippt, ins Leere laufen. Dasselbe Muster wie in der App
+            (packages/app/hooks/useEnjinLink.ts). Der Server raeumt einen abgelaufenen Schluessel
+            beim naechsten Status-Poll selbst weg, also gibt `pending` von allein wieder frei.
+          */}
           <button
-            className="pixel-btn-primary px-6 py-3"
+            className="pixel-btn-primary px-6 py-3 disabled:opacity-50"
             onClick={() => startLink.mutate()}
-            disabled={startLink.isPending}
+            disabled={startLink.isPending || link.data?.pending === true}
           >
             {startLink.isPending ? 'Opening…' : link.data?.pending ? 'Waiting for approval…' : 'Link Enjin Wallet'}
           </button>
           {linkInfo && (
             <div className="space-y-3 border-t border-m2e-border pt-4">
               <p className="text-sm text-m2e-text-secondary">
-                Scan this with the Enjin Wallet app on your phone. This page updates itself once you approve.
+                Treat this like a one-time password. The QR square and the digits carry the same
+                secret, and anyone who photographs either one can attach their own Enjin Wallet to
+                your account. Reveal it only when you are ready to scan, and don't share your screen.
               </p>
-              <img
-                src={linkInfo.qr}
-                alt="Enjin Wallet linking code"
-                className="w-44 h-44 bg-white p-2"
-              />
-              <p className="text-sm text-m2e-text-muted">
-                Or open the app and enter code <span className="text-m2e-accent font-bold">{linkInfo.code}</span>.
-              </p>
+              {codeVisible ? (
+                <>
+                  <img
+                    src={linkInfo.qr}
+                    alt="Enjin Wallet linking code"
+                    className="w-44 h-44 bg-white p-2"
+                  />
+                  <p className="text-sm text-m2e-text-muted">
+                    Scan it with the Enjin Wallet app on your phone, or enter code{' '}
+                    <span className="text-m2e-accent font-bold">{linkInfo.code}</span> in the app.
+                    This page updates itself once you approve.
+                  </p>
+                  <button className="pixel-btn px-4 py-2" onClick={() => setCodeVisible(false)}>
+                    Hide code
+                  </button>
+                </>
+              ) : (
+                <button className="pixel-btn px-4 py-2" onClick={() => setCodeVisible(true)}>
+                  Show code
+                </button>
+              )}
+              {restlaufzeit ? (
+                <p className="text-sm text-m2e-text-muted inline-flex items-center gap-2">
+                  <Clock className="w-4 h-4" /> Expires in {restlaufzeit}
+                </p>
+              ) : (
+                <p className="text-sm text-m2e-text-muted">
+                  This code has expired. Start again to get a fresh one.
+                </p>
+              )}
             </div>
           )}
           {link.data?.pending && !linkInfo && (
@@ -327,4 +383,18 @@ function Row({ label, value }: { label: string; value: string }) {
       <span className="font-bold">{value}</span>
     </div>
   );
+}
+
+/**
+ * Restlaufzeit des Verknuepfungscodes als m:ss, oder null wenn er abgelaufen ist oder der Server
+ * ein unlesbares Datum geschickt hat. Beides wird gleich behandelt: ein Code, dessen Ablauf wir
+ * nicht kennen, ist fuer die Anzeige tot — der Server verwirft ihn ohnehin beim naechsten Poll,
+ * und "abgelaufen, hol dir einen neuen" ist die einzige Auskunft, mit der der Spieler etwas
+ * anfangen kann.
+ */
+function remainingMmSs(expires: string, now: number): string | null {
+  const ms = new Date(expires).getTime() - now;
+  if (!Number.isFinite(ms) || ms <= 0) return null;
+  const total = Math.floor(ms / 1000);
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
 }

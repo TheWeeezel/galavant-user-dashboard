@@ -722,7 +722,6 @@ export interface MarketPolicy {
     buyEnabled: boolean;
     buyLabel: string;
     buyNote: string;
-    listingDeposit: string;
     listingDepositWarning: string;
   };
   offChainEnjRefusal: string;
@@ -770,14 +769,6 @@ export function marketBuy(id: string) {
 
 export function marketCancel(id: string) {
   return fetchAuthJson<{ success: boolean }>(`/market/${id}/cancel`, { method: 'POST' });
-}
-
-// --- NFT self-custody: move a managed-wallet NFT out to the player's own wallet ---
-export function nftSweepToSelf(itemType: 'bike' | 'part', itemId: string) {
-  return fetchAuthJson<{ success: boolean }>(
-    '/nft-marketplace/sweep',
-    { method: 'POST', body: JSON.stringify({ itemType, itemId }) },
-  );
 }
 
 // --- Part NFTs: export a part as its own token, or burn it back into the game ---

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Repeat } from 'pixelarticons/react';
 import {
   fetchUserBikes,
   fetchUserParts,
@@ -8,7 +7,6 @@ import {
   fetchMarketPolicy,
   marketList,
   marketCancel,
-  nftSweepToSelf,
   type MarketListing,
   type MarketPolicy,
   type UserBike,
@@ -168,7 +166,6 @@ function SellCard({
     }),
   });
   const cancel = useMutation({ mutationFn: () => marketCancel(listing!.id) });
-  const sweep = useMutation({ mutationFn: () => nftSweepToSelf(item.itemType, item.id) });
 
   const cut = policy && (item.isNft
     ? (currency === 'enj' ? policy.cuts.nft_enj : policy.cuts.nft_watts)
@@ -256,16 +253,6 @@ function SellCard({
             <div className="text-[11px] text-m2e-text-secondary">
               {policy.currencyCopy[currency]}
             </div>
-          )}
-
-          {item.isNft && (
-            <button
-              disabled={sweep.isPending}
-              onClick={() => run(() => sweep.mutateAsync())}
-              className="flex items-center justify-center gap-2 px-3 py-2 border border-m2e-border text-m2e-text-secondary uppercase tracking-wide text-xs disabled:opacity-50"
-            >
-              <Repeat className="w-4 h-4" /> {sweep.isPending ? 'Sweeping…' : 'Sweep to my wallet'}
-            </button>
           )}
         </>
       )}
