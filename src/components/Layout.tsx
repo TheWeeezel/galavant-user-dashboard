@@ -15,7 +15,7 @@ export function Layout() {
   // Only the landing page has a full-bleed hero image behind the bar. There the
   // header is lifted out of flow so the art runs underneath it and the scrim has
   // something to dissolve into. Everywhere else the page opens on a flat
-  // bg-m2e-text strip that a solid bar continues seamlessly — fading over those
+  // bg-m2e-chrome strip that a solid bar continues seamlessly — fading over those
   // just reveals the cream page behind and reads as a muddy seam.
   const blendsIntoHero = pathname === '/';
 
@@ -27,8 +27,6 @@ export function Layout() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  console.log('[Layout] render — isAuthenticated:', isAuthenticated, 'isRestoring:', isRestoring, 'isLoading:', isLoading, 'user:', user?.nickname ?? null, 'showLogin:', showLogin);
 
   useEffect(() => {
     if (isAuthenticated) setShowLogin(false);
@@ -56,17 +54,17 @@ export function Layout() {
       <header
         className={`sticky top-0 z-50 text-white relative transition-colors duration-300 ${
           scrolled
-            ? 'bg-m2e-text/75 backdrop-blur-md border-b border-white/10'
+            ? 'bg-m2e-chrome/75 backdrop-blur-md border-b border-white/10'
             : blendsIntoHero
               ? 'bg-transparent border-b border-transparent'
-              : 'bg-m2e-text border-b border-white/10'
+              : 'bg-m2e-chrome border-b border-white/10'
         }`}
       >
         {/* Blend layer. Taller than the bar so it keeps the nav legible at the top
             and then dissolves into the art below, instead of ending on a hard edge. */}
         <div
           aria-hidden
-          className={`absolute inset-x-0 top-0 h-[190%] pointer-events-none bg-gradient-to-b from-m2e-text via-m2e-text/80 to-transparent transition-opacity duration-300 ${
+          className={`absolute inset-x-0 top-0 h-[190%] pointer-events-none bg-gradient-to-b from-m2e-chrome via-m2e-chrome/80 to-transparent transition-opacity duration-300 ${
             scrolled || !blendsIntoHero ? 'opacity-0' : 'opacity-100'
           }`}
         />
@@ -143,7 +141,7 @@ export function Layout() {
 
         {/* Mobile dropdown */}
         {menuOpen && (
-          <nav className="md:hidden bg-m2e-text border-t border-white/10 px-4 py-3 flex flex-col gap-1 text-sm uppercase tracking-wider relative">
+          <nav className="md:hidden bg-m2e-chrome border-t border-white/10 px-4 py-3 flex flex-col gap-1 text-sm uppercase tracking-wider relative">
             {navLinks.map(({ href, label, icon: Icon }) => (
               <MobileLink
                 key={href}
@@ -205,7 +203,7 @@ export function Layout() {
       </main>
 
       {/* Footer — matches the dark chrome */}
-      <footer className="bg-m2e-text text-white relative overflow-hidden pb-20">
+      <footer className="bg-m2e-chrome text-white relative overflow-hidden pb-20">
         <div className="absolute inset-0 pointer-events-none scanlines-light" />
         <div className="mx-auto max-w-7xl px-4 py-10 flex flex-col items-center gap-5 text-center relative">
           <div className="section-label justify-center w-fit mx-auto">Community</div>
@@ -237,6 +235,24 @@ export function Layout() {
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               X / Twitter
             </a>
+          </div>
+          {/* The sky clock — the town's five hours */}
+          <div className="flex gap-1.5 w-full max-w-md mx-auto mt-2" aria-hidden>
+            {([
+              ['05', '#9A8FDE', '#CBBCE6'],
+              ['09', '#BFD2E8', '#D2DCE6'],
+              ['16', '#E9B87F', '#EECFA0'],
+              ['18', '#A879B8', '#C39BC4'],
+              ['20', '#241D47', '#1C1735'],
+            ] as const).map(([h, a, b]) => (
+              <div
+                key={h}
+                className="flex-1 h-5 rounded-sm relative overflow-hidden"
+                style={{ background: `linear-gradient(90deg, ${a} 0 50%, ${b} 50% 100%)` }}
+              >
+                <span className="absolute left-1 top-0 text-[10px] text-white/85" style={{ textShadow: '1px 1px 0 rgba(0,0,0,.6)' }}>{h}</span>
+              </div>
+            ))}
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-4 pt-4 border-t border-white/10 w-full text-xs text-white/50 uppercase tracking-[0.25em]">
             <span>Powered by Enjin</span>
@@ -309,3 +325,4 @@ function MobileLink({ to, active, watts, onClick, children }: {
     </Link>
   );
 }
+

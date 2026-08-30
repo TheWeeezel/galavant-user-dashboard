@@ -1,17 +1,18 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
-  Human, Coins, Zap, Redo, Copy, Check, Logout,
+  Human, Coins, Zap, Redo, Check, Logout,
   ChevronLeft, Trophy, Mail, Bookmark,
 } from 'pixelarticons/react';
-import { useWalletConnect } from '@btc-vision/walletconnect';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
 import { NftDetailModal } from '../components/NftDetailModal';
+import { PartNftModal } from '../components/PartNftModal';
+import type { PartNftRow } from '../components/PartNftModal';
 import { fetchSpendingWallet, fetchUserBikes, fetchUserParts, fetchWalletNfts } from '../api';
-import type { UserBike, UserPart } from '../api';
+import type { UserBike } from '../api';
 import { MissionProfileCard } from '../components/MissionProfileCard';
 import { config } from '../config';
 
@@ -46,19 +47,13 @@ function formatNumber(n: number): string {
 
 export function Profile() {
   const { isAuthenticated, isRestoring, user, logout } = useAuth();
-  const { disconnect: disconnectWallet } = useWalletConnect();
   const [showLogin, setShowLogin] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [selectedBikeId, setSelectedBikeId] = useState<string | null>(null);
+  const [selectedPart, setSelectedPart] = useState<PartNftRow | null>(null);
 
   const handleLogout = useCallback(() => {
-    try {
-      disconnectWallet();
-    } catch (err) {
-      console.warn('[Profile] wallet disconnect failed:', err);
-    }
     logout();
-  }, [disconnectWallet, logout]);
+  }, [logout]);
 
   const { data: spending } = useQuery({
     queryKey: ['spending'],
@@ -87,6 +82,19 @@ export function Profile() {
   const selectedBike: UserBike | null =
     (bikes?.find((b) => b.id === selectedBikeId) ?? nftBikes?.bikes?.find((b) => b.id === selectedBikeId)) ?? null;
 
+  // /parts/inventory only returns free, unlisted parts — exported ones (which may be
+  // socketed or listed) come from /wallet/nfts, so merge both into one list.
+  const partRows: PartNftRow[] = useMemo(() => {
+    const rows = new Map<string, PartNftRow>();
+    for (const p of parts ?? []) {
+      rows.set(p.id, { id: p.id, type: p.type, level: p.level, socketedInBike: p.socketedInBike, tokenId: null, isListed: false });
+    }
+    for (const p of nftBikes?.parts ?? []) {
+      rows.set(p.id, { id: p.id, type: p.type, level: p.level, socketedInBike: p.socketedInBike, tokenId: p.tokenId, isListed: p.isListed });
+    }
+    return [...rows.values()];
+  }, [parts, nftBikes]);
+
   if (isRestoring) {
     return (
       <div className="flex items-center justify-center py-24">
@@ -111,18 +119,10 @@ export function Profile() {
     );
   }
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(user.walletAddress);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const shortAddr = `${user.walletAddress.slice(0, 10)}…${user.walletAddress.slice(-6)}`;
-
   return (
     <>
       {/* Hero strip — player card */}
-      <div className="border-b-2 border-m2e-border bg-m2e-text text-white relative overflow-hidden scanlines-light">
+      <div className="border-b-2 border-m2e-border bg-m2e-chrome text-white relative overflow-hidden scanlines-light">
         <div className="mx-auto max-w-6xl px-4 md:px-8 py-10 md:py-14 relative z-10">
           <motion.div
             className="space-y-5"
@@ -169,8 +169,8 @@ export function Profile() {
                 </h1>
                 <div className="flex flex-wrap items-center gap-3 text-xs md:text-sm uppercase tracking-[0.2em] text-white/70">
                   <span className="pixel-border border-white/30 bg-white/10 px-2 py-1 flex items-center gap-1.5">
-                    {user.authProvider === 'google' ? <Mail className="w-3 h-3" /> : <Bookmark className="w-3 h-3" />}
-                    {user.authProvider === 'google' ? 'Google Auth' : 'Wallet Auth'}
+                    <Mail className="w-3 h-3" />
+                    Google Auth
                   </span>
                   {user.hasGoogleLinked && user.linkedEmail && (
                     <span className="pixel-border border-m2e-success/50 bg-m2e-success/10 text-m2e-success px-2 py-1 flex items-center gap-1.5 max-w-[240px] truncate">
@@ -186,29 +186,6 @@ export function Profile() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 md:px-8 py-10 md:py-14 space-y-10">
-        {/* Wallet address bar */}
-        <motion.section
-          className="space-y-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <div className="section-label">Wallet</div>
-          <div className="pixel-card p-4 md:p-5 flex items-center gap-3">
-            <span className="text-m2e-accent text-xs md:text-sm tracking-[0.3em] uppercase shrink-0">ADDR&gt;</span>
-            <code className="flex-1 text-sm md:text-base font-mono text-m2e-text break-all leading-tight">
-              <span className="hidden md:inline">{user.walletAddress}</span>
-              <span className="md:hidden">{shortAddr}</span>
-            </code>
-            <button
-              onClick={handleCopy}
-              className={`inline-flex items-center gap-1 px-3 py-2 text-[10px] uppercase tracking-widest pixel-border border-m2e-border bg-m2e-card-alt text-m2e-text-muted hover:text-m2e-accent hover:border-m2e-accent transition-colors shrink-0 ${copied ? 'text-m2e-success border-m2e-success' : ''}`}
-            >
-              {copied ? <><Check className="w-3 h-3" />Copied</> : <><Copy className="w-3 h-3" />Copy</>}
-            </button>
-          </div>
-        </motion.section>
-
         {/* Lifetime stats */}
         <motion.section
           className="space-y-3"
@@ -420,24 +397,30 @@ export function Profile() {
         >
           <div className="flex items-center justify-between">
             <div className="section-label">Inventory · Parts</div>
-            {parts && <span className="text-xs uppercase tracking-[0.25em] text-m2e-text-muted">{parts.length} total</span>}
+            <span className="text-xs uppercase tracking-[0.25em] text-m2e-text-muted">{partRows.length} total</span>
           </div>
 
-          {parts && parts.length > 0 ? (
+          {partRows.length > 0 ? (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
-              {parts.map((part: UserPart) => (
+              {partRows.map((part: PartNftRow) => (
                 <motion.div
                   key={part.id}
                   whileHover={{ y: -2, transition: { duration: 0.15 } }}
-                  className={`pixel-card overflow-hidden ${PART_TYPE_COLORS[part.type] ?? ''}`}
+                  className={`pixel-card overflow-hidden cursor-pointer ${PART_TYPE_COLORS[part.type] ?? ''}`}
+                  onClick={() => setSelectedPart(part)}
                 >
-                  <div className="bg-m2e-bg-alt p-2 flex items-center justify-center">
+                  <div className="relative bg-m2e-bg-alt p-2 flex items-center justify-center">
                     <img
                       src={getPartImageUrl(part.type, part.level)}
                       alt={`${part.type} Lv.${part.level}`}
                       className="w-16 h-16 object-contain pixel-render"
                       loading="lazy"
                     />
+                    {part.tokenId != null && (
+                      <span className="absolute top-1 right-1 px-1.5 py-0.5 text-[9px] bg-m2e-info/20 text-m2e-info pixel-border shadow-sm tracking-wide border-m2e-info/50">
+                        On-chain
+                      </span>
+                    )}
                   </div>
                   <div className="px-2 py-2 text-center border-t border-m2e-border">
                     <p className="text-xs uppercase text-m2e-text">
@@ -485,6 +468,10 @@ export function Profile() {
             onClose={() => setSelectedBikeId(null)}
             ownerBike={selectedBike}
           />
+        )}
+
+        {selectedPart && (
+          <PartNftModal part={selectedPart} onClose={() => setSelectedPart(null)} />
         )}
       </div>
     </>

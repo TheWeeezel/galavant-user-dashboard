@@ -284,6 +284,21 @@ export function googleAuth(code: string) {
   });
 }
 
+/**
+ * Second half of Google sign-up. `/auth/google` returns `needs_wallet` with a short-lived
+ * claim token for an account it has never seen; this exchanges that token for a real user.
+ *
+ * The website used to receive the claim token and throw it away, so a first-time visitor was
+ * told to "create a user in the app first" — the web could sign people IN but never sign them
+ * UP. No wallet fields are sent: the server generates the address itself when none is supplied.
+ */
+export function completeGoogleSignup(googleClaimToken: string) {
+  return fetchAuthJson<{ token: string; user: UserProfile; walletAddress: string }>(
+    '/auth/google/complete-wallet',
+    { method: 'POST', body: JSON.stringify({ googleClaimToken }) },
+  );
+}
+
 export function fetchMe() {
   return fetchAuthJson<UserProfile>('/auth/me');
 }
@@ -459,8 +474,11 @@ export interface WalletTransaction {
   createdAt: string;
 }
 
+/** Exported NFTs the player owns — bikes and, since §12e, parts. */
+export interface ExportedPart { id: string; type: string; level: number; tokenId: number | null; nftSettledAt: string | null; isListed: boolean; socketedInBike: string | null }
+
 export function fetchWalletNfts() {
-  return fetchAuthJson<{ bikes: UserBike[] }>('/wallet/nfts');
+  return fetchAuthJson<{ bikes: UserBike[]; parts: ExportedPart[] }>('/wallet/nfts');
 }
 
 export function fetchWalletTransactions() {
@@ -475,6 +493,15 @@ export function enjinLinkStart() {
   );
 }
 
+/**
+ * Loest die verknuepfte Enjin-Wallet vom Konto. Noetig, weil enjin_public_key EINDEUTIG ist: wer
+ * mehrere Wallets hat oder versehentlich die falsche verknuepft hat, kaeme sonst nie an die richtige.
+ * Loescht nur die Verknuepfung — Guthaben, Bonds und NFTs der Wallet bleiben unberuehrt.
+ */
+export function enjinLinkUnlink() {
+  return fetchAuthJson<{ linked: boolean }>('/enjin/link/unlink', { method: 'POST', body: JSON.stringify({}) });
+}
+
 export function enjinLinkStatus() {
   return fetchAuthJson<{ linked: boolean; pending?: boolean; publicKey?: string }>(
     '/enjin/link/status',
@@ -487,6 +514,8 @@ export function enjinStakingStatus() {
     poolId: number;
     staked?: boolean;
     currentBondedEnj?: number;
+    /** Spendable ENJ in the player's own wallet; null when the RPC read failed. */
+    walletEnj?: string | null;
     avgBondedEnj30d?: number;
     earningBoost?: number;
     energyBonus?: number;
@@ -498,10 +527,85 @@ export function enjinStakingStatus() {
   }>('/enjin/staking/status');
 }
 
+// --- Stake ENJ in-app: create a bond request the user approves in their own Enjin Wallet ---
+export function enjinBond(amountEnj: number) {
+  return fetchAuthJson<{ journalId: string; uuid: string | null; poolId: number }>(
+    '/enjin/staking/bond',
+    { method: 'POST', body: JSON.stringify({ amountEnj }) },
+  );
+}
+
+export function enjinBondStatus(journalId: string) {
+  return fetchAuthJson<{ state: string; extrinsicHash: string | null; error: string | null }>(
+    `/enjin/staking/bond/${journalId}`,
+  );
+}
+
+// --- Seasonal WATTS → ENJ redemption ---
+export interface RedemptionStatus {
+  open: boolean;
+  season?: { id: string; name: string; budgetEnj: number; totalWatts: number; closesAt: string | null };
+  entry?: { watts: number; estimatedEnj: number } | null;
+  minWatts?: number;
+}
+
+export function redemptionCurrent() {
+  return fetchAuthJson<RedemptionStatus>('/redemption/current');
+}
+
+export interface RedemptionStanding {
+  rank: number;
+  isMe: boolean;
+  nickname: string;
+  watts: number;
+  sharePct: number;
+  estimatedEnj: number;
+}
+
+export interface RedemptionLeaderboard {
+  open: boolean;
+  season?: {
+    id: string;
+    name: string;
+    budgetEnj: number;
+    totalWatts: number;
+    totalWeight: number;
+    entrants: number;
+    closesAt: string | null;
+  };
+  me?: { rank: number | null; watts: number; sharePct: number; estimatedEnj: number } | null;
+  top?: RedemptionStanding[];
+}
+
+export function redemptionLeaderboard(limit = 25) {
+  return fetchAuthJson<RedemptionLeaderboard>(`/redemption/leaderboard?limit=${limit}`);
+}
+
+export function redemptionSubmit(watts: number) {
+  return fetchAuthJson<{ ok: boolean; watts: number; weight: number }>(
+    '/redemption/submit',
+    { method: 'POST', body: JSON.stringify({ watts }) },
+  );
+}
+
+// --- Web shop (Stripe card checkout) ---
+export interface StoreProduct { type: string; displayName: string; quality: string; priceUsdCents: number; available: boolean }
+export interface StoreCatalog { enabled: boolean; currency: string; products: StoreProduct[] }
+
+export function fetchStoreProducts() {
+  return fetchJson<StoreCatalog>('/store/products');
+}
+
+export function storeCheckout(bikeType: string) {
+  return fetchAuthJson<{ url: string }>('/store/checkout', { method: 'POST', body: JSON.stringify({ bikeType }) });
+}
+
 // --- Blockchain / NFT ---
 
 export interface BlockchainFees {
   nftExportFeeSap: number;
+  /** WATTS fee to export a PART as its own NFT (§12e). */
+  partExportFeeSap: number;
 }
 
 export function fetchBlockchainFees() {
@@ -549,4 +653,88 @@ export function getMyListings() {
 
 export function getListingDetail(id: string) {
   return fetchAuthJson<MarketplaceListing>(`/marketplace/${id}`);
+}
+
+// --- NFT marketplace (on-chain NFTs: sell for ENJ, or sell for WATTS which burns the NFT) ---
+export interface NftListing {
+  id: string;
+  /** 'bike' | 'part' — the NFT marketplace carries both. */
+  itemType: 'bike' | 'part';
+  itemId: string;
+  tokenId: number;
+  sellerId: string;
+  saleType: 'enj' | 'watts';
+  priceEnj: string | null;
+  priceWatts: number | null;
+  status: 'active' | 'settling' | 'sold' | 'cancelled' | 'failed';
+  createdAt: string;
+  bikeType?: string;
+  quality?: string;
+  level?: number;
+  imageUrl?: string | null;
+  partType?: string;
+  partLevel?: number;
+}
+
+export function fetchNftListings() {
+  return fetchJson<{ listings: NftListing[] }>('/nft-marketplace/listings');
+}
+
+/** The signed-in player's own listings, including ones mid-settlement. */
+export function fetchMyNftListings() {
+  return fetchAuthJson<{ listings: NftListing[] }>('/nft-marketplace/mine');
+}
+
+export function fetchNftListing(id: string) {
+  return fetchAuthJson<{ listing: NftListing }>(`/nft-marketplace/listing/${id}`);
+}
+
+export function nftListForWatts(itemType: 'bike' | 'part', itemId: string, priceWatts: number) {
+  return fetchAuthJson<{ success: boolean; listingId: string }>(
+    '/nft-marketplace/list/watts',
+    { method: 'POST', body: JSON.stringify({ itemType, itemId, priceWatts }) },
+  );
+}
+
+export function nftListForEnj(itemType: 'bike' | 'part', itemId: string, priceEnj: string) {
+  return fetchAuthJson<{ success: boolean; listingId: string }>(
+    '/nft-marketplace/list/enj',
+    { method: 'POST', body: JSON.stringify({ itemType, itemId, priceEnj }) },
+  );
+}
+
+export function nftCancelListing(listingId: string) {
+  return fetchAuthJson<{ success: boolean }>(
+    '/nft-marketplace/cancel',
+    { method: 'POST', body: JSON.stringify({ listingId }) },
+  );
+}
+
+export function nftBuyWithWatts(listingId: string) {
+  return fetchAuthJson<{ success: boolean; status: string }>(
+    '/nft-marketplace/buy/watts',
+    { method: 'POST', body: JSON.stringify({ listingId }) },
+  );
+}
+
+export function nftSweepToSelf(itemType: 'bike' | 'part', itemId: string) {
+  return fetchAuthJson<{ success: boolean }>(
+    '/nft-marketplace/sweep',
+    { method: 'POST', body: JSON.stringify({ itemType, itemId }) },
+  );
+}
+
+// --- Part NFTs: export a part as its own token, or burn it back into the game ---
+export function mintPartNft(partId: string) {
+  return fetchAuthJson<{ success: boolean; tokenId: number; txHash: string | null }>(
+    '/blockchain/mint-part',
+    { method: 'POST', body: JSON.stringify({ partId }) },
+  );
+}
+
+export function importPartNft(tokenId: number) {
+  return fetchAuthJson<{ success: boolean; partId: string }>(
+    '/blockchain/import-part',
+    { method: 'POST', body: JSON.stringify({ tokenId }) },
+  );
 }

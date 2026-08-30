@@ -173,7 +173,7 @@ export function Changelog() {
   return (
     <>
       {/* Hero strip */}
-      <div className="border-b-2 border-m2e-border bg-m2e-text text-white relative overflow-hidden scanlines-light">
+      <div className="border-b-2 border-m2e-border bg-m2e-chrome text-white relative overflow-hidden scanlines-light">
         <div className="mx-auto max-w-5xl px-4 md:px-8 py-10 md:py-14 relative z-10">
           <motion.div
             className="space-y-4"

@@ -416,7 +416,7 @@ function ExportConfirmPanel({
     <div className="mt-5 pt-4 border-t-2 border-m2e-border space-y-3">
       <h3 className="text-sm uppercase tracking-widest text-m2e-text">Confirm Export</h3>
       <p className="text-xs text-m2e-text-secondary leading-relaxed">
-        This mints your bike as an on-chain NFT in your wallet. You'll be able to sell or transfer it on any Enjin-compatible marketplace. It will no longer earn WATTS in-game until you import it back.
+        This mints your bike as an on-chain NFT in your wallet. You'll be able to sell or transfer it on any Enjin-compatible marketplace. The bike is frozen at its current level and stats: it can't be ridden, levelled, repaired or fitted with parts, and it stops adding to your max energy, until you import it back.
       </p>
       <ul className="text-xs text-m2e-text-secondary space-y-1 pixel-border bg-m2e-bg-alt p-3">
         <li className="flex items-center justify-between">
@@ -425,8 +425,8 @@ function ExportConfirmPanel({
         </li>
         {socketedPartCount > 0 && (
           <li className="flex items-center justify-between">
-            <span className="uppercase tracking-wider text-m2e-text-muted">Parts unsocketed</span>
-            <span className="text-m2e-text">{socketedPartCount} returned to inventory</span>
+            <span className="uppercase tracking-wider text-m2e-text-muted">Socketed parts</span>
+            <span className="text-m2e-text">{socketedPartCount} pause with the bike</span>
           </li>
         )}
       </ul>
@@ -471,7 +471,7 @@ function ImportConfirmPanel({
     <div className="mt-5 pt-4 border-t-2 border-m2e-border space-y-3">
       <h3 className="text-sm uppercase tracking-widest text-m2e-text">Confirm Import</h3>
       <p className="text-xs text-m2e-text-secondary leading-relaxed">
-        This burns the NFT <span className="text-m2e-text">#{tokenId}</span> on-chain and returns the bike to your in-game inventory with full HP and durability. The burn is permanent — you can always export again later.
+        This burns the NFT <span className="text-m2e-text">#{tokenId}</span> on-chain and returns the bike to your in-game inventory — fully playable again, with full HP and durability. The burn is permanent — you can always export again later.
       </p>
       {errorMessage && (
         <div className="pixel-card p-3 border-m2e-danger bg-m2e-danger/10 text-m2e-danger text-xs">{errorMessage}</div>

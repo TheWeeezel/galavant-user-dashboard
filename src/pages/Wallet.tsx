@@ -7,6 +7,8 @@ import {
   ShoppingCart, Notes,
 } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
+import { EnjStakingSection } from '../components/EnjStakingSection';
+import { EnjRedemptionSection } from '../components/EnjRedemptionSection';
 import {
   fetchSpendingWallet,
   fetchWalletTransactions,
@@ -73,7 +75,7 @@ export function Wallet() {
   return (
     <>
       {/* Hero strip — terminal style */}
-      <div className="border-b-2 border-m2e-border bg-m2e-text text-white relative overflow-hidden scanlines-light">
+      <div className="border-b-2 border-m2e-border bg-m2e-chrome text-white relative overflow-hidden scanlines-light">
         <div className="mx-auto max-w-5xl px-4 md:px-8 py-10 md:py-14 relative z-10">
           <motion.div
             className="space-y-4"
@@ -110,13 +112,28 @@ export function Wallet() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <div className="section-label">Balances</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <BigBalance
               label="WATTS · In-Game"
               amount={spendingLoading ? '…' : spending?.sap?.toLocaleString() ?? '0'}
               unit="WATTS"
               accent
               icon={<img src="/assets/token-silver.png" alt="WATTS" className="w-10 h-10 pixel-render" />}
+            />
+            <BigBalance
+              label="ENJ · Wallet"
+              amount={
+                !link?.linked
+                  ? '—'
+                  : stakingLoading
+                    ? '…'
+                    : staking?.walletEnj != null
+                      ? Number(staking.walletEnj).toLocaleString(undefined, { maximumFractionDigits: 4 })
+                      : '—'
+              }
+              unit="ENJ"
+              note={link?.linked && staking?.walletEnj == null && !stakingLoading ? 'unavailable' : undefined}
+              icon={<img src="/assets/token-enj.svg" alt="ENJ" className="w-10 h-10 pixel-render" />}
             />
             <BigBalance
               label="ENJ · Staked"
@@ -129,7 +146,7 @@ export function Wallet() {
               }
               unit="ENJ"
               note={link?.linked ? undefined : 'wallet not linked'}
-              icon={<img src="/assets/token-enj.svg" alt="ENJ" className="w-10 h-10 pixel-render" />}
+              icon={<img src="/assets/vault-enj.png" alt="Staked ENJ" className="w-10 h-10 pixel-render" />}
             />
           </div>
         </motion.section>
@@ -143,11 +160,32 @@ export function Wallet() {
           transition={{ duration: 0.5 }}
         >
           <div className="section-label">Actions</div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <ActionCard to="/enj-staking" Icon={Zap} title="Stake ENJ" description="Earning boost" />
+          <div className="grid grid-cols-2 gap-4">
             <ActionCard to="/earn" Icon={Coins} title="Earn" description="Missions & walks" />
             <ActionCard to="/market" Icon={ShoppingCart} title="Market" description="Spend WATTS" />
           </div>
+        </motion.section>
+
+        {/* ENJ staking — merged into the account */}
+        <motion.section
+          className="space-y-4"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.5 }}
+        >
+          <EnjStakingSection />
+        </motion.section>
+
+        {/* WATTS → ENJ redemption — merged into the account */}
+        <motion.section
+          className="space-y-4"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.5 }}
+        >
+          <EnjRedemptionSection />
         </motion.section>
 
         {/* Address */}
@@ -183,7 +221,7 @@ export function Wallet() {
 
           <div className="pixel-card p-0 overflow-hidden">
             {/* Title bar */}
-            <div className="bg-m2e-text text-m2e-accent px-5 py-3 border-b-2 border-m2e-border flex items-center justify-between">
+            <div className="bg-m2e-chrome text-m2e-accent px-5 py-3 border-b-2 border-m2e-border flex items-center justify-between">
               <span className="text-xs md:text-sm tracking-[0.3em] uppercase flex items-center gap-2">
                 <Notes className="w-4 h-4" />
                 &gt; Transaction Log

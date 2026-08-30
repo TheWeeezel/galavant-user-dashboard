@@ -6,7 +6,6 @@ import {
   useScroll,
   useTransform,
   useReducedMotion,
-  useSpring,
   useMotionValue,
   useInView,
   animate,
@@ -15,42 +14,19 @@ import {
 import {
   Users, MapPin, Coins, Image, Zap,
   Store, ShoppingCart, Trophy, SpeedFast,
-  Heart, Scale, Chart, Fire,
+  Heart, Scale, Fire,
   Download, Login, Gift, Human,
-  Cancel, Check, Globe, Flag,
+  Check, Globe, Flag,
   Music, Cloud, Lock, Clock,
-  ArrowDown, ChevronLeft, ChevronRight,
+  ArrowDown, ChevronRight,
 } from 'pixelarticons/react';
-import { fetchStats, fetchLeaderboard, fetchMarketplace, fetchNfts, type MintedNft } from '../api';
+import { fetchStats, fetchLeaderboard, fetchMarketplace } from '../api';
 import { NftDetailModal } from '../components/NftDetailModal';
 import { ListingCard } from '../components/ListingCard';
 import { AndroidPlayStoreButton } from '../components/AndroidPlayStoreButton';
 import { formatDistance } from '../utils/format';
 import { config } from '../config';
 import type { ChangelogData } from '../types/changelog';
-
-const RARITY_RANK: Record<string, number> = {
-  legendary: 5,
-  epic: 4,
-  rare: 3,
-  uncommon: 2,
-  common: 1,
-};
-
-const RARITY_STYLE: Record<string, { label: string; ring: string; chip: string; glow: string }> = {
-  legendary: { label: 'Legendary', ring: 'ring-m2e-legendary/40', chip: 'bg-m2e-legendary/20 text-m2e-legendary border-m2e-legendary', glow: 'drop-shadow-[0_0_24px_rgba(212,146,10,0.45)]' },
-  epic:      { label: 'Epic',      ring: 'ring-m2e-epic/40',      chip: 'bg-m2e-epic/20 text-m2e-epic border-m2e-epic',            glow: 'drop-shadow-[0_0_20px_rgba(136,85,187,0.4)]'  },
-  rare:      { label: 'Rare',      ring: 'ring-m2e-rare/40',      chip: 'bg-m2e-rare/20 text-m2e-rare border-m2e-rare',            glow: 'drop-shadow-[0_0_18px_rgba(68,136,204,0.4)]'  },
-  uncommon:  { label: 'Uncommon',  ring: 'ring-m2e-uncommon/40',  chip: 'bg-m2e-uncommon/20 text-m2e-uncommon border-m2e-uncommon', glow: 'drop-shadow-[0_0_14px_rgba(59,165,93,0.35)]'  },
-  common:    { label: 'Common',    ring: 'ring-m2e-common/40',    chip: 'bg-m2e-common/20 text-m2e-common border-m2e-common',       glow: 'drop-shadow-[0_8px_0_rgba(0,0,0,0.15)]'       },
-};
-
-function resolveBikeImage(bike: MintedNft): string {
-  if (bike.imageUrl) {
-    return bike.imageUrl.startsWith('/') ? `${config.apiUrl}${bike.imageUrl}` : bike.imageUrl;
-  }
-  return `${config.apiUrl}/art/bases/bike-${bike.type.toLowerCase()}.png`;
-}
 
 type LeaderboardMetric = 'distance' | 'earnings';
 type LeaderboardPeriod = 'daily' | 'weekly' | 'all_time';
@@ -69,33 +45,6 @@ function formatSat(n: number): string {
 }
 
 // ── Data ────────────────────────────────────────────────────────────────────
-
-type PillarVisual =
-  | { kind: 'bike'; bike: MintedNft }
-  | { kind: 'tokens' }
-  | { kind: 'loot' }
-  | { kind: 'fallback'; src: string };
-
-interface PillarData {
-  kicker: string;
-  title: string;
-  tagline: string;
-  icon: React.ComponentType<any>;
-  visual: PillarVisual;
-}
-
-const PILLAR_META = [
-  { kicker: '01 / MOVE',     title: 'WALK.',    tagline: 'Your balance bike. On chain. On your feet.',       icon: Human,  fallback: '/assets/floating/bike.png' },
-  { kicker: '02 / STACK',    title: 'EARN.',    tagline: 'WATTS per minute. Redeem for ENJ each season.',    icon: Coins,  fallback: '/assets/landing/feature-ride.png' },
-  { kicker: '03 / DOMINATE', title: 'CONQUER.', tagline: 'Lv 9 parts. Toolboxes. Legendary tools.',          icon: Trophy, fallback: '/assets/landing/feature-trade.png' },
-] as const;
-
-const COMPARISON_DATA: { label: string; icon: React.ComponentType<any>; other: string; galavant: string }[] = [
-  { label: 'Where payouts come from', icon: Coins, other: 'New deposits and speculation', galavant: 'Platform revenue, capped by a season budget' },
-  { label: 'Supply control', icon: Fire, other: 'Unlimited or ignored', galavant: 'No token to mint — WATTS burns on redemption' },
-  { label: 'Economy management', icon: Chart, other: 'None — mint and pray', galavant: 'Actively managed, every change human-approved' },
-  { label: 'Health visibility', icon: Heart, other: 'Hidden or non-existent', galavant: 'Public health score, on this page' },
-];
 
 const ONBOARDING_STEPS = [
   { icon: Download, title: 'Download', description: 'iOS or Android' },
@@ -116,6 +65,23 @@ const ROADMAP_ITEMS: { title: string; icon: React.ComponentType<any>; status: 'd
   { title: 'Zones', icon: Globe, status: 'upcoming' },
   { title: 'Lucky Events', icon: Gift, status: 'upcoming' },
 ];
+
+// The four bike types are speed bands — walk, jog, or power-walk; the town
+// pays for real motion. Ranges are the UI-visible optimal bands.
+const BIKE_TYPES = [
+  { type: 'Commuter', best: 'Leisurely walkers', lo: 2, hi: 5 },
+  { type: 'Touring', best: 'Brisk walkers', lo: 5, hi: 9 },
+  { type: 'Racing', best: 'Power walkers', lo: 10, hi: 18 },
+  { type: 'Electric', best: 'Any walker · full band', lo: 2, hi: 18, accent: true },
+] as const;
+
+const MATERIALS = [
+  ['Steel', 'var(--color-m2e-common)'],
+  ['Moss', 'var(--color-m2e-uncommon)'],
+  ['Blue Hour', 'var(--color-m2e-rare)'],
+  ['Orchid', 'var(--color-m2e-epic)'],
+  ['Brass', 'var(--color-m2e-legendary)'],
+] as const;
 
 const HERO_WORDS = ['WALK.', 'EARN.', 'CONQUER.'];
 
@@ -202,12 +168,8 @@ export function Home() {
   const [lbMetric, setLbMetric] = useState<LeaderboardMetric>('distance');
   const [lbPeriod, setLbPeriod] = useState<LeaderboardPeriod>('all_time');
   const [mpSort, setMpSort] = useState<MarketplaceSort>('newest');
-  const [carouselIndex, setCarouselIndex] = useState(0);
 
-  const carouselRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
-  const pillarsRef = useRef<HTMLDivElement>(null);
-  const dragState = useRef({ active: false, startX: 0, scrollStart: 0, velX: 0, lastX: 0, lastT: 0 });
   const reducedMotion = useReducedMotion();
 
   // Hero parallax
@@ -219,14 +181,6 @@ export function Home() {
   const heroImageScale = useTransform(heroProgress, [0, 1], [1.15, 1.28]);
   const heroContentY = useTransform(heroProgress, [0, 1], [0, -40]);
   const heroOpacity = useTransform(heroProgress, [0, 0.85], [1, 0]);
-
-  // Pillars horizontal scroll (pinned section)
-  const { scrollYProgress: pillarsProgress } = useScroll({
-    target: pillarsRef,
-    offset: ['start start', 'end end'],
-  });
-  const pillarsX = useTransform(pillarsProgress, [0, 1], ['0%', '-66.667%']);
-  const pillarsXSpring = useSpring(pillarsX, { damping: 20, stiffness: 60, mass: 0.3 });
 
   // Queries
   const changelog = useQuery<ChangelogData>({
@@ -246,105 +200,6 @@ export function Home() {
     queryFn: () => fetchMarketplace({ page: 1, limit: 6, sortBy: mpSort }),
     retry: false,
   });
-
-  // Featured bikes for the pillars section (real NFTs sorted by rarity+level)
-  const featuredBikes = useQuery({
-    queryKey: ['home-featured-bikes'],
-    queryFn: () => fetchNfts(1, 30),
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const pillars: PillarData[] = useMemo(() => {
-    const nfts = featuredBikes.data?.nfts ?? [];
-    const ranked = [...nfts].sort((a, b) => {
-      const ra = RARITY_RANK[a.quality] ?? 0;
-      const rb = RARITY_RANK[b.quality] ?? 0;
-      if (rb !== ra) return rb - ra;
-      return (b.level ?? 0) - (a.level ?? 0);
-    });
-    const bestBike = ranked[0] ?? null;
-
-    const walkVisual: PillarVisual = bestBike
-      ? { kind: 'bike', bike: bestBike }
-      : { kind: 'fallback', src: PILLAR_META[0].fallback };
-
-    return [
-      { ...PILLAR_META[0], visual: walkVisual },
-      { ...PILLAR_META[1], visual: { kind: 'tokens' } },
-      { ...PILLAR_META[2], visual: { kind: 'loot' } },
-    ];
-  }, [featuredBikes.data]);
-
-  // Comparison carousel — track leftmost visible card
-  useEffect(() => {
-    const container = carouselRef.current;
-    if (!container) return;
-    const onScroll = () => {
-      const firstCard = container.children[0] as HTMLElement | undefined;
-      if (!firstCard) return;
-      const cardWidth = firstCard.offsetWidth;
-      const gap = 16;
-      const idx = Math.round(container.scrollLeft / (cardWidth + gap));
-      setCarouselIndex(Math.max(0, Math.min(idx, COMPARISON_DATA.length - 1)));
-    };
-    container.addEventListener('scroll', onScroll, { passive: true });
-    return () => container.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const scrollCarouselBy = useCallback((direction: number) => {
-    const container = carouselRef.current;
-    if (!container || !container.children[0]) return;
-    const cardWidth = (container.children[0] as HTMLElement).offsetWidth + 16;
-    container.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
-  }, []);
-
-  const scrollCarouselTo = useCallback((index: number) => {
-    const container = carouselRef.current;
-    if (!container || !container.children[index]) return;
-    const card = container.children[index] as HTMLElement;
-    container.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
-  }, []);
-
-  // Mouse drag-to-scroll with momentum
-  const onDragStart = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType === 'touch') return;
-    const container = carouselRef.current;
-    if (!container) return;
-    dragState.current = { active: true, startX: e.clientX, scrollStart: container.scrollLeft, velX: 0, lastX: e.clientX, lastT: Date.now() };
-    container.setPointerCapture(e.pointerId);
-    container.style.cursor = 'grabbing';
-    container.style.userSelect = 'none';
-  }, []);
-
-  const onDragMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    const ds = dragState.current;
-    if (!ds.active) return;
-    const container = carouselRef.current;
-    if (!container) return;
-    e.preventDefault();
-    container.scrollLeft = ds.scrollStart - (e.clientX - ds.startX);
-    const now = Date.now();
-    const dt = now - ds.lastT;
-    if (dt > 0) {
-      ds.velX = (e.clientX - ds.lastX) / dt;
-      ds.lastX = e.clientX;
-      ds.lastT = now;
-    }
-  }, []);
-
-  const onDragEnd = useCallback(() => {
-    const ds = dragState.current;
-    if (!ds.active) return;
-    ds.active = false;
-    const container = carouselRef.current;
-    if (!container) return;
-    container.style.cursor = '';
-    container.style.userSelect = '';
-    const momentum = -ds.velX * 800;
-    if (Math.abs(momentum) > 50) {
-      container.scrollBy({ left: momentum, behavior: 'smooth' });
-    }
-  }, []);
 
   const vp = { once: true, margin: '-80px' };
 
@@ -366,6 +221,18 @@ export function Home() {
             className="absolute inset-0 w-full h-full object-cover pixel-render will-change-transform"
             style={reducedMotion ? undefined : { y: heroImageY, scale: heroImageScale }}
           />
+          {/* Day art — the same square at dawn; fades out at night to reveal the dusk plate */}
+          <motion.img
+            src="/assets/landing/galavant-hero-day.webp"
+            alt=""
+            aria-hidden
+            className="dayart absolute inset-0 w-full h-full object-cover pixel-render will-change-transform"
+            style={reducedMotion ? undefined : { y: heroImageY, scale: heroImageScale }}
+          />
+
+          {/* Night: violet wash + starfield over the town (sky clock) */}
+          <div className="nightwash absolute inset-0 z-[1] pointer-events-none" />
+          <div className="nightstars absolute inset-0 z-[2] pointer-events-none" />
 
           {/* Scan-beam sweep */}
           {!reducedMotion && (
@@ -446,48 +313,10 @@ export function Home() {
         <LiveTicker items={tickerTwice} />
       </div>
 
-      {/* ══════════════════════════════════════════════════════════════════════
-          2 / PILLARS — Walk. Earn. Conquer. (horizontal-pinned on desktop)
-          ══════════════════════════════════════════════════════════════════════ */}
-      <section ref={pillarsRef} className="relative hidden md:block" style={{ height: '300vh' }}>
-        <div className="sticky top-0 h-screen overflow-hidden flex items-center pixel-noise-bg">
-          <motion.div
-            className="flex w-[300vw] h-full"
-            style={reducedMotion ? undefined : { x: pillarsXSpring }}
-          >
-            {pillars.map((p, i) => (
-              <PillarPanel key={p.title} pillar={p} index={i} total={pillars.length} />
-            ))}
-          </motion.div>
-
-          {/* Progress dots */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
-            {pillars.map((_, i) => (
-              <PillarDot key={i} index={i} progress={pillarsProgress} />
-            ))}
-          </div>
-
-          {/* Section label */}
-          <div className="absolute top-6 left-6 md:top-8 md:left-10 z-20 section-label">
-            01 · Loop
-          </div>
-        </div>
-      </section>
-
-      {/* Mobile vertical pillars */}
-      <section className="md:hidden px-4 py-12 space-y-8 pixel-noise-bg">
-        <div className="section-label justify-center mx-auto w-fit">01 · Loop</div>
-        <div className="space-y-6">
-          {pillars.map((p, i) => (
-            <PillarMobile key={p.title} pillar={p} index={i} />
-          ))}
-        </div>
-      </section>
-
       <div className="mx-auto max-w-7xl px-4 pb-12 space-y-24 md:space-y-32 relative">
 
         {/* ══════════════════════════════════════════════════════════════════
-            3 / LIVE STATS — count-up numbers
+            1 / THE LOOP — walk, earn, fit
             ══════════════════════════════════════════════════════════════════ */}
         <motion.section
           className="space-y-8 pt-16"
@@ -498,7 +327,321 @@ export function Home() {
         >
           <div className="flex items-end justify-between flex-wrap gap-4">
             <div className="space-y-2">
-              <div className="section-label">02 · Live</div>
+              <div className="section-label">01 · The Loop</div>
+              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
+                Walk. Earn.<br className="md:hidden" /> Upgrade. <span className="text-m2e-accent">Redeem.</span>
+              </h2>
+            </div>
+            <p className="text-base md:text-xl text-m2e-text-secondary max-w-md">
+              Every real-world walk burns energy, mints WATTS, and wears your bike — a loop the town's economy actually manages.
+            </p>
+          </div>
+
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={vp}
+          >
+            <motion.div variants={staggerItem} className="pixel-card p-6 flex flex-col gap-3">
+              <div className="text-xs tracking-[0.3em] uppercase text-m2e-text-muted">Step 1</div>
+              <div className="text-2xl md:text-3xl uppercase tracking-wide text-m2e-text leading-none">Walk the Town</div>
+              <p className="text-sm md:text-base text-m2e-text-secondary leading-snug">
+                Walk, jog, or run with your NFT balance bike — minutes inside your bike's speed band burn energy cells and earn.
+              </p>
+              <div className="flex gap-1 mt-auto pt-2">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className={`flex-1 h-4 rounded-[2px] border ${i < 7 ? 'bg-m2e-info border-m2e-info' : 'bg-m2e-bg-alt border-m2e-border'}`}
+                    style={i < 7 ? { boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)' } : undefined}
+                  />
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div variants={staggerItem} className="pixel-card p-6 flex flex-col gap-3">
+              <div className="text-xs tracking-[0.3em] uppercase text-m2e-text-muted">Step 2</div>
+              <div className="text-2xl md:text-3xl uppercase tracking-wide text-m2e-text leading-none">Earn Credits</div>
+              <p className="text-sm md:text-base text-m2e-text-secondary leading-snug">
+                WATTS per earning minute — boosted by loyalty streaks and staked ENJ. Spend it in the workshop or trade it.
+              </p>
+              <div className="inline-flex items-center gap-3 bg-m2e-bg-alt border border-m2e-border rounded-lg px-4 py-2 mt-auto w-fit">
+                <img src="/assets/token-silver.png" alt="WATTS" className="w-7 h-7 pixel-render" />
+                <span className="text-2xl text-m2e-text">+272</span>
+                <span className="text-[10px] tracking-[0.25em] uppercase text-m2e-text-muted">per walk</span>
+              </div>
+            </motion.div>
+
+            <motion.div variants={staggerItem} className="pixel-card p-6 flex flex-col gap-3">
+              <div className="text-xs tracking-[0.3em] uppercase text-m2e-text-muted">Step 3</div>
+              <div className="text-2xl md:text-3xl uppercase tracking-wide text-m2e-text leading-none">Fit the Hardpoints</div>
+              <p className="text-sm md:text-base text-m2e-text-secondary leading-snug">
+                Sockets take parts. Parts add attributes. Attributes change how the next walk pays. The loop closes.
+              </p>
+              <div className="relative w-24 rounded-md bg-m2e-bg-alt border-2 border-m2e-earning overflow-hidden flex flex-col items-center justify-center gap-1 py-2 mt-auto">
+                <span className="absolute top-0 inset-x-0 h-[3px] bg-m2e-earning opacity-80" />
+                <img src="/parts/part-earning-lv5.png" alt="Earning part" className="w-10 h-10 object-contain pixel-render" />
+                <span className="text-m2e-earning text-lg leading-none">+25</span>
+                <span className="text-[8px] tracking-[0.2em] uppercase text-m2e-text-muted">Earning</span>
+              </div>
+            </motion.div>
+
+            <motion.div variants={staggerItem} className="pixel-card p-6 flex flex-col gap-3 border-m2e-accent">
+              <div className="text-xs tracking-[0.3em] uppercase text-m2e-text-muted">Step 4</div>
+              <div className="text-2xl md:text-3xl uppercase tracking-wide text-m2e-text leading-none">Join the Season</div>
+              <p className="text-sm md:text-base text-m2e-text-secondary leading-snug">
+                Commit WATTS to the season pool — commits burn, and when the season closes, the leaders share the ENJ budget.
+              </p>
+              <div className="flex items-center gap-3 bg-m2e-bg-alt border border-m2e-border rounded-lg px-4 py-2.5 mt-auto">
+                <img src="/assets/token-silver.png" alt="WATTS" className="w-6 h-6 pixel-render" />
+                <span className="flex-1 border-t-2 border-dashed border-m2e-border-dark" />
+                <Fire className="w-4 h-4 text-m2e-warning" />
+                <span className="flex-1 border-t-2 border-dashed border-m2e-border-dark" />
+                <img src="/assets/token-enj.svg" alt="ENJ" className="w-6 h-6 pixel-render" />
+              </div>
+            </motion.div>
+          </motion.div>
+        </motion.section>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            2 / GARAGE — four bikes, four paces
+            ══════════════════════════════════════════════════════════════════ */}
+        <motion.section
+          className="space-y-8 pt-16"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={vp}
+        >
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <div className="space-y-2">
+              <div className="section-label">02 · Garage</div>
+              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
+                Four Bikes,<br className="md:hidden" /> <span className="text-m2e-accent">Four Paces.</span>
+              </h2>
+            </div>
+            <p className="text-base md:text-xl text-m2e-text-secondary max-w-md">
+              Every type earns in its own speed band — pick the one that matches how you actually move.
+            </p>
+          </div>
+
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={vp}
+          >
+            {BIKE_TYPES.map((b) => (
+              <motion.div
+                key={b.type}
+                variants={staggerItem}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className={`pixel-card p-4 flex flex-col gap-3 ${'accent' in b && b.accent ? 'border-m2e-accent' : ''}`}
+              >
+                <img
+                  src={`${config.apiUrl}/art/bases/bike-${b.type.toLowerCase()}.png`}
+                  alt={`${b.type} bike`}
+                  className="w-full h-28 object-contain pixel-render"
+                  loading="lazy"
+                />
+                <div className="flex items-end justify-between gap-2">
+                  <span className="text-2xl uppercase tracking-wide text-m2e-text leading-none">{b.type}</span>
+                  <span className="text-m2e-accent text-lg leading-none whitespace-nowrap">
+                    {b.lo}–{b.hi} <span className="text-xs text-m2e-text-muted">km/h</span>
+                  </span>
+                </div>
+                <div className="text-[11px] uppercase tracking-[0.2em] text-m2e-text-muted">{b.best}</div>
+                <div className="relative h-2.5 rounded-full bg-m2e-bg-alt border border-m2e-border overflow-hidden">
+                  <span
+                    className="absolute top-0 bottom-0 bg-m2e-accent"
+                    style={{ left: `${(b.lo / 18) * 100}%`, width: `${((b.hi - b.lo) / 18) * 100}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-[10px] text-m2e-text-muted"><span>0</span><span>18 km/h</span></div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Materials strip — the rarity dimension, worn as an aura */}
+          <div className="pixel-card px-5 py-4 flex flex-wrap items-center gap-x-5 gap-y-3">
+            <span className="text-[11px] uppercase tracking-[0.25em] text-m2e-text-muted">
+              Every type rolls a material grade — worn as an aura:
+            </span>
+            {MATERIALS.map(([name, color]) => (
+              <span key={name} className="inline-flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rotate-45 rounded-[2px]" style={{ backgroundColor: color }} />
+                <span className="uppercase tracking-[0.15em] text-sm" style={{ color }}>{name}</span>
+              </span>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            3 / SEASONS — how the ENJ pool pays out
+            ══════════════════════════════════════════════════════════════════ */}
+        <motion.section
+          className="space-y-10"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={vp}
+        >
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <div className="space-y-2">
+              <div className="section-label">03 · Seasons</div>
+              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
+                Seasons Pay<br className="md:hidden" /> <span className="text-m2e-accent">In ENJ.</span>
+              </h2>
+            </div>
+            <p className="text-base md:text-xl text-m2e-text-secondary max-w-md">
+              Every season sets aside an ENJ budget from platform revenue. Commit WATTS to claim a slice — commits burn, and the budget is the ceiling.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] items-stretch gap-3 md:gap-2">
+            <FlowNode icon={Coins} label="Earn WATTS" sub="Walk the town" />
+            <FlowArrow />
+            <FlowNode icon={Fire} label="Commit" sub="WATTS burn into the pool" accent />
+            <FlowArrow />
+            <FlowNode icon={Trophy} label="Season pays" sub="Leaders share the ENJ" />
+          </div>
+
+          <div className="pixel-card p-5 space-y-3 max-w-2xl mx-auto w-full">
+            <div className="flex items-center justify-between">
+              <span className="text-xs tracking-[0.25em] uppercase text-m2e-text-muted">Season ENJ Pool</span>
+              <span className="text-m2e-accent uppercase tracking-wider">Top riders share</span>
+            </div>
+            <div className="h-3 rounded-full bg-m2e-bg-alt border border-m2e-border overflow-hidden">
+              <span className="block h-full w-[84%] bg-m2e-accent" />
+            </div>
+            <p className="text-sm text-m2e-text-secondary">
+              The budget is set aside up front — payouts never exceed it, and never come from the next player.
+            </p>
+            <div className="pt-1">
+              <Link to="/leaderboard" className="pixel-btn pixel-btn-secondary text-sm px-5 py-2.5 inline-flex items-center gap-2">
+                <Trophy className="w-4 h-4" />
+                View season standings
+              </Link>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            4 / POWER STATION — ENJ staking
+            ══════════════════════════════════════════════════════════════════ */}
+        <motion.section
+          className="space-y-10"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={vp}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            <div className="space-y-5">
+              <div className="section-label">04 · Power Station</div>
+              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
+                The Power<br /> <span className="text-m2e-accent">Station.</span>
+              </h2>
+              <p className="text-base md:text-xl text-m2e-text-secondary leading-snug max-w-md">
+                Bond ENJ to the town's pool and every walk pays more — the bigger the bond, the bigger the boost, plus bonus daily energy. Real chain, real assets, no token to mint.
+              </p>
+              <Link to="/wallet" className="pixel-btn pixel-btn-primary text-base px-7 py-3 inline-flex items-center gap-2 animate-glow-pulse">
+                Stake ENJ
+              </Link>
+            </div>
+            <div className="pixel-card p-8 flex flex-col items-center text-center gap-3">
+              <img src="/assets/vault-enj.png" alt="ENJ vault" className="w-44 md:w-56 h-auto pixel-render" />
+              <div className="text-xl md:text-2xl uppercase tracking-wide text-m2e-text">Bond ENJ · Earn more WATTS</div>
+              <div className="text-[11px] tracking-[0.25em] uppercase text-m2e-text-muted">
+                Tiers from Iron to Legend · boost + bonus energy
+              </div>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            5 / MARKETPLACE — on sale now
+            ══════════════════════════════════════════════════════════════════ */}
+        <motion.section
+          className="space-y-8"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={vp}
+        >
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-2">
+              <div className="section-label">05 · On Sale</div>
+              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
+                The<br className="md:hidden" /> <span className="text-m2e-accent">Market.</span>
+              </h2>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+              <Pills
+                value={mpSort}
+                onChange={(v) => setMpSort(v as MarketplaceSort)}
+                options={[
+                  ['newest', 'Newest'],
+                  ['price_asc', 'Cheapest'],
+                  ['price_desc', 'Priciest'],
+                ]}
+              />
+              <Link to="/market" className="pixel-btn pixel-btn-secondary px-5 py-3 text-sm whitespace-nowrap inline-flex items-center gap-2">
+                <ShoppingCart className="w-4 h-4" />
+                View All
+              </Link>
+            </div>
+          </div>
+
+          {marketplace.isLoading ? (
+            <div className="text-m2e-text-muted text-sm">Loading marketplace…</div>
+          ) : marketplace.error ? (
+            <div className="text-m2e-danger text-sm">Failed to load marketplace</div>
+          ) : marketplace.data && marketplace.data.listings.length > 0 ? (
+            <motion.div
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={vp}
+            >
+              {marketplace.data.listings.slice(0, 6).map((listing) => (
+                <motion.div
+                  key={listing.id}
+                  variants={staggerItem}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                >
+                  <ListingCard
+                    listing={listing}
+                    onClick={listing.itemType === 'bike' ? () => setSelectedNftId(listing.itemId) : undefined}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <div className="pixel-card p-12 text-center">
+              <Store className="w-12 h-12 text-m2e-text-muted mx-auto mb-3" />
+              <div className="text-m2e-text-muted text-sm">No listings yet — be the first to list.</div>
+            </div>
+          )}
+        </motion.section>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            6 / LIVE STATS — count-up numbers
+            ══════════════════════════════════════════════════════════════════ */}
+        <motion.section
+          className="space-y-8 pt-16"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={vp}
+        >
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <div className="space-y-2">
+              <div className="section-label">06 · Live</div>
               <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
                 World<br className="md:hidden" /><span className="text-m2e-accent"> in Motion</span>
               </h2>
@@ -539,112 +682,7 @@ export function Home() {
         </motion.section>
 
         {/* ══════════════════════════════════════════════════════════════════
-            4 / THE DIFFERENCE — horizontal-snap comparison
-            ══════════════════════════════════════════════════════════════════ */}
-        <motion.section
-          className="space-y-10"
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={vp}
-        >
-          <div className="flex items-end justify-between flex-wrap gap-4">
-            <div className="space-y-2">
-              <div className="section-label">03 · The Difference</div>
-              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
-                Not Another<br /><span className="text-m2e-accent">Ponzi Sim.</span>
-              </h2>
-            </div>
-            <div className="flex items-center gap-6 text-sm uppercase tracking-widest">
-              <span className="text-m2e-danger/80 line-through decoration-2 flex items-center gap-1.5">
-                <Cancel className="w-4 h-4" /> Them
-              </span>
-              <span className="text-m2e-accent flex items-center gap-1.5">
-                <Check className="w-4 h-4" /> Galavant
-              </span>
-            </div>
-          </div>
-
-          <div className="relative">
-            <button
-              onClick={() => scrollCarouselBy(-1)}
-              className={`hidden md:flex absolute left-2 top-[calc(50%-28px)] z-10 w-11 h-11 items-center justify-center bg-m2e-card border-2 border-m2e-border rounded-lg pixel-shadow-sm hover:bg-m2e-accent hover:text-white hover:border-m2e-accent-dark transition-colors ${carouselIndex === 0 ? 'opacity-30 pointer-events-none' : ''}`}
-              aria-label="Previous"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => scrollCarouselBy(1)}
-              className={`hidden md:flex absolute right-2 top-[calc(50%-28px)] z-10 w-11 h-11 items-center justify-center bg-m2e-card border-2 border-m2e-border rounded-lg pixel-shadow-sm hover:bg-m2e-accent hover:text-white hover:border-m2e-accent-dark transition-colors ${carouselIndex >= COMPARISON_DATA.length - 1 ? 'opacity-30 pointer-events-none' : ''}`}
-              aria-label="Next"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-
-            <motion.div
-              ref={carouselRef}
-              className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 cursor-grab active:cursor-grabbing snap-x snap-mandatory"
-              onPointerDown={onDragStart}
-              onPointerMove={onDragMove}
-              onPointerUp={onDragEnd}
-              onPointerCancel={onDragEnd}
-              variants={stagger}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
-            >
-              {COMPARISON_DATA.map((item, i) => (
-                <ComparisonCard key={item.label} index={i} {...item} />
-              ))}
-            </motion.div>
-
-            <div className="flex justify-center gap-1.5 mt-6">
-              {COMPARISON_DATA.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => scrollCarouselTo(i)}
-                  className={`rounded-full transition-all duration-300 ${
-                    i === carouselIndex ? 'w-6 h-2 bg-m2e-accent' : 'w-2 h-2 bg-m2e-border hover:bg-m2e-accent/50'
-                  }`}
-                  aria-label={`Go to card ${i + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* One picture of where the money moves. The mechanics live in the guide. */}
-          <motion.div className="space-y-6" variants={fadeUp}>
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] items-stretch gap-3 md:gap-2">
-              <FlowNode icon={Store} label="Revenue" sub="Shop · trades · pool" />
-              <FlowArrow />
-              <FlowNode icon={Scale} label="Season budget" sub="Set aside up front" accent />
-              <FlowArrow />
-              <FlowNode icon={Coins} label="Your slice" sub="Burn WATTS, take a share" />
-            </div>
-
-            <p className="text-lg md:text-2xl text-m2e-text text-center max-w-3xl mx-auto leading-snug">
-              The budget is the ceiling.{' '}
-              <span className="text-m2e-accent">Payouts come from revenue, never from the next player.</span>
-            </p>
-
-            <p className="text-sm md:text-base text-m2e-text-secondary text-center max-w-2xl mx-auto">
-              An economy agent proposes the changes. A human approves every one. Neither can mint a
-              token — there isn't one.
-            </p>
-          </motion.div>
-
-          <div className="text-center">
-            <Link
-              to="/gameplay/economic-governance/how-decisions-are-made"
-              className="pixel-btn pixel-btn-secondary text-sm px-6 py-3 inline-flex items-center gap-2"
-            >
-              How the economy actually works
-            </Link>
-          </div>
-        </motion.section>
-
-        {/* ══════════════════════════════════════════════════════════════════
-            5 / HIGH SCORES — arcade-style leaderboard
+            7 / HIGH SCORES — arcade-style leaderboard
             ══════════════════════════════════════════════════════════════════ */}
         <motion.section
           className="space-y-8"
@@ -655,7 +693,7 @@ export function Home() {
         >
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
-              <div className="section-label">04 · High Scores</div>
+              <div className="section-label">07 · High Scores</div>
               <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
                 Top Riders<span className="text-m2e-accent animate-blink">_</span>
               </h2>
@@ -684,7 +722,7 @@ export function Home() {
 
           <div className="relative pixel-card p-0 overflow-hidden">
             {/* Arcade title bar */}
-            <div className="bg-m2e-text text-m2e-accent px-5 py-3 border-b-2 border-m2e-border flex items-center justify-between">
+            <div className="bg-m2e-chrome text-m2e-accent-light px-5 py-3 border-b-2 border-m2e-border flex items-center justify-between">
               <span className="text-xs md:text-sm tracking-[0.3em] uppercase">&gt; Score Board</span>
               <span className="text-xs tracking-widest uppercase flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-m2e-success animate-pulse-ring [--pulse-ring:var(--color-m2e-success)]" />
@@ -711,7 +749,7 @@ export function Home() {
         </motion.section>
 
         {/* ══════════════════════════════════════════════════════════════════
-            6 / ECONOMY PULSE — health score
+            8 / ECONOMY PULSE — health score
             ══════════════════════════════════════════════════════════════════ */}
         <motion.section
           className="space-y-10"
@@ -722,7 +760,7 @@ export function Home() {
         >
           <div className="flex items-end justify-between flex-wrap gap-4">
             <div className="space-y-2">
-              <div className="section-label">05 · Pulse</div>
+              <div className="section-label">08 · Pulse</div>
               <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
                 Economy<br className="md:hidden" /> <span className="text-m2e-accent">Live.</span>
               </h2>
@@ -799,7 +837,7 @@ export function Home() {
         </motion.section>
 
         {/* ══════════════════════════════════════════════════════════════════
-            7 / ROADMAP — quest log
+            9 / ROADMAP — quest log
             ══════════════════════════════════════════════════════════════════ */}
         <motion.section
           className="space-y-10"
@@ -810,7 +848,7 @@ export function Home() {
         >
           <div className="flex items-end justify-between flex-wrap gap-4">
             <div className="space-y-2">
-              <div className="section-label">06 · Quest Log</div>
+              <div className="section-label">09 · Quest Log</div>
               <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
                 What's<br className="md:hidden" /> <span className="text-m2e-accent">Coming.</span>
               </h2>
@@ -868,74 +906,7 @@ export function Home() {
         </motion.section>
 
         {/* ══════════════════════════════════════════════════════════════════
-            8 / MARKETPLACE — on sale now
-            ══════════════════════════════════════════════════════════════════ */}
-        <motion.section
-          className="space-y-8"
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={vp}
-        >
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-2">
-              <div className="section-label">07 · On Sale</div>
-              <h2 className="text-4xl md:text-6xl tracking-wide text-m2e-text uppercase leading-none">
-                The<br className="md:hidden" /> <span className="text-m2e-accent">Market.</span>
-              </h2>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-              <Pills
-                value={mpSort}
-                onChange={(v) => setMpSort(v as MarketplaceSort)}
-                options={[
-                  ['newest', 'Newest'],
-                  ['price_asc', 'Cheapest'],
-                  ['price_desc', 'Priciest'],
-                ]}
-              />
-              <Link to="/market" className="pixel-btn pixel-btn-secondary px-5 py-3 text-sm whitespace-nowrap inline-flex items-center gap-2">
-                <ShoppingCart className="w-4 h-4" />
-                View All
-              </Link>
-            </div>
-          </div>
-
-          {marketplace.isLoading ? (
-            <div className="text-m2e-text-muted text-sm">Loading marketplace…</div>
-          ) : marketplace.error ? (
-            <div className="text-m2e-danger text-sm">Failed to load marketplace</div>
-          ) : marketplace.data && marketplace.data.listings.length > 0 ? (
-            <motion.div
-              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
-              variants={stagger}
-              initial="hidden"
-              whileInView="visible"
-              viewport={vp}
-            >
-              {marketplace.data.listings.slice(0, 6).map((listing) => (
-                <motion.div
-                  key={listing.id}
-                  variants={staggerItem}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                >
-                  <ListingCard
-                    listing={listing}
-                    onClick={listing.itemType === 'bike' ? () => setSelectedNftId(listing.itemId) : undefined}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <div className="pixel-card p-12 text-center">
-              <Store className="w-12 h-12 text-m2e-text-muted mx-auto mb-3" />
-              <div className="text-m2e-text-muted text-sm">No listings yet — be the first to list.</div>
-            </div>
-          )}
-        </motion.section>
-
-        {/* ══════════════════════════════════════════════════════════════════
-            9 / ENDGAME — Insert Coin
+            10 / ENDGAME — Insert Coin
             ══════════════════════════════════════════════════════════════════ */}
         <motion.section
           id="endgame"
@@ -949,7 +920,7 @@ export function Home() {
             <div className="absolute inset-0 pixel-grid-bg opacity-40 pointer-events-none" />
             <div className="relative z-10 space-y-8">
               <div className="space-y-3">
-                <div className="section-label justify-center w-fit mx-auto">08 · Endgame</div>
+                <div className="section-label justify-center w-fit mx-auto">10 · Endgame</div>
                 <h2 className="text-4xl md:text-7xl text-m2e-text uppercase tracking-wide text-chroma-soft leading-none">
                   Insert Coin<br />
                   <span className="text-m2e-accent">To Continue.</span>
@@ -1026,7 +997,7 @@ export function Home() {
 
 function LiveTicker({ items }: { items: string[] }) {
   return (
-    <div className="relative bg-m2e-text text-m2e-accent border-y-2 border-m2e-border overflow-hidden py-3">
+    <div className="relative bg-m2e-chrome text-m2e-accent-light border-y-2 border-m2e-border overflow-hidden py-3">
       <div className="flex gap-10 whitespace-nowrap animate-marquee will-change-transform">
         {items.map((item, i) => (
           <span key={i} className="flex items-center gap-10 text-sm md:text-base uppercase tracking-[0.2em]">
@@ -1039,231 +1010,9 @@ function LiveTicker({ items }: { items: string[] }) {
   );
 }
 
-function PillarPanel({ pillar, index, total }: {
-  pillar: PillarData;
-  index: number;
-  total: number;
-}) {
-  return (
-    <div
-      className="w-screen h-screen flex-shrink-0 flex items-center justify-center px-8 lg:px-20 relative"
-      style={{ backgroundColor: index % 2 === 0 ? 'var(--color-m2e-bg)' : 'var(--color-m2e-bg-alt)' }}
-    >
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl w-full">
-        <div className="space-y-6 order-2 lg:order-1">
-          <div className="text-xs tracking-[0.35em] uppercase text-m2e-accent">{pillar.kicker}</div>
-          <h3 className="text-[20vw] md:text-[14vw] lg:text-[10vw] xl:text-[9rem] uppercase leading-[0.85] text-m2e-text text-chroma-soft">
-            {pillar.title}
-          </h3>
-          <p className="text-2xl md:text-3xl lg:text-4xl text-m2e-text-secondary leading-tight max-w-md">
-            {pillar.tagline}
-          </p>
-          <div className="flex items-center gap-3 text-sm text-m2e-text-muted uppercase tracking-widest">
-            <pillar.icon className="w-5 h-5 text-m2e-accent" />
-            {index + 1} / {total}
-          </div>
-        </div>
-        <div className="flex justify-center lg:justify-end order-1 lg:order-2">
-          <PillarVisual visual={pillar.visual} size="lg" title={pillar.title} />
-        </div>
-      </div>
-    </div>
-  );
-}
 
-function PillarMobile({ pillar, index }: { pillar: PillarData; index: number }) {
-  return (
-    <motion.div
-      className="pixel-card p-6 flex flex-col items-center gap-4 text-center"
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-    >
-      <div className="text-[10px] tracking-[0.35em] uppercase text-m2e-accent">{pillar.kicker}</div>
-      <PillarVisual visual={pillar.visual} size="sm" title={pillar.title} />
-      <h3 className="text-5xl uppercase leading-none text-m2e-text text-chroma-soft">{pillar.title}</h3>
-      <p className="text-base text-m2e-text-secondary leading-snug max-w-xs">{pillar.tagline}</p>
-    </motion.div>
-  );
-}
 
-function PillarVisual({ visual, size, title }: {
-  visual: PillarVisual;
-  size: 'sm' | 'lg';
-  title: string;
-}) {
-  const large = size === 'lg';
 
-  if (visual.kind === 'bike') {
-    const bike = visual.bike;
-    const style = RARITY_STYLE[bike.quality] ?? RARITY_STYLE.common;
-    const image = resolveBikeImage(bike);
-    return (
-      <div className={`relative flex flex-col items-center gap-3 ${large ? '' : ''}`}>
-        <div className={`relative ${large ? 'w-60 md:w-80 lg:w-[28rem]' : 'w-40'}`}>
-          <motion.img
-            src={image}
-            alt={`${bike.quality} ${bike.type} bike`}
-            className={`w-full h-auto pixel-render ${style.glow}`}
-            animate={{ y: [0, -10, 0], rotate: [0, 1.5, 0, -1.5, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          {/* rarity halo */}
-          <div
-            className={`absolute inset-0 -z-10 rounded-full blur-2xl opacity-50`}
-            style={{
-              background:
-                bike.quality === 'legendary' ? 'radial-gradient(ellipse, rgba(212,146,10,0.4), transparent 70%)' :
-                bike.quality === 'epic'      ? 'radial-gradient(ellipse, rgba(136,85,187,0.35), transparent 70%)' :
-                bike.quality === 'rare'      ? 'radial-gradient(ellipse, rgba(68,136,204,0.3), transparent 70%)' :
-                bike.quality === 'uncommon'  ? 'radial-gradient(ellipse, rgba(59,165,93,0.3), transparent 70%)' :
-                'radial-gradient(ellipse, rgba(138,138,138,0.2), transparent 70%)',
-            }}
-          />
-        </div>
-        <div className="flex items-center gap-2 flex-wrap justify-center">
-          <span className={`px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border ${style.chip} border-opacity-60`}>
-            {style.label}
-          </span>
-          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border">
-            {bike.type}
-          </span>
-          {bike.level > 0 && (
-            <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border">
-              Lv. {bike.level}
-            </span>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  if (visual.kind === 'tokens') {
-    const coinSize = large ? 'w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56' : 'w-24 h-24';
-    return (
-      <div className="relative flex flex-col items-center gap-3">
-        <div className={`relative ${large ? 'w-64 md:w-80 lg:w-[28rem] h-56 md:h-72 lg:h-80' : 'w-44 h-32'}`}>
-          {/* ENJ — back/right */}
-          <motion.img
-            src="/assets/token-enj.svg"
-            alt="ENJ token"
-            className={`absolute ${coinSize} pixel-render drop-shadow-[0_0_24px_rgba(120,102,213,0.5)]`}
-            style={{ top: '10%', right: '8%' }}
-            animate={{ y: [0, -12, 0], rotate: [-6, 2, -6] }}
-            transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          {/* WATTS (silver) — front/left */}
-          <motion.img
-            src="/assets/token-silver.png"
-            alt="WATTS token"
-            className={`absolute ${coinSize} pixel-render drop-shadow-[0_0_20px_rgba(196,184,156,0.5)]`}
-            style={{ bottom: '5%', left: '5%' }}
-            animate={{ y: [0, -8, 0], rotate: [4, -3, 4] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border flex items-center gap-1.5">
-            <img src="/assets/token-silver.png" alt="" className="w-3 h-3 pixel-render" /> WATTS
-          </span>
-          <span className="text-m2e-text-muted">×</span>
-          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-bg-alt text-m2e-text-secondary border-m2e-border flex items-center gap-1.5">
-            <img src="/assets/token-enj.svg" alt="" className="w-3 h-3 pixel-render" /> ENJ
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  if (visual.kind === 'loot') {
-    const stageSize = large ? 'w-72 md:w-96 lg:w-[32rem] h-64 md:h-80 lg:h-96' : 'w-48 h-40';
-    const luckSize = large ? 'w-32 md:w-40 lg:w-48' : 'w-20';
-    const toolboxSize = large ? 'w-32 md:w-40 lg:w-48' : 'w-20';
-    const toolSize = large ? 'w-24 md:w-32 lg:w-40' : 'w-14';
-    return (
-      <div className="relative flex flex-col items-center gap-3">
-        <div className={`relative ${stageSize}`}>
-          {/* Rainbow halo behind everything */}
-          <div
-            className="absolute inset-0 -z-10 blur-3xl opacity-60"
-            style={{
-              background:
-                'conic-gradient(from 0deg, rgba(212,146,10,0.35), rgba(136,85,187,0.35), rgba(68,136,204,0.3), rgba(232,129,26,0.35), rgba(212,146,10,0.35))',
-            }}
-          />
-
-          {/* Lv 9 Luck part — top/center, legendary sparkle */}
-          <motion.img
-            src="/parts/part-luck-lv9.png"
-            alt="Legendary luck part"
-            className={`absolute ${luckSize} pixel-render drop-shadow-[0_0_28px_rgba(212,146,10,0.65)]`}
-            style={{ top: '0%', left: '50%', translate: '-50% 0' }}
-            animate={{ y: [0, -14, 0], rotate: [-3, 3, -3] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          />
-
-          {/* Toolbox — bottom-left */}
-          <motion.img
-            src="/assets/floating/toolbox-lv5.png"
-            alt="Legendary toolbox"
-            className={`absolute ${toolboxSize} pixel-render drop-shadow-[0_0_22px_rgba(204,51,51,0.5)]`}
-            style={{ bottom: '2%', left: '2%' }}
-            animate={{ y: [0, -10, 0], rotate: [4, -4, 4] }}
-            transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
-          />
-
-          {/* Tool — bottom-right */}
-          <motion.img
-            src="/assets/floating/tool.png"
-            alt="Minting tool"
-            className={`absolute ${toolSize} pixel-render drop-shadow-[0_0_20px_rgba(232,129,26,0.55)]`}
-            style={{ bottom: '10%', right: '4%' }}
-            animate={{ y: [0, -8, 0], rotate: [-6, 6, -6] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
-          />
-        </div>
-        <div className="flex items-center gap-2 flex-wrap justify-center">
-          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-legendary/15 text-m2e-legendary border-m2e-legendary/50">Lv 9 Parts</span>
-          <span className="text-m2e-text-muted">·</span>
-          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-danger/15 text-m2e-danger border-m2e-danger/50">Toolboxes</span>
-          <span className="text-m2e-text-muted">·</span>
-          <span className="px-2 py-1 text-[10px] uppercase tracking-[0.25em] pixel-border bg-m2e-accent/15 text-m2e-accent border-m2e-accent/50">Tools</span>
-        </div>
-      </div>
-    );
-  }
-
-  // Fallback — original landing asset
-  return (
-    <motion.img
-      src={visual.src}
-      alt={title}
-      className={`${large ? 'w-60 md:w-80 lg:w-[28rem]' : 'w-40 h-40 object-contain'} h-auto pixel-render drop-shadow-[0_8px_0_rgba(0,0,0,0.15)]`}
-      animate={{ y: [0, -10, 0], rotate: [0, 1.5, 0, -1.5, 0] }}
-      transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-    />
-  );
-}
-
-function PillarDot({ index, progress }: { index: number; progress: ReturnType<typeof useScroll>['scrollYProgress'] }) {
-  const active = useTransform(progress, (v) => {
-    const section = Math.floor(v * 3);
-    return Math.min(2, Math.max(0, section)) === index;
-  });
-  const [isActive, setIsActive] = useState(index === 0);
-  useEffect(() => active.on('change', setIsActive), [active]);
-
-  return (
-    <motion.span
-      className="block h-2 rounded-full transition-all duration-300"
-      animate={{
-        width: isActive ? 32 : 8,
-        backgroundColor: isActive ? 'var(--color-m2e-accent)' : 'var(--color-m2e-border)',
-      }}
-    />
-  );
-}
 
 function BigStat({ icon: Icon, label, value, format }: {
   icon: React.ComponentType<any>;
@@ -1316,52 +1065,6 @@ function FlowArrow() {
   );
 }
 
-function ComparisonCard({ label, icon: Icon, other, galavant, index }: {
-  label: string;
-  icon: React.ComponentType<any>;
-  other: string;
-  galavant: string;
-  index: number;
-}) {
-  return (
-    <motion.div
-      variants={staggerItem}
-      className="min-w-[80vw] sm:min-w-[360px] lg:min-w-[380px] snap-start flex-shrink-0"
-    >
-      <motion.div
-        className="pixel-card p-5 space-y-4 h-full transition-colors hover:border-m2e-accent-dark relative overflow-hidden"
-        whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      >
-        <div className="absolute top-3 right-4 text-5xl text-m2e-border/60 leading-none pointer-events-none">
-          {String(index + 1).padStart(2, '0')}
-        </div>
-
-        <div className="flex items-center gap-3 relative">
-          <div className="w-11 h-11 rounded-lg bg-m2e-accent/15 border border-m2e-accent/30 flex items-center justify-center flex-shrink-0">
-            <Icon className="w-5 h-5 text-m2e-accent" />
-          </div>
-          <h3 className="text-lg uppercase tracking-wider text-m2e-text leading-tight">{label}</h3>
-        </div>
-
-        <div className="p-3 rounded-lg bg-m2e-danger/5 border border-m2e-danger/20 relative">
-          <div className="text-[10px] uppercase tracking-[0.25em] text-m2e-danger/70 mb-1.5">Them</div>
-          <div className="flex items-start gap-2">
-            <Cancel className="w-4 h-4 text-m2e-danger shrink-0 mt-1" />
-            <span className="text-base text-m2e-text-muted leading-snug line-through decoration-m2e-danger/40">{other}</span>
-          </div>
-        </div>
-
-        <div className="p-3 rounded-lg bg-m2e-accent/10 border border-m2e-accent/30 ring-1 ring-m2e-accent/10 relative">
-          <div className="text-[10px] uppercase tracking-[0.25em] text-m2e-accent mb-1.5">Galavant</div>
-          <div className="flex items-start gap-2">
-            <Check className="w-4 h-4 text-m2e-success shrink-0 mt-1" />
-            <span className="text-base text-m2e-text leading-snug">{galavant}</span>
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
 
 function Pills<T extends string>({ value, onChange, options }: {
   value: T;

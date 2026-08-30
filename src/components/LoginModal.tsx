@@ -1,7 +1,6 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cancel, Gamepad, Mail } from 'pixelarticons/react';
-import { useWalletConnect } from '@btc-vision/walletconnect';
+import { Cancel, Mail } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
 import { config } from '../config';
 
@@ -11,28 +10,15 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ open, onClose }: LoginModalProps) {
-  const { walletAddress, publicKey, mldsaPublicKey, openConnectModal, connecting } = useWalletConnect();
-  const { loginWithWallet, loginWithGoogle, isLoading } = useAuth();
+  const { loginWithGoogle, isLoading } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [needsWalletMsg, setNeedsWalletMsg] = useState(false);
-  const [walletLoggingIn, setWalletLoggingIn] = useState(false);
-
-  const walletRef = useRef({ walletAddress, publicKey, mldsaPublicKey });
-  walletRef.current = { walletAddress, publicKey, mldsaPublicKey };
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (!open && pollRef.current) {
-      clearInterval(pollRef.current);
-      pollRef.current = null;
-      setWalletLoggingIn(false);
+    if (!open) {
+      setError(null);
+      setNeedsWalletMsg(false);
     }
-    return () => {
-      if (pollRef.current) {
-        clearInterval(pollRef.current);
-        pollRef.current = null;
-      }
-    };
   }, [open]);
 
   // Lock body scroll while modal is open
@@ -44,35 +30,6 @@ export function LoginModal({ open, onClose }: LoginModalProps) {
       document.body.style.overflow = prev;
     };
   }, [open]);
-
-  const handleWalletConnect = useCallback(() => {
-    setError(null);
-    setNeedsWalletMsg(false);
-    openConnectModal();
-
-    if (pollRef.current) clearInterval(pollRef.current);
-    const startTime = Date.now();
-    pollRef.current = setInterval(() => {
-      const { walletAddress: addr, publicKey: pk, mldsaPublicKey: mldsa } = walletRef.current;
-      if (Date.now() - startTime > 60_000) {
-        clearInterval(pollRef.current!);
-        pollRef.current = null;
-        return;
-      }
-      if (addr) {
-        clearInterval(pollRef.current!);
-        pollRef.current = null;
-        setWalletLoggingIn(true);
-        console.log('[LoginModal] Wallet detected, logging in:', addr);
-        loginWithWallet(addr, pk ?? undefined, mldsa ?? undefined)
-          .catch((err: any) => {
-            console.error('[LoginModal] Wallet login failed:', err);
-            setError(err.message ?? 'Wallet login failed');
-            setWalletLoggingIn(false);
-          });
-      }
-    }, 300);
-  }, [openConnectModal, loginWithWallet]);
 
   const handleGoogleLogin = useCallback(() => {
     if (!window.google?.accounts?.oauth2) {
@@ -107,8 +64,6 @@ export function LoginModal({ open, onClose }: LoginModalProps) {
 
     client.requestCode();
   }, [loginWithGoogle, onClose]);
-
-  const walletBusy = connecting || isLoading || walletLoggingIn;
 
   return (
     <AnimatePresence>
@@ -146,7 +101,7 @@ export function LoginModal({ open, onClose }: LoginModalProps) {
                     <span className="text-m2e-accent">Coin.</span>
                   </h2>
                   <p className="text-sm text-m2e-text-secondary">
-                    Sign in with your wallet or your Google account.
+                    Sign in with your Google account. Link your Enjin Wallet in your account after signing in.
                   </p>
                 </div>
                 <button
@@ -158,43 +113,16 @@ export function LoginModal({ open, onClose }: LoginModalProps) {
                 </button>
               </div>
 
-              {/* Wallet Connect — primary */}
-              <div className="relative space-y-2">
-                <div className="text-[10px] uppercase tracking-[0.3em] text-m2e-text-muted flex items-center gap-2">
-                  <Gamepad className="w-3.5 h-3.5 text-m2e-accent" />
-                  Player 1 · Wallet
-                </div>
-                <button
-                  onClick={handleWalletConnect}
-                  disabled={walletBusy}
-                  className="pixel-btn pixel-btn-primary w-full px-4 py-4 text-base animate-glow-pulse"
-                >
-                  {walletLoggingIn ? 'Authenticating…' : walletBusy ? 'Connecting…' : 'Connect Wallet'}
-                </button>
-                {walletBusy && (
-                  <p className="text-xs text-m2e-text-muted text-center animate-pulse">
-                    {walletLoggingIn ? '> Authenticating your wallet…' : '> Approve the connection in your wallet extension…'}
-                  </p>
-                )}
-              </div>
-
-              {/* Divider */}
-              <div className="flex items-center gap-3 relative">
-                <div className="flex-1 h-0.5 bg-m2e-border" />
-                <span className="text-[10px] uppercase tracking-[0.3em] text-m2e-text-muted">or</span>
-                <div className="flex-1 h-0.5 bg-m2e-border" />
-              </div>
-
               {/* Google Sign-In */}
               <div className="relative space-y-2">
                 <div className="text-[10px] uppercase tracking-[0.3em] text-m2e-text-muted flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-m2e-info" />
-                  Player 2 · Google
+                  Sign in with Google
                 </div>
                 <button
                   onClick={handleGoogleLogin}
-                  disabled={walletBusy}
-                  className="pixel-btn w-full px-4 py-3 text-sm flex items-center justify-center gap-2 bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50 disabled:opacity-50"
+                  disabled={isLoading}
+                  className="pixel-btn w-full px-4 py-4 text-sm flex items-center justify-center gap-2 bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50 disabled:opacity-50"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -205,14 +133,14 @@ export function LoginModal({ open, onClose }: LoginModalProps) {
                   Sign in with Google
                 </button>
                 <p className="text-[10px] text-m2e-text-muted text-center uppercase tracking-wider">
-                  Only works if you've linked Google in the mobile app
+                  Use the Google account you set up in the Galavant mobile app
                 </p>
               </div>
 
               {/* Needs wallet message */}
               {needsWalletMsg && (
                 <div className="relative pixel-border border-m2e-warning bg-m2e-warning/10 p-3 text-sm text-m2e-warning">
-                  Your Google account isn't linked to a wallet yet. Please set up your account in the Galavant mobile app first.
+                  Your Google account isn't set up yet. Please create your account in the Galavant mobile app first.
                 </div>
               )}
 

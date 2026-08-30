@@ -34,7 +34,7 @@ const BIKE_TYPES = ['commuter', 'touring', 'racing', 'electric'];
 const PART_TYPES = ['earning', 'luck', 'recovery', 'durability'];
 const PART_LEVELS = [1, 2, 3, 4, 5];
 
-function formatSat(n: number): string {
+function formatWatts(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
   return n.toLocaleString();
@@ -132,9 +132,9 @@ export function Marketplace() {
     const s = stats.data;
     return [
       `LIVE · ${s.activeListings ?? 0} LISTINGS`,
-      `FLOOR · ${(s.floorPrice ?? 0) > 0 ? formatSat(s.floorPrice) + ' WATTS' : '—'}`,
-      `AVG · ${(s.avgListingPrice ?? 0) > 0 ? formatSat(s.avgListingPrice) + ' WATTS' : '—'}`,
-      `VOLUME · ${(s.totalVolume ?? 0) > 0 ? formatSat(s.totalVolume) + ' WATTS' : '—'}`,
+      `FLOOR · ${(s.floorPrice ?? 0) > 0 ? formatWatts(s.floorPrice) + ' WATTS' : '—'}`,
+      `AVG · ${(s.avgListingPrice ?? 0) > 0 ? formatWatts(s.avgListingPrice) + ' WATTS' : '—'}`,
+      `VOLUME · ${(s.totalVolume ?? 0) > 0 ? formatWatts(s.totalVolume) + ' WATTS' : '—'}`,
       `SOLD · ${(s.totalSold ?? 0).toLocaleString()}`,
     ];
   }, [stats.data]);
@@ -142,7 +142,7 @@ export function Marketplace() {
   return (
     <>
       {/* Hero strip */}
-      <div className="border-b-2 border-m2e-border bg-m2e-text text-white relative overflow-hidden scanlines-light">
+      <div className="border-b-2 border-m2e-border bg-m2e-chrome text-white relative overflow-hidden scanlines-light">
         <div className="mx-auto max-w-7xl px-4 md:px-8 py-10 md:py-14 relative z-10">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <motion.div
@@ -157,7 +157,7 @@ export function Marketplace() {
                   Home
                 </Link>
                 <span className="text-white/30">/</span>
-                <div className="section-label">09 · Shop Floor</div>
+                <div className="section-label">05 · Shop Floor</div>
               </div>
               <h1 className="text-5xl md:text-7xl lg:text-8xl uppercase tracking-wide text-chroma-hero leading-[0.9]">
                 The<br />

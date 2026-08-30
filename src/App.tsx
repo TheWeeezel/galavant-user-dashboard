@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Marketplace } from './pages/Marketplace';
@@ -8,9 +8,11 @@ import { Profile } from './pages/Profile';
 import { EarnPoints } from './pages/EarnPoints';
 import { Tasks } from './pages/Tasks';
 import { Roadmap } from './pages/Roadmap';
+import { Leaderboard } from './pages/Leaderboard';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { Wallet } from './pages/Wallet';
-import EnjStaking from './pages/EnjStaking';
+import Store from './pages/Store';
+import NftMarket from './pages/NftMarket';
 import { GameplayLayout } from './pages/gameplay/GameplayLayout';
 import { GameplayPage } from './pages/gameplay/GameplayPage';
 
@@ -35,11 +37,16 @@ export function App() {
           <Route path="earn" element={<EarnPoints />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="roadmap" element={<Roadmap />} />
+          <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
           <Route path="wallet" element={<Wallet />} />
+          <Route path="store" element={<Store />} />
+          <Route path="nft-market" element={<NftMarket />} />
+          <Route path="shop" element={<Navigate to="/store" replace />} />
           {/* ENJ staking is the only staking — /staking kept so old links still land */}
-          <Route path="staking" element={<EnjStaking />} />
-          <Route path="enj-staking" element={<EnjStaking />} />
+          {/* Staking now lives inside the Wallet (account) page. */}
+          <Route path="staking" element={<Navigate to="/wallet" replace />} />
+          <Route path="enj-staking" element={<Navigate to="/wallet" replace />} />
           <Route path="gameplay" element={<GameplayLayout />}>
             <Route index element={<GameplayPage />} />
             <Route path=":sectionSlug/:pageSlug" element={<GameplayPage />} />

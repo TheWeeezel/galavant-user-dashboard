@@ -11,6 +11,9 @@
   --color-m2e-border-dark: #A89880;
   --color-m2e-border-focus: #3D3228;
   --color-m2e-text: #2C2420;
+  /* Dark chrome surface (header/footer/ticker). Decoupled from text so the
+     night theme can turn text parchment without flipping the chrome. */
+  --color-m2e-chrome: #2C2420;
   --color-m2e-text-secondary: #6B5C4D;
   --color-m2e-text-muted: #A89880;
   /* Semantic scale. Three real shades per role, because each is used three ways:
@@ -55,18 +58,18 @@
   --radius-pixel: 4px;
   --radius-pixel-md: 8px;
 
-  /* Attribute colors */
-  --color-m2e-earning: #DD8800;
-  --color-m2e-luck: #00AA44;
-  --color-m2e-recovery: #CC1155;
-  --color-m2e-durability: #0099DD;
+  /* Attribute colors — the workshop metals (Paint Shop, see DESIGN-ARCADE.md) */
+  --color-m2e-earning: #B56A28;   /* copper */
+  --color-m2e-luck: #2C8577;      /* jade */
+  --color-m2e-recovery: #B54A60;  /* berry */
+  --color-m2e-durability: #62788C;/* iron */
 
-  /* Rarity colors */
-  --color-m2e-common: #8F857A;      /* warm grey — neutrals share the paper's cast */
-  --color-m2e-uncommon: #2E9E71;    /* same jade as success, so the app has one green */
-  --color-m2e-rare: #4A82C8;
-  --color-m2e-epic: #A34FC0;        /* pushed toward plum; #8855BB was 20° from the accent */
-  --color-m2e-legendary: #D4920A;
+  /* Rarity colors — materials of the town (Paint Shop, see DESIGN-ARCADE.md) */
+  --color-m2e-common: #837568;      /* steel */
+  --color-m2e-uncommon: #5A7F45;    /* moss */
+  --color-m2e-rare: #46689E;        /* blue hour */
+  --color-m2e-epic: #93488E;        /* orchid — deliberately off the brand violet */
+  --color-m2e-legendary: #A6791C;   /* brass */
 }
 
 html {
@@ -346,16 +349,16 @@ body {
 /* Pixel dithered background pattern */
 .pixel-grid-bg {
   background-image:
-    linear-gradient(to right, rgba(196, 184, 156, 0.25) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(196, 184, 156, 0.25) 1px, transparent 1px);
+    linear-gradient(to right, color-mix(in srgb, var(--color-m2e-border) 45%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-m2e-border) 45%, transparent) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
 .pixel-noise-bg {
   background-color: var(--color-m2e-bg);
   background-image:
-    radial-gradient(rgba(168, 152, 128, 0.18) 1px, transparent 1px),
-    radial-gradient(rgba(168, 152, 128, 0.12) 1px, transparent 1px);
+    radial-gradient(color-mix(in srgb, var(--color-m2e-border-dark) 32%, transparent) 1px, transparent 1px),
+    radial-gradient(color-mix(in srgb, var(--color-m2e-border-dark) 22%, transparent) 1px, transparent 1px);
   background-size: 6px 6px, 9px 9px;
   background-position: 0 0, 3px 3px;
 }
@@ -475,4 +478,83 @@ body {
   .animate-pulse-ring {
     animation: none;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   The Sky Clock — night theme (studio-violet). Set by the inline
+   script in index.html (auto by visitor hour) or the nav toggle.
+   @theme compiles to :root, so this later block wins at night.
+   ───────────────────────────────────────────────────────────── */
+:root[data-theme="night"] {
+  --color-m2e-bg: #171225;
+  --color-m2e-bg-alt: #131022;
+  --color-m2e-card: #221C38;
+  --color-m2e-card-alt: #2B2447;
+  --color-m2e-border: #3B3261;
+  --color-m2e-border-light: #4C4180;
+  --color-m2e-border-dark: #0F0C1A;
+  --color-m2e-border-focus: #9E92E4;
+  --color-m2e-text: #F0EBE0;
+  --color-m2e-text-secondary: #B0A8C8;
+  --color-m2e-text-muted: #7A7194;
+  --color-m2e-chrome: #0B0914;
+  --color-m2e-accent-soft: #2A2254;
+  --color-m2e-accent: #8C7EF5;
+  --color-m2e-accent-dark: #5F4FC0;
+  --color-m2e-accent-light: #AEA3EB;
+  --color-m2e-success-soft: #14322B;
+  --color-m2e-success: #31D895;
+  --color-m2e-success-deep: #7FE7BF;
+  --color-m2e-danger-soft: #321721;
+  --color-m2e-danger: #DF4959;
+  --color-m2e-danger-deep: #F09AA3;
+  --color-m2e-warning-soft: #322817;
+  --color-m2e-warning: #E6A833;
+  --color-m2e-warning-deep: #F2CD8B;
+  --color-m2e-info-soft: #182338;
+  --color-m2e-info: #5692DC;
+  --color-m2e-info-deep: #9FC1EC;
+  --color-m2e-shadow: #0F0C1A;
+  --color-m2e-common: #A79C8E;
+  --color-m2e-uncommon: #9BC077;
+  --color-m2e-rare: #82A7E0;
+  --color-m2e-epic: #D67ECE;
+  --color-m2e-legendary: #E3B95C;
+  --color-m2e-earning: #E6A268;
+  --color-m2e-luck: #66C7B4;
+  --color-m2e-recovery: #E58CA0;
+  --color-m2e-durability: #9DB2C7;
+}
+
+/* Hero day plate — fades out at night, revealing the dusk art beneath */
+.dayart {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+:root[data-theme="night"] .dayart {
+  opacity: 0;
+}
+
+/* Hero at night: violet wash + starfield over the town art */
+.nightwash {
+  background: linear-gradient(180deg, rgba(20, 13, 45, 0.72), rgba(23, 18, 37, 0.55) 55%, rgba(23, 18, 37, 0.78));
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+:root[data-theme="night"] .nightwash {
+  opacity: 1;
+}
+.nightstars {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  background-image:
+    radial-gradient(#fff 1px, transparent 1.5px),
+    radial-gradient(rgba(255, 255, 255, 0.6) 1px, transparent 1.5px);
+  background-size: 190px 140px, 230px 170px;
+  background-position: 20px 30px, 110px 80px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 55%);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 55%);
+}
+:root[data-theme="night"] .nightstars {
+  opacity: 0.85;
 }

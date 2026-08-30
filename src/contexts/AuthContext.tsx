@@ -2,15 +2,14 @@ import { createContext, useContext, useReducer, useEffect, useCallback, type Rea
 import { useQueryClient } from '@tanstack/react-query';
 import {
   setAuthToken,
-  connectWallet,
   googleAuth,
+  completeGoogleSignup,
   fetchMe,
   type UserProfile,
   type GoogleAuthResult,
 } from '../api';
 
 const STORAGE_TOKEN = 'galavant_auth_token';
-const STORAGE_WALLET = 'galavant_wallet_address';
 
 interface AuthState {
   token: string | null;
@@ -43,7 +42,6 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 }
 
 interface AuthContextValue extends AuthState {
-  loginWithWallet: (walletAddress: string, publicKey?: string, mldsaPublicKey?: string) => Promise<void>;
   loginWithGoogle: (code: string) => Promise<GoogleAuthResult>;
   logout: () => void;
 }
@@ -62,7 +60,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     localStorage.removeItem(STORAGE_TOKEN);
-    localStorage.removeItem(STORAGE_WALLET);
     setAuthToken(null);
     queryClient.clear();
     dispatch({ type: 'LOGOUT' });
@@ -86,20 +83,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
   }, [logout]);
 
-  const loginWithWallet = useCallback(async (walletAddress: string, publicKey?: string, mldsaPublicKey?: string) => {
-    dispatch({ type: 'SET_LOADING', loading: true });
-    try {
-      const result = await connectWallet(walletAddress, publicKey, mldsaPublicKey);
-      setAuthToken(result.token);
-      localStorage.setItem(STORAGE_TOKEN, result.token);
-      localStorage.setItem(STORAGE_WALLET, walletAddress);
-      dispatch({ type: 'LOGIN', token: result.token, user: result.user });
-    } catch (err) {
-      dispatch({ type: 'SET_LOADING', loading: false });
-      throw err;
-    }
-  }, []);
-
   const loginWithGoogle = useCallback(async (code: string): Promise<GoogleAuthResult> => {
     dispatch({ type: 'SET_LOADING', loading: true });
     try {
@@ -107,12 +90,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (result.status === 'authenticated') {
         setAuthToken(result.token);
         localStorage.setItem(STORAGE_TOKEN, result.token);
-        localStorage.setItem(STORAGE_WALLET, result.walletAddress);
         dispatch({ type: 'LOGIN', token: result.token, user: result.user });
-      } else {
-        dispatch({ type: 'SET_LOADING', loading: false });
+        return result;
       }
-      return result;
+      // First-time visitor: the server handed us a short-lived claim token instead of a
+      // session. Redeeming it is what actually creates the account — dropping it here was why
+      // the web could sign people in but never sign them up, and told them to use the app.
+      const created = await completeGoogleSignup(result.googleClaimToken);
+      setAuthToken(created.token);
+      localStorage.setItem(STORAGE_TOKEN, created.token);
+      dispatch({ type: 'LOGIN', token: created.token, user: created.user });
+      return { status: 'authenticated' as const, token: created.token, user: created.user, walletAddress: created.walletAddress };
     } catch (err) {
       dispatch({ type: 'SET_LOADING', loading: false });
       throw err;
@@ -120,7 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ ...state, loginWithWallet, loginWithGoogle, logout }}>
+    <AuthContext.Provider value={{ ...state, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );

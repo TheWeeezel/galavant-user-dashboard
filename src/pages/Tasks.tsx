@@ -4,7 +4,7 @@ import {
   Login, Human, Download,
   Store, ShoppingCart, Coins,
   SpeedFast, Zap, Heart,
-  Redo, Fire, Gift, Check,
+  Redo, Gift, Check,
   ExternalLink, Loader,
 } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
@@ -34,8 +34,6 @@ const TASK_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   part_upgrade: Zap,
   breed_bike: Heart,
   convert_points_to_tokens: Redo,
-  convert_btc_to_sat: Fire,
-  convert_sat_to_points: Gift,
   export_bike_to_wallet: ExternalLink,
   import_bike_from_wallet: Loader,
 };
@@ -98,13 +96,22 @@ export function Tasks() {
   })).filter((g) => g.tasks.length > 0);
 
   return (
- <div className="p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6">
-      <h1
- className="text-2xl md:text-3xl uppercase tracking-widest text-m2e-accent"
-        style={{ textShadow: '1px 1px 0px var(--color-m2e-accent-dark)' }}
-      >
-        Testing Tasks
-      </h1>
+    <>
+      {/* Hero strip */}
+      <div className="border-b-2 border-m2e-border bg-m2e-chrome text-white relative overflow-hidden scanlines-light">
+        <div className="mx-auto max-w-7xl px-4 md:px-8 py-10 md:py-14 relative z-10 space-y-4">
+          <div className="section-label">Beta Duty</div>
+          <h1 className="text-5xl md:text-7xl uppercase tracking-wide text-chroma-hero leading-[0.9]">
+            The Test<br />
+            <span className="text-m2e-accent">Track.</span>
+          </h1>
+          <p className="text-white/70 text-lg md:text-xl max-w-2xl">
+            Work through the beta checklist — every task you clear pays out WATTS.
+          </p>
+        </div>
+      </div>
+
+    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6">
 
       {/* Progress card */}
  <div className="pixel-card p-5 space-y-4">
@@ -160,7 +167,8 @@ export function Tasks() {
           </div>
         ))
       )}
-    </div>
+        </div>
+    </>
   );
 }
 

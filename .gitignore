@@ -6,3 +6,5 @@ tsconfig.tsbuildinfo
 
 # Local Netlify folder
 .netlify
+.env.local.bak
+.vite.log
