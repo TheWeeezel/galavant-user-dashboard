@@ -29,15 +29,25 @@ export type GameplaySection = {
   pages: GameplayPage[];
 };
 
+/**
+ * The fallback the static `gameplaySections` export is built from, used before the live values
+ * arrive from `/economy/guide-params` (and forever, for the sidebar, which never waits on a
+ * fetch).
+ *
+ * It holds only what the owner's decision of 2026-08-30 leaves publishable — verbatim: "no
+ * gameplay metrics publishing which helps player perfect against the algorithm." Four numbers
+ * that used to sit here are gone: the base WATTS a Common bike earns per minute, the HP decay per
+ * minute, the wear decay per minute, and the base toolbox drop chance. Each was the numeric half
+ * of a lever a player tunes against, and together they let anyone with a spreadsheet rank their
+ * next stat point by expected value instead of playing. What survives is a ceiling and a clock a
+ * player merely plans a day around, plus the platform fee — price information a seller needs
+ * BEFORE committing to a sale, which is a decision rather than an optimisation.
+ */
 const DEFAULT_GUIDE_PARAMS: GuideParams = {
   maxEnergyCap: 200,
   energyRegenPercent: 25,
   energyRegenIntervalHours: 6,
   fullRechargeHours: 24,
-  baseEarningRateCommon: 5,
-  hpDecayPerMinute: 0.5,
-  durabilityDecayPerMinute: 0.8,
-  toolboxBaseDropChance: 0.02,
   platformTaxPercent: 5,
 };
 
@@ -103,71 +113,56 @@ function buildEnergyPage(p: GuideParams): GameplayPage {
   };
 }
 
-// Luck multiplier per point (hardcoded constant, not a lever)
-const LUCK_MULTIPLIER = 0.003;
-
-function fmt(n: number, decimals = 2): string {
-  return n.toFixed(decimals);
-}
-
-function buildDecayRow(stat: number, baseDecay: number): [string, string, string] {
-  const decay = baseDecay / (1 + stat / 100);
-  return [String(stat), `${fmt(decay)}%`, `~${Math.round(100 / decay)} min`];
-}
-
-function buildBikeAttributesPage(p: GuideParams): GameplayPage {
-  const base = p.baseEarningRateCommon;
-  const earningRows: string[][] = [0, 10, 50, 100, 200].map((stat) => {
-    const mult = 1 + stat / 100;
-    return [String(stat), `${fmt(mult)}x`, `${fmt(base * mult, 1)} WATTS/min`];
-  });
-
-  const dropRows: string[][] = [0, 10, 50, 100].map((luck) => {
-    const chance = p.toolboxBaseDropChance + luck * LUCK_MULTIPLIER;
-    return [String(luck), `${Math.round(chance * 100)}%`];
-  });
-
-  return {
-    slug: 'bike-attributes',
-    title: 'Bike Attributes',
-    content: [
-      { type: 'paragraph', text: 'Each balance bike has four core attributes that affect different aspects of gameplay. Attributes come from three sources: base stats (rolled at creation), level-up points you allocate, and bonuses from socketed parts.' },
-      { type: 'heading', text: 'Earning' },
-      { type: 'paragraph', text: 'Increases the WATTS you earn per minute of walking. Every 100 points of Earning doubles your base rate.' },
-      { type: 'table', headers: ['Total Earning', 'Multiplier', 'Example (Common bike)'], rows: earningRows },
-      { type: 'heading', text: 'Luck' },
-      { type: 'paragraph', text: 'Improves your chances of receiving a toolbox drop each minute you walk, and increases the likelihood of higher-level toolboxes. Higher Luck means better odds, but drops are never guaranteed to be a specific level.' },
-      { type: 'table', headers: ['Total Luck', 'Drop Chance per Minute'], rows: dropRows },
-      { type: 'heading', text: 'Recovery' },
-      { type: 'paragraph', text: 'Slows down HP drain during walks so you can go longer between repairs. Each bike also has a one-time HP safety net that activates when HP gets critically low, fully restoring it — so new players won\'t lose their bike before they can find recovery parts.' },
-      { type: 'table', headers: ['Total Recovery', 'HP Decay/min', 'Full HP Lasts'], rows: [
-        buildDecayRow(0, p.hpDecayPerMinute),
-        buildDecayRow(10, p.hpDecayPerMinute),
-        buildDecayRow(50, p.hpDecayPerMinute),
-        buildDecayRow(100, p.hpDecayPerMinute),
-      ]},
-      { type: 'heading', text: 'Durability' },
-      { type: 'paragraph', text: 'Your bike\'s Durability stat slows down wear and tear. A bike that wears more slowly spends more time in peak condition — and a bike in peak condition earns at full rate. As your bike wears down through use, its Bike Condition drops, and your earnings progressively decrease until you repair it back to peak.' },
-      { type: 'paragraph', text: 'Higher Durability also means faster repairs: a well-built bike is quicker to restore between sessions. Durability parts (the helmet-shaped pieces) are the single best way to boost this stat.' },
-      { type: 'table', headers: ['Total Durability', 'Wear Decay/min', 'Full Durability Lasts'], rows: [
-        buildDecayRow(0, p.durabilityDecayPerMinute),
-        buildDecayRow(10, p.durabilityDecayPerMinute),
-        buildDecayRow(50, p.durabilityDecayPerMinute),
-        buildDecayRow(100, p.durabilityDecayPerMinute),
-      ]},
-      { type: 'divider' },
-      { type: 'paragraph', text: 'When your bike levels up, you receive stat points that you can allocate to any of these four attributes. Choose wisely based on your playstyle!' },
-      { type: 'heading', text: 'Tips for Stat Allocation' },
-      { type: 'list', items: [
-        'Earning-focused builds maximize short-term WATTS income.',
-        'Luck builds aim for valuable toolbox drops.',
-        'Recovery builds reduce HP loss and the need for recovery parts.',
-        'Durability builds keep your bike at peak earning rate longer and shorten repair times.',
-        'A balanced build works well for casual players.',
-      ]},
-    ],
-  };
-}
+/**
+ * Bike Attributes — the page the owner's 2026-08-30 decision hit hardest, and the reason it is a
+ * plain constant now rather than a builder.
+ *
+ * It used to render four tables computed from live economy levers: Earning stat against a
+ * multiplier and an example WATTS-per-minute figure, Luck against a drop chance per minute, and
+ * Recovery and Durability against a decay percentage per minute plus how many minutes a full bar
+ * therefore survives. Those tables did not merely mention the levers, they EXISTED to display
+ * them — which is why the fix could not be to feed them different numbers. Four rows of
+ * "stat → exact yield" is the whole input a player needs to compute the marginal value of the
+ * next stat point and stop making a choice: the build with the highest number wins, every time,
+ * for everyone, and the four attributes collapse into one correct answer.
+ *
+ * So each table is replaced by the qualitative claim it was decorating. A player still learns
+ * WHICH WAY each attribute pushes — more Earning is more WATTS a minute, more Luck is more
+ * toolboxes, more Recovery and more Durability is slower wear and longer between repairs — which
+ * is everything the allocation decision actually needs. What they no longer get is the exchange
+ * rate, and without it the choice goes back to being about how they want to play.
+ *
+ * Nothing here varies with the server any more, so the page takes no GuideParams and
+ * buildGameplaySections no longer has to rebuild it. That is deliberate and load-bearing: a
+ * builder still threading params through this page would be an open invitation to plug a fresh
+ * lever back into a table.
+ */
+const bikeAttributesPage: GameplayPage = {
+  slug: 'bike-attributes',
+  title: 'Bike Attributes',
+  content: [
+    { type: 'paragraph', text: 'Each balance bike has four core attributes that affect different aspects of gameplay. Attributes come from three sources: base stats (rolled at creation), level-up points you allocate, and bonuses from socketed parts.' },
+    { type: 'heading', text: 'Earning' },
+    { type: 'paragraph', text: 'The WATTS you earn per minute of walking. A higher Earning attribute means every minute of a walk is worth more, and it is the most direct lever you have on your income — level-up points and socketed Earning parts both feed it, and a strong Earning part moves it more than anything else.' },
+    { type: 'heading', text: 'Luck' },
+    { type: 'paragraph', text: 'Improves your chances of receiving a toolbox drop each minute you walk, and increases the likelihood of higher-level toolboxes. The higher your Luck, the more often toolboxes fall and the better they tend to be — but drops stay a roll, never a schedule, and are never guaranteed to be a specific level.' },
+    { type: 'heading', text: 'Recovery' },
+    { type: 'paragraph', text: 'Slows down HP drain during walks, so a higher Recovery attribute means a full HP bar carries you through more walking before it needs attention and your repairs sit further apart. Each bike also has a one-time HP safety net that activates when HP gets critically low, fully restoring it — so new players won\'t lose their bike before they can find recovery parts.' },
+    { type: 'heading', text: 'Durability' },
+    { type: 'paragraph', text: 'Your bike\'s Durability stat slows down wear and tear. A bike that wears more slowly spends more time in peak condition — and a bike in peak condition earns at full rate. As your bike wears down through use, its Bike Condition drops, and your earnings progressively decrease until you repair it back to peak.' },
+    { type: 'paragraph', text: 'Higher Durability also means faster repairs: a well-built bike is quicker to restore between sessions. Durability parts (the helmet-shaped pieces) are the single best way to boost this stat.' },
+    { type: 'divider' },
+    { type: 'paragraph', text: 'When your bike levels up, you receive stat points that you can allocate to any of these four attributes. Choose wisely based on your playstyle!' },
+    { type: 'heading', text: 'Tips for Stat Allocation' },
+    { type: 'list', items: [
+      'Earning-focused builds maximize short-term WATTS income.',
+      'Luck builds aim for valuable toolbox drops.',
+      'Recovery builds reduce HP loss and the need for recovery parts.',
+      'Durability builds keep your bike at peak earning rate longer and shorten repair times.',
+      'A balanced build works well for casual players.',
+    ]},
+  ],
+};
 
 export const gameplaySections: GameplaySection[] = [
   // ─── 1. Getting Started ───────────────────────────────────────
@@ -281,7 +276,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'tip', text: 'Higher quality bikes also amplify the bonuses from socketed parts, making them even more valuable at end-game.' },
         ],
       },
-      buildBikeAttributesPage(DEFAULT_GUIDE_PARAMS),
+      bikeAttributesPage,
       {
         slug: 'leveling-up',
         title: 'Leveling Up',
@@ -1144,14 +1139,9 @@ export function buildGameplaySections(params: GuideParams): GameplaySection[] {
         ),
       };
     }
-    if (section.slug === 'bikes') {
-      return {
-        ...section,
-        pages: section.pages.map((page) =>
-          page.slug === 'bike-attributes' ? buildBikeAttributesPage(params) : page,
-        ),
-      };
-    }
+    // The 'bikes' section is deliberately absent from this list. Bike Attributes used to be
+    // rebuilt here from the live economy levers; since the owner's 2026-08-30 decision it is a
+    // static page (see bikeAttributesPage) and there is nothing left for the server to fill in.
     if (section.slug === 'economy') {
       return {
         ...section,

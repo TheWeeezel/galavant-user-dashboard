@@ -98,15 +98,20 @@ export interface LeaderboardEntry {
 
 // --- Guide params (public, for gameplay guide) ---
 
+/**
+ * Mirrors what `/economy/guide-params` actually returns. Four fields were removed from the
+ * server's response on 2026-08-30 by owner decision — verbatim: "no gameplay metrics publishing
+ * which helps player perfect against the algorithm." They were baseEarningRateCommon,
+ * hpDecayPerMinute, durabilityDecayPerMinute and toolboxBaseDropChance, and each was the exact
+ * exchange rate for one attribute, which is what lets a player optimise a build on paper instead
+ * of playing. Declaring them here again would be worse than useless: the fetch would type-check
+ * while handing every reader `undefined`, so keep this shape honest to the endpoint.
+ */
 export interface GuideParams {
   maxEnergyCap: number;
   energyRegenPercent: number;
   energyRegenIntervalHours: number;
   fullRechargeHours: number;
-  baseEarningRateCommon: number;
-  hpDecayPerMinute: number;
-  durabilityDecayPerMinute: number;
-  toolboxBaseDropChance: number;
   platformTaxPercent: number;
 }
 
