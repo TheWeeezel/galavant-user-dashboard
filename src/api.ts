@@ -525,6 +525,18 @@ export function enjinLinkUnlink() {
   return fetchAuthJson<{ linked: boolean }>('/enjin/link/unlink', { method: 'POST', body: JSON.stringify({}) });
 }
 
+/**
+ * Die SS58-Adresse der VERWALTETEN Wallet (Matrixchain) — die Einzahlungsadresse fuer ein auf
+ * dem Enjin-Marktplatz gekauftes Galavant-NFT. Nur dort sieht das Spiel das Token und kann es
+ * uebernehmen. Nicht zu verwechseln mit der verknuepften eigenen Wallet aus enjinLinkStatus:
+ * die gehoert dem Spieler und dient dem Staking.
+ */
+export function fetchManagedWalletAddress() {
+  return fetchAuthJson<{ status: 'ready' | 'provisioning'; address: string | null }>(
+    '/enjin/wallet/address',
+  );
+}
+
 export function enjinLinkStatus() {
   return fetchAuthJson<{ linked: boolean; pending?: boolean; publicKey?: string }>(
     '/enjin/link/status',
@@ -640,6 +652,27 @@ export function mintBikeNft(bikeId: string) {
     method: 'POST',
     body: JSON.stringify({ bikeId }),
   });
+}
+
+/**
+ * Ein Token, das die verwaltete Wallet haelt, dessen Gegenstand aber noch nicht im Spiel ist —
+ * also ein gekauftes NFT, das nur noch beansprucht werden muss. Die eigenen exportierten NFTs
+ * stehen hier NICHT drin, die kommen aus fetchWalletNfts.
+ */
+export interface ClaimableNft {
+  kind: 'bike' | 'part';
+  tokenId: number;
+  type: string;
+  /** Nur Fahrraeder haben eine Qualitaet. */
+  quality: string | null;
+  level: number;
+  imageUrl: string | null;
+  /** Der Verkauf wird noch abgerechnet — der Import weist bis dahin ab. */
+  settling: boolean;
+}
+
+export function fetchClaimableNfts() {
+  return fetchAuthJson<{ items: ClaimableNft[] }>('/blockchain/claimable');
 }
 
 export function importBikeNft(tokenId: number) {
