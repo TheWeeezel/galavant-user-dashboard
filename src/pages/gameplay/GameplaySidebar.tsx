@@ -5,17 +5,18 @@ import { gameplaySections } from './gameplay-content';
 
 export function GameplaySidebar({ onNavigate }: { onNavigate?: () => void }) {
   const { sectionSlug, pageSlug } = useParams();
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  // Accordion: only one section open at a time, so the nav never overflows
+  const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
 
   // Auto-expand current section
   useEffect(() => {
     if (sectionSlug) {
-      setExpanded((prev) => ({ ...prev, [sectionSlug]: true }));
+      setExpandedSlug(sectionSlug);
     }
   }, [sectionSlug]);
 
   const toggle = (slug: string) => {
-    setExpanded((prev) => ({ ...prev, [slug]: !prev[slug] }));
+    setExpandedSlug((prev) => (prev === slug ? null : slug));
   };
 
   return (
@@ -24,7 +25,7 @@ export function GameplaySidebar({ onNavigate }: { onNavigate?: () => void }) {
         Gameplay Guide
       </div>
       {gameplaySections.map((section) => {
-        const isExpanded = expanded[section.slug] ?? false;
+        const isExpanded = expandedSlug === section.slug;
         const isCurrent = section.slug === sectionSlug;
         const Icon = section.icon;
 
