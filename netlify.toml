@@ -2,6 +2,19 @@
   command = "rm -rf node_modules package-lock.json && npm install && npm run build"
   publish = "dist"
 
+# VITE_API_URL steht hier BEWUSST NICHT.
+#
+# Die Reihenfolge bei Netlify ist: netlify.toml schlaegt die Oberflaeche, die Oberflaeche
+# schlaegt .env-Dateien. Ein Eintrag hier waere also nicht die zusaetzliche Absicherung,
+# als die er aussieht, sondern das Gegenteil: er nimmt der Oberflaeche die Wirkung.
+#
+# Genau die brauchen wir aber als Notausstieg. Der Serverwechsel auf ap1.galavant.run
+# steht als Rueckfallwert in src/config.ts, sichtbar im Diff und im Review. Muss die
+# Webseite im Stoerfall kurzfristig zurueck auf Cloud Run, ist das dann ein Eintrag in
+# der Netlify-Oberflaeche plus ein Deploy — dreissig Sekunden, ohne Commit. Steht die
+# Variable hier, wird dieser Eintrag stillschweigend ignoriert, es gibt keine
+# Fehlermeldung, und man sucht den Fehler ueberall ausser an der richtigen Stelle.
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
