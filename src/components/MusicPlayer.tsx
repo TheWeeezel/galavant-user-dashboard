@@ -122,7 +122,7 @@ export function MusicPlayer() {
   const [expanded, setExpanded] = useState(false);
   // The bar spans the full width and covered page content on every route, so it
   // rests as a corner button and is opened deliberately.
-  const [barOpen, setBarOpen] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
   const [shuffled, setShuffled] = useState(false);
   const [shuffleOrder, setShuffleOrder] = useState<number[]>([]);
   const [repeatMode, setRepeatMode] = useState<RepeatMode>('off');
@@ -269,202 +269,126 @@ export function MusicPlayer() {
         onPause={() => setPlaying(false)}
       />
 
- {/* Resting state: a corner button, so nothing is permanently covered. */}
+      {/* Resting control. The left half is the transport, because play/pause is
+          the one action worth reaching without opening anything; the right half
+          opens everything else. */}
+      <div className="fixed bottom-4 right-4 z-50 flex items-stretch rounded-full overflow-hidden border-2 border-m2e-accent-dark bg-m2e-accent text-m2e-text-on-accent shadow-lg">
+        <button
+          onClick={togglePlay}
+          aria-label={playing ? 'Pause radio' : 'Play radio'}
+          className="relative w-14 h-14 flex items-center justify-center hover:bg-m2e-accent-dark transition-colors"
+        >
+          {playing ? <PauseIcon className="w-6 h-6" /> : <PlayIcon className="w-6 h-6" />}
+          {playing && <span className="absolute inset-0 rounded-full animate-pulse-ring" aria-hidden />}
+        </button>
+        <button
+          onClick={() => setPopoverOpen((v) => !v)}
+          aria-label={popoverOpen ? 'Close radio' : 'Open Galavant Radio'}
+          aria-expanded={popoverOpen}
+          className="w-9 h-14 flex items-center justify-center border-l border-m2e-accent-dark/60 hover:bg-m2e-accent-dark transition-colors"
+        >
+          {popoverOpen ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
+        </button>
+      </div>
 
- {!barOpen && (
+      {popoverOpen && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setPopoverOpen(false)} aria-hidden />
 
-   <button
-
-     onClick={() => setBarOpen(true)}
-
-     aria-label="Open Galavant Radio"
-
-     className="fixed bottom-4 right-4 z-50 w-14 h-14 rounded-full bg-m2e-accent border-2 border-m2e-accent-dark text-m2e-text-on-accent flex items-center justify-center hover:scale-105 transition-transform"
-
-   >
-
-     <MusicIcon className="w-6 h-6" />
-
-     {playing && (
-
-       <span className="absolute inset-0 rounded-full animate-pulse-ring" aria-hidden />
-
-     )}
-
-   </button>
-
- )}
-
-
- {barOpen && (
-
- <div className="fixed bottom-0 left-0 right-0 z-50">
-        {/* Expanded tracklist panel */}
-        {expanded && (
- <div className="bg-m2e-card border-t-2 border-x-2 border-m2e-border mx-auto max-w-7xl rounded-t-lg shadow-lg max-h-64 overflow-y-auto">
- <div className="px-4 py-3 border-b border-m2e-border">
- <h3 className="text-base uppercase tracking-wide text-m2e-accent">Galavant Radio</h3>
+          <div
+            role="dialog"
+            aria-label="Galavant Radio"
+            className="fixed bottom-24 right-4 z-50 w-[min(21rem,calc(100vw-2rem))] pixel-card overflow-hidden"
+          >
+            <div className="flex items-center justify-between px-4 py-2.5 bg-m2e-chrome">
+              <h3 className="text-sm uppercase tracking-[0.2em] text-m2e-accent-light">Galavant Radio</h3>
+              <span className="text-[10px] uppercase tracking-widest text-white/40 font-mono">
+                {trackIdx + 1}/{playOrder.length}
+              </span>
             </div>
-            {playOrder.map((realIdx, i) => {
-              const t = tracklist[realIdx];
-              const isActive = i === trackIdx;
-              return (
-                <button
-                  key={t.src}
-                  ref={isActive ? activeTrackRef : undefined}
-                  onClick={() => setTrackIdx(i)}
- className={`w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-m2e-border-light transition-colors ${
-                    isActive ? 'bg-m2e-card-alt text-m2e-accent' : 'text-m2e-text-secondary'
-                  }`}
-                >
- <span className="text-sm font-mono w-6 text-center">{i + 1}</span>
- <MusicIcon className="w-4 h-4 shrink-0" />
- <div className="min-w-0 flex-1">
- <div className="text-base truncate">{t.title}</div>
- <div className="text-sm text-m2e-text-muted truncate">
-                      {t.artist} &middot; {t.credit}
-                    </div>
-                  </div>
-                  {isActive && playing && <EqBars />}
-                </button>
-              );
-            })}
-          </div>
-        )}
 
-        {/* Main bar */}
- <div className="bg-m2e-card border-t-2 border-m2e-border shadow-lg">
-          {/* Progress bar */}
-          {duration > 0 && (
- <div className="h-1 bg-m2e-border cursor-pointer group" onClick={seek}>
-              <div
- className="h-full bg-m2e-accent transition-all duration-300 group-hover:h-1.5"
-                style={{ width: `${(progress / duration) * 100}%` }}
+            <div className="px-4 pt-3 min-w-0">
+              <div className="text-base text-m2e-text truncate">{track.title}</div>
+              <div className="text-xs text-m2e-text-muted truncate">{track.artist}</div>
+            </div>
+
+            {duration > 0 && (
+              <div className="px-4 pt-3">
+                <div className="h-1.5 bg-m2e-bg-alt cursor-pointer" onClick={seek}>
+                  <div className="h-full bg-m2e-accent" style={{ width: `${(progress / duration) * 100}%` }} />
+                </div>
+                <div className="flex justify-between text-[10px] text-m2e-text-muted font-mono pt-1">
+                  <span>{fmt(progress)}</span>
+                  <span>{fmt(duration)}</span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center justify-center gap-1.5 px-4 py-3">
+              <button onClick={toggleShuffle} aria-label="Shuffle"
+                className={`p-2 transition-colors ${shuffled ? 'text-m2e-accent' : 'text-m2e-text-muted hover:text-m2e-text'}`}>
+                <ShuffleIcon className="w-4 h-4" />
+              </button>
+              <button onClick={prev} aria-label="Previous track"
+                className="p-2 text-m2e-text-secondary hover:text-m2e-text transition-colors">
+                <PrevIcon className="w-5 h-5" />
+              </button>
+              <button onClick={togglePlay} aria-label={playing ? 'Pause' : 'Play'}
+                className="w-12 h-12 flex items-center justify-center bg-m2e-accent text-m2e-text-on-accent border-2 border-m2e-accent-dark hover:bg-m2e-accent-dark transition-colors">
+                {playing ? <PauseIcon className="w-5 h-5" /> : <PlayIcon className="w-5 h-5" />}
+              </button>
+              <button onClick={next} aria-label="Next track"
+                className="p-2 text-m2e-text-secondary hover:text-m2e-text transition-colors">
+                <NextIcon className="w-5 h-5" />
+              </button>
+              <button onClick={cycleRepeat} aria-label="Repeat"
+                className={`p-2 transition-colors ${repeatMode !== 'off' ? 'text-m2e-accent' : 'text-m2e-text-muted hover:text-m2e-text'}`}>
+                {repeatMode === 'one' ? <RepeatOneIcon className="w-4 h-4" /> : <RepeatIcon className="w-4 h-4" />}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 px-4 pb-3">
+              <VolumeIcon className="w-4 h-4 text-m2e-text-muted shrink-0" />
+              <input
+                type="range" min={0} max={100} value={Math.round(volume * 100)}
+                onChange={(e) => setVolume(Number(e.target.value) / 100)}
+                aria-label="Volume"
+                className="flex-1 accent-[var(--color-m2e-accent)]"
               />
             </div>
-          )}
-
- <div className="mx-auto max-w-7xl px-4 py-2 flex items-center gap-3">
-            {/* Expand/collapse */}
-            <button
- onClick={() => (expanded ? setExpanded(false) : setBarOpen(false))}
- className="text-m2e-text-muted hover:text-m2e-text transition-colors"
- aria-label={expanded ? 'Collapse tracklist' : 'Hide player'}
- >
-              {expanded ? (
- <ChevronDownIcon className="w-5 h-5" />
-              ) : (
- <ChevronUpIcon className="w-5 h-5" />
-              )}
-            </button>
 
             <button
               onClick={() => setExpanded((v) => !v)}
-              className="text-m2e-text-muted hover:text-m2e-accent transition-colors"
-              aria-label={expanded ? 'Hide tracklist' : 'Show tracklist'}
+              aria-expanded={expanded}
+              className="w-full px-4 py-2 flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-m2e-text-muted hover:text-m2e-accent border-t border-m2e-border transition-colors"
             >
-              <MusicIcon className="w-5 h-5" />
+              Tracklist
+              {expanded ? <ChevronDownIcon className="w-4 h-4" /> : <ChevronUpIcon className="w-4 h-4" />}
             </button>
 
-            {/* Controls */}
- <div className="flex items-center gap-1">
-              <button
-                onClick={prev}
- className="p-1.5 text-m2e-text-secondary hover:text-m2e-text transition-colors"
-                aria-label="Previous track"
-              >
- <PrevIcon className="w-4 h-4" />
-              </button>
-              <button
-                onClick={togglePlay}
- className="p-2 bg-m2e-accent text-m2e-text-on-accent rounded-md border-2 border-m2e-accent-dark hover:brightness-110 transition-all"
-                aria-label={playing ? 'Pause' : 'Play'}
-              >
- {playing ? <PauseIcon className="w-5 h-5" /> : <PlayIcon className="w-5 h-5" />}
-              </button>
-              <button
-                onClick={next}
- className="p-1.5 text-m2e-text-secondary hover:text-m2e-text transition-colors"
-                aria-label="Next track"
-              >
- <NextIcon className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Shuffle & Repeat */}
- <div className="flex items-center gap-1 hidden sm:flex">
-              <button
-                onClick={toggleShuffle}
- className={`p-1.5 transition-colors ${shuffled ? 'text-m2e-accent' : 'text-m2e-text-muted hover:text-m2e-text'}`}
-                aria-label="Shuffle"
-                title={shuffled ? 'Shuffle on' : 'Shuffle off'}
-              >
- <ShuffleIcon className="w-4 h-4" />
-              </button>
-              <button
-                onClick={cycleRepeat}
- className={`p-1.5 transition-colors ${repeatMode !== 'off' ? 'text-m2e-accent' : 'text-m2e-text-muted hover:text-m2e-text'}`}
-                aria-label="Repeat"
-                title={`Repeat: ${repeatMode}`}
-              >
-                {repeatMode === 'one' ? (
- <RepeatOneIcon className="w-4 h-4" />
-                ) : (
- <RepeatIcon className="w-4 h-4" />
-                )}
-              </button>
-            </div>
-
-            {/* Track info */}
- <div className="min-w-0 flex-1">
- <div className="flex items-center gap-2">
- <MusicIcon className="w-4 h-4 text-m2e-accent shrink-0" />
- <div className="min-w-0">
- <div className="text-base truncate">{track.title}</div>
- <div className="text-xs text-m2e-text-muted truncate">
-                    {track.artist} &middot; {track.credit}
-                  </div>
-                </div>
+            {expanded && (
+              <div className="max-h-56 overflow-y-auto border-t border-m2e-border">
+                {playOrder.map((realIdx, i) => {
+                  const tr = tracklist[realIdx];
+                  const isActive = i === trackIdx;
+                  return (
+                    <button
+                      key={tr.src}
+                      ref={isActive ? activeTrackRef : undefined}
+                      onClick={() => setTrackIdx(i)}
+                      className={`w-full text-left px-4 py-2.5 flex items-center gap-3 transition-colors ${
+                        isActive ? 'bg-m2e-accent-soft text-m2e-accent-dark' : 'text-m2e-text-secondary hover:bg-m2e-bg-alt'
+                      }`}
+                    >
+                      <span className="text-xs font-mono w-5 text-center shrink-0">{i + 1}</span>
+                      <span className="min-w-0 flex-1 truncate text-sm">{tr.title}</span>
+                    </button>
+                  );
+                })}
               </div>
-            </div>
-
-            {/* Track counter */}
- <span className="text-xs text-m2e-text-muted font-mono hidden sm:block">
-              {trackIdx + 1}/{playOrder.length}
-            </span>
-
-            {/* Time */}
-            {duration > 0 && (
- <span className="text-xs text-m2e-text-muted font-mono hidden sm:block">
-                {fmt(progress)} / {fmt(duration)}
-              </span>
             )}
-
-            {/* Volume */}
- <div className="relative hidden sm:block">
-              <button
-                onClick={() => setShowVolume((v) => !v)}
- className="p-1.5 text-m2e-text-secondary hover:text-m2e-text transition-colors"
-                aria-label="Volume"
-              >
- <VolumeIcon className="w-4 h-4" />
-              </button>
-              {showVolume && (
- <div className="absolute bottom-full right-0 mb-2 bg-m2e-card border-2 border-m2e-border rounded-md p-3 shadow-lg">
-                  <input
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={Math.round(volume * 100)}
-                    onChange={(e) => setVolume(Number(e.target.value) / 100)}
- className="w-24 accent-[var(--color-m2e-accent)]"
-                  />
-                </div>
-              )}
-            </div>
           </div>
-        </div>
-      </div>
+        </>
       )}
     </>
   );
