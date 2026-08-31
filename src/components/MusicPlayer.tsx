@@ -120,6 +120,9 @@ export function MusicPlayer() {
   const [volume, setVolume] = useState(0.5);
   const [showVolume, setShowVolume] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  // The bar spans the full width and covered page content on every route, so it
+  // rests as a corner button and is opened deliberately.
+  const [barOpen, setBarOpen] = useState(false);
   const [shuffled, setShuffled] = useState(false);
   const [shuffleOrder, setShuffleOrder] = useState<number[]>([]);
   const [repeatMode, setRepeatMode] = useState<RepeatMode>('off');
@@ -266,6 +269,35 @@ export function MusicPlayer() {
         onPause={() => setPlaying(false)}
       />
 
+ {/* Resting state: a corner button, so nothing is permanently covered. */}
+
+ {!barOpen && (
+
+   <button
+
+     onClick={() => setBarOpen(true)}
+
+     aria-label="Open Galavant Radio"
+
+     className="fixed bottom-4 right-4 z-50 w-14 h-14 rounded-full bg-m2e-accent border-2 border-m2e-accent-dark text-m2e-text-on-accent flex items-center justify-center hover:scale-105 transition-transform"
+
+   >
+
+     <MusicIcon className="w-6 h-6" />
+
+     {playing && (
+
+       <span className="absolute inset-0 rounded-full animate-pulse-ring" aria-hidden />
+
+     )}
+
+   </button>
+
+ )}
+
+
+ {barOpen && (
+
  <div className="fixed bottom-0 left-0 right-0 z-50">
         {/* Expanded tracklist panel */}
         {expanded && (
@@ -315,15 +347,23 @@ export function MusicPlayer() {
  <div className="mx-auto max-w-7xl px-4 py-2 flex items-center gap-3">
             {/* Expand/collapse */}
             <button
-              onClick={() => setExpanded((v) => !v)}
+ onClick={() => (expanded ? setExpanded(false) : setBarOpen(false))}
  className="text-m2e-text-muted hover:text-m2e-text transition-colors"
-              aria-label={expanded ? 'Collapse tracklist' : 'Expand tracklist'}
-            >
+ aria-label={expanded ? 'Collapse tracklist' : 'Hide player'}
+ >
               {expanded ? (
  <ChevronDownIcon className="w-5 h-5" />
               ) : (
  <ChevronUpIcon className="w-5 h-5" />
               )}
+            </button>
+
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="text-m2e-text-muted hover:text-m2e-accent transition-colors"
+              aria-label={expanded ? 'Hide tracklist' : 'Show tracklist'}
+            >
+              <MusicIcon className="w-5 h-5" />
             </button>
 
             {/* Controls */}
@@ -425,6 +465,7 @@ export function MusicPlayer() {
           </div>
         </div>
       </div>
+      )}
     </>
   );
 }

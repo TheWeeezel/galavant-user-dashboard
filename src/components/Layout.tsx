@@ -48,7 +48,7 @@ export function Layout() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-m2e-bg text-m2e-text pb-[var(--player-h)]">
+    <div className="min-h-screen flex flex-col bg-m2e-bg text-m2e-text">
       {/* Nav — melts into each page's hero at rest, becomes a blurred pane on scroll */}
       <header
         className={`sticky top-0 z-50 text-white relative transition-colors duration-300 ${
