@@ -261,6 +261,8 @@ export function Layout() {
             {/* On every page, because a stuck player is never on the page you expected. */}
             <Link to="/report" className="hover:text-m2e-accent transition-colors">Report a Problem</Link>
             <span className="hidden sm:inline text-white/20">|</span>
+            <Link to="/press-kit" className="hover:text-m2e-accent transition-colors">Press Kit</Link>
+            <span className="hidden sm:inline text-white/20">|</span>
             <Link to="/privacy" className="hover:text-m2e-accent transition-colors">Privacy Policy</Link>
           </div>
         </div>

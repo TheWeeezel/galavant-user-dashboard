@@ -163,6 +163,51 @@ function CountUp({
 
 // ── Main Component ──────────────────────────────────────────────────────────
 
+/**
+ * The hero is two full-bleed plates that crossfade by time of day, and at full
+ * size they are 1.9 MB before anything else on the page loads. This paints a
+ * 155 KB pair first and swaps in the full ones once BOTH have decoded, so the
+ * day/night fade never runs against one sharp and one soft plate.
+ *
+ * Skipped entirely when the browser reports Save-Data or a 2g-class connection:
+ * there the small pair is the right answer, not a placeholder.
+ */
+function useHeroPlates() {
+  const SMALL = {
+    night: '/assets/landing/galavant-hero-sm.webp',
+    day: '/assets/landing/galavant-hero-day-sm.webp',
+  };
+  const FULL = {
+    night: '/assets/landing/galavant-hero.webp',
+    day: '/assets/landing/galavant-hero-day.webp',
+  };
+  const [src, setSrc] = useState(SMALL);
+
+  useEffect(() => {
+    const conn = (navigator as any).connection;
+    if (conn?.saveData || /(^|-)2g$/.test(conn?.effectiveType ?? '')) return;
+
+    let cancelled = false;
+    Promise.all(
+      [FULL.night, FULL.day].map(
+        (href) =>
+          new Promise<void>((resolve) => {
+            // `Image` here is the pixelarticons icon, not the DOM constructor
+            const img = document.createElement('img');
+            img.onload = () => resolve();
+            img.onerror = () => resolve(); // a failed upgrade keeps the small plate
+            img.src = href;
+          }),
+      ),
+    ).then(() => {
+      if (!cancelled) setSrc(FULL);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  return src;
+}
+
 export function Home() {
   const [selectedNftId, setSelectedNftId] = useState<string | null>(null);
   const [lbMetric, setLbMetric] = useState<LeaderboardMetric>('distance');
@@ -204,6 +249,7 @@ export function Home() {
   const vp = { once: true, margin: '-80px' };
 
   const tickerTwice = useMemo(() => [...TICKER_ITEMS, ...TICKER_ITEMS], []);
+  const heroSrc = useHeroPlates();
 
   const economyState = stats.data?.economyState ?? 'Healthy';
   const stateStyle = economyStateColors[economyState] ?? economyStateColors.Healthy;
@@ -216,14 +262,14 @@ export function Home() {
       <div ref={heroRef} className="relative">
         <div className="relative w-full h-[92vh] min-h-[560px] overflow-hidden scanlines vignette">
           <motion.img
-            src="/assets/landing/galavant-hero.webp"
+            src={heroSrc.night}
             alt="Galavant"
             className="absolute inset-0 w-full h-full object-cover pixel-render will-change-transform"
             style={reducedMotion ? undefined : { y: heroImageY, scale: heroImageScale }}
           />
           {/* Day art — the same square at dawn; fades out at night to reveal the dusk plate */}
           <motion.img
-            src="/assets/landing/galavant-hero-day.webp"
+            src={heroSrc.day}
             alt=""
             aria-hidden
             className="dayart absolute inset-0 w-full h-full object-cover pixel-render will-change-transform"

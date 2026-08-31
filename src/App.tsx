@@ -11,6 +11,7 @@ import { Report } from './pages/Report';
 import { Roadmap } from './pages/Roadmap';
 import { Leaderboard } from './pages/Leaderboard';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { PressKit } from './pages/PressKit';
 import { Wallet } from './pages/Wallet';
 import Store from './pages/Store';
 import { GameplayLayout } from './pages/gameplay/GameplayLayout';
@@ -40,6 +41,8 @@ export function App() {
           <Route path="roadmap" element={<Roadmap />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="press-kit" element={<PressKit />} />
+          <Route path="press" element={<Navigate to="/press-kit" replace />} />
           <Route path="wallet" element={<Wallet />} />
           <Route path="store" element={<Store />} />
           {/* ONE market (task 7dc61fc3): the NFT "Trading Post" merged into /market. Kept so
