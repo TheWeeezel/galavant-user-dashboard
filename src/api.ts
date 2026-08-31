@@ -623,16 +623,62 @@ export function redemptionSubmit(watts: number) {
   );
 }
 
-// --- Web shop (Stripe card checkout) ---
-export interface StoreProduct { type: string; displayName: string; quality: string; priceUsdCents: number; available: boolean }
+// --- Web shop (card checkout, and ENJ once the server quotes it) ---
+export interface StoreProduct {
+  type: string;
+  displayName: string;
+  quality: string;
+  priceUsdCents: number;
+  available: boolean;
+  /**
+   * Indicative ENJ price as a decimal string, the same shape the marketplace already uses.
+   *
+   * This one field is the shop's whole switch for the ENJ way. The server sends it exactly when it
+   * can both quote a rate and take the money, so an unfinished ENJ path leaves the player with no
+   * ENJ price and no ENJ button at all — never with a button that answers with an error. The page
+   * therefore asks for this instead of carrying a rate or a feature flag of its own.
+   */
+  priceEnj?: string | null;
+}
 export interface StoreCatalog { enabled: boolean; currency: string; products: StoreProduct[] }
+
+/**
+ * Stock side of the shop. It carries no usable price — the satoshi lever behind `priceSats` died
+ * with the BTC purchase path — but its caps say whether a bike is gone for good or only for today,
+ * which is the difference between "sold out" and "come back tomorrow".
+ */
+export interface StoreStockListing { type: string; displayName: string; quality: string; available: boolean }
+export interface StoreStock {
+  enabled: boolean;
+  listings: StoreStockListing[];
+  totalSold: number;
+  totalCap: number;
+  soldToday: number;
+  dailyCap: number;
+}
 
 export function fetchStoreProducts() {
   return fetchJson<StoreCatalog>('/store/products');
 }
 
+export function fetchStoreStock() {
+  return fetchJson<StoreStock>('/store/bikes');
+}
+
 export function storeCheckout(bikeType: string) {
   return fetchAuthJson<{ url: string }>('/store/checkout', { method: 'POST', body: JSON.stringify({ bikeType }) });
+}
+
+/**
+ * ENJ checkout, the twin of `storeCheckout`. It is only ever called for a bike the server itself
+ * priced in ENJ, so the day the catalog starts quoting ENJ this route has to answer — the price
+ * and the way to pay it are one delivery, not two.
+ *
+ * `url` is optional on purpose: a server that quotes a price it cannot yet collect gets an honest
+ * "not ready, nothing was charged" on the card rather than a silent dead click.
+ */
+export function storeCheckoutEnj(bikeType: string) {
+  return fetchAuthJson<{ url?: string | null }>('/store/checkout/enj', { method: 'POST', body: JSON.stringify({ bikeType }) });
 }
 
 // --- Blockchain / NFT ---
