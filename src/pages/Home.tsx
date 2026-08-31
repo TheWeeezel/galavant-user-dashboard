@@ -260,7 +260,7 @@ export function Home() {
           1 / HERO — Cold open
           ══════════════════════════════════════════════════════════════════════ */}
       <div ref={heroRef} className="relative">
-        <div className="relative w-full h-[92vh] min-h-[560px] overflow-hidden scanlines vignette">
+        <div className="relative w-full h-[calc(92vh-var(--player-h))] min-h-[560px] overflow-hidden scanlines vignette">
           <motion.img
             src={heroSrc.night}
             alt="Galavant"

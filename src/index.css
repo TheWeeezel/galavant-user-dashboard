@@ -72,6 +72,12 @@
   --color-m2e-legendary: #A6791C;   /* brass */
 }
 
+:root {
+  /* The music player is fixed to the bottom on every page. Anything that should
+     not end up underneath it reserves this. */
+  --player-h: 69px;
+}
+
 html {
   scroll-behavior: smooth;
   font-size: 18px;

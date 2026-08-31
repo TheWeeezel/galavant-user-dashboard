@@ -48,7 +48,7 @@ export function Layout() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-m2e-bg text-m2e-text">
+    <div className="min-h-screen flex flex-col bg-m2e-bg text-m2e-text pb-[var(--player-h)]">
       {/* Nav — melts into each page's hero at rest, becomes a blurred pane on scroll */}
       <header
         className={`sticky top-0 z-50 text-white relative transition-colors duration-300 ${
@@ -202,7 +202,7 @@ export function Layout() {
       </main>
 
       {/* Footer — matches the dark chrome */}
-      <footer className="bg-m2e-chrome text-white relative overflow-hidden pb-20">
+      <footer className="bg-m2e-chrome text-white relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none scanlines-light" />
         <div className="mx-auto max-w-7xl px-4 py-10 flex flex-col items-center gap-5 text-center relative">
           <div className="section-label justify-center w-fit mx-auto">Community</div>
