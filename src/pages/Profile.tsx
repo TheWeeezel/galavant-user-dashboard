@@ -523,7 +523,7 @@ function EmptyState({ icon: Icon, label }: { icon: React.ComponentType<any>; lab
  * mein NFT", und die braucht der Spieler VOR dem Kauf, nicht erst danach.
  */
 function EnjinWalletSection() {
-  const { data: wallet } = useQuery({
+  const { data: wallet, error: walletError } = useQuery({
     queryKey: ['managedWalletAddress'],
     queryFn: fetchManagedWalletAddress,
   });
@@ -563,8 +563,13 @@ function EnjinWalletSection() {
 
       <div className="flex items-center justify-between pt-2">
         <div className="section-label">Ready to claim</div>
-        {items.length > 0 && (
-          <span className="text-xs uppercase tracking-[0.25em] text-m2e-text-muted">{items.length} waiting</span>
+        {/* Nur die zaehlen, deren Knopf auch klickbar ist. Ein abgerechnetes Stueck steht in der
+            Liste, laesst sich aber nicht beanspruchen — es unter "ready to claim" mitzuzaehlen
+            hiesse, eine Zahl neben eine Ueberschrift zu setzen, die etwas anderes behauptet. */}
+        {items.filter((i) => !i.settling).length > 0 && (
+          <span className="text-xs uppercase tracking-[0.25em] text-m2e-text-muted">
+            {items.filter((i) => !i.settling).length} waiting
+          </span>
         )}
       </div>
 
@@ -582,9 +587,17 @@ function EnjinWalletSection() {
             <ClaimCard key={`${item.kind}-${item.tokenId}`} item={item} />
           ))}
         </div>
-      ) : claimableLoading ? (
+      ) : claimableLoading || (!wallet && !walletError) ? (
         <div className="pixel-card p-6 text-center text-xs text-m2e-text-muted uppercase tracking-[0.25em]">
           Checking your wallet…
+        </div>
+      ) : walletError || claimableError ? (
+        /* "Nothing waiting" ist eine ENDGUELTIGE Aussage: dein NFT ist nicht da. Sie darf nur
+           fallen, wenn wirklich nachgesehen wurde. Schlaegt die Abfrage fehl — oder laeuft sie
+           gar nicht, weil die Wallet-Abfrage haengt — dann wissen wir es nicht, und ein Kaeufer,
+           dessen Token sehr wohl in der Wallet liegt, wuerde hier fuer immer das Gegenteil lesen. */
+        <div className="pixel-card p-6 text-center text-xs text-m2e-text-muted uppercase tracking-[0.25em]">
+          Could not check right now — reload in a moment
         </div>
       ) : (
         <EmptyState icon={Download} label="Nothing waiting" />
