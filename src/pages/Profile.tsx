@@ -7,6 +7,7 @@ import {
   ChevronLeft, Trophy, Mail, Bookmark, Copy, Download,
 } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
+import { PlayerAvatar } from '../components/PlayerAvatar';
 import { LoginModal } from '../components/LoginModal';
 import { NftDetailModal } from '../components/NftDetailModal';
 import { PartNftModal } from '../components/PartNftModal';
@@ -145,19 +146,12 @@ export function Profile() {
             <div className="flex flex-col md:flex-row md:items-end gap-6">
               {/* Avatar */}
               <div className="relative shrink-0">
-                {user.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={user.nickname}
-                    className="w-28 h-28 md:w-40 md:h-40 pixel-border border-m2e-accent pixel-shadow object-cover pixel-render"
-                  />
-                ) : (
-                  <div className="w-28 h-28 md:w-40 md:h-40 pixel-border border-m2e-accent pixel-shadow bg-m2e-bg-alt flex items-center justify-center">
-                    <span className="text-5xl md:text-7xl text-m2e-accent text-chroma-soft">
-                      {user.nickname[0].toUpperCase()}
-                    </span>
-                  </div>
-                )}
+                <PlayerAvatar
+                  avatarUrl={user.avatarUrl}
+                  nickname={user.nickname}
+                  className="w-28 h-28 md:w-40 md:h-40 pixel-border border-m2e-accent pixel-shadow"
+                  textClassName="text-5xl md:text-7xl"
+                />
                 <span className="absolute -bottom-2 -right-2 px-2 py-0.5 text-[10px] uppercase tracking-widest bg-m2e-accent text-m2e-text-on-accent pixel-border border-m2e-accent-dark flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-blink" />
                   Player 1

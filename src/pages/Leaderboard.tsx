@@ -9,6 +9,7 @@ import {
   type RedemptionStanding,
 } from '../api';
 import { useAuth } from '../contexts/AuthContext';
+import { PlayerAvatar } from '../components/PlayerAvatar';
 import { EnjRedemptionSection } from '../components/EnjRedemptionSection';
 import { formatDistance } from '../utils/format';
 
@@ -183,6 +184,12 @@ export function Leaderboard() {
                   <span className={`text-lg tabular-nums w-10 shrink-0 ${entry.rank <= 3 ? 'text-m2e-accent' : 'text-m2e-text-muted'}`}>
                     {String(entry.rank).padStart(2, '0')}
                   </span>
+                  <PlayerAvatar
+                    avatarUrl={entry.avatarUrl}
+                    nickname={entry.nickname}
+                    className="w-8 h-8 shrink-0 pixel-border border-m2e-border"
+                    textClassName="text-sm"
+                  />
                   <span className="flex-1 min-w-0 truncate text-m2e-text">{entry.nickname ?? 'Player'}</span>
                   <span className="text-m2e-text-secondary tabular-nums">
                     {metric === 'distance'
