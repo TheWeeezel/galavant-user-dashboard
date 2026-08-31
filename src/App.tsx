@@ -8,6 +8,7 @@ import { Profile } from './pages/Profile';
 import { EarnPoints } from './pages/EarnPoints';
 import { Tasks } from './pages/Tasks';
 import { Report } from './pages/Report';
+import { Bounty } from './pages/Bounty';
 import { Roadmap } from './pages/Roadmap';
 import { Leaderboard } from './pages/Leaderboard';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
@@ -38,6 +39,8 @@ export function App() {
           <Route path="earn" element={<EarnPoints />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="report" element={<Report />} />
+          {/* Short on purpose — the bounty rules are meant to be pasted into a post. */}
+          <Route path="bounty" element={<Bounty />} />
           <Route path="roadmap" element={<Roadmap />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="privacy" element={<PrivacyPolicy />} />

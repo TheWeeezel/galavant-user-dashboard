@@ -16,7 +16,7 @@ import {
   Store, ShoppingCart, Trophy, SpeedFast,
   Heart, Scale, Fire,
   Download, Login, Gift, Human,
-  Check, Globe, Flag,
+  Check, Globe, Flag, Shield,
   Music, Cloud, Lock, Clock,
   ArrowDown, ChevronRight,
 } from 'pixelarticons/react';
@@ -948,6 +948,57 @@ export function Home() {
               <Globe className="w-5 h-5" />
               View Full Roadmap
             </Link>
+          </div>
+        </motion.section>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            TEST MONTH — the GPS-spoof bounty
+
+            Unnumbered on purpose: the 01…10 spine describes the game, and this
+            is a programme that ends with the test month. Numbering it would
+            renumber the spine every time a temporary call goes up or comes down.
+
+            Short on purpose too. Everything a passer-by needs is the offer, the
+            one rule that keeps a helper from being treated as a cheat, and the
+            top amount; the grading behind that amount stays off every player-
+            facing surface, /bounty included, because it is what we grade
+            against.
+            ══════════════════════════════════════════════════════════════════ */}
+        <motion.section
+          className="space-y-6"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={vp}
+        >
+          <div className="pixel-card p-6 md:p-10 border-m2e-accent grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 md:gap-10 md:items-center">
+            <div className="space-y-4">
+              <div className="section-label">Test Month · Bounty</div>
+              <h2 className="text-3xl md:text-5xl tracking-wide text-m2e-text uppercase leading-none">
+                Break Our GPS.<br className="md:hidden" /> <span className="text-m2e-accent">Get Paid.</span>
+              </h2>
+              <p className="text-base md:text-lg text-m2e-text-secondary leading-snug max-w-xl">
+                The town pays for real walking, so a faked ride is the one thing that could break it.
+                For the test month we would rather buy the proof than find out the hard way later:
+                get a faked ride past our detection and it is worth up to 500 ENJ, graded by how
+                easily anyone else could repeat it.
+              </p>
+              <p className="text-base md:text-lg text-m2e-text leading-snug max-w-xl">
+                Register before you spoof. An unregistered faked ride is cheating and is treated as
+                cheating — a registered one costs you nothing.
+              </p>
+              <Link to="/bounty" className="pixel-btn pixel-btn-secondary text-sm px-6 py-3 inline-flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                Read the rules
+              </Link>
+            </div>
+            <div className="bg-m2e-bg-alt border-2 border-m2e-border rounded-lg p-6 flex flex-col items-center text-center gap-2 md:w-56">
+              <Shield className="w-12 h-12 text-m2e-accent" />
+              <div className="text-3xl uppercase tracking-wide text-m2e-text leading-none">500 ENJ</div>
+              <div className="text-[10px] tracking-[0.25em] uppercase text-m2e-text-muted">
+                Top payout · scaled down
+              </div>
+            </div>
           </div>
         </motion.section>
 
