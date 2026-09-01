@@ -62,6 +62,7 @@ function buildEnergyPage(p: GuideParams): GameplayPage {
       { type: 'list', items: [
         'Energy is measured in minutes of earning time. Only minutes where you actively earn WATTS consume energy — if your speed is out of range, you stop moving, or you pause your session, your energy is preserved.',
         `It refills ${p.energyRegenPercent}% every ${p.energyRegenIntervalHours} hours — a full refill takes ${p.fullRechargeHours} hours.`,
+        'If a refill lands while you\'re mid-session and out of energy, it\'s automatically credited to your ride — the session screen shows a banner when this happens. The "energy full" notification waits until your session ends.',
         'Your total energy pool depends on how many bikes you own and their quality.',
         `The maximum energy cap is ${cap} minutes per day.`,
         'Only bikes with HP remaining contribute to your energy pool.',
@@ -806,7 +807,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'What you need it for' },
           { type: 'list', items: [
             'Signing. Anything that happens on the chain in your name is approved in your wallet, not by us. That is the point of holding your own keys.',
-            'Staking ENJ. The stake is signed from your own wallet and never by us, so linking is step one and approving the request in the wallet is step two.',
+            'Staking ENJ. You stake in the Galavant Peloton pool yourself, in your own wallet — Galavant is not part of that step and never holds your ENJ.',
             'Holding your own ENJ. Once a wallet is linked, your account page shows what is in it and what you have staked.',
             'Buying a Galavant NFT priced in ENJ. Those listings are real listings on the chain and can be filled from the chain side — read Importing first, because a purchase made that way cannot be brought into the game yet.',
             'Looking at Galavant NFTs from outside the game. Every token points at its own live stat sheet, so a bike renders the same in a wallet or on a marketplace as it does here.',
@@ -830,7 +831,8 @@ export const gameplaySections: GameplaySection[] = [
           // happens.
           { type: 'paragraph', text: 'On a desktop there is no wallet app for the link to open, so the QR square is the way in — scan it with the phone your wallet lives on. The code expires, and the website counts the time down for you; if it runs out, start again for a fresh one.' },
           { type: 'heading', text: 'Approving a request' },
-          { type: 'paragraph', text: 'When Galavant needs your signature — a stake, for example — it creates a request instead of signing for you. Open the Enjin Wallet on your phone, go to Settings, then Connected Apps, and you will find it waiting there. Check what it says, approve it, and the Galavant screen updates on its own. Nothing happens on our side until you do.' },
+          { type: 'paragraph', text: 'When Galavant needs your signature it creates a request instead of signing for you. Open the Enjin Wallet on your phone, go to Settings, then Connected Apps, and you will find it waiting there. Check what it says, approve it, and the Galavant screen updates on its own. Nothing happens on our side until you do.' },
+          { type: 'paragraph', text: 'Staking is not one of those requests. You do it in the pool yourself, and there is nothing waiting in Connected Apps for it.' },
           { type: 'paragraph', text: 'One wallet per account and one account per wallet. You can unlink whenever you like: your ENJ, your stake and everything else in the wallet stay exactly where they are — only the connection goes, and your staking bonus stops until you link again.' },
           { type: 'tip', text: 'Treat the linking code like a one-time password. Anyone who photographs it — over your shoulder, on a shared screen — can attach their own wallet to your account and take the one link slot. Reveal it only when you are ready to scan.' },
         ],
@@ -1073,7 +1075,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'enj-staking',
         title: 'ENJ Staking',
         content: [
-          { type: 'paragraph', text: 'Staking is the optional half of your account bonus. Stake ENJ in the Galavant Peloton nomination pool from your own Enjin Wallet, and the game rewards you for it. Your ENJ never leaves your wallet and never enters ours.' },
+          { type: 'paragraph', text: 'Staking is the optional half of your account bonus. Stake ENJ in the Galavant Peloton nomination pool from your own Enjin Wallet, and the game rewards you for it. Your ENJ never leaves your wallet and never enters ours — the stake is made in the pool, by you, and we only read the result.' },
           { type: 'heading', text: 'The short version' },
           { type: 'list', items: [
             'You keep your ENJ, and you keep the normal on-chain staking rewards it already pays you.',
@@ -1083,8 +1085,8 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Setting it up' },
           { type: 'list', items: [
             'Link your Enjin Wallet under Staking → Stake ENJ, in the app or in your account on the website. Linking only reads your public address — it never moves funds.',
-            'Enter an amount and tap Stake ENJ, then approve the request in your Enjin Wallet under Connected Apps. Galavant only asks; you sign.',
-            'Your bonus appears within an hour or so and then keeps building.',
+            'Open the Galavant Peloton pool from that screen, and stake there in your own wallet. You choose the amount and you sign it; Galavant is not part of that step.',
+            'Your bonus appears on its own within an hour or so and then keeps building. There is nothing to claim and nothing to confirm — we read the pool from the chain and find your stake there.',
           ]},
           { type: 'heading', text: 'Why it takes a while to build' },
           { type: 'paragraph', text: 'Your bonus is based on how much you have had staked over recent weeks, not on what is in the pool at this instant. Staking a large amount and pulling it straight back out does almost nothing. If you have just staked, expect the bonus to keep climbing for a while before it settles — that is the system recognising that you actually stayed.' },

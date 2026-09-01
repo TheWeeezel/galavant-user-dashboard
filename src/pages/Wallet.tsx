@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
   Coins, Zap, Lock, ExternalLink, ChevronLeft, Copy, Check,
-  ShoppingCart, Notes,
+  ShoppingCart, Notes, Download,
 } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
 import { EnjStakingSection } from '../components/EnjStakingSection';
@@ -163,6 +163,15 @@ export function Wallet() {
           <div className="grid grid-cols-2 gap-4">
             <ActionCard to="/earn" Icon={Coins} title="Earn" description="Missions & walks" />
             <ActionCard to="/market" Icon={ShoppingCart} title="Market" description="Spend WATTS" />
+            {/*
+              Der Wegweiser zur Abholung, und er steht ausgerechnet hier, weil DIESE Seite die
+              ist, auf der ein NFT-Halter landet: die App verlinkt sie ("SWAP · DEPOSIT · NFTS"),
+              und wer eine Wallet sucht, tippt /wallet und nicht /profile. Die Einzahlungsadresse
+              und die Liste des Angekommenen liegen aber im Profil — ohne diese Karte fuehrt von
+              hier nichts dorthin, und die Adresse, die weiter unten auf dieser Seite steht, ist
+              die VERKNUEPFTE Wallet des Spielers, also genau die falsche zum Einzahlen.
+            */}
+            <ActionCard to="/profile" Icon={Download} title="Claim NFTs" description="Your NFT deposit address" />
           </div>
         </motion.section>
 
