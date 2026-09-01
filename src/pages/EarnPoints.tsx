@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
@@ -15,7 +15,7 @@ import {
   fetchReferralStats,
   fetchSocialStatus,
   fetchSocialTweets,
-  linkTwitter,
+  twitterLinkStart,
   unlinkTwitter,
   claimFollow,
   claimLike,
@@ -26,7 +26,6 @@ export function EarnPoints() {
   const { isAuthenticated } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [twitterHandle, setTwitterHandle] = useState('');
   const [followClicked, setFollowClicked] = useState(false);
   const [visitedTweets, setVisitedTweets] = useState<Set<string>>(new Set());
   const queryClient = useQueryClient();
@@ -63,13 +62,26 @@ export function EarnPoints() {
     }),
   });
 
+  // The OAuth callback bounces back to /earn with the outcome in the query.
+  const [linkNotice, setLinkNotice] = useState<{ kind: 'ok' | 'fail'; text: string } | null>(null);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const x = q.get('x');
+    if (!x) return;
+    if (x === 'linked') setLinkNotice({ kind: 'ok', text: `Connected as @${q.get('handle') ?? 'your account'}` });
+    else if (x === 'denied') setLinkNotice({ kind: 'fail', text: 'You declined the X permission request.' });
+    else setLinkNotice({ kind: 'fail', text: q.get('reason') ?? 'Could not link your X account.' });
+    queryClient.invalidateQueries({ queryKey: ['social-status'] });
+    window.history.replaceState({}, '', window.location.pathname);
+  }, [queryClient]);
+
   const linkTwitterMutation = useMutation({
-    mutationFn: (username: string) => linkTwitter(username),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['socialStatus'] });
-      setTwitterHandle('');
-    },
+    mutationFn: twitterLinkStart,
+    // Full redirect, not a popup: X blocks its authorize page in many embedded
+    // and popup contexts, and the callback returns to /earn anyway.
+    onSuccess: ({ url }) => { window.location.href = url; },
   });
+
 
   const claimFollowMutation = useMutation({
     mutationFn: claimFollow,
@@ -228,22 +240,16 @@ export function EarnPoints() {
                 Login to Link X
               </button>
             ) : !socialStatus?.twitterLinked ? (
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={twitterHandle}
-                  onChange={(e) => setTwitterHandle(e.target.value)}
-                  placeholder="@username"
-                  className="w-40 pixel-border border-m2e-border bg-m2e-card px-3 py-2 text-xs text-m2e-text placeholder:text-m2e-text-muted outline-none focus:border-m2e-accent font-mono"
-                />
-                <button
-                  onClick={() => linkTwitterMutation.mutate(twitterHandle)}
-                  disabled={!twitterHandle.trim() || linkTwitterMutation.isPending}
-                  className="pixel-btn pixel-btn-primary px-4 py-2 text-xs disabled:opacity-50"
-                >
-                  {linkTwitterMutation.isPending ? '…' : 'Link X'}
-                </button>
-              </div>
+              <button
+                onClick={() => linkTwitterMutation.mutate()}
+                disabled={linkTwitterMutation.isPending}
+                className="pixel-btn pixel-btn-primary px-5 py-2.5 text-sm inline-flex items-center gap-2 disabled:opacity-50"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+                {linkTwitterMutation.isPending ? 'Opening X…' : 'Connect X'}
+              </button>
             ) : (
               <div className="flex items-center gap-2">
                 <span className="text-xs text-m2e-text font-mono pixel-border border-m2e-success bg-m2e-success/10 px-3 py-2 text-m2e-success">

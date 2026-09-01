@@ -411,12 +411,12 @@ export function fetchSocialStatus() {
   return fetchAuthJson<SocialRewardStatus>('/social/status');
 }
 
-export function linkTwitter(username: string) {
-  return fetchAuthJson<{ success: boolean }>('/social/link-twitter', {
-    method: 'POST',
-    body: JSON.stringify({ username }),
-  });
+/** Start X account linking. The caller sends the player to `url`. */
+export function twitterLinkStart() {
+  return fetchAuthJson<{ url: string }>('/social/twitter/start', { method: 'POST', body: JSON.stringify({}) });
 }
+
+
 
 export function unlinkTwitter() {
   return fetchAuthJson<{ success: boolean }>('/social/unlink-twitter', { method: 'POST' });
