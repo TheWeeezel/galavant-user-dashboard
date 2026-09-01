@@ -6,8 +6,6 @@ import {
   enjinLinkUnlink,
   enjinLinkStatus,
   enjinStakingStatus,
-  enjinBond,
-  enjinBondStatus,
 } from '../api';
 
 // Pool 84, "Galavant Peloton". Players stake from their own Enjin Wallet — Galavant never custodies ENJ.
@@ -20,11 +18,6 @@ const POOL_URL = 'https://nft.io/staking/pool/84';
  * the caller is authenticated (it lives inside the account view).
  */
 export function EnjStakingSection() {
-  const [amount, setAmount] = useState('');
-  const [bondJournalId, setBondJournalId] = useState<string | null>(null);
-  // The amount that was actually submitted, so the approval steps can tell the
-  // player exactly what the pending request in their wallet should say.
-  const [submittedAmount, setSubmittedAmount] = useState<string | null>(null);
 
   const link = useQuery({
     queryKey: ['enjin-link-status'],
@@ -97,23 +90,7 @@ export function EnjStakingSection() {
     },
   });
 
-  const bond = useMutation({
-    mutationFn: (enj: number) => enjinBond(enj),
-    onSuccess: (data, enj) => {
-      setBondJournalId(data.journalId);
-      setSubmittedAmount(String(enj));
-    },
-  });
 
-  const bondStatus = useQuery({
-    queryKey: ['enjin-bond-status', bondJournalId],
-    queryFn: () => enjinBondStatus(bondJournalId as string),
-    enabled: !!bondJournalId,
-    refetchInterval: (q) => {
-      const s = q.state.data?.state;
-      return s === 'FINALIZED' || s === 'FAILED' || s === 'ABANDONED' ? false : 5000;
-    },
-  });
 
   const notEnabled =
     (link.error as { message?: string } | undefined)?.message?.includes('not enabled') ||
@@ -123,10 +100,6 @@ export function EnjStakingSection() {
     ? Math.round((staking.data.earningBoost - 1) * 100)
     : 0;
 
-  const bondState = bondStatus.data?.state;
-  const bondPending = !!bondJournalId && bondState !== 'FINALIZED' && bondState !== 'FAILED' && bondState !== 'ABANDONED';
-  const amountNum = Number(amount);
-  const amountValid = Number.isFinite(amountNum) && amountNum >= 1;
 
   if (notEnabled) {
     return (
@@ -256,56 +229,28 @@ export function EnjStakingSection() {
           </div>
 
           <div className="pixel-card p-6 space-y-4">
-            <h3 className="text-xl uppercase tracking-wide">Stake ENJ</h3>
+            <h3 className="text-xl uppercase tracking-wide">Stake in the pool</h3>
             <p className="text-m2e-text-secondary text-sm">
-              Enter an amount and approve the request in your own Enjin Wallet. Your ENJ never leaves your
-              wallet — Galavant only asks; you sign.
+              Staking happens in the Galavant Peloton pool, and you do it there — pick the amount and
+              sign it in your own wallet. Galavant is not part of that step and never holds your ENJ.
             </p>
-            <div className="flex items-center gap-3">
-              <input
-                type="number"
-                inputMode="decimal"
-                min="1"
-                step="any"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="1"
-                disabled={bondPending || bond.isPending}
-                className="flex-1 bg-m2e-bg-alt border-2 border-m2e-border rounded px-4 py-3 text-lg font-bold text-m2e-text focus:border-m2e-accent outline-none"
-              />
-              <span className="text-m2e-text-secondary font-bold">ENJ</span>
-            </div>
-            <button
-              className="pixel-btn-primary px-6 py-3 w-full disabled:opacity-50"
-              onClick={() => amountValid && bond.mutate(amountNum)}
-              disabled={!amountValid || bond.isPending || bondPending}
-            >
-              {bond.isPending ? 'Creating request…' : 'Stake ENJ'}
-            </button>
-
-            {bond.isError ? (
-              <p className="text-sm text-m2e-danger">
-                {(bond.error as Error).message}. In your Enjin Wallet, your ENJ must include a little
-                free (unbonded) balance to cover the network fee.
-              </p>
-            ) : bondPending ? (
-              <ApprovalSteps amountEnj={submittedAmount} state={bondState} />
-            ) : bondState === 'FINALIZED' ? (
-              <p className="text-sm text-m2e-success font-bold">Bond confirmed on-chain. Your boost basis updates within the hour.</p>
-            ) : bondState === 'FAILED' || bondState === 'ABANDONED' ? (
-              <p className="text-sm text-m2e-danger">
-                That bond didn't go through{bondStatus.data?.error ? `: ${bondStatus.data.error}` : ''}. You can try again.
-              </p>
-            ) : null}
-
+            <ol className="text-sm text-m2e-text-secondary space-y-2 list-decimal list-inside">
+              <li>Open the pool below. On a phone, tap Connect Wallet and your Enjin Wallet comes to the front.</li>
+              <li>Enter how much ENJ to stake and approve it in the wallet.</li>
+              <li>Come back here. Your stake turns up by itself within the hour — nothing to claim.</li>
+            </ol>
             <a
-              className="text-sm text-m2e-text-muted inline-flex items-center gap-2 hover:text-m2e-accent"
+              className="pixel-btn-primary px-6 py-3 w-full inline-flex items-center justify-center gap-2"
               href={POOL_URL}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Prefer the web? Open the Galavant Peloton pool <ExternalLink className="w-4 h-4" />
+              Open Galavant Peloton pool <ExternalLink className="w-4 h-4" />
             </a>
+            <p className="text-xs text-m2e-text-muted">
+              The pool lives on the Enjin Relaychain — that is where the ENJ you stake has to be, and
+              where it stays. Unstaking works the same way, in the same place.
+            </p>
           </div>
 
           {staking.data?.slashingRisk && (
@@ -317,53 +262,8 @@ export function EnjStakingSection() {
   );
 }
 
-/**
- * The bond lives as a PENDING request until the player approves it in the Enjin
- * Wallet *mobile app* — there is nothing to click here, and on desktop that is
- * genuinely unobvious. Spell out where to go and what the request looks like.
- */
-function ApprovalSteps({ amountEnj, state }: { amountEnj: string | null; state?: string }) {
-  return (
-    <div className="relative pixel-border border-m2e-warning bg-m2e-warning/10 p-4 space-y-3">
-      <div className="flex items-center gap-2 text-m2e-warning font-bold uppercase tracking-wide text-sm">
-        <Clock className="w-4 h-4 animate-pulse" />
-        Waiting for approval in your Enjin Wallet
-      </div>
-
-      <p className="text-sm text-m2e-text-secondary">
-        Your stake isn't submitted yet. Galavant created a request — you have to sign it on the phone
-        where your Enjin Wallet lives. Nothing happens on this page until you do.
-      </p>
-
-      <ol className="text-sm text-m2e-text-secondary space-y-2">
-        <Step n={1}>Open the <span className="text-m2e-text font-bold">Enjin Wallet</span> app on your phone.</Step>
-        <Step n={2}>
-          Go to <span className="text-m2e-text font-bold">Settings → Connected Apps</span>, or tap the
-          push notification if you got one.
-        </Step>
-        <Step n={3}>
-          Find the pending request from <span className="text-m2e-text font-bold">Galavant</span>
-          {amountEnj ? (
-            <> to stake <span className="text-m2e-accent font-bold">{amountEnj} ENJ</span></>
-          ) : null}
-          {' '}into the Galavant Peloton pool.
-        </Step>
-        <Step n={4}>Check the amount, then <span className="text-m2e-text font-bold">Approve</span> and sign.</Step>
-      </ol>
-
-      <p className="text-xs text-m2e-text-muted">
-        Keep this page open — it updates on its own once you approve, usually within a minute.
-        {state ? <> Current status: <span className="font-bold">{state}</span>.</> : null}
-      </p>
-
-      <p className="text-xs text-m2e-text-muted">
-        Don't see the request? Make sure the wallet you linked is the one open on your phone, and that
-        it holds a little free (unbonded) ENJ for the network fee. If it never arrives, the request
-        expires on its own and you can stake again.
-      </p>
-    </div>
-  );
-}
+// `ApprovalSteps` ist am 2026-09-01 entfallen. Es fuehrte durch eine Freigabe in Connected Apps,
+// die es fuer einen Stake nicht mehr gibt — gestaked wird im Pool, in der eigenen Wallet.
 
 function Step({ n, children }: { n: number; children: ReactNode }) {
   return (
