@@ -12,6 +12,7 @@ import {
   type UserBike,
   type UserPart,
 } from '../api';
+import { config } from '../config';
 
 /**
  * THE listing surface (task 7dc61fc3). One place a player lists an item, whichever kind it is:
@@ -23,12 +24,20 @@ import {
  * listing and selling it are exactly the things its owner CAN do.
  */
 
-const qualityClass: Record<string, string> = {
-  common: 'text-m2e-text-secondary',
-  uncommon: 'text-m2e-success',
-  rare: 'text-sky-400',
-  epic: 'text-purple-400',
-  legendary: 'text-amber-400',
+// Rarity as materials — the same gem tag the app's RarityTag renders.
+const RARITY_MATERIALS: Record<string, { label: string; color: string }> = {
+  common: { label: 'Steel', color: 'var(--color-m2e-common)' },
+  uncommon: { label: 'Moss', color: 'var(--color-m2e-uncommon)' },
+  rare: { label: 'Blue Hour', color: 'var(--color-m2e-rare)' },
+  epic: { label: 'Orchid', color: 'var(--color-m2e-epic)' },
+  legendary: { label: 'Brass', color: 'var(--color-m2e-legendary)' },
+};
+
+const PART_COLORS: Record<string, string> = {
+  earning: 'var(--color-m2e-earning)',
+  luck: 'var(--color-m2e-luck)',
+  recovery: 'var(--color-m2e-recovery)',
+  durability: 'var(--color-m2e-durability)',
 };
 
 const pct = (rate: number) => `${Number((rate * 100).toFixed(2))}%`;
@@ -36,37 +45,55 @@ const pct = (rate: number) => `${Number((rate * 100).toFixed(2))}%`;
 type SellableItem = {
   id: string;
   itemType: 'bike' | 'part';
-  label: string;
+  /** The item's identity line (bike type / part type). */
+  name: string;
+  /** Material (bikes) or attribute (parts) — rendered as the gem tag. */
+  gemLabel: string;
+  gemColor: string;
+  /** Item art, baked on white — shown on a white plate like everywhere else. */
+  art: string;
   sublabel: string;
-  quality?: string;
   isNft: boolean;
   /** Off-chain bikes must be fully repaired first; an NFT's condition is frozen at mint. */
   blockedReason: string | null;
 };
 
 function bikeToItem(b: UserBike): SellableItem {
-  const isNft = b.tokenId != null;
+    const isNft = b.tokenId != null;
+  const mat = RARITY_MATERIALS[b.quality] ?? RARITY_MATERIALS.common;
   return {
     id: b.id,
     itemType: 'bike',
-    label: `${b.quality} ${b.type}`,
+    name: b.type,
+    gemLabel: mat.label,
+    gemColor: mat.color,
+    art: b.imageUrl
+      ? (b.imageUrl.startsWith('/') ? `${config.apiUrl}${b.imageUrl}` : b.imageUrl)
+      : `${config.apiUrl}/art/bases/bike-${b.type.toLowerCase()}.png`,
     sublabel: isNft ? `NFT #${b.tokenId} · Lv.${b.level}` : `Lv.${b.level}`,
-    quality: b.quality,
     isNft,
-    blockedReason: !isNft && b.durability < 100
-      ? 'Repair this bike to 100% durability before listing it.'
-      : b.isEquipped
-        ? 'Unequip this bike before listing it.'
-        : null,
+    // Ein frisch exportiertes Rad BLEIBT hier stehen und sagt, was los ist. Vorher fiel es zwei
+    // Stunden lang ganz aus der Liste (der Server filterte es weg) — der Spieler sah nur, dass
+    // sein Rad verschwunden war. Gemeldet am 2026-09-02.
+    blockedReason: b.settling
+      ? 'This NFT is still settling on chain — you can list it in a couple of hours.'
+      : !isNft && b.durability < 100
+        ? 'Repair this bike to 100% durability before listing it.'
+        : b.isEquipped
+          ? 'Unequip this bike before listing it.'
+          : null,
   };
 }
 
 function partToItem(p: UserPart): SellableItem {
-  const isNft = p.tokenId != null;
+    const isNft = p.tokenId != null;
   return {
     id: p.id,
     itemType: 'part',
-    label: `${p.type} part`,
+    name: `${p.type} part`,
+    gemLabel: p.type,
+    gemColor: PART_COLORS[p.type] ?? 'var(--color-m2e-text-muted)',
+    art: `/parts/part-${p.type.toLowerCase()}-lv${p.level}.png`,
     sublabel: isNft ? `NFT #${p.tokenId} · Lv.${p.level}` : `Lv.${p.level}`,
     isNft,
     blockedReason: null,
@@ -183,11 +210,27 @@ function SellCard({
 
   return (
     <div className="pixel-card p-4 flex flex-col gap-3">
-      <div className="flex items-baseline justify-between">
-        <span className={`uppercase text-sm tracking-wide ${item.quality ? (qualityClass[item.quality] ?? '') : 'text-m2e-accent'}`}>
-          {item.label}
-        </span>
-        <span className="text-xs text-m2e-text-secondary">{item.sublabel}</span>
+            {/* Identity — art on a white plate, Jersey name, gem tag; the app's card grammar. */}
+      <div className="flex gap-3">
+        <div className="w-16 h-16 shrink-0 bg-white pixel-border overflow-hidden">
+          <img
+            src={item.art}
+            alt={item.name}
+            className="w-full h-full object-cover pixel-render"
+            loading="lazy"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }}
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="uppercase text-lg tracking-wide text-m2e-text truncate">{item.name}</span>
+            <span className="text-xs text-m2e-text-secondary shrink-0 tabular-nums">{item.sublabel}</span>
+          </div>
+          <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider mt-1" style={{ color: item.gemColor }}>
+            <span className="w-2 h-2 rotate-45 rounded-[1px] inline-block" style={{ backgroundColor: item.gemColor }} />
+            {item.gemLabel}
+          </span>
+        </div>
       </div>
 
       {listing ? (
