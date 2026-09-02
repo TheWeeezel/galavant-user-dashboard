@@ -10,12 +10,13 @@ function truncateId(id: string): string {
   return `${id.slice(0, 6)}...${id.slice(-4)}`;
 }
 
-const qualityColors: Record<string, string> = {
-  common: 'pixel-badge-common',
-  uncommon: 'pixel-badge-uncommon',
-  rare: 'pixel-badge-rare',
-  epic: 'pixel-badge-epic',
-  legendary: 'pixel-badge-legendary',
+// Rarity as materials — the gem tag the app's RarityTag renders.
+const RARITY_MATERIALS: Record<string, { label: string; color: string }> = {
+  common: { label: 'Steel', color: 'var(--color-m2e-common)' },
+  uncommon: { label: 'Moss', color: 'var(--color-m2e-uncommon)' },
+  rare: { label: 'Blue Hour', color: 'var(--color-m2e-rare)' },
+  epic: { label: 'Orchid', color: 'var(--color-m2e-epic)' },
+  legendary: { label: 'Brass', color: 'var(--color-m2e-legendary)' },
 };
 
 const QUALITY_MAX: Record<string, number> = {
@@ -40,10 +41,12 @@ interface SegmentedStatBarProps {
   max: number;
   color: string;
   colorLight: string;
+  /** CSS color for the attribute label — the Paint-Shop hue of the stat. */
+  labelColor: string;
   showBase: boolean;
 }
 
-function SegmentedStatBar({ label, base, added, max, color, colorLight, showBase }: SegmentedStatBarProps) {
+function SegmentedStatBar({ label, base, added, max, color, colorLight, labelColor, showBase }: SegmentedStatBarProps) {
   const total = base + added;
   const displayValue = showBase ? base : total;
   const basePct = Math.min((base / max) * 100, 100);
@@ -51,7 +54,7 @@ function SegmentedStatBar({ label, base, added, max, color, colorLight, showBase
 
   return (
  <div className="flex items-center gap-2 text-xs">
- <span className="w-10 text-m2e-text-secondary uppercase">{label}</span>
+ <span className="w-10 uppercase tracking-wider" style={{ color: labelColor }}>{label}</span>
       <div
  className="flex-1 h-5 bg-m2e-bg-alt overflow-hidden pixel-border"
         style={{
@@ -90,38 +93,42 @@ const socketTypeIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGE
   durability: Shield,
 };
 
-const socketTypeColors: Record<string, string> = {
-  earning: 'text-m2e-earning',
-  luck: 'text-m2e-luck',
-  recovery: 'text-m2e-recovery',
-  durability: 'text-m2e-durability',
-};
-
-const socketTypeBorders: Record<string, string> = {
-  earning: 'border-m2e-earning',
-  luck: 'border-m2e-luck',
-  recovery: 'border-m2e-recovery',
-  durability: 'border-m2e-durability',
+// Hardpoint wells — the app's cartridge-slot grammar: a dashed inset in the
+// attribute's Paint-Shop hue with its gem; locked wells stay muted.
+const socketWellColors: Record<string, string> = {
+  earning: 'var(--color-m2e-earning)',
+  luck: 'var(--color-m2e-luck)',
+  recovery: 'var(--color-m2e-recovery)',
+  durability: 'var(--color-m2e-durability)',
 };
 
 function SocketSlot({ socket }: { socket: PartSocket }) {
   const Icon = socketTypeIcons[socket.type] ?? Lock;
-  const colorClass = socketTypeColors[socket.type] ?? 'text-m2e-text-muted';
-  const borderClass = socket.unlocked ? (socketTypeBorders[socket.type] ?? '') : 'border-m2e-border-light';
+  const wellColor = socketWellColors[socket.type] ?? 'var(--color-m2e-text-muted)';
+
+  if (!socket.unlocked) {
+    return (
+      <div className="rounded border-2 border-dashed border-m2e-border-light bg-m2e-bg-alt/60 p-3 flex flex-col items-center gap-1 opacity-70">
+        <Lock className="w-5 h-5 text-m2e-text-muted" />
+        <span className="text-[10px] uppercase tracking-wider text-m2e-text-muted">Locked</span>
+        <span className="text-[9px] text-m2e-text-muted uppercase">Slot {socket.slot + 1}</span>
+      </div>
+    );
+  }
 
   return (
- <div className={`pixel-border p-3 flex flex-col items-center gap-1 ${borderClass} ${socket.unlocked ? 'bg-m2e-card' : 'bg-m2e-bg-alt opacity-70'}`}>
-      {socket.unlocked ? (
- <Icon className={`w-5 h-5 ${colorClass}`} />
-      ) : (
- <Lock className="w-5 h-5 text-m2e-text-muted" />
-      )}
- <span className={`text-[10px] uppercase tracking-wider ${socket.unlocked ? colorClass : 'text-m2e-text-muted'}`}>
+    <div
+      className="rounded border-2 border-dashed p-3 flex flex-col items-center gap-1 bg-m2e-bg-alt"
+      style={{ borderColor: wellColor }}
+    >
+      <span className="inline-flex items-center gap-1.5">
+        <span className="w-2 h-2 rotate-45 rounded-[1px] inline-block" style={{ backgroundColor: wellColor }} />
+        <Icon className="w-4 h-4" style={{ color: wellColor }} />
+      </span>
+      <span className="text-[11px] uppercase tracking-wider" style={{ color: wellColor }}>
         {socket.type}
       </span>
- <span className="text-[9px] text-m2e-text-muted uppercase">
-        Slot {socket.slot + 1}
-      </span>
+      <span className="text-[9px] text-m2e-text-muted uppercase">Slot {socket.slot + 1}</span>
     </div>
   );
 }
@@ -144,23 +151,29 @@ function ModalContent({ nft }: { nft: MintedNftDetail }) {
         </div>
  <div className="flex-1 space-y-2">
  <div className="flex items-center gap-2 flex-wrap">
- <span className="text-lg uppercase tracking-wide text-m2e-text">
-              {isOnChain ? `#${nft.tokenId}` : truncateId(nft.id)}
+ <span className="text-2xl uppercase tracking-wide text-m2e-text">
+              {nft.type}
             </span>
- <span className={`px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide ${qualityColors[nft.quality] ?? qualityColors.common}`}>
-              {nft.quality}
+ <span
+              className="inline-flex items-center gap-1.5 text-sm uppercase tracking-wide"
+              style={{ color: (RARITY_MATERIALS[nft.quality] ?? RARITY_MATERIALS.common).color }}
+            >
+              <span
+                className="w-2 h-2 rotate-45 rounded-[1px] inline-block"
+                style={{ backgroundColor: (RARITY_MATERIALS[nft.quality] ?? RARITY_MATERIALS.common).color }}
+              />
+              {(RARITY_MATERIALS[nft.quality] ?? RARITY_MATERIALS.common).label}
             </span>
  <span className={`px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide ${isOnChain ? 'bg-m2e-info/20 text-m2e-info border-m2e-info/50' : 'bg-m2e-bg-alt text-m2e-text-muted border-m2e-border-light'}`}>
               {isOnChain ? 'On-chain' : 'In-game'}
             </span>
           </div>
- <div className="text-sm uppercase tracking-wide text-m2e-text-secondary">
-            {nft.type}
+ <div className="text-sm uppercase tracking-wide text-m2e-text-secondary tabular-nums">
+            LV.{nft.level}{isOnChain ? ` · #${nft.tokenId}` : ''}
           </div>
- <div className="text-xs text-m2e-text-muted space-x-3">
-            <span>Lv. {nft.level}</span>
-            {isOnChain && <span title={nft.id}>ID: {truncateId(nft.id)}</span>}
-          </div>
+          {isOnChain && (
+            <div className="text-xs text-m2e-text-muted" title={nft.id}>ID: {truncateId(nft.id)}</div>
+          )}
         </div>
       </div>
 
@@ -170,20 +183,16 @@ function ModalContent({ nft }: { nft: MintedNftDetail }) {
  <h3 className="text-xs uppercase tracking-widest text-m2e-text-muted">Attributes</h3>
           <button
             onClick={() => setShowBase((v) => !v)}
- className={`px-3 py-1 text-[10px] uppercase tracking-wider pixel-border transition-colors ${
-              showBase
-                ? 'bg-m2e-accent/20 text-m2e-accent border-m2e-accent/50'
-                : 'bg-m2e-info/20 text-m2e-info border-m2e-info/50'
-            }`}
+ className="px-3 py-1 text-[11px] uppercase tracking-wider pixel-border transition-colors bg-m2e-accent/15 text-m2e-accent border-m2e-accent"
           >
-            {showBase ? 'BASE' : 'TOTAL'}
+            {showBase ? 'Base' : 'Total'}
           </button>
         </div>
  <div className="space-y-1">
-          <SegmentedStatBar label="EAR" base={nft.baseEarning} added={nft.addedEarning} max={tierMax} color="bg-m2e-earning" colorLight="bg-m2e-earning/50" showBase={showBase} />
-          <SegmentedStatBar label="LCK" base={nft.baseLuck} added={nft.addedLuck} max={tierMax} color="bg-m2e-luck" colorLight="bg-m2e-luck/50" showBase={showBase} />
-          <SegmentedStatBar label="REC" base={nft.baseRecovery} added={nft.addedRecovery} max={tierMax} color="bg-m2e-recovery" colorLight="bg-m2e-recovery/50" showBase={showBase} />
-          <SegmentedStatBar label="DUR" base={nft.baseDurability} added={nft.addedDurability} max={tierMax} color="bg-m2e-durability" colorLight="bg-m2e-durability/50" showBase={showBase} />
+          <SegmentedStatBar label="EAR" base={nft.baseEarning} added={nft.addedEarning} max={tierMax} color="bg-m2e-earning" colorLight="bg-m2e-earning/50" labelColor="var(--color-m2e-earning)" showBase={showBase} />
+          <SegmentedStatBar label="LCK" base={nft.baseLuck} added={nft.addedLuck} max={tierMax} color="bg-m2e-luck" colorLight="bg-m2e-luck/50" labelColor="var(--color-m2e-luck)" showBase={showBase} />
+          <SegmentedStatBar label="REC" base={nft.baseRecovery} added={nft.addedRecovery} max={tierMax} color="bg-m2e-recovery" colorLight="bg-m2e-recovery/50" labelColor="var(--color-m2e-recovery)" showBase={showBase} />
+          <SegmentedStatBar label="DUR" base={nft.baseDurability} added={nft.addedDurability} max={tierMax} color="bg-m2e-durability" colorLight="bg-m2e-durability/50" labelColor="var(--color-m2e-durability)" showBase={showBase} />
         </div>
       </div>
 
@@ -197,19 +206,21 @@ function ModalContent({ nft }: { nft: MintedNftDetail }) {
         </div>
       </div>
 
-      {/* Extra info */}
- <div className="grid grid-cols-3 gap-3 text-center">
- <div className="pixel-border p-2 bg-m2e-bg-alt">
- <div className="text-[10px] text-m2e-text-muted uppercase">Mint</div>
- <div className="text-sm text-m2e-text">{nft.mintCount}/{nft.maxMints}</div>
+      {/* Scoreboard trio — the app's StatTrio row */}
+      <div className="pixel-border bg-m2e-bg-alt p-3 flex items-center text-center">
+        <div className="flex-1">
+          <div className="text-xl leading-none text-m2e-text tabular-nums">{nft.mintCount}/{nft.maxMints}</div>
+          <div className="text-[9px] font-bold tracking-[0.15em] text-m2e-text-muted uppercase mt-1">Mint</div>
         </div>
- <div className="pixel-border p-2 bg-m2e-bg-alt">
- <div className="text-[10px] text-m2e-text-muted uppercase">HP</div>
- <div className="text-sm text-m2e-text">{Math.round(nft.hp)}%</div>
+        <div className="w-px h-8 bg-m2e-border" />
+        <div className="flex-1">
+          <div className="text-xl leading-none text-m2e-text tabular-nums">{Math.round(nft.hp)}%</div>
+          <div className="text-[9px] font-bold tracking-[0.15em] text-m2e-text-muted uppercase mt-1">HP</div>
         </div>
- <div className="pixel-border p-2 bg-m2e-bg-alt">
- <div className="text-[10px] text-m2e-text-muted uppercase">Durability</div>
- <div className="text-sm text-m2e-text">{Math.round(nft.durability)}%</div>
+        <div className="w-px h-8 bg-m2e-border" />
+        <div className="flex-1">
+          <div className="text-xl leading-none text-m2e-text tabular-nums">{Math.round(nft.durability)}%</div>
+          <div className="text-[9px] font-bold tracking-[0.15em] text-m2e-text-muted uppercase mt-1">Durability</div>
         </div>
       </div>
     </div>
@@ -421,7 +432,7 @@ function ExportConfirmPanel({
       <ul className="text-xs text-m2e-text-secondary space-y-1 pixel-border bg-m2e-bg-alt p-3">
         <li className="flex items-center justify-between">
           <span className="uppercase tracking-wider text-m2e-text-muted">Fee</span>
-          <span className="text-m2e-text">{feesLoading ? '…' : fees ? `${fees.nftExportFeeSap.toLocaleString()} WATTS` : '—'}</span>
+          <span className="text-base text-m2e-text tabular-nums">{feesLoading ? '…' : fees ? `${fees.nftExportFeeSap.toLocaleString()} WATTS` : '—'}</span>
         </li>
         {socketedPartCount > 0 && (
           <li className="flex items-center justify-between">
