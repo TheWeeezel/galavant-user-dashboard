@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
   Human, Coins, Zap, Redo, Check, Logout,
-  ChevronLeft, Trophy, Mail, Bookmark, Copy, Download,
+  ChevronLeft, Trophy, Mail, Bookmark, Download,
 } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
 import { PlayerAvatar } from '../components/PlayerAvatar';
@@ -13,9 +13,10 @@ import { NftDetailModal } from '../components/NftDetailModal';
 import { PartNftModal } from '../components/PartNftModal';
 import type { PartNftRow } from '../components/PartNftModal';
 import {
-  fetchClaimableNfts, fetchManagedWalletAddress, fetchSpendingWallet, fetchUserBikes,
-  fetchUserParts, fetchWalletNfts, importBikeNft, importPartNft,
+  enjinLinkStatus, fetchClaimableNfts, fetchSpendingWallet, fetchUserBikes,
+  fetchUserParts, fetchWalletNfts,
 } from '../api';
+import { importNft } from '../hooks/useNftImport';
 import type { ClaimableNft, UserBike } from '../api';
 import { MissionProfileCard } from '../components/MissionProfileCard';
 import { config } from '../config';
@@ -510,29 +511,23 @@ function EmptyState({ icon: Icon, label }: { icon: React.ComponentType<any>; lab
 }
 
 /**
- * Die verwaltete Wallet als das, was sie fuer den Spieler ist: eine Adresse, an die er ein
- * gekauftes NFT schickt, und eine Liste dessen, was dort angekommen ist.
+ * NFTs that are in the player's own Enjin Wallet but not (or no longer) in the game — bought on
+ * the Enjin marketplace, received from someone, or exported by another account. One tap asks
+ * the chain who holds the token, then asks the player's wallet to burn it; the row is credited
+ * once the burn lands. There is no deposit address any more (2026-09-02): the linked wallet IS
+ * the wallet, and a token that arrives there is already where it has to be.
  *
- * Beides fehlte, und eines allein genuegt nicht. Ohne die Adresse bekommt niemand ein auf dem
- * Enjin-Marktplatz gekauftes Token dorthin, wo das Spiel es ueberhaupt sehen kann. Ohne die
- * Liste gaebe es keinen Knopf, der die Uebernahme ausloest: der vorhandene Import-Knopf haengt
- * an der eigenen Fahrradliste, und ein Kaeufer hat dort per Definition nichts stehen — die
- * serverseitig fertige Uebernahme war damit unerreichbar.
- *
- * Der Abschnitt steht auch dann, wenn nichts wartet. Er ist die Antwort auf "wohin schicke ich
- * mein NFT", und die braucht der Spieler VOR dem Kauf, nicht erst danach.
+ * The section stands even when nothing is waiting: it is the answer to "I bought a Galavant
+ * NFT — now what", and that question comes before the purchase, not after.
  */
 function EnjinWalletSection() {
-  const { data: wallet, error: walletError } = useQuery({
-    queryKey: ['managedWalletAddress'],
-    queryFn: fetchManagedWalletAddress,
-  });
-  // Erst fragen, wenn es eine Wallet gibt — ohne sie kann der Endpunkt nur antworten, dass sie
-  // noch angelegt wird, und das steht schon oben.
+  const link = useQuery({ queryKey: ['enjin-link-status'], queryFn: enjinLinkStatus, retry: false });
+  const linked = link.data?.linked === true;
+  // Nothing to look for without a wallet to look in.
   const { data: claimable, error: claimableError, isLoading: claimableLoading } = useQuery({
     queryKey: ['claimableNfts'],
     queryFn: fetchClaimableNfts,
-    enabled: wallet?.status === 'ready',
+    enabled: linked,
   });
 
   const items = claimable?.items ?? [];
@@ -545,27 +540,24 @@ function EnjinWalletSection() {
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.5 }}
     >
-      <div className="section-label">Enjin Wallet</div>
+      <div className="section-label">NFTs in your wallet</div>
 
-      <div className="pixel-card p-4 md:p-6 space-y-4">
+      <div className="pixel-card p-4 md:p-6 space-y-2">
         <p className="text-xs md:text-sm text-m2e-text-secondary leading-relaxed">
-          Bought a Galavant NFT on the Enjin marketplace? Send it to this address — it is your
-          managed game wallet. Whatever arrives here you can claim into the game below.
+          Bought a Galavant NFT, or been sent one? It is in your Enjin Wallet, and anything from our
+          collections that is not in the game yet shows up here. Claim it and approve the burn in your
+          wallet — the item lands in your inventory once the chain confirms.
         </p>
-        {wallet?.address ? (
-          <ManagedAddressBar address={wallet.address} />
-        ) : (
-          <p className="text-xs text-m2e-text-muted uppercase tracking-widest">
-            Setting up your Enjin wallet — check back in a moment.
+        {link.isSuccess && !linked && (
+          <p className="text-xs text-m2e-warning uppercase tracking-widest">
+            Link your Enjin Wallet under ENJ Staking on your wallet page first.
           </p>
         )}
       </div>
 
       <div className="flex items-center justify-between pt-2">
         <div className="section-label">Ready to claim</div>
-        {/* Nur die zaehlen, deren Knopf auch klickbar ist. Ein abgerechnetes Stueck steht in der
-            Liste, laesst sich aber nicht beanspruchen — es unter "ready to claim" mitzuzaehlen
-            hiesse, eine Zahl neben eine Ueberschrift zu setzen, die etwas anderes behauptet. */}
+        {/* Nur die zaehlen, deren Knopf auch klickbar ist. */}
         {items.filter((i) => !i.settling).length > 0 && (
           <span className="text-xs uppercase tracking-[0.25em] text-m2e-text-muted">
             {items.filter((i) => !i.settling).length} waiting
@@ -587,77 +579,43 @@ function EnjinWalletSection() {
             <ClaimCard key={`${item.kind}-${item.tokenId}`} item={item} />
           ))}
         </div>
-      ) : claimableLoading || (!wallet && !walletError) ? (
+      ) : claimableLoading || link.isLoading ? (
         <div className="pixel-card p-6 text-center text-xs text-m2e-text-muted uppercase tracking-[0.25em]">
           Checking your wallet…
         </div>
-      ) : walletError || claimableError ? (
-        /* "Nothing waiting" ist eine ENDGUELTIGE Aussage: dein NFT ist nicht da. Sie darf nur
-           fallen, wenn wirklich nachgesehen wurde. Schlaegt die Abfrage fehl — oder laeuft sie
-           gar nicht, weil die Wallet-Abfrage haengt — dann wissen wir es nicht, und ein Kaeufer,
-           dessen Token sehr wohl in der Wallet liegt, wuerde hier fuer immer das Gegenteil lesen. */
+      ) : link.isError ? (
+        /* "Nothing waiting" ist eine ENDGUELTIGE Aussage und darf nur fallen, wenn wirklich
+           nachgesehen wurde. */
         <div className="pixel-card p-6 text-center text-xs text-m2e-text-muted uppercase tracking-[0.25em]">
           Could not check right now — reload in a moment
         </div>
       ) : (
-        <EmptyState icon={Download} label="Nothing waiting" />
+        <EmptyState icon={Download} label={linked ? 'Nothing waiting' : 'No wallet linked'} />
       )}
     </motion.section>
   );
 }
 
 /**
- * Adresse plus Kopierknopf. Absichtlich eine eigene kleine Komponente statt der gleichnamigen
- * aus Wallet.tsx: die ist dort nicht exportiert, und sie fuer diesen einen Zweck zu oeffnen
- * hiesse, eine fremde Seite anzufassen, die mit dem NFT-Rueckweg nichts zu tun hat.
- */
-function ManagedAddressBar({ address }: { address: string }) {
-  const [copied, setCopied] = useState(false);
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // Kein Clipboard-Zugriff (aelterer Browser, kein HTTPS): die Adresse steht daneben und
-      // laesst sich von Hand markieren.
-    }
-  };
-  return (
-    <div className="pixel-card p-3 md:p-4 flex items-center gap-3 bg-m2e-bg-alt">
-      <span className="text-m2e-accent text-xs md:text-sm tracking-[0.3em] uppercase shrink-0">ADDR&gt;</span>
-      <code className="flex-1 text-[11px] md:text-sm font-mono text-m2e-text break-all leading-tight">
-        {address}
-      </code>
-      <button
-        onClick={copy}
-        className={`inline-flex items-center gap-1 px-3 py-2 text-[10px] uppercase tracking-widest pixel-border border-m2e-border bg-m2e-card text-m2e-text-muted hover:text-m2e-accent hover:border-m2e-accent transition-colors shrink-0 ${copied ? 'text-m2e-success border-m2e-success' : ''}`}
-        title="Copy address"
-      >
-        {copied ? <><Check className="w-3 h-3" />Copied</> : <><Copy className="w-3 h-3" />Copy</>}
-      </button>
-    </div>
-  );
-}
-
-/**
- * Ein Token in der verwalteten Wallet, das noch nicht im Spiel ist — ein Klick von der
- * Uebernahme entfernt. Der Anspruch laeuft ueber genau die vorhandenen Import-Endpunkte; sie
- * finden die Zeile ueber die Token-Id und fragen die Kette, wer das Token haelt.
+ * Ein Token in der eigenen Wallet des Spielers, das noch nicht im Spiel ist — ein Klick und eine
+ * Freigabe von der Uebernahme entfernt. Der Anspruch laeuft ueber genau die vorhandenen
+ * Import-Endpunkte; sie finden die Zeile ueber die Token-Id, fragen die Kette, wer das Token
+ * haelt, und schicken den Burn zur Unterschrift in die Wallet.
  */
 function ClaimCard({ item }: { item: ClaimableNft }) {
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
+  const [awaitingWallet, setAwaitingWallet] = useState(false);
 
   const claim = useMutation({
-    // Rueckgabe verworfen: die beiden Endpunkte antworten unterschiedlich, und gebraucht wird
-    // hier nur, DASS die Uebernahme durchging — alles Weitere kommt aus den neu geladenen Listen.
-    mutationFn: async () => {
-      if (item.kind === 'bike') await importBikeNft(item.tokenId);
-      else await importPartNft(item.tokenId);
-    },
-    onSuccess: () => {
+    mutationFn: () => importNft(item.kind, item.tokenId, () => setAwaitingWallet(true)),
+    onSettled: () => setAwaitingWallet(false),
+    onSuccess: (outcome) => {
       setError(null);
+      if (outcome.status === 'still-pending') {
+        setError('Still waiting for your approval in the Enjin Wallet — the item lands on its own once you approve.');
+        return;
+      }
       // Der Gegenstand wandert aus dieser Liste in das eigene Inventar, und ein Fahrrad zaehlt
       // wieder zur maximalen Energie.
       queryClient.invalidateQueries({ queryKey: ['claimableNfts'] });
@@ -721,7 +679,7 @@ function ClaimCard({ item }: { item: ClaimableNft }) {
           className="mt-auto pixel-btn pixel-btn-primary w-full px-3 py-2 text-xs uppercase tracking-wider inline-flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <Download className="w-4 h-4" />
-          {claim.isPending ? 'Claiming…' : 'Claim'}
+          {awaitingWallet ? 'Approve in your wallet…' : claim.isPending ? 'Claiming…' : 'Claim'}
         </button>
       </div>
     </div>

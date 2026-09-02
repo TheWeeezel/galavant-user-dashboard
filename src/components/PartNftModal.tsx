@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Cancel, Download, Upload } from 'pixelarticons/react';
-import { fetchBlockchainFees, importPartNft, mintPartNft } from '../api';
+import { fetchBlockchainFees, mintPartNft } from '../api';
+import { importNft } from '../hooks/useNftImport';
 import type { BlockchainFees } from '../api';
 
 /** A part as shown in the Profile inventory — in-game or exported on-chain. */
@@ -50,9 +51,16 @@ export function PartNftModal({ part, onClose }: { part: PartNftRow; onClose: () 
     onError: (err: Error) => setActionError(err.message),
   });
 
+  // Signed by the player in their own Enjin Wallet (2026-09-02); see NftDetailModal.
+  const [awaitingWallet, setAwaitingWallet] = useState(false);
   const importMutation = useMutation({
-    mutationFn: (tokenId: number) => importPartNft(tokenId),
-    onSuccess: () => {
+    mutationFn: (tokenId: number) => importNft('part', tokenId, () => setAwaitingWallet(true)),
+    onSettled: () => setAwaitingWallet(false),
+    onSuccess: (outcome) => {
+      if (outcome.status === 'still-pending') {
+        setActionError('Still waiting for your approval in the Enjin Wallet. The part comes back on its own once you approve — you can close this.');
+        return;
+      }
       setActionError(null);
       setDone('import');
       invalidateAfterChainAction();
@@ -141,7 +149,7 @@ export function PartNftModal({ part, onClose }: { part: PartNftRow; onClose: () 
               </h3>
               <p className="text-xs text-m2e-text-secondary leading-relaxed">
                 {done === 'export'
-                  ? 'This part is now an NFT in your wallet, ready to sell or transfer.'
+                  ? 'This part is now an NFT in your Enjin Wallet, ready to hold, send or sell.'
                   : 'The token was burned and the part is back in your in-game inventory.'}
               </p>
               <div className="flex justify-end">
@@ -164,7 +172,8 @@ export function PartNftModal({ part, onClose }: { part: PartNftRow; onClose: () 
               )}
               {isOnChain && (
                 <p className="text-xs text-m2e-text-secondary leading-relaxed">
-                  Importing burns token <span className="text-m2e-text">#{part.tokenId}</span> on-chain. You can
+                  Importing burns token <span className="text-m2e-text">#{part.tokenId}</span>. You sign the burn
+                  in your Enjin Wallet (Settings → Connected Apps); the part is back once you approve. You can
                   export it again later.
                 </p>
               )}
@@ -193,7 +202,7 @@ export function PartNftModal({ part, onClose }: { part: PartNftRow; onClose: () 
                     className="pixel-btn pixel-btn-primary px-4 py-2 text-xs uppercase tracking-wider inline-flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <Download className="w-4 h-4" />
-                    {importMutation.isPending ? 'Importing…' : 'Import to Game'}
+                    {awaitingWallet ? 'Approve in your wallet…' : importMutation.isPending ? 'Sending…' : 'Import to Game'}
                   </button>
                 ) : (
                   <button

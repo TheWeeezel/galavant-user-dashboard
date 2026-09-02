@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Coins } from 'pixelarticons/react';
-import { redemptionCurrent, redemptionSubmit } from '../api';
+import { enjinLinkStatus, redemptionCurrent, redemptionSubmit } from '../api';
 
 /**
  * Seasonal WATTS → ENJ redemption, embedded in the account (Wallet page). When
@@ -19,6 +19,10 @@ export function EnjRedemptionSection() {
     retry: false,
     refetchInterval: 30_000,
   });
+  // The ENJ is paid to the linked Enjin Wallet (2026-09-02), so a player without one cannot
+  // commit — the server refuses before a WATT is burned, and this says so before they type.
+  const link = useQuery({ queryKey: ['enjin-link-status'], queryFn: enjinLinkStatus, retry: false });
+  const linked = link.data?.linked === true;
 
   const submit = useMutation({
     mutationFn: (w: number) => redemptionSubmit(w),
@@ -57,8 +61,13 @@ export function EnjRedemptionSection() {
           Put WATTS into this season's pot to claim a share of a real{' '}
           <span className="text-m2e-accent">{s.season.budgetEnj.toLocaleString()} ENJ</span> budget. WATTS you
           commit are spent. When the window closes, the budget is split among everyone who entered — your share
-          depends on how much you put in (staking grows it). No fixed rate.
+          depends on how much you put in and how early. No fixed rate. The ENJ is paid to your linked Enjin Wallet.
         </p>
+        {link.isSuccess && !linked && (
+          <p className="text-sm text-m2e-warning">
+            Link your Enjin Wallet first — that is where the ENJ is paid, so there is nothing to commit to without it.
+          </p>
+        )}
         <div className="border-t border-m2e-border pt-4 space-y-2">
           <Row label="Season pot" value={`${s.season.budgetEnj.toLocaleString()} ENJ`} />
           <Row label="Committed by all players" value={`${s.season.totalWatts.toLocaleString()} WATTS`} />
@@ -73,15 +82,15 @@ export function EnjRedemptionSection() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder={String(min)}
-            disabled={submit.isPending}
-            className="flex-1 bg-m2e-bg-alt border-2 border-m2e-border rounded px-4 py-3 text-lg font-bold text-m2e-text focus:border-m2e-accent outline-none"
+            disabled={submit.isPending || !linked}
+            className="flex-1 bg-m2e-bg-alt border-2 border-m2e-border rounded px-4 py-3 text-lg font-bold text-m2e-text focus:border-m2e-accent outline-none disabled:opacity-50"
           />
           <span className="text-m2e-text-secondary font-bold">WATTS</span>
         </div>
         <button
           className="pixel-btn-primary px-6 py-3 w-full disabled:opacity-50"
           onClick={() => valid && submit.mutate(n)}
-          disabled={!valid || submit.isPending}
+          disabled={!valid || submit.isPending || !linked}
         >
           {submit.isPending ? 'Committing…' : 'Redeem WATTS for ENJ'}
         </button>

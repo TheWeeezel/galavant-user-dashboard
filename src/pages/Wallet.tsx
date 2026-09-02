@@ -164,14 +164,12 @@ export function Wallet() {
             <ActionCard to="/earn" Icon={Coins} title="Earn" description="Missions & walks" />
             <ActionCard to="/market" Icon={ShoppingCart} title="Market" description="Spend WATTS" />
             {/*
-              Der Wegweiser zur Abholung, und er steht ausgerechnet hier, weil DIESE Seite die
-              ist, auf der ein NFT-Halter landet: die App verlinkt sie ("SWAP · DEPOSIT · NFTS"),
-              und wer eine Wallet sucht, tippt /wallet und nicht /profile. Die Einzahlungsadresse
-              und die Liste des Angekommenen liegen aber im Profil — ohne diese Karte fuehrt von
-              hier nichts dorthin, und die Adresse, die weiter unten auf dieser Seite steht, ist
-              die VERKNUEPFTE Wallet des Spielers, also genau die falsche zum Einzahlen.
+              Der Wegweiser zur Abholung: die App verlinkt DIESE Seite ("SWAP · DEPOSIT · NFTS"),
+              die Liste der NFTs, die in der eigenen Wallet liegen und noch nicht im Spiel sind,
+              steht aber im Profil. Seit 2026-09-02 gibt es keine Einzahlungsadresse mehr — das
+              NFT ist in der verknuepften Wallet, und von dort holt der Spieler es selbst herein.
             */}
-            <ActionCard to="/profile" Icon={Download} title="Claim NFTs" description="Your NFT deposit address" />
+            <ActionCard to="/profile" Icon={Download} title="Claim NFTs" description="NFTs in your wallet, not yet in the game" />
           </div>
         </motion.section>
 
@@ -207,7 +205,8 @@ export function Wallet() {
             transition={{ duration: 0.5 }}
           >
             <div className="section-label">Linked Enjin Wallet</div>
-            <AddressBar address={link.publicKey} />
+            {/* The Matrixchain form — where NFTs and ENJ live. The hex key stays in the payload for the app. */}
+            <AddressBar address={link.address ?? link.publicKey} />
           </motion.section>
         )}
 

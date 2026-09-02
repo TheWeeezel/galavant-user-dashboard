@@ -382,6 +382,7 @@ export const gameplaySections: GameplaySection[] = [
             'Poor GPS signal (tunnels, dense buildings) will reduce your earnings.',
             'The game verifies genuine movement patterns — spoofing or faking won\'t work.',
             'Leaving your phone stationary (e.g. on a table) will not earn rewards — the app detects both GPS drift and lack of body motion.',
+            'Only movement at a human pace counts toward your distance. Stretches that would need a vehicle are left out of your totals, and the same fix is never counted twice.',
           ]},
           { type: 'tip', text: 'For the best experience, walk in open areas with good sky visibility. Parks, sidewalks, and trails work great. Keep your phone on your body while walking — it needs to sense your movement.' },
           { type: 'heading', text: 'Signal Quality' },
@@ -640,20 +641,20 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'table', headers: ['', 'In the game', 'On the chain'], rows: [
             ['Priced in', 'WATTS', 'ENJ'],
             ['Who signs', 'Nobody — you tap a button', 'You do, in your own Enjin Wallet'],
-            ['Chain fees', 'There are none', 'Galavant pays for minting, importing and listing'],
+            ['Chain fees', 'There are none', 'Galavant pays for minting and importing; a sale on the Enjin marketplace is between you and the chain'],
             ['Where you do it', 'App and website', 'Website to export, app or website to import; your wallet for anything ENJ'],
           ]},
           { type: 'heading', text: 'What an NFT is here' },
-          { type: 'paragraph', text: 'An NFT is one of your bikes or parts, minted as a token on the Enjin chain. It is not a copy of the item and not a certificate hanging beside it — it is the item, moved out of the game and onto the chain. One token per item, one item per token, never both at once.' },
+          { type: 'paragraph', text: 'An NFT is one of your bikes or parts, minted as a token on the Enjin chain and placed straight into your own Enjin Wallet. It is not a copy of the item and not a certificate hanging beside it — it is the item, moved out of the game and onto the chain. One token per item, one item per token, never both at once.' },
           { type: 'heading', text: 'An NFT is frozen' },
           { type: 'paragraph', text: 'The moment an item is minted it freezes. It keeps the level and the stats it had at that second, and it cannot be ridden, levelled, repaired, socketed or upgraded for as long as the token exists.' },
           { type: 'paragraph', text: 'That is not a restriction bolted on afterwards — it is what makes the token worth anything. A buyer can see exactly what they are buying, and nothing about it can move behind their back while they own it.' },
-          { type: 'paragraph', text: 'Two things still work on a frozen item: you can sell it, and you can import it. Importing burns the token and hands the item back to the game exactly as it was minted. Import is the only way back — nothing else unfreezes it.' },
+          { type: 'paragraph', text: 'Two things still work on a frozen item: you can trade it on the chain, and you can import it. Importing burns the token and hands the item back to the game exactly as it was minted. Import is the only way back — nothing else unfreezes it.' },
           { type: 'tip', text: 'If a button has gone quiet on a bike or a part, check whether it is an NFT. The game answers the same way every time: import it back into the game before using it.' },
           { type: 'heading', text: 'Where each thing happens' },
           { type: 'list', items: [
             'Playing — levelling, repairs, socketing, breeding — happens in the app, all of it in WATTS, none of it signed by you.',
-            'Selling and buying work in both places. An NFT can be listed from the app or the website, for WATTS or for ENJ.',
+            'Selling in-game items for WATTS works in the app and on the website. An NFT is not sold on the game market: it is traded on the Enjin marketplace from your wallet, or imported first and then sold here for WATTS.',
             'Exporting is on the website. Importing works in both — the app has an Import button right on the bike.',
             'Anything paid for with money is on the website only. No card purchase happens inside the app.',
           ]},
@@ -661,62 +662,55 @@ export const gameplaySections: GameplaySection[] = [
       },
       {
         slug: 'wallets',
-        title: 'Your Two Wallets',
+        title: 'Your Wallet',
         content: [
-          { type: 'paragraph', text: 'You have one account and two wallets. Telling them apart explains most of what follows, so it is worth two minutes.' },
+          { type: 'paragraph', text: 'You have one account and one wallet — your own Enjin Wallet. Galavant never runs a wallet for you and never holds a key of yours. That is worth two minutes, because it explains most of what follows.' },
           { type: 'heading', text: 'Signing in' },
           { type: 'list', items: [
             'Your account is created in the mobile app with Google sign-in. That is the only way to make one.',
             'The website uses the same Google sign-in and opens the same account — same bikes, same parts, same WATTS balance.',
             'There is no wallet login anywhere. No browser extension, no recovery phrase, nothing to type in. If the website says your Google account is not set up yet, sign in once in the app and come back.',
           ]},
-          { type: 'heading', text: 'The wallet Galavant runs for you' },
-          { type: 'paragraph', text: 'Every player has an Enjin wallet that Galavant holds the keys to. It appears on its own the first time you need it — nothing to set up, nothing to back up. Your NFTs are minted into it, and ENJ the game pays you — a season redemption, the proceeds of an ENJ sale — arrives there.' },
-          { type: 'paragraph', text: 'Galavant holding those keys is exactly what keeps an NFT usable. The game can burn the token the moment you want the item back in play, and it can hand the token to a buyer when you sell. A token sitting in a wallet the game cannot sign for could do neither — which is why an exported NFT stays in this wallet, and why there is no button that moves one out of it.' },
-          // Said out loud because it is the question a player asks the moment ENJ appears in
-          // their balance. The per-token sweep AND the whole-wallet sweep are both gone: the
-          // route was deleted 2026-08-30 and `sweepManagedWallet` in enjin/platform-client.ts
-          // has no caller. Redemption pays here too (services/redemption.ts getManagedRecipient).
-          { type: 'paragraph', text: 'The same goes for ENJ that lands there: it stays, for now. Sending it on to your own Enjin Wallet is not built.' },
-          { type: 'heading', text: 'Your own Enjin Wallet' },
-          { type: 'paragraph', text: 'The second wallet is the Enjin Wallet app on your phone, and only you hold its keys. You link it to your account yourself, and linking is read-only: it tells Galavant your public address and nothing more. It never moves funds, and it is never a login.' },
-          { type: 'paragraph', text: 'This is the wallet that signs. Staking your ENJ is approved there, and so is buying an NFT priced in ENJ. Galavant creates the request; you decide whether it happens.' },
-          { type: 'tip', text: 'Two wallets, two jobs. The Galavant one holds your NFTs so the game can act on them. Your own one holds your ENJ and does your signing. Nothing crosses between them on its own.' },
+          { type: 'heading', text: 'Your Enjin Wallet' },
+          { type: 'paragraph', text: 'The Enjin Wallet is the app on your phone, and only you hold its keys. You link it to your account yourself, and linking is read-only: it tells Galavant your public address and nothing more. It never moves funds, and it is never a login.' },
+          { type: 'paragraph', text: 'Everything that leaves the game goes to it, and everything that comes back in is signed from it. An NFT you export is minted straight into it. ENJ the game pays you — a season redemption — is sent to it. An NFT you import back is burned by a request you approve in it. There is nothing to move between wallets, because there is only the one.' },
+          { type: 'heading', text: 'What needs the wallet and what does not' },
+          { type: 'list', items: [
+            'Playing needs no wallet at all. Walking, earning, levelling, repairing, breeding, toolboxes and the WATTS market never touch it.',
+            'Exporting an NFT needs it — that is where the token is minted.',
+            'Importing an NFT needs it — you approve the burn there.',
+            'Cashing WATTS out for ENJ needs it — that is where the ENJ is paid. Without a linked wallet you cannot commit WATTS to a season.',
+            'Staking needs it — you stake from it, and the game reads your stake from the chain.',
+          ]},
+          { type: 'tip', text: 'One rule covers it: everything you earn inside the game needs no wallet; everything that leaves the game needs the one you linked.' },
         ],
       },
       {
         slug: 'exporting-bikes',
         title: 'Exporting: Minting an NFT',
         content: [
-          { type: 'paragraph', text: 'Bikes and parts you buy, earn or breed are ordinary in-game items. Exporting one mints it as an NFT on the Enjin chain — which is what lets it be sold for real ENJ, and what freezes it.' },
+          { type: 'paragraph', text: 'Bikes and parts you buy, earn or breed are ordinary in-game items. Exporting one mints it as an NFT on the Enjin chain, straight into your own Enjin Wallet — which is what lets it be traded for real ENJ, and what freezes it.' },
           { type: 'heading', text: 'Where you do it' },
           { type: 'paragraph', text: 'On the website. Sign in at galavant.run with the same Google account, open Profile, and scroll to your inventory. Tap a bike and choose Export to Wallet; tap a part and choose Export as NFT.' },
           { type: 'paragraph', text: 'The mobile app has an Export button on the bike screen, but all it does is send you to the website — the minting itself is not in the app.' },
           { type: 'heading', text: 'What the item needs first' },
           { type: 'list', items: [
+            'A linked Enjin Wallet. The NFT is minted into it, so without one there is nowhere to mint to.',
             'Fully healed — full HP and full durability — so no worn item is ever minted.',
             'At or above a minimum level. Starter bikes and dust-level parts cannot be exported; the floor keeps the collection from filling up with them.',
             'No unpaid servicing. Settle a bike\'s maintenance before it leaves.',
             'Nothing in flight: not listed on the market, not mid level-up, and not in a ride you have not finished.',
             'A part has to be out of its bike. Unsocket it first.',
           ]},
-          // The equipped bike is deliberately NOT in that list any more: mint-bike sets
-          // isEquipped false itself and has no guard to fail, so telling the player to switch
-          // bikes was a step that does nothing.
-          { type: 'paragraph', text: 'Equip a different bike first: the export button stays disabled while a bike is the one you are riding. Exporting costs no WATTS; the chain write is paid by Galavant.' },
+          { type: 'paragraph', text: 'Equip a different bike first: the export button stays disabled while a bike is the one you are riding. Exporting costs no WATTS and needs no signature from you — Galavant mints the token and pays for the chain write.' },
           { type: 'heading', text: 'What changes the moment it is minted' },
           { type: 'list', items: [
-            'The item stops being playable and moves to the on-chain part of your inventory, still yours, with its token number.',
+            'The item stops being playable and moves to the on-chain part of your inventory, still yours, with its token number — and it is sitting in your Enjin Wallet, where any wallet app or marketplace can see it.',
             'A bike no longer counts toward your maximum energy — exporting lowers your cap, importing puts it back.',
             'Parts stay socketed in an exported bike and pause with it. Take them out any time to use them on another bike.',
-            'Selling is the one thing that still works. A frozen NFT can be listed and sold exactly like anything else you own.',
+            'Trading is the one thing that still works — on the chain, from your wallet. The game market does not list NFTs.',
           ]},
-          // A fresh mint cannot be listed until it settles (NFT_SETTLE_COOLDOWN_HOURS, shared
-          // utils/nft.ts, via isNftSettled) — said out loud because a seller who exports in
-          // order to sell hits a refusal with no visible cause otherwise. Approximate, not
-          // exact: the cooldown is a tunable.
-          { type: 'paragraph', text: 'One thing to expect if you exported in order to sell: a fresh mint has to settle before it can be listed. Give it a couple of hours while the chain finalises, and the Sell option opens up on its own.' },
-          { type: 'tip', text: 'When an NFT sells, its parts pop back into your inventory first — the item always changes hands bare, so a sale never costs you parts.' },
+          { type: 'tip', text: 'Export in order to trade, not in order to keep: a frozen bike earns nothing. If you just want it back in the game later, that is what Import is for.' },
         ],
       },
       {
@@ -726,56 +720,37 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Importing turns an NFT back into a playable item, and it is the only thing that does. Nothing else unfreezes it, so this is always the first step before you use the item for anything.' },
           { type: 'heading', text: 'How importing works' },
           { type: 'list', items: [
-            'On the website, open Profile and find the item — exported bikes and exported parts each sit in their own on-chain group.',
-            'Tap it and choose Import to Game.',
-            'The token is burned — destroyed on-chain, permanently.',
-            'The item comes back exactly as it was minted: same level, same stats, full condition.',
+            'On the website, open Profile and find the item — exported bikes and exported parts each sit in their own on-chain group. Tap it and choose Import to Game. In the app, open the bike and use Import.',
+            'Galavant asks the chain that the token is in your linked wallet, then sends a burn request to your Enjin Wallet.',
+            'Open the Enjin Wallet on your phone — Settings, then Connected Apps — and approve the request. The burn is signed by you, and it costs you nothing: Galavant covers the fee.',
+            'The token is burned — destroyed on-chain, permanently — and the item comes back exactly as it was minted: same level, same stats, full condition. The screen updates on its own once the chain confirms; you can close it and come back.',
             'It is fully playable again. Equip it, socket parts, level it, start walking. A bike puts your maximum energy back up too.',
           ]},
           { type: 'paragraph', text: 'The burn is one-way for that token, but the item is not: you can export it again later whenever you want to trade it.' },
-          { type: 'paragraph', text: 'You can do this in the app as well: open the bike and use Import. It is the same action either way, and the bike comes back exactly as it is — same level, same stats.' },
-          { type: 'heading', text: 'A purchase you cannot bring in yet' },
-          // True as of 2026-08-31 and checked in the code, not assumed: the import ROUTE does
-          // accept a buyer's takeover (routes/blockchain.ts, by token id alone), but the proof
-          // it requires is a balance in the caller's MANAGED wallet, and no endpoint hands the
-          // player that wallet's address. So there is genuinely nowhere to send the token.
-          { type: 'paragraph', text: 'If you buy a Galavant NFT out on the chain — from your own wallet, or through a marketplace that talks to the chain directly — it lands in your own Enjin Wallet, and there is no screen that brings it into the game from there. Galavant cannot yet tell you where to send the token. It is being built. Until it ships, an NFT bought outside Galavant is a collectible rather than a playable item.' },
+          { type: 'heading', text: 'An NFT you bought or were sent' },
+          { type: 'paragraph', text: 'A Galavant NFT that arrives in your Enjin Wallet from anywhere — a marketplace purchase, a gift, a trade — is already where it needs to be. Open Profile on the website, or the Vault tab in the app, and it shows under NFTs in your wallet. Claim it the same way: approve the burn in your wallet, and the item lands in your inventory with the level and stats it was minted with. Any parts that were fitted stay with the previous owner, so it arrives bare.' },
         ],
       },
       {
         slug: 'selling-nfts',
-        title: 'Selling & Buying NFTs',
+        title: 'Trading NFTs',
         content: [
-          { type: 'paragraph', text: 'There is one market and everything players own sits on the same shelf. What is different about an NFT is that it gives the seller a second currency to price in — and the currency decides what the buyer walks away with.' },
-          { type: 'heading', text: 'Three purchases, one shelf' },
-          { type: 'table', headers: ['You buy', 'What happens', 'You receive'], rows: [
-            ['An in-game item for WATTS', 'Ownership transfers', 'An ordinary in-game item, right away'],
-            ['An NFT for WATTS', 'The token is burned', 'An ordinary in-game item, once the burn settles'],
-            ['An NFT for ENJ', 'The token changes hands', 'An NFT — frozen until you import it'],
+          { type: 'paragraph', text: 'There are two markets, and which one you use depends on whether the item is in the game or on the chain.' },
+          { type: 'table', headers: ['The item is', 'Where it sells', 'Priced in', 'What the buyer gets'], rows: [
+            ['In the game', 'The Galavant market, app or website', 'WATTS', 'An ordinary in-game item, right away'],
+            ['An NFT in your wallet', 'The Enjin marketplace, from your wallet', 'ENJ', 'The NFT itself — frozen until they import it'],
           ]},
-          // The middle row is the one the market cards were corrected for on 2026-08-31
-          // (BUYER_OUTCOME_COPY, shared utils/market.ts): the card says "In-game item", not
-          // "NFT", and it is not instant because settleWattsSale burns on chain first.
-          { type: 'paragraph', text: 'The middle row is the one people misread. Paying WATTS for an NFT does not make you the owner of a token — the token is destroyed and you receive a normal in-game item, identical to one that was never exported. That is why the card says "In-game item" rather than "NFT". It is also not instant: the burn goes to the chain first, so the item lands in your inventory a moment later rather than on the click.' },
-          { type: 'heading', text: 'Selling for WATTS' },
-          { type: 'paragraph', text: 'List an NFT for WATTS and, when it sells, the token is burned and the buyer receives an ordinary in-game item. This is the item\'s way back into the game — a clean route for another player to get something good with WATTS they earned walking. It is the more expensive of the two exits for the seller; what each route costs is in Economy → The Market.' },
-          { type: 'heading', text: 'Selling for ENJ' },
-          { type: 'paragraph', text: 'List it for a price in ENJ and it settles on-chain: the buyer receives the token itself, frozen exactly as it was minted, until they import it into their own game. This is the cheaper exit, and the proceeds land in the wallet Galavant runs for you.' },
-          { type: 'paragraph', text: 'You can list either way from the app or the website. Being on-chain does not push selling to the web the way exporting does.' },
-          { type: 'heading', text: 'Buying with ENJ' },
-          // Written to survive the fix (task 7b4cd59d): when the buyer-signs path ships, this
-          // heading goes and nothing else in the section has to change. Do not soften it into
-          // "coming soon" — a buyer who taps and finds no button needs the reason.
-          { type: 'paragraph', text: 'An ENJ purchase cannot be paid from inside Galavant yet. Filling one has to be signed from a wallet of the buyer\'s own, and that step is still being built — it is our gap, not the chain\'s. In the Galavant market an ENJ card shows that explanation where the buy button would be.' },
-          { type: 'paragraph', text: 'The listing itself is real. It is live on the Enjin chain, so it can be filled from a wallet or a marketplace that talks to the chain directly — read Importing first, because a purchase made that way cannot be brought into the game yet. If you want a sale that completes today, WATTS is the route that finishes here.' },
-          { type: 'heading', text: 'Rules for both routes' },
+          { type: 'heading', text: 'Selling an NFT for ENJ' },
+          { type: 'paragraph', text: 'An exported item is in your Enjin Wallet, and you sell it the way you would sell any Enjin NFT: list it on the Enjin marketplace from your wallet, at your price, and sign the listing there. Galavant is not part of that step. The buyer pays you directly, on the chain, and the token moves to their wallet — frozen, exactly as it was minted, until they import it into their own game.' },
+          { type: 'paragraph', text: 'Every Galavant NFT carries a small royalty for the game on each sale, applied by the chain itself. It is the same on any marketplace, and it is what funds the season pot alongside the game\'s other revenue.' },
+          { type: 'heading', text: 'Selling an NFT for WATTS' },
+          { type: 'paragraph', text: 'The game market does not list NFTs. If you would rather sell to another player for WATTS, import the item first — it becomes an ordinary in-game item again — and list it on the game market like anything else you own. The buyer gets a normal item, and the token is gone.' },
+          { type: 'heading', text: 'Buying' },
           { type: 'list', items: [
-            'It has to be an NFT you own, and a fresh mint has to settle first — see Exporting for that wait.',
-            'Being frozen never stops a sale. Listing and selling are exactly the things an NFT can still do.',
-            'Listing pops any socketed parts back into your inventory first, so the item always sells bare.',
-            'Listing for ENJ needs no ENJ of your own. The chain holds a refundable deposit for as long as the listing is live, and Galavant\'s fuel tank puts that deposit up for you along with the transaction fee — so nothing is held against your wallet, and there is nothing for you to claim back once the listing sells or is cancelled. Listing for WATTS costs you nothing up front either.',
+            'In-game items are bought on the Galavant market with WATTS, in the app or on the website. Browse by type, quality, and price.',
+            'Galavant NFTs are bought on the Enjin marketplace with ENJ, from your own wallet. Once one is in your wallet, Importing tells you how to bring it into the game.',
           ]},
-          { type: 'tip', text: 'Selling for ENJ keeps the item alive on-chain for the next owner; selling for WATTS trades it back into the game and takes one NFT out of circulation. Pick based on whether you want crypto or in-game value — and on which one can actually complete today.' },
+          { type: 'tip', text: 'Check Mint Scores when buying bikes — a high grade at a low price is a great find!' },
         ],
       },
       {
@@ -785,16 +760,16 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Parts can be NFTs too, and they follow the same model as bikes. A part is either an ordinary in-game part or its own on-chain NFT, never both, and a part is never sold inside a bike.' },
           { type: 'heading', text: 'Exporting a part' },
           { type: 'list', items: [
-            'Website again: Profile, then your parts inventory, then the part, then Export as NFT.',
+            'Website again: Profile, then your parts inventory, then the part, then Export as NFT. It is minted into your linked Enjin Wallet.',
             'It must be unsocketed and not listed — take it out of its bike first.',
             'It must be at or above a minimum level. Dust-level parts stay off the chain.',
             'No WATTS fee. Galavant pays for the chain write.',
           ]},
           { type: 'heading', text: 'While a part is an NFT' },
-          { type: 'paragraph', text: 'Everything you would normally do with the part is paused until you import it back. An NFT part cannot be socketed into a bike, fed into an upgrade, or burned to repair a bike\'s HP. Selling it is the exception — that still works, from the app or the website.' },
-          { type: 'paragraph', text: 'Importing works exactly as it does for a bike: open the part on your Profile and choose Import to Game. The token is burned and the part comes back at the level it was minted at, ready to socket and upgrade again.' },
+          { type: 'paragraph', text: 'Everything you would normally do with the part is paused until you import it back. An NFT part cannot be socketed into a bike, fed into an upgrade, or burned to repair a bike\'s HP. Trading it on the chain is the exception — that works from your wallet.' },
+          { type: 'paragraph', text: 'Importing works exactly as it does for a bike: open the part on your Profile, choose Import to Game, and approve the burn in your Enjin Wallet. The token is burned and the part comes back at the level it was minted at, ready to socket and upgrade again.' },
           { type: 'heading', text: 'Selling parts' },
-          { type: 'paragraph', text: 'Part NFTs sell on the same market as bikes and behave the same way: for ENJ the token changes hands and stays an NFT, for WATTS it is burned and the buyer receives an ordinary in-game part. Listing a part pops it out of any bike first, so it always changes hands bare. Everything on the previous page applies here, the ENJ caveat included.' },
+          { type: 'paragraph', text: 'Part NFTs trade on the Enjin marketplace like bikes, from your wallet, for ENJ. To sell one for WATTS on the game market, import it first. Everything on the previous page applies here.' },
           { type: 'tip', text: 'High-level parts are the ones worth exporting — a top-tier part took a lot of upgrades to make, and the level floor is there to keep the cheap ones out.' },
         ],
       },
@@ -809,14 +784,13 @@ export const gameplaySections: GameplaySection[] = [
             'Signing. Anything that happens on the chain in your name is approved in your wallet, not by us. That is the point of holding your own keys.',
             'Staking ENJ. You stake in the Galavant Peloton pool yourself, in your own wallet — Galavant is not part of that step and never holds your ENJ.',
             'Holding your own ENJ. Once a wallet is linked, your account page shows what is in it and what you have staked.',
-            'Buying a Galavant NFT priced in ENJ. Those listings are real listings on the chain and can be filled from the chain side — read Importing first, because a purchase made that way cannot be brought into the game yet.',
+            'Holding the NFTs you export, and buying or selling Galavant NFTs on the Enjin marketplace. A Galavant NFT in your wallet can be claimed into the game from Profile — read Importing.',
             'Looking at Galavant NFTs from outside the game. Every token points at its own live stat sheet, so a bike renders the same in a wallet or on a marketplace as it does here.',
           ]},
           { type: 'heading', text: 'What you do NOT need it for' },
           { type: 'list', items: [
             'Logging in. Galavant is Google sign-in, in the app and on the web.',
-            'Playing. Everything in the game is priced in WATTS. You never need crypto to walk, earn, level, repair, breed or trade.',
-            'Holding the NFTs you export. Those are minted into the wallet Galavant runs and they stay there — see Your Two Wallets for why.',
+            'Playing. Everything in the game is priced in WATTS. You never need crypto to walk, earn, level, repair, breed or trade in-game items.',
           ]},
           { type: 'heading', text: 'Linking it, step by step' },
           { type: 'paragraph', text: 'Linking works the same way in both places: Galavant hands out a one-time code and your wallet approves it.' },
@@ -831,7 +805,7 @@ export const gameplaySections: GameplaySection[] = [
           // happens.
           { type: 'paragraph', text: 'On a desktop there is no wallet app for the link to open, so the QR square is the way in — scan it with the phone your wallet lives on. The code expires, and the website counts the time down for you; if it runs out, start again for a fresh one.' },
           { type: 'heading', text: 'Approving a request' },
-          { type: 'paragraph', text: 'When Galavant needs your signature it creates a request instead of signing for you. Open the Enjin Wallet on your phone, go to Settings, then Connected Apps, and you will find it waiting there. Check what it says, approve it, and the Galavant screen updates on its own. Nothing happens on our side until you do.' },
+          { type: 'paragraph', text: 'When Galavant needs your signature it creates a request instead of signing for you — importing an NFT is the one that does this. Open the Enjin Wallet on your phone, go to Settings, then Connected Apps, and you will find it waiting there. Check what it says, approve it, and the Galavant screen updates on its own. Nothing happens on our side until you do.' },
           { type: 'paragraph', text: 'Staking is not one of those requests. You do it in the pool yourself, and there is nothing waiting in Connected Apps for it.' },
           { type: 'paragraph', text: 'One wallet per account and one account per wallet. You can unlink whenever you like: your ENJ, your stake and everything else in the wallet stay exactly where they are — only the connection goes, and your staking bonus stops until you link again.' },
           { type: 'tip', text: 'Treat the linking code like a one-time password. Anyone who photographs it — over your shoulder, on a shared screen — can attach their own wallet to your account and take the one link slot. Reveal it only when you are ready to scan.' },
@@ -1110,15 +1084,12 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'How it works' },
           { type: 'paragraph', text: 'Three simple steps: you commit WATTS, your commitment is weighed (the earlier in the window, the heavier it counts), and the pot is split.' },
           { type: 'list', items: [
+            'Link your Enjin Wallet first. The ENJ is paid to it, and the game will not take WATTS it cannot pay out for.',
             'When a window is open, choose how much WATTS to put in. Those WATTS are spent — they leave your balance for good.',
             'Commit early. The same WATTS are worth the most on the day a window opens and steadily less as the closing time approaches, so an early commitment beats an identical one made at the end.',
             'Every window has a published closing time, and it is a real deadline: the moment it passes, no further WATTS can be committed. There is no grace period, so do not leave it to the last minute.',
             'When the window closes, a real ENJ budget is split among everyone who entered. Your share depends on how much you put in compared to everyone else.',
-            // The old half of this line promised a withdrawal to the player's own wallet.
-            // Nothing implements it: "withdraw" appeared exactly once in the whole product,
-            // here. Payouts go to the managed wallet (server services/redemption.ts) and the
-            // sweep that used to empty it was removed on 2026-08-30.
-            'Your ENJ lands in the Enjin wallet Galavant runs for you. Sending it on to your own Enjin Wallet is not built yet.',
+            'Your ENJ is sent to your linked Enjin Wallet — the one you own. That is also why you need a linked wallet before you can commit: without an address to pay, there is nothing to commit to.',
           ]},
           { type: 'paragraph', text: 'Between the close and the payout you can still see the season and what you committed — your estimated share is final at that point, because nobody can add to the pool any more. The payout runs on its own shortly after the window closes; you do not need to do anything.' },
           { type: 'heading', text: 'There is no fixed exchange rate' },

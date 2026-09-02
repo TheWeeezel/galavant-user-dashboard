@@ -532,19 +532,12 @@ export function enjinLinkUnlink() {
 }
 
 /**
- * Die SS58-Adresse der VERWALTETEN Wallet (Matrixchain) — die Einzahlungsadresse fuer ein auf
- * dem Enjin-Marktplatz gekauftes Galavant-NFT. Nur dort sieht das Spiel das Token und kann es
- * uebernehmen. Nicht zu verwechseln mit der verknuepften eigenen Wallet aus enjinLinkStatus:
- * die gehoert dem Spieler und dient dem Staking.
+ * The player's linked Enjin Wallet — the only wallet they have with us (2026-09-02). `address`
+ * is the Matrixchain form (where NFTs and ENJ live), `relayAddress` the Relaychain form shown
+ * next to the stake; `publicKey` is the raw hex the app compares.
  */
-export function fetchManagedWalletAddress() {
-  return fetchAuthJson<{ status: 'ready' | 'provisioning'; address: string | null }>(
-    '/enjin/wallet/address',
-  );
-}
-
 export function enjinLinkStatus() {
-  return fetchAuthJson<{ linked: boolean; pending?: boolean; publicKey?: string }>(
+  return fetchAuthJson<{ linked: boolean; pending?: boolean; publicKey?: string; address?: string; relayAddress?: string }>(
     '/enjin/link/status',
   );
 }
@@ -763,11 +756,40 @@ export function fetchClaimableNfts() {
   return fetchAuthJson<{ items: ClaimableNft[] }>('/blockchain/claimable');
 }
 
+/**
+ * What an import answers. The burn is signed by the player in their own Enjin Wallet
+ * (2026-09-02), so the usual answer is `pending` plus the journal to poll — the item comes
+ * home once the chain has finalized the burn. `done` is the owner's rescue: the token was
+ * already gone from the chain and the row was credited on the spot.
+ */
+export interface ImportStart {
+  success: boolean;
+  status: 'pending' | 'done';
+  journalId?: string;
+  uuid?: string | null;
+  bikeId?: string;
+  partId?: string;
+}
+
+export interface ImportStatus {
+  state: string;
+  result: string | null;
+  extrinsicHash: string | null;
+  error: string | null;
+  /** True once the burn is finalized and the row is credited. */
+  imported: boolean;
+  tokenId: number;
+}
+
 export function importBikeNft(tokenId: number) {
-  return fetchAuthJson<{ bike: UserBike; txHash: string }>('/blockchain/import-bike', {
+  return fetchAuthJson<ImportStart>('/blockchain/import-bike', {
     method: 'POST',
     body: JSON.stringify({ tokenId }),
   });
+}
+
+export function fetchImportStatus(journalId: string) {
+  return fetchAuthJson<ImportStatus>(`/blockchain/import/${journalId}`);
 }
 
 // --- Marketplace mutations ---
@@ -906,7 +928,7 @@ export function mintPartNft(partId: string) {
 }
 
 export function importPartNft(tokenId: number) {
-  return fetchAuthJson<{ success: boolean; partId: string }>(
+  return fetchAuthJson<ImportStart>(
     '/blockchain/import-part',
     { method: 'POST', body: JSON.stringify({ tokenId }) },
   );

@@ -190,7 +190,8 @@ export function EnjStakingSection() {
               <span className="text-m2e-text-secondary">earning boost</span>
             </div>
             <div className="border-t border-m2e-border pt-4 space-y-2">
-              <Row label="Linked wallet" value={`${(link.data?.publicKey ?? '').slice(0, 10)}…${(link.data?.publicKey ?? '').slice(-6)}`} />
+              {/* The Relaychain form: the stake lives there, and this is the address the Enjin Wallet shows beside it. */}
+              <Row label="Linked wallet" value={`${(link.data?.relayAddress ?? link.data?.publicKey ?? '').slice(0, 10)}…${(link.data?.relayAddress ?? link.data?.publicKey ?? '').slice(-6)}`} />
               <Row label="Currently staked" value={`${(staking.data?.currentBondedEnj ?? 0).toLocaleString()} ENJ`} />
               <Row label="Boost basis (14-day avg)" value={`${(staking.data?.timeWeightedBondedEnj ?? 0).toLocaleString()} ENJ`} />
             </div>

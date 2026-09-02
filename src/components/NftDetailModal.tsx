@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Cancel, Lock, Coins, Leaf, Heart, Shield, ExternalLink, Download, Upload } from 'pixelarticons/react';
 import { config } from '../config';
-import { fetchBlockchainFees, fetchNftDetail, importBikeNft, mintBikeNft } from '../api';
+import { fetchNftDetail, mintBikeNft } from '../api';
+import { importNft } from '../hooks/useNftImport';
 import type { MintedNftDetail, PartSocket, UserBike } from '../api';
 import { txExplorerUrl } from '../utils/format';
 
@@ -267,10 +268,20 @@ export function NftDetailModal({ nftId, onClose, ownerBike }: NftDetailModalProp
     },
   });
 
+  // The burn is signed by the player in their own Enjin Wallet (2026-09-02): the request goes
+  // out, the panel says so, and the item is credited once the chain confirms — importNft waits
+  // for that, or gives up after a few minutes without losing the import (the server finishes
+  // it whenever the approval lands).
+  const [awaitingWallet, setAwaitingWallet] = useState(false);
   const importMutation = useMutation({
-    mutationFn: (tokenId: number) => importBikeNft(tokenId),
-    onSuccess: (data) => {
-      setResult({ kind: 'import', txHash: data.txHash ?? null, tokenId: null });
+    mutationFn: (tokenId: number) => importNft('bike', tokenId, () => setAwaitingWallet(true)),
+    onSettled: () => setAwaitingWallet(false),
+    onSuccess: (outcome) => {
+      if (outcome.status === 'still-pending') {
+        setActionError('Still waiting for your approval in the Enjin Wallet. The bike comes back on its own once you approve — you can close this.');
+        return;
+      }
+      setResult({ kind: 'import', txHash: null, tokenId: null });
       setActionError(null);
       setConfirmAction(null);
       invalidateAfterChainAction();
@@ -339,6 +350,7 @@ export function NftDetailModal({ nftId, onClose, ownerBike }: NftDetailModalProp
               <ImportConfirmPanel
                 tokenId={ownerBike.tokenId}
                 pending={importMutation.isPending}
+                awaitingWallet={awaitingWallet}
                 errorMessage={actionError}
                 onCancel={() => setConfirmAction(null)}
                 onConfirm={() => importMutation.mutate(ownerBike.tokenId as number)}
@@ -417,30 +429,26 @@ function ExportConfirmPanel({
   onCancel: () => void;
   onConfirm: () => void;
 }) {
-  const { data: fees, isLoading: feesLoading } = useQuery({
-    queryKey: ['blockchain-fees'],
-    queryFn: fetchBlockchainFees,
-  });
+  // KEINE GEBUEHRENABFRAGE MEHR. Der Export kostete einmal WATTS; das ist abgeschafft, und
+  // /blockchain/fees liefert seither 0. Eine Zeile "Gebuehr: 0 WATTS" beantwortet keine Frage,
+  // sie stellt eine — der Eigentuemer hat am 2026-09-02 genau danach gefragt. Was den Export
+  // heute begrenzt, steht ohnehin schon im Text darueber: das Rad wird eingefroren.
   const socketedPartCount = (bike.partSockets ?? []).filter((s) => s.partId != null).length;
 
   return (
     <div className="mt-5 pt-4 border-t-2 border-m2e-border space-y-3">
       <h3 className="text-sm uppercase tracking-widest text-m2e-text">Confirm Export</h3>
       <p className="text-xs text-m2e-text-secondary leading-relaxed">
-        This mints your bike as an on-chain NFT in your wallet. You'll be able to sell or transfer it on any Enjin-compatible marketplace. The bike is frozen at its current level and stats: it can't be ridden, levelled, repaired or fitted with parts, and it stops adding to your max energy, until you import it back.
+        This mints your bike as an NFT straight into your linked Enjin Wallet — it is yours on the chain from that moment, to hold, send or sell on any Enjin marketplace. The bike is frozen at its current level and stats: it can't be ridden, levelled, repaired or fitted with parts, and it stops adding to your max energy, until you import it back.
       </p>
-      <ul className="text-xs text-m2e-text-secondary space-y-1 pixel-border bg-m2e-bg-alt p-3">
-        <li className="flex items-center justify-between">
-          <span className="uppercase tracking-wider text-m2e-text-muted">Fee</span>
-          <span className="text-base text-m2e-text tabular-nums">{feesLoading ? '…' : fees ? `${fees.nftExportFeeSap.toLocaleString()} WATTS` : '—'}</span>
-        </li>
-        {socketedPartCount > 0 && (
+      {socketedPartCount > 0 && (
+        <ul className="text-xs text-m2e-text-secondary space-y-1 pixel-border bg-m2e-bg-alt p-3">
           <li className="flex items-center justify-between">
             <span className="uppercase tracking-wider text-m2e-text-muted">Socketed parts</span>
             <span className="text-m2e-text">{socketedPartCount} pause with the bike</span>
           </li>
-        )}
-      </ul>
+        </ul>
+      )}
       {errorMessage && (
         <div className="pixel-card p-3 border-m2e-danger bg-m2e-danger/10 text-m2e-danger text-xs">{errorMessage}</div>
       )}
@@ -454,7 +462,7 @@ function ExportConfirmPanel({
         </button>
         <button
           onClick={onConfirm}
-          disabled={pending || feesLoading}
+          disabled={pending}
           className="pixel-btn pixel-btn-primary px-4 py-2 text-xs uppercase tracking-wider inline-flex items-center gap-2 disabled:opacity-40"
         >
           <Upload className="w-4 h-4" />
@@ -468,12 +476,14 @@ function ExportConfirmPanel({
 function ImportConfirmPanel({
   tokenId,
   pending,
+  awaitingWallet,
   errorMessage,
   onCancel,
   onConfirm,
 }: {
   tokenId: number;
   pending: boolean;
+  awaitingWallet: boolean;
   errorMessage: string | null;
   onCancel: () => void;
   onConfirm: () => void;
@@ -482,8 +492,13 @@ function ImportConfirmPanel({
     <div className="mt-5 pt-4 border-t-2 border-m2e-border space-y-3">
       <h3 className="text-sm uppercase tracking-widest text-m2e-text">Confirm Import</h3>
       <p className="text-xs text-m2e-text-secondary leading-relaxed">
-        This burns the NFT <span className="text-m2e-text">#{tokenId}</span> on-chain and returns the bike to your in-game inventory — fully playable again, with full HP and durability. The burn is permanent — you can always export again later.
+        This burns the NFT <span className="text-m2e-text">#{tokenId}</span> and returns the bike to your in-game inventory — fully playable again, with full HP and durability. The burn is signed by you: a request appears in your Enjin Wallet (Settings → Connected Apps), and the bike comes back once you approve it. The burn is permanent — you can always export again later.
       </p>
+      {awaitingWallet && (
+        <div className="pixel-card p-3 border-m2e-accent bg-m2e-accent/10 text-m2e-text text-xs">
+          Waiting for your approval in the Enjin Wallet…
+        </div>
+      )}
       {errorMessage && (
         <div className="pixel-card p-3 border-m2e-danger bg-m2e-danger/10 text-m2e-danger text-xs">{errorMessage}</div>
       )}
@@ -501,7 +516,7 @@ function ImportConfirmPanel({
           className="pixel-btn pixel-btn-primary px-4 py-2 text-xs uppercase tracking-wider inline-flex items-center gap-2 disabled:opacity-40"
         >
           <Download className="w-4 h-4" />
-          {pending ? 'Importing…' : 'Confirm Import'}
+          {awaitingWallet ? 'Approve in your wallet…' : pending ? 'Sending…' : 'Confirm Import'}
         </button>
       </div>
     </div>
@@ -517,7 +532,7 @@ function ResultPanel({
 }) {
   const title = result.kind === 'export' ? 'Exported on-chain' : 'Imported to game';
   const body = result.kind === 'export'
-    ? `Your bike is now an on-chain NFT${result.tokenId != null ? ` (#${result.tokenId})` : ''}. It's in your wallet and ready to sell or transfer.`
+    ? `Your bike is now an on-chain NFT${result.tokenId != null ? ` (#${result.tokenId})` : ''}. It's in your Enjin Wallet, ready to hold, send or sell.`
     : 'Your bike is back in your inventory at full HP. You can equip it and start earning again.';
 
   return (

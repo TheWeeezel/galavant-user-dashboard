@@ -75,9 +75,11 @@ function bikeToItem(b: UserBike): SellableItem {
     // Ein frisch exportiertes Rad BLEIBT hier stehen und sagt, was los ist. Vorher fiel es zwei
     // Stunden lang ganz aus der Liste (der Server filterte es weg) — der Spieler sah nur, dass
     // sein Rad verschwunden war. Gemeldet am 2026-09-02.
-    blockedReason: b.settling
-      ? 'This NFT is still settling on chain — you can list it in a couple of hours.'
-      : !isNft && b.durability < 100
+    // An NFT is in the player's own Enjin Wallet (2026-09-02) — nothing of theirs is in our
+    // custody to burn or hand over, so the game market cannot take it. Import first.
+    blockedReason: isNft
+      ? 'This NFT is in your Enjin Wallet. Import it back into the game to sell it here for WATTS.'
+      : b.durability < 100
         ? 'Repair this bike to 100% durability before listing it.'
         : b.isEquipped
           ? 'Unequip this bike before listing it.'
@@ -96,7 +98,9 @@ function partToItem(p: UserPart): SellableItem {
     art: `/parts/part-${p.type.toLowerCase()}-lv${p.level}.png`,
     sublabel: isNft ? `NFT #${p.tokenId} · Lv.${p.level}` : `Lv.${p.level}`,
     isNft,
-    blockedReason: null,
+    blockedReason: isNft
+      ? 'This NFT is in your Enjin Wallet. Import it back into the game to sell it here for WATTS.'
+      : null,
   };
 }
 
@@ -255,12 +259,13 @@ function SellCard({
           {/* The item is the item; the currency is the decision. */}
           <div className="flex gap-2">
             {(['watts', 'enj'] as const).map((c) => {
-              const allowed = item.isNft || c === 'watts';
+              // The game market is a WATTS market; ENJ changes hands on the chain, wallet to wallet.
+              const allowed = c === 'watts';
               return (
                 <button
                   key={c}
                   disabled={!allowed}
-                  title={allowed ? undefined : policy?.offChainEnjRefusal}
+                  title={allowed ? undefined : policy?.currencyCopy.enj ?? policy?.offChainEnjRefusal}
                   onClick={() => { setCurrency(c); setPrice(''); }}
                   className={`flex-1 px-3 py-1.5 uppercase tracking-wide text-xs border-2 disabled:opacity-40 ${
                     currency === c
