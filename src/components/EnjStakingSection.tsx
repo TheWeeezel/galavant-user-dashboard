@@ -25,6 +25,17 @@ export function EnjStakingSection() {
     retry: false,
     refetchInterval: (q) => (q.state.data?.linked ? false : 5000),
   });
+  // A request abandoned in the wallet left this screen on "Waiting for approval…" with nothing
+  // to press until the code expired (a tester sat on it for the code's full lifetime,
+  // 2026-09-02). After half a minute the player may start over: a fresh code replaces the old
+  // one on the server, and the only thing lost is an approval nobody was going to give.
+  const pending = link.data?.pending === true;
+  const [canRestart, setCanRestart] = useState(false);
+  useEffect(() => {
+    if (!pending) { setCanRestart(false); return; }
+    const t = setTimeout(() => setCanRestart(true), 30_000);
+    return () => clearTimeout(t);
+  }, [pending]);
 
   const staking = useQuery({
     queryKey: ['enjin-staking-status'],
@@ -133,10 +144,10 @@ export function EnjStakingSection() {
           */}
           <button
             className="pixel-btn-primary px-6 py-3 disabled:opacity-50"
-            onClick={() => startLink.mutate()}
-            disabled={startLink.isPending || link.data?.pending === true}
+            onClick={() => { setCanRestart(false); startLink.mutate(); }}
+            disabled={startLink.isPending || (pending && !canRestart)}
           >
-            {startLink.isPending ? 'Opening…' : link.data?.pending ? 'Waiting for approval…' : 'Link Enjin Wallet'}
+            {startLink.isPending ? 'Opening…' : pending ? (canRestart ? 'Start over' : 'Waiting for approval…') : 'Link Enjin Wallet'}
           </button>
           {linkInfo && (
             <div className="space-y-3 border-t border-m2e-border pt-4">
