@@ -3,6 +3,69 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.24",
+      "date": "2026-09-02",
+      "title": "One Wallet on Enjin",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Claim NFTs that arrive in your Enjin Wallet — bought on the Enjin marketplace or sent to you — straight into the game from Profile (web) or the Vault (app), by approving the burn in your wallet"
+        },
+        {
+          "type": "feature",
+          "text": "Import from your own wallet: bringing an NFT back into the game is now a signing request in your Enjin Wallet; the item lands once the chain confirms, even if you close the screen"
+        },
+        {
+          "type": "feature",
+          "text": "Link your X account with one tap (OAuth) instead of typing a handle"
+        },
+        {
+          "type": "improvement",
+          "text": "One wallet: your linked Enjin Wallet is the only wallet you have with Galavant. Exported bikes and parts are minted straight into it; there is no separate \"game wallet\" or deposit address any more"
+        },
+        {
+          "type": "improvement",
+          "text": "Wallet addresses are shown as real Enjin addresses (Matrixchain on the wallet page, Relaychain next to your stake) instead of a raw key"
+        },
+        {
+          "type": "improvement",
+          "text": "Season payouts are sent to your linked Enjin Wallet, so a linked wallet is required before you can commit WATTS"
+        },
+        {
+          "type": "improvement",
+          "text": "NFTs are no longer sold on the game market — trade them on the Enjin marketplace from your wallet, or import them first to sell for WATTS"
+        },
+        {
+          "type": "improvement",
+          "text": "Exporting needs a linked wallet; the last bike in your garage can be exported too"
+        },
+        {
+          "type": "improvement",
+          "text": "Starter bikes can be bought with ENJ on the website, paid from your own wallet"
+        },
+        {
+          "type": "improvement",
+          "text": "Bike detail attribute bars render as solid fills"
+        },
+        {
+          "type": "fix",
+          "text": "A freshly exported bike no longer disappears from your inventory while it settles"
+        },
+        {
+          "type": "fix",
+          "text": "Token images no longer pick up a stale cache suffix"
+        },
+        {
+          "type": "fix",
+          "text": "Chain errors on export/import now say what happened and what to do instead of a bare \"validation\""
+        },
+        {
+          "type": "fix",
+          "text": "Distance counting drops stretches faster than a human pace and never counts the same GPS fix twice"
+        }
+      ]
+    },
+    {
       "version": "0.0.22",
       "date": "2026-05-15",
       "title": "Maintenance Matters",
