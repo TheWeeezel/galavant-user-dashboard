@@ -641,7 +641,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'table', headers: ['', 'In the game', 'On the chain'], rows: [
             ['Priced in', 'WATTS', 'ENJ'],
             ['Who signs', 'Nobody — you tap a button', 'You do, in your own Enjin Wallet'],
-            ['Chain fees', 'There are none', 'Galavant pays for minting and importing; a sale on the Enjin marketplace is between you and the chain'],
+            ['Chain fees', 'There are none', 'Galavant pays for minting; importing costs your wallet a tiny network fee; a sale on the Enjin marketplace is between you and the chain'],
             ['Where you do it', 'App and website', 'Website to export, app or website to import; your wallet for anything ENJ'],
           ]},
           { type: 'heading', text: 'What an NFT is here' },
@@ -678,7 +678,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'list', items: [
             'Playing needs no wallet at all. Walking, earning, levelling, repairing, breeding, toolboxes and the WATTS market never touch it.',
             'Exporting an NFT needs it — that is where the token is minted.',
-            'Importing an NFT needs it — you approve the burn there.',
+            'Importing an NFT needs it — you approve the burn there, and it pays the small network fee.',
             'Cashing WATTS out for ENJ needs it — that is where the ENJ is paid. Without a linked wallet you cannot commit WATTS to a season.',
             'Staking needs it — you stake from it, and the game reads your stake from the chain.',
           ]},
@@ -722,7 +722,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'list', items: [
             'On the website, open Profile and find the item — exported bikes and exported parts each sit in their own on-chain group. Tap it and choose Import to Game. In the app, open the bike and use Import.',
             'Galavant asks the chain that the token is in your linked wallet, then sends a burn request to your Enjin Wallet.',
-            'Open the Enjin Wallet on your phone — Settings, then Connected Apps — and approve the request. The burn is signed by you, and it costs you nothing: Galavant covers the fee.',
+            'Open the Enjin Wallet on your phone — Settings, then Connected Apps — and approve the request. The burn is signed by you, and your wallet pays the small network fee for it — a fraction of a cent in ENJ, so keep a little ENJ in the wallet.',
             'The token is burned — destroyed on-chain, permanently — and the item comes back exactly as it was minted: same level, same stats, full condition. The screen updates on its own once the chain confirms; you can close it and come back.',
             'It is fully playable again. Equip it, socket parts, level it, start walking. A bike puts your maximum energy back up too.',
           ]},
