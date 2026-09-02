@@ -252,6 +252,12 @@ export interface UserBike {
   isListed: boolean;
   durability: number;
   hp: number;
+  /**
+   * True for the ~2h a fresh mint needs to finalise on chain. The server owns this rule; do not
+   * recompute it here from a timestamp, or this panel will disagree with the server that
+   * actually accepts the listing.
+   */
+  settling: boolean;
 }
 
 export interface UserPart {
@@ -629,6 +635,13 @@ export interface StoreProduct {
    * therefore asks for this instead of carrying a rate or a feature flag of its own.
    */
   priceEnj?: string | null;
+  /**
+   * Whether the CARD button may be pressed. Separate from `available` because the shop now has two
+   * tills and they open independently: with no Stripe key but a live ENJ rate the bike is on sale,
+   * `available` is true, and a card button that leads to a 503 would be the only thing the buyer
+   * ever sees. Absent on an older server, and then the card is as available as the bike is.
+   */
+  cardAvailable?: boolean;
 }
 export interface StoreCatalog { enabled: boolean; currency: string; products: StoreProduct[] }
 
@@ -660,15 +673,54 @@ export function storeCheckout(bikeType: string) {
 }
 
 /**
- * ENJ checkout, the twin of `storeCheckout`. It is only ever called for a bike the server itself
- * priced in ENJ, so the day the catalog starts quoting ENJ this route has to answer — the price
- * and the way to pay it are one delivery, not two.
+ * What the shop hands a buyer who pays in ENJ: an address, an amount and a deadline.
  *
- * `url` is optional on purpose: a server that quotes a price it cannot yet collect gets an honest
- * "not ready, nothing was charged" on the card rather than a silent dead click.
+ * Deliberately NOT a checkout URL, which is what this used to expect. There is no hosted page to
+ * send anyone to, because nobody but the buyer ever touches their ENJ — they sign the transfer in
+ * their own wallet, and the server reads the result off the chain. `chain` is spelled out for the
+ * same reason the amount is: sending on the wrong chain loses the money, and no refund exists.
+ */
+export interface EnjPayment {
+  quoteId: string;
+  product: string;
+  /**
+   * DER BETRAG, DER ZU SENDEN IST — Preis plus die Kennung dieses Kaufs, auf acht Nachkommastellen.
+   *
+   * Seit dem 2026-09-01 geht das Geld an EINE Galavant-Adresse statt an eine eigene je Kauf (der
+   * Eigentuemer haelt keine Zahlungen und wir unterschreiben nichts). Damit ist der Empfaenger
+   * keine Zuordnung mehr, und ein Verwendungszweck existiert auf der Relaychain nicht — also
+   * traegt der Betrag die Kennung, in den Nachkommastellen fuenf bis acht. Wer sie wegrundet,
+   * hat bezahlt, ohne dass jemand weiss wofuer; deshalb sagt die Oberflaeche es ausdruecklich.
+   */
+  amountEnj: string;
+  /** Der Preis ohne Kennung — damit sichtbar ist, dass nichts aufgeschlagen wird. */
+  priceEnj: string;
+  /** Die vier Ziffern selbst, damit sie hervorgehoben werden koennen. */
+  paymentTag: number;
+  address: string;
+  chain: string;
+  expiresAt: string;
+  /** open (waiting for the transfer) → paid → redeemed; or held. */
+  status: string;
+  /** True once the fifteen-minute promise has run out and nothing was paid against it. */
+  expired: boolean;
+  /** 'late' or 'amount' — money arrived that cannot be honoured as-is and a human has to look. */
+  holdReason: string | null;
+  redeemed: boolean;
+}
+
+/**
+ * Open (or re-open) an ENJ payment. The server hands back the SAME payment while one is still
+ * running for this bike, so a reload cannot leave the buyer looking at one address while their
+ * wallet is aimed at another.
  */
 export function storeCheckoutEnj(bikeType: string) {
-  return fetchAuthJson<{ url?: string | null }>('/store/checkout/enj', { method: 'POST', body: JSON.stringify({ bikeType }) });
+  return fetchAuthJson<EnjPayment>('/store/checkout/enj', { method: 'POST', body: JSON.stringify({ bikeType }) });
+}
+
+/** Poll one payment while the transfer travels. */
+export function fetchEnjPayment(quoteId: string) {
+  return fetchAuthJson<EnjPayment>(`/store/checkout/enj/${quoteId}`);
 }
 
 // --- Blockchain / NFT ---
