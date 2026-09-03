@@ -920,6 +920,11 @@ export function marketList(body: {
   );
 }
 
+/** The caller's own ENJ purchase request for a listing — waiting in the wallet, failed (why), or done. */
+export function fetchMarketPurchase(id: string) {
+  return fetchAuthJson<{ state: 'none' | 'pending' | 'failed' | 'done'; error: string | null }>(`/market/${id}/purchase`);
+}
+
 export function marketBuy(id: string) {
   // `pending`: an ENJ purchase the buyer still has to approve in their Enjin Wallet.
   return fetchAuthJson<{ success: boolean; status?: string; pending?: boolean }>(`/market/${id}/buy`, { method: 'POST' });

@@ -6,7 +6,7 @@ import {
   ShoppingCart, ChevronLeft, Cancel, Coins,
   Settings2, SortVertical, Check, Search,
 } from 'pixelarticons/react';
-import { fetchMarket, fetchStats, marketBuy, type MarketListing } from '../api';
+import { fetchMarket, fetchStats, marketBuy, fetchMarketPurchase, type MarketListing } from '../api';
 import { ListingCard } from '../components/ListingCard';
 import { MarketSellPanel } from '../components/MarketSellPanel';
 import { NftDetailModal } from '../components/NftDetailModal';
@@ -120,13 +120,33 @@ export function Marketplace() {
   // Buying: an off-chain item settles here. An ENJ listing answers `pending` — the purchase is
   // a request the buyer approves in their Enjin Wallet (2026-09-03), so the page says so.
   const [buyNotice, setBuyNotice] = useState<string | null>(null);
+  // The listing whose purchase request is being watched: polled until it is no longer waiting.
+  const [watchedPurchase, setWatchedPurchase] = useState<string | null>(null);
   const buy = useMutation({
     mutationFn: (id: string) => marketBuy(id),
-    onSuccess: (res) => {
+    onSuccess: (res, id) => {
       qc.invalidateQueries({ queryKey: ['market'] });
-      if (res.pending) setBuyNotice('Approve the purchase in your Enjin Wallet. Your wallet pays the price plus a small network fee; the NFT lands in it once the chain confirms, and you can claim it into the game from your Profile.');
+      if (res.pending) {
+        setBuyNotice('Approve the purchase in your Enjin Wallet. Your wallet pays the price plus a small network fee; the NFT lands in it once the chain confirms, and you can claim it into the game from your Profile.');
+        setWatchedPurchase(id);
+      }
     },
+    onError: (e) => setBuyNotice((e as Error).message),
   });
+  useEffect(() => {
+    if (!watchedPurchase) return;
+    const timer = setInterval(() => {
+      fetchMarketPurchase(watchedPurchase).then((p) => {
+        if (p.state === 'pending' || p.state === 'none') return;
+        setWatchedPurchase(null);
+        qc.invalidateQueries({ queryKey: ['market'] });
+        setBuyNotice(p.state === 'done'
+          ? 'Bought. The NFT is in your Enjin Wallet — claim it into the game from your Profile.'
+          : `Purchase failed: ${p.error ?? 'the chain refused it'}. Nothing was paid except the network fee.`);
+      }).catch(() => undefined);
+    }, 5_000);
+    return () => clearInterval(timer);
+  }, [watchedPurchase, qc]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['market', itemType, sortBy, quality, bikeType, partType, partLevel, debouncedMin, debouncedMax, page],
