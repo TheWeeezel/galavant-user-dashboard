@@ -50,9 +50,13 @@ type SellableItem = {
   /** Material (bikes) or attribute (parts) — rendered as the gem tag. */
   gemLabel: string;
   gemColor: string;
-  /** Item art, baked on white — shown on a white plate like everywhere else. */
+    /** Item art, baked on white — shown on a white plate like everywhere else. */
   art: string;
   sublabel: string;
+  /** Corner badge on the art plate (the app's EQUIPPED ribbon). */
+  badge?: string;
+  hp?: number;
+  durability?: number;
   isNft: boolean;
   /** Off-chain bikes must be fully repaired first; an NFT's condition is frozen at mint. */
   blockedReason: string | null;
@@ -70,7 +74,10 @@ function bikeToItem(b: UserBike): SellableItem {
     art: b.imageUrl
       ? (b.imageUrl.startsWith('/') ? `${config.apiUrl}${b.imageUrl}` : b.imageUrl)
       : `${config.apiUrl}/art/bases/bike-${b.type.toLowerCase()}.png`,
-    sublabel: isNft ? `NFT #${b.tokenId} · Lv.${b.level}` : `Lv.${b.level}`,
+        sublabel: isNft ? `Lv.${b.level} · NFT #${b.tokenId}` : `Lv.${b.level}`,
+    badge: b.isEquipped ? 'Equipped' : undefined,
+    hp: b.hp,
+    durability: b.durability,
     isNft,
     // An NFT lists for ENJ, signed from the wallet that holds it (2026-09-03); its condition is
     // frozen at mint, so the repair and equip gates are for in-game bikes only.
@@ -213,27 +220,46 @@ function SellCard({
 
   return (
     <div className="pixel-card p-4 flex flex-col gap-3">
-            {/* Identity — art on a white plate, Jersey name, gem tag; the app's card grammar. */}
-      <div className="flex gap-3">
-        <div className="w-16 h-16 shrink-0 bg-white pixel-border overflow-hidden">
+                  {/* The app's BikeCard anatomy: art plate (scanlines + ground strip, corner
+          badge), Jersey name, LV/gem row, HP+DUR meters. */}
+      <div className="pixel-border overflow-hidden relative bg-white">
+        {item.badge && (
+          <span className="absolute top-0 left-0 z-10 bg-m2e-accent text-white text-[10px] font-bold tracking-[0.2em] uppercase px-2.5 py-1">
+            {item.badge}
+          </span>
+        )}
+        <div
+          className="h-36 flex items-center justify-center"
+          style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(60, 40, 70, 0.05) 0 2px, transparent 2px 4px)' }}
+        >
           <img
             src={item.art}
             alt={item.name}
-            className="w-full h-full object-cover pixel-render"
+            className="h-full w-full object-contain pixel-render p-2"
             loading="lazy"
             onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }}
           />
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="uppercase text-lg tracking-wide text-m2e-text truncate">{item.name}</span>
-            <span className="text-xs text-m2e-text-secondary shrink-0 tabular-nums">{item.sublabel}</span>
-          </div>
-          <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider mt-1" style={{ color: item.gemColor }}>
+        <div
+          className="h-2.5"
+          style={{ background: 'repeating-linear-gradient(90deg, #D7C2B2 0 14px, #C9B2A0 14px 22px, #D7C2B2 22px 40px, #A57F93 40px 46px, #C9B2A0 46px 60px)' }}
+        />
+      </div>
+      <div>
+        <div className="text-2xl uppercase tracking-wide text-m2e-text leading-none truncate">{item.name}</div>
+        <div className="flex items-center justify-between mt-1">
+          <span className="text-sm text-m2e-text-secondary uppercase tabular-nums">{item.sublabel}</span>
+          <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider" style={{ color: item.gemColor }}>
             <span className="w-2 h-2 rotate-45 rounded-[1px] inline-block" style={{ backgroundColor: item.gemColor }} />
             {item.gemLabel}
           </span>
         </div>
+        {item.hp != null && item.durability != null && (
+          <div className="flex items-center gap-4 mt-2 text-[10px] font-bold tracking-wider">
+            <Meter label="HP" value={item.hp} color="var(--color-m2e-success)" />
+            <Meter label="DUR" value={item.durability} color="var(--color-m2e-info)" />
+          </div>
+        )}
       </div>
 
       {listing ? (
@@ -316,6 +342,18 @@ function SellCard({
         </div>
       )}
       {err && <div className="text-m2e-danger text-xs">{err}</div>}
+    </div>
+  );
+}
+
+function Meter({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div className="flex items-center gap-1.5 flex-1 min-w-0">
+      <span style={{ color }}>{label}</span>
+      <div className="flex-1 h-2 rounded-full bg-m2e-bg-alt border border-m2e-border overflow-hidden">
+        <div className="h-full rounded-full" style={{ width: `${Math.min(value, 100)}%`, backgroundColor: color }} />
+      </div>
+      <span className="text-m2e-text tabular-nums">{Math.round(value)}%</span>
     </div>
   );
 }
