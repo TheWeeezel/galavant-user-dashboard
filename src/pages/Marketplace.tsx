@@ -117,11 +117,15 @@ export function Marketplace() {
   const qc = useQueryClient();
   const stats = useQuery({ queryKey: ['stats'], queryFn: fetchStats });
 
-  // Buying works the same on every card the market can actually settle: an off-chain item and
-  // an NFT bought for WATTS. An ENJ listing carries its own explanation instead of a button.
+  // Buying: an off-chain item settles here. An ENJ listing answers `pending` — the purchase is
+  // a request the buyer approves in their Enjin Wallet (2026-09-03), so the page says so.
+  const [buyNotice, setBuyNotice] = useState<string | null>(null);
   const buy = useMutation({
     mutationFn: (id: string) => marketBuy(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['market'] }),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ['market'] });
+      if (res.pending) setBuyNotice('Approve the purchase in your Enjin Wallet. Your wallet pays the price plus a small network fee; the NFT lands in it once the chain confirms, and you can claim it into the game from your Profile.');
+    },
   });
 
   const { data, isLoading, error } = useQuery({
@@ -241,6 +245,10 @@ export function Marketplace() {
               </button>
             ))}
           </div>
+
+          {buyNotice && (
+            <div className="pixel-card p-4 border-amber-500/60 text-sm text-m2e-text-secondary">{buyNotice}</div>
+          )}
 
           {tab === 'sell' ? (
             isAuthenticated ? (

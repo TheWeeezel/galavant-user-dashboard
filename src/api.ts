@@ -921,7 +921,8 @@ export function marketList(body: {
 }
 
 export function marketBuy(id: string) {
-  return fetchAuthJson<{ success: boolean; status?: string }>(`/market/${id}/buy`, { method: 'POST' });
+  // `pending`: an ENJ purchase the buyer still has to approve in their Enjin Wallet.
+  return fetchAuthJson<{ success: boolean; status?: string; pending?: boolean }>(`/market/${id}/buy`, { method: 'POST' });
 }
 
 export function marketCancel(id: string) {

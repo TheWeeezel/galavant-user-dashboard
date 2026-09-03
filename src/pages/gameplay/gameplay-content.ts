@@ -642,7 +642,7 @@ export const gameplaySections: GameplaySection[] = [
             ['Priced in', 'WATTS', 'ENJ'],
             ['Who signs', 'Nobody — you tap a button', 'You do, in your own Enjin Wallet'],
             ['Chain fees', 'There are none', 'Galavant pays for minting; importing costs your wallet a tiny network fee; listing for ENJ costs a fee plus a refundable deposit, held while the listing is live'],
-            ['Where you do it', 'App and website', 'App or website to export, import and list for ENJ; your Enjin Wallet approves each of those and is where an NFT is bought'],
+            ['Where you do it', 'App and website', 'App or website to export, import, list and buy for ENJ; your Enjin Wallet approves each of those'],
           ]},
           { type: 'heading', text: 'What an NFT is here' },
           { type: 'paragraph', text: 'An NFT is one of your bikes or parts, minted as a token on the Enjin chain and placed straight into your own Enjin Wallet. It is not a copy of the item and not a certificate hanging beside it — it is the item, moved out of the game and onto the chain. One token per item, one item per token, never both at once.' },
@@ -654,7 +654,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Where each thing happens' },
           { type: 'list', items: [
             'Playing — levelling, repairs, socketing, breeding — happens in the app, all of it in WATTS, none of it signed by you.',
-            'Selling works in the app and on the website for both halves: an in-game item is listed for WATTS, an NFT for ENJ. You set the price here and approve the listing in your Enjin Wallet. Buying an NFT is signed from a wallet, not in the app.',
+            'Selling works in the app and on the website for both halves: an in-game item is listed for WATTS, an NFT for ENJ. You set the price here and approve the listing in your Enjin Wallet. Buying an NFT works the same way: tap Buy, approve it in your wallet.',
             'Exporting and importing work in both — the app has Export and Import right on the bike.',
             'Anything paid for with money is on the website only. No card purchase happens inside the app.',
           ]},
@@ -748,7 +748,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Buying' },
           { type: 'list', items: [
             'In-game items are bought on the Galavant market with WATTS, in the app or on the website. Browse by type, quality, and price.',
-            'Galavant NFTs are bought with ENJ from your own Enjin Wallet, on the Enjin marketplace. The game market shows the listing and its price, but the purchase itself is signed in a wallet, not in the app. Once the NFT is in your wallet, Importing tells you how to bring it into the game.',
+            'Galavant NFTs are bought with ENJ right on the game market, in the app or on the website: tap Buy, then approve the purchase in your Enjin Wallet, which pays the price and a small network fee. The NFT lands in your wallet, frozen; Importing tells you how to bring it into the game.',
           ]},
           { type: 'tip', text: 'Check Mint Scores when buying bikes — a high grade at a low price is a great find!' },
         ],
