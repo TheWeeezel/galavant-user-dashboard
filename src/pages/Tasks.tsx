@@ -21,7 +21,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   wallet: 'Wallet',
 };
 
-const CATEGORY_ORDER = ['getting_started', 'marketplace', 'bike_progression', 'economy', 'wallet'];
+const CATEGORY_ORDER = ['getting_started', 'bike_progression', 'marketplace', 'wallet', 'economy'];
 
 const TASK_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   create_wallet: Login,
@@ -37,6 +37,17 @@ const TASK_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   convert_points_to_tokens: Redo,
   export_bike_to_wallet: ExternalLink,
   import_bike_from_wallet: Loader,
+  ride_first_km: SpeedFast,
+  open_toolbox: Download,
+  socket_part: Zap,
+  repair_bike: Heart,
+  daily_mission: Redo,
+  cancel_listing: Store,
+  list_nft_for_enj: Coins,
+  buy_nft_for_enj: ShoppingCart,
+  export_part_to_wallet: ExternalLink,
+  redeem_watts: Coins,
+  season_payout: Download,
 };
 
 export function Tasks() {
