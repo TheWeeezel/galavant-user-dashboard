@@ -337,7 +337,10 @@ function SellCard({
           )}
         </>
       )}
-      {notice && (
+      {/* The local notice is instant feedback for the moment BEFORE the refetch
+          lands; once the listing itself reports chainPending, the listing row above
+          says the same thing — showing both printed the approval text twice. */}
+      {notice && !(listing?.chainPending && notice.title === policy?.enj.listingSubmittedTitle) && (
         <div className="text-[11px] text-amber-600">
           <span className="uppercase tracking-wide">{notice.title}</span> — {notice.text}
         </div>
