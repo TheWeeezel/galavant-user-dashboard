@@ -782,7 +782,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'What you need it for' },
           { type: 'list', items: [
             'Signing. Anything that happens on the chain in your name is approved in your wallet, not by us. That is the point of holding your own keys.',
-            'Staking ENJ. You stake in the Galavant Peloton pool yourself, in your own wallet — Galavant is not part of that step and never holds your ENJ.',
+            'Staking ENJ. You stake in the Galavant Peloton pool from the app or from the pool page, and approve it in your own wallet — Galavant never holds your ENJ.',
             'Holding your own ENJ. Once a wallet is linked, your account page shows what is in it and what you have staked.',
             'Holding the NFTs you export, approving the listings you create for them, and buying Galavant NFTs on the Enjin marketplace. A Galavant NFT in your wallet can be claimed into the game from Profile — read Importing.',
             'Looking at Galavant NFTs from outside the game. Every token points at its own live stat sheet, so a bike renders the same in a wallet or on a marketplace as it does here.',
@@ -1057,7 +1057,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Setting it up' },
           { type: 'list', items: [
             'Link your Enjin Wallet under Staking → Stake ENJ, in the app or in your account on the website. Linking only reads your public address — it never moves funds.',
-            'Open the Galavant Peloton pool from that screen, and stake there in your own wallet. You choose the amount and you sign it; Galavant is not part of that step.',
+            'On that screen, enter how much ENJ to stake and approve the request in your Enjin Wallet — the ENJ has to be on the Relaychain side of your wallet. Or open the Galavant Peloton pool page and stake there. You choose the amount and you sign it either way.',
             'Your bonus appears on its own within an hour or so and then keeps building. There is nothing to claim and nothing to confirm — we read the pool from the chain and find your stake there.',
           ]},
           { type: 'heading', text: 'Why it takes a while to build' },
