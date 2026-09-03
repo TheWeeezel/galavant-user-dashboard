@@ -748,7 +748,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Buying' },
           { type: 'list', items: [
             'In-game items are bought on the Galavant market with WATTS, in the app or on the website. Browse by type, quality, and price.',
-            'Galavant NFTs are bought with ENJ right on the game market, in the app or on the website: tap Buy, then approve the purchase in your Enjin Wallet, which pays the price and a small network fee. The NFT lands in your wallet, frozen; Importing tells you how to bring it into the game.',
+            'Galavant NFTs are bought with ENJ right on the game market, in the app or on the website: tap Buy, then approve the purchase in your Enjin Wallet, which pays the price and a small network fee. The NFT lands in your wallet and shows in your Items as a frozen NFT — Importing tells you how to bring it into the game.',
           ]},
           { type: 'tip', text: 'Check Mint Scores when buying bikes — a high grade at a low price is a great find!' },
         ],
