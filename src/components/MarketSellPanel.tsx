@@ -72,13 +72,10 @@ function bikeToItem(b: UserBike): SellableItem {
       : `${config.apiUrl}/art/bases/bike-${b.type.toLowerCase()}.png`,
     sublabel: isNft ? `NFT #${b.tokenId} · Lv.${b.level}` : `Lv.${b.level}`,
     isNft,
-    // Ein frisch exportiertes Rad BLEIBT hier stehen und sagt, was los ist. Vorher fiel es zwei
-    // Stunden lang ganz aus der Liste (der Server filterte es weg) — der Spieler sah nur, dass
-    // sein Rad verschwunden war. Gemeldet am 2026-09-02.
-    // An NFT is in the player's own Enjin Wallet (2026-09-02) — nothing of theirs is in our
-    // custody to burn or hand over, so the game market cannot take it. Import first.
+    // An NFT lists for ENJ, signed from the wallet that holds it (2026-09-03); its condition is
+    // frozen at mint, so the repair and equip gates are for in-game bikes only.
     blockedReason: isNft
-      ? 'This NFT is in your Enjin Wallet. Import it back into the game to sell it here for WATTS.'
+      ? null
       : b.durability < 100
         ? 'Repair this bike to 100% durability before listing it.'
         : b.isEquipped
@@ -98,9 +95,7 @@ function partToItem(p: UserPart): SellableItem {
     art: `/parts/part-${p.type.toLowerCase()}-lv${p.level}.png`,
     sublabel: isNft ? `NFT #${p.tokenId} · Lv.${p.level}` : `Lv.${p.level}`,
     isNft,
-    blockedReason: isNft
-      ? 'This NFT is in your Enjin Wallet. Import it back into the game to sell it here for WATTS.'
-      : null,
+    blockedReason: null,
   };
 }
 
@@ -179,12 +174,16 @@ function SellCard({
   policy?: MarketPolicy;
   onChanged: () => void;
 }) {
-  const [currency, setCurrency] = useState<'watts' | 'enj'>('watts');
+  // The item decides the currency: an in-game item is a WATTS sale, an NFT an ENJ one.
+  const [currency, setCurrency] = useState<'watts' | 'enj'>(item.isNft ? 'enj' : 'watts');
   const [price, setPrice] = useState('');
   const [err, setErr] = useState<string | null>(null);
+  /** What the seller still has to do in their wallet after list / cancel of an ENJ listing. */
+  const [notice, setNotice] = useState<{ title: string; text: string } | null>(null);
 
   const run = (fn: () => Promise<unknown>) => {
     setErr(null);
+    setNotice(null);
     fn().then(onChanged).catch((e) => setErr((e as Error).message));
   };
 
@@ -244,9 +243,14 @@ function SellCard({
             {listing.status === 'settling' && ' · selling…'}
           </div>
           <div className="text-[11px] text-m2e-text-secondary">Buyer gets: {listing.buyerNote}</div>
+          {listing.chainPending && policy && (
+            <div className="text-[11px] text-amber-600">{policy.enj.listingSubmittedTitle} — {policy.enj.listingSubmittedNote}</div>
+          )}
           <button
             disabled={cancel.isPending || listing.status !== 'active'}
-            onClick={() => run(() => cancel.mutateAsync())}
+            onClick={() => run(() => cancel.mutateAsync().then((r) => {
+              if (r.pending && policy) setNotice({ title: policy.enj.cancelSubmittedTitle, text: policy.enj.cancelSubmittedNote });
+            }))}
             className="px-3 py-2 border border-m2e-border text-m2e-text-secondary uppercase tracking-wide text-sm disabled:opacity-50"
           >
             {cancel.isPending ? 'Cancelling…' : 'Cancel listing'}
@@ -259,13 +263,13 @@ function SellCard({
           {/* The item is the item; the currency is the decision. */}
           <div className="flex gap-2">
             {(['watts', 'enj'] as const).map((c) => {
-              // The game market is a WATTS market; ENJ changes hands on the chain, wallet to wallet.
-              const allowed = c === 'watts';
+              // An in-game item is priced in WATTS; an NFT in ENJ (the buyer receives the token).
+              const allowed = item.isNft ? c === 'enj' : c === 'watts';
               return (
                 <button
                   key={c}
                   disabled={!allowed}
-                  title={allowed ? undefined : policy?.currencyCopy.enj ?? policy?.offChainEnjRefusal}
+                  title={allowed ? undefined : item.isNft ? policy?.nftWattsRefusal : policy?.offChainEnjRefusal}
                   onClick={() => { setCurrency(c); setPrice(''); }}
                   className={`flex-1 px-3 py-1.5 uppercase tracking-wide text-xs border-2 disabled:opacity-40 ${
                     currency === c
@@ -289,7 +293,9 @@ function SellCard({
             />
             <button
               disabled={list.isPending || !priceValid}
-              onClick={() => run(() => list.mutateAsync())}
+              onClick={() => run(() => list.mutateAsync().then(() => {
+                if (currency === 'enj' && policy) setNotice({ title: policy.enj.listingSubmittedTitle, text: policy.enj.listingSubmittedNote });
+              }))}
               className="px-3 py-2 border border-m2e-accent text-m2e-accent uppercase tracking-wide text-xs disabled:opacity-50"
             >
               {list.isPending ? 'Listing…' : 'List'}
@@ -303,6 +309,11 @@ function SellCard({
             </div>
           )}
         </>
+      )}
+      {notice && (
+        <div className="text-[11px] text-amber-600">
+          <span className="uppercase tracking-wide">{notice.title}</span> — {notice.text}
+        </div>
       )}
       {err && <div className="text-m2e-danger text-xs">{err}</div>}
     </div>

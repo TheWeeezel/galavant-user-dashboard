@@ -846,6 +846,8 @@ export interface MarketListing {
   canBuyHere: boolean;
   blockedLabel: string | null;
   blockedNote: string | null;
+  /** An ENJ listing sent to the chain — or waiting for the seller's signature — but not standing yet. */
+  chainPending: boolean;
   status: string;
   sellerId: string;
   sellerName: string | null;
@@ -871,8 +873,15 @@ export interface MarketPolicy {
     buyLabel: string;
     buyNote: string;
     listingDepositWarning: string;
+    /** After list / cancel: the request waits in the seller's Enjin Wallet. */
+    listingSubmittedTitle: string;
+    listingSubmittedNote: string;
+    cancelSubmittedTitle: string;
+    cancelSubmittedNote: string;
   };
   offChainEnjRefusal: string;
+  /** Why an NFT cannot be priced in WATTS (import first). */
+  nftWattsRefusal: string;
 }
 
 export function fetchMarket(filters: MarketplaceFilters = {}) {
@@ -916,7 +925,8 @@ export function marketBuy(id: string) {
 }
 
 export function marketCancel(id: string) {
-  return fetchAuthJson<{ success: boolean }>(`/market/${id}/cancel`, { method: 'POST' });
+  // `pending`: an ENJ cancel the seller still has to approve in their Enjin Wallet.
+  return fetchAuthJson<{ success: boolean; pending?: boolean }>(`/market/${id}/cancel`, { method: 'POST' });
 }
 
 // --- Part NFTs: export a part as its own token, or burn it back into the game ---

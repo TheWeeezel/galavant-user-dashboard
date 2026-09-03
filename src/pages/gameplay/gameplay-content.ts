@@ -641,8 +641,8 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'table', headers: ['', 'In the game', 'On the chain'], rows: [
             ['Priced in', 'WATTS', 'ENJ'],
             ['Who signs', 'Nobody — you tap a button', 'You do, in your own Enjin Wallet'],
-            ['Chain fees', 'There are none', 'Galavant pays for minting; importing costs your wallet a tiny network fee; a sale on the Enjin marketplace is between you and the chain'],
-            ['Where you do it', 'App and website', 'App or website to export and import; your wallet for anything ENJ'],
+            ['Chain fees', 'There are none', 'Galavant pays for minting; importing costs your wallet a tiny network fee; listing for ENJ costs a fee plus a refundable deposit, held while the listing is live'],
+            ['Where you do it', 'App and website', 'App or website to export, import and list for ENJ; your Enjin Wallet approves each of those and is where an NFT is bought'],
           ]},
           { type: 'heading', text: 'What an NFT is here' },
           { type: 'paragraph', text: 'An NFT is one of your bikes or parts, minted as a token on the Enjin chain and placed straight into your own Enjin Wallet. It is not a copy of the item and not a certificate hanging beside it — it is the item, moved out of the game and onto the chain. One token per item, one item per token, never both at once.' },
@@ -654,7 +654,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Where each thing happens' },
           { type: 'list', items: [
             'Playing — levelling, repairs, socketing, breeding — happens in the app, all of it in WATTS, none of it signed by you.',
-            'Selling in-game items for WATTS works in the app and on the website. An NFT is not sold on the game market: it is traded on the Enjin marketplace from your wallet, or imported first and then sold here for WATTS.',
+            'Selling works in the app and on the website for both halves: an in-game item is listed for WATTS, an NFT for ENJ. You set the price here and approve the listing in your Enjin Wallet. Buying an NFT is signed from a wallet, not in the app.',
             'Exporting and importing work in both — the app has Export and Import right on the bike.',
             'Anything paid for with money is on the website only. No card purchase happens inside the app.',
           ]},
@@ -737,17 +737,18 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'There are two markets, and which one you use depends on whether the item is in the game or on the chain.' },
           { type: 'table', headers: ['The item is', 'Where it sells', 'Priced in', 'What the buyer gets'], rows: [
             ['In the game', 'The Galavant market, app or website', 'WATTS', 'An ordinary in-game item, right away'],
-            ['An NFT in your wallet', 'The Enjin marketplace, from your wallet', 'ENJ', 'The NFT itself — frozen until they import it'],
+            ['An NFT in your wallet', 'The Galavant market, app or website — approved in your Enjin Wallet', 'ENJ', 'The NFT itself — frozen until they import it'],
           ]},
           { type: 'heading', text: 'Selling an NFT for ENJ' },
-          { type: 'paragraph', text: 'An exported item is in your Enjin Wallet, and you sell it the way you would sell any Enjin NFT: list it on the Enjin marketplace from your wallet, at your price, and sign the listing there. Galavant is not part of that step. The buyer pays you directly, on the chain, and the token moves to their wallet — frozen, exactly as it was minted, until they import it into their own game.' },
+          { type: 'paragraph', text: 'An exported item is in your Enjin Wallet, and you list it from the game: open the item, choose Sell, and set a price in ENJ. The listing request then appears in your Enjin Wallet — approve it there, and the chain puts the listing up a short while later. Your wallet pays a small network fee and holds a refundable deposit while the listing is live, so keep a little ENJ in it. Galavant never touches the token. The buyer pays you directly, on the chain, and the token moves to their wallet — frozen, exactly as it was minted, until they import it into their own game.' },
+          { type: 'paragraph', text: 'Cancelling works the same way: ask for it in the game, approve it in your wallet, and the item is back in your inventory once the chain confirms. A listing you cancel straight from your wallet or an Enjin marketplace comes back the same way — the game checks the chain, not the button you pressed.' },
           { type: 'paragraph', text: 'Every Galavant NFT carries a small royalty for the game on each sale, applied by the chain itself. It is the same on any marketplace, and it is what funds the season pot alongside the game\'s other revenue.' },
           { type: 'heading', text: 'Selling an NFT for WATTS' },
-          { type: 'paragraph', text: 'The game market does not list NFTs. If you would rather sell to another player for WATTS, import the item first — it becomes an ordinary in-game item again — and list it on the game market like anything else you own. The buyer gets a normal item, and the token is gone.' },
+          { type: 'paragraph', text: 'An NFT is priced in ENJ. If you would rather sell to another player for WATTS, import the item first — it becomes an ordinary in-game item again — and list it on the game market like anything else you own. The buyer gets a normal item, and the token is gone.' },
           { type: 'heading', text: 'Buying' },
           { type: 'list', items: [
             'In-game items are bought on the Galavant market with WATTS, in the app or on the website. Browse by type, quality, and price.',
-            'Galavant NFTs are bought on the Enjin marketplace with ENJ, from your own wallet. Once one is in your wallet, Importing tells you how to bring it into the game.',
+            'Galavant NFTs are bought with ENJ from your own Enjin Wallet, on the Enjin marketplace. The game market shows the listing and its price, but the purchase itself is signed in a wallet, not in the app. Once the NFT is in your wallet, Importing tells you how to bring it into the game.',
           ]},
           { type: 'tip', text: 'Check Mint Scores when buying bikes — a high grade at a low price is a great find!' },
         ],
@@ -768,7 +769,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Everything you would normally do with the part is paused until you import it back. An NFT part cannot be socketed into a bike, fed into an upgrade, or burned to repair a bike\'s HP. Trading it on the chain is the exception — that works from your wallet.' },
           { type: 'paragraph', text: 'Importing works exactly as it does for a bike: open the part on your Profile, choose Import to Game, and approve the burn in your Enjin Wallet. The token is burned and the part comes back at the level it was minted at, ready to socket and upgrade again.' },
           { type: 'heading', text: 'Selling parts' },
-          { type: 'paragraph', text: 'Part NFTs trade on the Enjin marketplace like bikes, from your wallet, for ENJ. To sell one for WATTS on the game market, import it first. Everything on the previous page applies here.' },
+          { type: 'paragraph', text: 'Part NFTs are listed for ENJ like bikes: set the price in the game, approve the listing in your Enjin Wallet. To sell one for WATTS, import it first. Everything on the previous page applies here.' },
           { type: 'tip', text: 'High-level parts are the ones worth exporting — a top-tier part took a lot of upgrades to make, and the level floor is there to keep the cheap ones out.' },
         ],
       },
@@ -783,7 +784,7 @@ export const gameplaySections: GameplaySection[] = [
             'Signing. Anything that happens on the chain in your name is approved in your wallet, not by us. That is the point of holding your own keys.',
             'Staking ENJ. You stake in the Galavant Peloton pool yourself, in your own wallet — Galavant is not part of that step and never holds your ENJ.',
             'Holding your own ENJ. Once a wallet is linked, your account page shows what is in it and what you have staked.',
-            'Holding the NFTs you export, and buying or selling Galavant NFTs on the Enjin marketplace. A Galavant NFT in your wallet can be claimed into the game from Profile — read Importing.',
+            'Holding the NFTs you export, approving the listings you create for them, and buying Galavant NFTs on the Enjin marketplace. A Galavant NFT in your wallet can be claimed into the game from Profile — read Importing.',
             'Looking at Galavant NFTs from outside the game. Every token points at its own live stat sheet, so a bike renders the same in a wallet or on a marketplace as it does here.',
           ]},
           { type: 'heading', text: 'What you do NOT need it for' },
@@ -883,21 +884,19 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'You set the price; the only thing that differs between the two currencies is our cut, and it is shown on the listing screen before you commit.' },
           { type: 'table', headers: ['Selling', 'Our cut'], rows: [
             ['An in-game item for WATTS', '5% platform fee'],
-            ['An NFT for WATTS', '10% — 5% platform fee + 5% royalty'],
             ['An NFT for ENJ', '5% royalty only, no platform fee'],
           ]},
-          { type: 'paragraph', text: 'Selling for ENJ is deliberately the cheaper route. It leaves the NFT alive on-chain, where it can be traded on again; selling for WATTS ends the token for good.' },
-          { type: 'heading', text: 'Listing for ENJ: nothing to fund' },
+          { type: 'paragraph', text: 'Selling for ENJ is deliberately the cheaper route. It leaves the NFT alive on-chain, where it can be traded on again; importing it and selling for WATTS ends the token for good.' },
+          { type: 'heading', text: 'Listing for ENJ: what your wallet pays' },
           // Verbatim from ENJ_LISTING_DEPOSIT_WARNING (@m2e/shared utils/market.ts), which is
           // the one definition the app and the listing screen also render. Kept word for word
           // so the guide cannot drift away from the sentence the seller sees at the moment of
           // the decision — and it names no amount, per the economy-secrets rule.
-          { type: 'paragraph', text: 'Listing for ENJ needs no ENJ of your own. The chain holds a refundable deposit for as long as the listing is live, and Galavant\'s fuel tank puts that deposit up for you along with the transaction fee — so nothing is held against your wallet, and there is nothing for you to claim back once the listing sells or is cancelled. Listing for WATTS costs you nothing up front either.' },
+          { type: 'paragraph', text: 'Listing an NFT for ENJ is signed in your Enjin Wallet. Your wallet pays a small network fee and holds a refundable deposit while the listing is live — keep a little ENJ in it, or the listing cannot be created. The deposit comes back to your wallet when the listing sells or is cancelled. Listing for WATTS costs you nothing up front.' },
           { type: 'heading', text: 'Buying' },
           { type: 'paragraph', text: 'Every card says what you will actually walk away with, because there are three different purchases on the same shelf.' },
           { type: 'table', headers: ['You buy', 'What happens', 'You receive'], rows: [
             ['An in-game item for WATTS', 'Ownership transfers instantly', 'A normal in-game item'],
-            ['An NFT for WATTS', 'The NFT is burned', 'A normal in-game item'],
             ['An NFT for ENJ', 'The NFT changes hands on-chain', 'An NFT — frozen until you import it'],
           ]},
           { type: 'list', items: [
