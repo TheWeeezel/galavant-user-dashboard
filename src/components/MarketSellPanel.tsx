@@ -155,7 +155,7 @@ export function MarketSellPanel() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {items.map((item) => (
           <SellCard
             key={item.id}
@@ -228,16 +228,17 @@ function SellCard({
             {item.badge}
           </span>
         )}
-        <div
-          className="h-36 flex items-center justify-center"
-          style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(60, 40, 70, 0.05) 0 2px, transparent 2px 4px)' }}
-        >
+                <div className="h-32 relative">
           <img
             src={item.art}
             alt={item.name}
-            className="h-full w-full object-contain pixel-render p-2"
+            className="absolute inset-0 w-full h-full object-cover pixel-render"
             loading="lazy"
             onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = 'hidden'; }}
+          />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(60, 40, 70, 0.05) 0 2px, transparent 2px 4px)' }}
           />
         </div>
         <div
@@ -277,7 +278,7 @@ function SellCard({
             onClick={() => run(() => cancel.mutateAsync().then((r) => {
               if (r.pending && policy) setNotice({ title: policy.enj.cancelSubmittedTitle, text: policy.enj.cancelSubmittedNote });
             }))}
-            className="px-3 py-2 border border-m2e-border text-m2e-text-secondary uppercase tracking-wide text-sm disabled:opacity-50"
+            className="pixel-btn px-3 py-2 uppercase tracking-wide text-xs disabled:opacity-50"
           >
             {cancel.isPending ? 'Cancelling…' : 'Cancel listing'}
           </button>
@@ -297,10 +298,10 @@ function SellCard({
                   disabled={!allowed}
                   title={allowed ? undefined : item.isNft ? policy?.nftWattsRefusal : policy?.offChainEnjRefusal}
                   onClick={() => { setCurrency(c); setPrice(''); }}
-                  className={`flex-1 px-3 py-1.5 uppercase tracking-wide text-xs border-2 disabled:opacity-40 ${
+                  className={`flex-1 px-3 py-2 uppercase tracking-wide text-xs pixel-border transition-colors disabled:opacity-40 ${
                     currency === c
-                      ? 'border-m2e-accent bg-m2e-accent/10 text-m2e-accent'
-                      : 'border-m2e-border text-m2e-text-secondary'
+                      ? 'bg-m2e-accent text-white border-m2e-accent'
+                      : 'bg-m2e-card-alt text-m2e-text-secondary'
                   }`}
                 >
                   {c === 'watts' ? 'WATTS' : 'ENJ'}
@@ -315,14 +316,14 @@ function SellCard({
               onChange={(e) => setPrice(e.target.value)}
               inputMode={currency === 'watts' ? 'numeric' : 'decimal'}
               placeholder={currency === 'watts' ? 'Price in WATTS' : 'Price in ENJ'}
-              className="flex-1 min-w-0 bg-m2e-card-alt border border-m2e-border px-2 py-2 text-sm"
+              className="flex-1 min-w-0 pixel-border bg-m2e-bg-alt px-3 py-2 text-sm"
             />
             <button
               disabled={list.isPending || !priceValid}
               onClick={() => run(() => list.mutateAsync().then(() => {
                 if (currency === 'enj' && policy) setNotice({ title: policy.enj.listingSubmittedTitle, text: policy.enj.listingSubmittedNote });
               }))}
-              className="px-3 py-2 border border-m2e-accent text-m2e-accent uppercase tracking-wide text-xs disabled:opacity-50"
+              className="pixel-btn pixel-btn-primary px-4 py-2 uppercase tracking-wider text-xs disabled:opacity-50"
             >
               {list.isPending ? 'Listing…' : 'List'}
             </button>
