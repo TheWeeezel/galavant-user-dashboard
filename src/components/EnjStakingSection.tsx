@@ -6,6 +6,9 @@ import {
   enjinLinkUnlink,
   enjinLinkStatus,
   enjinStakingStatus,
+  enjinBond,
+  enjinBondLatest,
+  enjinBondWithdraw,
 } from '../api';
 
 // Pool 84, "Galavant Peloton". Players stake from their own Enjin Wallet — Galavant never custodies ENJ.
@@ -62,6 +65,30 @@ export function EnjStakingSection() {
   // Darum liegt er verdeckt. WICHTIG: der QR-Code traegt DASSELBE Geheimnis wie die Ziffern, nur
   // maschinenlesbar — beide gehoeren hinter denselben Schalter, sonst ist es Theater.
   const [codeVisible, setCodeVisible] = useState(false);
+  // In-app bond (2026-09-03): a request the player approves in their OWN Enjin Wallet. The
+  // boost itself still comes from the hourly chain read — whoever stakes, by any route, is seen.
+  const [amount, setAmount] = useState('');
+  const latest = useQuery({
+    queryKey: ['enjin-bond-latest'],
+    queryFn: enjinBondLatest,
+    enabled: !!link.data?.linked,
+    refetchInterval: (q) => (q.state.data?.state === 'pending' ? 5_000 : false),
+  });
+  const bond = useMutation({
+    mutationFn: (enj: number) => enjinBond(enj),
+    onSuccess: () => { setAmount(''); latest.refetch(); },
+  });
+  const withdraw = useMutation({
+    mutationFn: (journalId: string) => enjinBondWithdraw(journalId),
+    onSuccess: () => latest.refetch(),
+  });
+  const req = latest.data;
+  const bondPending = req?.state === 'pending';
+  const gate = bondGate(staking.data?.walletEnj, amount);
+  useEffect(() => {
+    if (req?.state === 'done') staking.refetch();
+  }, [req?.state]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const startLink = useMutation({
     mutationFn: enjinLinkStart,
     onSuccess: (data) => {
@@ -241,18 +268,66 @@ export function EnjStakingSection() {
           </div>
 
           <div className="pixel-card p-6 space-y-4">
-            <h3 className="text-xl uppercase tracking-wide">Stake in the pool</h3>
+            <h3 className="text-xl uppercase tracking-wide">Stake ENJ</h3>
             <p className="text-m2e-text-secondary text-sm">
-              Staking happens in the Galavant Peloton pool, and you do it there — pick the amount and
-              sign it in your own wallet. Galavant is not part of that step and never holds your ENJ.
+              Enter an amount and approve the request in your own Enjin Wallet. Your ENJ never leaves
+              your wallet — Galavant only asks; you sign. The pool lives on the Enjin Relaychain, so
+              that is where the ENJ you stake has to be.
             </p>
-            <ol className="text-sm text-m2e-text-secondary space-y-2 list-decimal list-inside">
-              <li>Open the pool below. On a phone, tap Connect Wallet and your Enjin Wallet comes to the front.</li>
-              <li>Enter how much ENJ to stake and approve it in the wallet.</li>
-              <li>Come back here. Your stake turns up by itself within the hour — nothing to claim.</li>
-            </ol>
+
+            {bondPending ? (
+              <div className="space-y-3">
+                <p className="text-sm text-m2e-text-secondary">
+                  {`A staking request${req?.amountEnj ? ` for ${req.amountEnj} ENJ` : ''} has been waiting in your Enjin Wallet since ${req?.since ? new Date(req.since).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'just now'}. Open the wallet on your phone — the request shows on its home screen; pull down there if it does not — and approve it. This page updates on its own.`}
+                </p>
+                {req?.unsigned && (
+                  <button
+                    className="pixel-btn px-4 py-2"
+                    disabled={withdraw.isPending}
+                    onClick={() => req.journalId && withdraw.mutate(req.journalId)}
+                  >
+                    {withdraw.isPending ? 'Withdrawing…' : 'Withdraw request'}
+                  </button>
+                )}
+                {withdraw.isError && <p className="text-xs text-m2e-danger">{(withdraw.error as Error).message}</p>}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex gap-2 items-center">
+                  <input
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    inputMode="decimal"
+                    placeholder="1"
+                    disabled={bond.isPending}
+                    className="flex-1 min-w-0 bg-m2e-card-alt border border-m2e-border px-3 py-2 text-lg"
+                  />
+                  <span className="text-m2e-text-secondary">ENJ</span>
+                </div>
+                {gate.hint && <p className="text-xs text-m2e-text-muted">{gate.hint}</p>}
+                <button
+                  className="pixel-btn-primary px-6 py-3 w-full"
+                  disabled={!gate.canStake || bond.isPending}
+                  onClick={() => { if (gate.canStake) bond.mutate(parseEnjAmount(amount)); }}
+                >
+                  {bond.isPending ? 'Creating request…' : 'Stake ENJ'}
+                </button>
+                {bond.isError ? (
+                  <p className="text-xs text-m2e-danger">{(bond.error as Error).message}</p>
+                ) : req?.state === 'done' ? (
+                  <p className="text-xs text-m2e-success">Your last stake is confirmed on-chain. The boost basis updates within the hour.</p>
+                ) : req?.state === 'failed' ? (
+                  <p className="text-xs text-m2e-danger">{`The last staking request did not go through${req.error ? `: ${req.error}` : ''}. Nothing was staked — you can try again.`}</p>
+                ) : null}
+              </div>
+            )}
+
+            <p className="text-xs text-m2e-text-muted">
+              Prefer the pool page? Connect your wallet there and stake instead — the stake turns up
+              here by itself within the hour either way.
+            </p>
             <a
-              className="pixel-btn-primary px-6 py-3 w-full inline-flex items-center justify-center gap-2"
+              className="pixel-btn px-6 py-3 w-full inline-flex items-center justify-center gap-2"
               href={POOL_URL}
               target="_blank"
               rel="noopener noreferrer"
@@ -309,4 +384,31 @@ function remainingMmSs(expires: string, now: number): string | null {
   if (!Number.isFinite(ms) || ms <= 0) return null;
   const total = Math.floor(ms / 1000);
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}
+
+// ── the balance gate, mirrored from the app (utils/staking-budget.ts) — the website cannot
+// import @m2e/shared. Pool floor 1 ENJ (minJoinBond of pool 84); 0.05 ENJ stays for fee + ED.
+const MIN_BOND_ENJ = 1;
+const RESERVE_ENJ = 0.05;
+const fmt = (v: number) => String(Math.round(v * 10_000) / 10_000);
+function parseEnjAmount(amount: string): number {
+  return Number(amount.trim().replace(',', '.'));
+}
+function bondGate(walletEnj: string | null | undefined, amount: string): { canStake: boolean; hint: string | null } {
+  const parsed = walletEnj == null ? NaN : Number(walletEnj);
+  const wallet = Number.isFinite(parsed) ? parsed : null;
+  const n = parseEnjAmount(amount);
+  const typed = amount.trim() !== '' && Number.isFinite(n) && n > 0;
+  if (!typed) return { canStake: false, hint: null };
+  if (n < MIN_BOND_ENJ) return { canStake: false, hint: `The pool takes stakes of ${MIN_BOND_ENJ} ENJ and up.` };
+  if (wallet !== null && n > wallet - RESERVE_ENJ) {
+    const possible = Math.max(0, wallet - RESERVE_ENJ);
+    return {
+      canStake: false,
+      hint: possible >= MIN_BOND_ENJ
+        ? `Your wallet holds ${fmt(wallet)} ENJ on the Relaychain, so ${fmt(n)} ENJ is out of reach — a little has to stay in the account for the network fee, which leaves ${fmt(possible)} ENJ to stake.`
+        : `Your wallet holds ${fmt(wallet)} ENJ on the Relaychain — not enough to stake ${fmt(n)} ENJ once the network fee and the amount that has to stay in the account are counted.`,
+    };
+  }
+  return { canStake: true, hint: null };
 }

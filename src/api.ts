@@ -542,6 +542,26 @@ export function enjinLinkStatus() {
   );
 }
 
+/** Ask for a bond into the pool: a request the player approves in their Enjin Wallet. */
+export function enjinBond(amountEnj: number) {
+  return fetchAuthJson<{ journalId: string; uuid: string | null; poolId: number; alreadyOpen: boolean }>(
+    '/enjin/staking/bond',
+    { method: 'POST', body: JSON.stringify({ amountEnj }) },
+  );
+}
+
+/** The player's latest bond request: open in the wallet (since when), failed (why), done, or none. */
+export function enjinBondLatest() {
+  return fetchAuthJson<{ state: 'none' | 'pending' | 'failed' | 'done'; journalId?: string; since?: string; amountEnj?: string | null; error?: string | null; unsigned?: boolean }>(
+    '/enjin/staking/bond/latest',
+  );
+}
+
+/** Withdraw a bond request the wallet never showed, so a fresh one can be made. */
+export function enjinBondWithdraw(journalId: string) {
+  return fetchAuthJson<{ withdrawn: boolean }>(`/enjin/staking/bond/${journalId}/withdraw`, { method: 'POST' });
+}
+
 export function enjinStakingStatus() {
   return fetchAuthJson<{
     linked: boolean;
@@ -561,9 +581,6 @@ export function enjinStakingStatus() {
   }>('/enjin/staking/status');
 }
 
-// `enjinBond` und `enjinBondStatus` sind am 2026-09-01 entfallen: der Endpunkt dahinter ist weg.
-// Gestaked wird im Galavant-Peloton-Pool, in der eigenen Wallet des Spielers, und der Boost kommt
-// aus der Kette — es gibt nichts mehr anzustossen und nichts mehr abzufragen.
 
 // --- Seasonal WATTS → ENJ redemption ---
 export interface RedemptionStatus {
