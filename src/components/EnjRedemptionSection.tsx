@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Coins } from 'pixelarticons/react';
-import { enjinLinkStatus, redemptionCurrent, redemptionSubmit } from '../api';
+import {
+  enjinLinkStatus,
+  redemptionCurrent,
+  redemptionSubmit,
+  redemptionHistory,
+  type RedemptionHistorySeason,
+} from '../api';
 
 /**
  * Seasonal WATTS → ENJ redemption, embedded in the account (Wallet page). When
@@ -34,15 +40,19 @@ export function EnjRedemptionSection() {
   });
 
   const s = status.data;
+  const history = useQuery({ queryKey: ['redemption-history'], queryFn: redemptionHistory, retry: false });
 
   if (!s || !s.open || !s.season) {
     return (
-      <div className="pixel-card p-6 space-y-2">
-        <div className="section-label flex items-center gap-2"><Coins className="w-4 h-4 text-m2e-accent" /> WATTS → ENJ</div>
-        <p className="text-m2e-text-secondary text-sm">
-          No redemption window is open right now. Each season you'll turn earned WATTS into real ENJ —
-          funded by game revenue. Keep earning and staking to grow your share.
-        </p>
+      <div className="space-y-4">
+        <div className="pixel-card p-6 space-y-2">
+          <div className="section-label flex items-center gap-2"><Coins className="w-4 h-4 text-m2e-accent" /> WATTS → ENJ</div>
+          <p className="text-m2e-text-secondary text-sm">
+            No redemption window is open right now. Each season you'll turn earned WATTS into real ENJ —
+            funded by game revenue. Keep earning and staking to grow your share.
+          </p>
+        </div>
+        <SeasonHistory seasons={history.data?.seasons ?? []} />
       </div>
     );
   }
@@ -99,6 +109,47 @@ export function EnjRedemptionSection() {
           shifts as other players join.
         </p>
         {submit.isError && <p className="text-sm text-m2e-danger">{(submit.error as Error).message}</p>}
+      </div>
+      <SeasonHistory seasons={history.data?.seasons ?? []} />
+    </div>
+  );
+}
+
+/** Previous seasons — the record every player keeps: pot, their commit, their payout. */
+function SeasonHistory({ seasons }: { seasons: RedemptionHistorySeason[] }) {
+  if (seasons.length === 0) return null;
+  return (
+    <div className="pixel-card p-6 space-y-3">
+      <div className="section-label">Previous seasons</div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-[11px] uppercase tracking-wide text-m2e-text-muted text-left">
+              <th className="py-1 pr-3">Season</th>
+              <th className="py-1 pr-3">Closed</th>
+              <th className="py-1 pr-3">Pot</th>
+              <th className="py-1 pr-3">You committed</th>
+              <th className="py-1 pr-3">Your payout</th>
+              <th className="py-1">ENJ/USD at settlement</th>
+            </tr>
+          </thead>
+          <tbody>
+            {seasons.map((h) => (
+              <tr key={h.id} className="border-t border-m2e-border/50">
+                <td className="py-2 pr-3 text-m2e-text">{h.name} <span className="text-m2e-text-muted text-xs">· {h.status === 'paid' ? 'paid out' : 'settling'}</span></td>
+                <td className="py-2 pr-3 text-m2e-text-secondary">{new Date(h.closesAt).toLocaleDateString()}</td>
+                <td className="py-2 pr-3 text-m2e-text">{h.budgetEnj.toLocaleString()} ENJ</td>
+                <td className="py-2 pr-3 text-m2e-text">{h.entry ? `${h.entry.watts.toLocaleString()} W · ${h.entry.sharePct}%` : '—'}</td>
+                <td className="py-2 pr-3 text-m2e-accent">
+                  {h.entry ? (h.entry.enjPaid != null
+                    ? `${h.entry.enjPaid} ENJ${h.enjPriceUsdAtSettle != null ? ` (≈ $${(h.entry.enjPaid * h.enjPriceUsdAtSettle).toFixed(2)})` : ''}`
+                    : 'pending') : '—'}
+                </td>
+                <td className="py-2 text-m2e-text-secondary">{h.enjPriceUsdAtSettle != null ? `$${h.enjPriceUsdAtSettle.toFixed(4)}` : '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

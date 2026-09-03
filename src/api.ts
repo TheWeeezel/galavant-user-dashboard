@@ -618,6 +618,18 @@ export interface RedemptionLeaderboard {
   top?: RedemptionStanding[];
 }
 
+export interface RedemptionHistorySeason {
+  id: string; name: string; status: string; budgetEnj: number; totalWatts: number;
+  closesAt: string; settledAt: string | null; paidEnj: number | null;
+  enjPriceUsdAtOpen: number | null; enjPriceUsdAtSettle: number | null;
+  entry: { watts: number; sharePct: number; enjPaid: number | null; status: string } | null;
+}
+
+/** Past seasons with your own entry and payout. */
+export function redemptionHistory() {
+  return fetchAuthJson<{ seasons: RedemptionHistorySeason[] }>('/redemption/history');
+}
+
 export function redemptionLeaderboard(limit = 25) {
   return fetchAuthJson<RedemptionLeaderboard>(`/redemption/leaderboard?limit=${limit}`);
 }
