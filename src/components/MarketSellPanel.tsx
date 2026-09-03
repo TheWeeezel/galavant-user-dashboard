@@ -209,7 +209,7 @@ function SellCard({
       : `Our cut ${pct(cut.taxRate)} — platform fee`);
 
   const priceValid = currency === 'watts'
-    ? Number(price) >= 100
+    ? Number(price) >= 1
     : /^\d+(\.\d+)?$/.test(price.trim()) && Number(price) > 0;
 
   return (

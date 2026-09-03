@@ -642,7 +642,7 @@ export const gameplaySections: GameplaySection[] = [
             ['Priced in', 'WATTS', 'ENJ'],
             ['Who signs', 'Nobody — you tap a button', 'You do, in your own Enjin Wallet'],
             ['Chain fees', 'There are none', 'Galavant pays for minting; importing costs your wallet a tiny network fee; a sale on the Enjin marketplace is between you and the chain'],
-            ['Where you do it', 'App and website', 'Website to export, app or website to import; your wallet for anything ENJ'],
+            ['Where you do it', 'App and website', 'App or website to export and import; your wallet for anything ENJ'],
           ]},
           { type: 'heading', text: 'What an NFT is here' },
           { type: 'paragraph', text: 'An NFT is one of your bikes or parts, minted as a token on the Enjin chain and placed straight into your own Enjin Wallet. It is not a copy of the item and not a certificate hanging beside it — it is the item, moved out of the game and onto the chain. One token per item, one item per token, never both at once.' },
@@ -655,7 +655,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'list', items: [
             'Playing — levelling, repairs, socketing, breeding — happens in the app, all of it in WATTS, none of it signed by you.',
             'Selling in-game items for WATTS works in the app and on the website. An NFT is not sold on the game market: it is traded on the Enjin marketplace from your wallet, or imported first and then sold here for WATTS.',
-            'Exporting is on the website. Importing works in both — the app has an Import button right on the bike.',
+            'Exporting and importing work in both — the app has Export and Import right on the bike.',
             'Anything paid for with money is on the website only. No card purchase happens inside the app.',
           ]},
         ],
@@ -691,8 +691,7 @@ export const gameplaySections: GameplaySection[] = [
         content: [
           { type: 'paragraph', text: 'Bikes and parts you buy, earn or breed are ordinary in-game items. Exporting one mints it as an NFT on the Enjin chain, straight into your own Enjin Wallet — which is what lets it be traded for real ENJ, and what freezes it.' },
           { type: 'heading', text: 'Where you do it' },
-          { type: 'paragraph', text: 'On the website. Sign in at galavant.run with the same Google account, open Profile, and scroll to your inventory. Tap a bike and choose Export to Wallet; tap a part and choose Export as NFT.' },
-          { type: 'paragraph', text: 'The mobile app has an Export button on the bike screen, but all it does is send you to the website — the minting itself is not in the app.' },
+          { type: 'paragraph', text: 'In the app: open the bike and tap Export. On the website: sign in at galavant.run with the same Google account, open Profile, scroll to your inventory, tap a bike and choose Export to Wallet; tap a part and choose Export as NFT. Parts are exported on the website.' },
           { type: 'heading', text: 'What the item needs first' },
           { type: 'list', items: [
             'A linked Enjin Wallet. The NFT is minted into it, so without one there is nowhere to mint to.',
@@ -760,7 +759,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Parts can be NFTs too, and they follow the same model as bikes. A part is either an ordinary in-game part or its own on-chain NFT, never both, and a part is never sold inside a bike.' },
           { type: 'heading', text: 'Exporting a part' },
           { type: 'list', items: [
-            'Website again: Profile, then your parts inventory, then the part, then Export as NFT. It is minted into your linked Enjin Wallet.',
+            'On the website: Profile, then your parts inventory, then the part, then Export as NFT. It is minted into your linked Enjin Wallet.',
             'It must be unsocketed and not listed — take it out of its bike first.',
             'It must be at or above a minimum level. Dust-level parts stay off the chain.',
             'No WATTS fee. Galavant pays for the chain write.',
