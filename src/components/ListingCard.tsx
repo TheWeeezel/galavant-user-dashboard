@@ -2,12 +2,13 @@ import type { ReactNode } from 'react';
 import { config } from '../config';
 import type { MarketListing, MarketplaceListing } from '../api';
 
-const qualityColors: Record<string, string> = {
-  common: 'pixel-badge-common',
-  uncommon: 'pixel-badge-uncommon',
-  rare: 'pixel-badge-rare',
-  epic: 'pixel-badge-epic',
-  legendary: 'pixel-badge-legendary',
+// Rarity as materials — the app's gem tag, not the tier word in a box.
+const RARITY_MATERIALS: Record<string, { label: string; color: string }> = {
+  common: { label: 'Steel', color: 'var(--color-m2e-common)' },
+  uncommon: { label: 'Moss', color: 'var(--color-m2e-uncommon)' },
+  rare: { label: 'Blue Hour', color: 'var(--color-m2e-rare)' },
+  epic: { label: 'Orchid', color: 'var(--color-m2e-epic)' },
+  legendary: { label: 'Brass', color: 'var(--color-m2e-legendary)' },
 };
 
 const itemTypeLabels: Record<string, string> = {
@@ -109,9 +110,16 @@ function CardShell({
       <div className="p-3 space-y-2 flex flex-col flex-1">
         <div className="flex items-center justify-between">
           <span className="text-sm uppercase tracking-wide text-m2e-text">{title}</span>
-          {quality && (
-            <span className={`px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide border-opacity-50 ${qualityColors[quality] ?? qualityColors.common}`}>
-              {quality}
+                    {quality && (
+            <span
+              className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider"
+              style={{ color: (RARITY_MATERIALS[quality] ?? RARITY_MATERIALS.common).color }}
+            >
+              <span
+                className="w-2 h-2 rotate-45 rounded-[1px] inline-block"
+                style={{ backgroundColor: (RARITY_MATERIALS[quality] ?? RARITY_MATERIALS.common).color }}
+              />
+              {(RARITY_MATERIALS[quality] ?? RARITY_MATERIALS.common).label}
             </span>
           )}
         </div>
@@ -177,9 +185,8 @@ export function ListingCard({ listing, onClick, footer }: ListingCardProps) {
       quality={quality}
       priceTag={priceTag}
       priceUnit={priceUnit}
-      // What the buyer actually receives — the one thing that separates the three kinds of
-      // card, so it belongs on the card and not in a legend somewhere.
-      description={merged?.buyerNote}
+            // No buyerNote paragraph here: the buy button already names the outcome
+      // (BUY · NFT -> YOUR WALLET); five lines of prose per card drowned the grid.
       metaLeft={listing.sellerName ? `by ${listing.sellerName}` : undefined}
       metaRight={timeAgo(listing.createdAt)}
       footer={footer}
