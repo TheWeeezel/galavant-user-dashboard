@@ -166,9 +166,12 @@ export function StoreBikeCard({
         {offer.reason && <p className="text-xs text-m2e-text-secondary">{offer.reason}</p>}
 
         <div className="mt-auto flex flex-col gap-2">
+          {/* The card till can be shut while the shop is open — that is exactly the state the shop
+              is in with no Stripe key and a live ENJ rate. An older server sends no `cardAvailable`
+              at all, and then the card is as open as the bike is. */}
           <button
             className="pixel-btn pixel-btn-primary px-4 py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={disabled}
+            disabled={disabled || product.cardAvailable === false}
             onClick={() => onBuy('card')}
           >
             {busy === 'card' ? 'Opening checkout…' : signedIn ? 'Buy with card' : 'Sign in to buy'}
@@ -186,6 +189,12 @@ export function StoreBikeCard({
             </button>
           )}
         </div>
+
+        {/* Only when the bike IS on sale and only the card is shut — otherwise `offer.reason` above
+            has already said the thing that matters, and two explanations read as two problems. */}
+        {offer.buyable && product.cardAvailable === false && enj !== null && (
+          <p className="text-xs text-m2e-text-secondary">Card payment opens soon — ENJ works today.</p>
+        )}
 
         {error && <p className="text-xs text-m2e-danger-deep">{error}</p>}
       </div>

@@ -4,7 +4,8 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
 import { StoreBikeCard, type PayMethod } from '../components/StoreBikeCard';
-import { fetchStoreProducts, fetchStoreStock, storeCheckout, storeCheckoutEnj, type StoreProduct } from '../api';
+import { EnjPaymentPanel } from '../components/EnjPaymentPanel';
+import { fetchStoreProducts, fetchStoreStock, storeCheckout, storeCheckoutEnj, type EnjPayment, type StoreProduct } from '../api';
 
 export default function Store() {
   const { isAuthenticated } = useAuth();
@@ -22,15 +23,24 @@ export default function Store() {
   // "Buy with card" while the checkout page is already loading, which reads as a click that failed.
   const [leaving, setLeaving] = useState(false);
 
+  // The ENJ payment currently on screen, if any. The card path leaves the site; this one does not,
+  // because the buyer pays from their own wallet and there is nowhere to send them.
+  const [enjPayment, setEnjPayment] = useState<EnjPayment | null>(null);
+
   const checkout = useMutation({
-    mutationFn: async ({ type, method }: { type: string; method: PayMethod }): Promise<string> => {
-      const session = method === 'enj' ? await storeCheckoutEnj(type) : await storeCheckout(type);
+    mutationFn: async ({ type, method }: { type: string; method: PayMethod }) => {
+      if (method === 'enj') return { method, payment: await storeCheckoutEnj(type) } as const;
+      const session = await storeCheckout(type);
       if (!session.url) throw new Error('Checkout could not be opened — you have not been charged.');
-      return session.url;
+      return { method, url: session.url } as const;
     },
-    onSuccess: (url) => {
+    onSuccess: (result) => {
+      if (result.method === 'enj') {
+        setEnjPayment(result.payment);
+        return;
+      }
       setLeaving(true);
-      window.location.href = url;
+      window.location.href = result.url;
     },
   });
 
@@ -56,7 +66,8 @@ export default function Store() {
             <span className="text-m2e-accent">Shop.</span>
           </h1>
           <p className="text-white/70 text-lg md:text-xl max-w-2xl">
-            Brand-new bikes for your card — playable immediately, exportable to your Enjin Wallet anytime.
+            Brand-new bikes, paid by card or in ENJ from your own wallet — playable immediately,
+            exportable to your Enjin Wallet anytime.
           </p>
         </div>
       </div>
@@ -70,6 +81,14 @@ export default function Store() {
         )}
         {status === 'cancel' && (
           <div className="pixel-card p-4 text-m2e-text-secondary">Checkout cancelled — no charge was made.</div>
+        )}
+
+        {enjPayment && (
+          <EnjPaymentPanel
+            payment={enjPayment}
+            displayName={products.find((p) => p.type === enjPayment.product)?.displayName ?? enjPayment.product}
+            onClose={() => setEnjPayment(null)}
+          />
         )}
 
         {catalog.isPending ? (
