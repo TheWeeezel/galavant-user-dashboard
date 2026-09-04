@@ -208,9 +208,6 @@ function useHeroPlates() {
   return src;
 }
 
-/** Flip to true once the 0.0.25 store review has cleared — the test-month strip stays hidden until then. */
-const TEST_MONTH_ANNOUNCED = false;
-
 export function Home() {
   const [selectedNftId, setSelectedNftId] = useState<string | null>(null);
   const [lbMetric, setLbMetric] = useState<LeaderboardMetric>('distance');
@@ -259,31 +256,6 @@ export function Home() {
 
   return (
     <>
-      {/* ══════════════════════════════════════════════════════════════════════
-          0 / TEST MONTH — the one line a September visitor must not miss
-          ══════════════════════════════════════════════════════════════════════ */}
-      {/* The sticky nav (h-16) paints over the top of the page, so the strip starts below it.
-          Hidden until the store review of 0.0.25 has cleared (owner, 2026-09-04): no gaming can
-          start before the build is downloadable, so the strip must not announce it yet. */}
-      {TEST_MONTH_ANNOUNCED && (
-      <div className="bg-m2e-accent text-m2e-bg border-b-2 border-black/30 pt-16">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-6 text-sm">
-          <div className="uppercase tracking-[0.2em] text-xs font-bold whitespace-nowrap">Test month September · live on Enjin mainnet</div>
-          <div className="flex-1 leading-snug">
-            Everything resets on 1 October — only your Genesis standing survives it, and the Genesis Drop happens in October.
-            Ride on as many separate days as you can, work through the 25 tasks, and put WATTS into the 200 ENJ September season.
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <a href="https://play.google.com/store/apps/details?id=com.m2e.opnet" target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">Android · open testing</a>
-            {changelog.data?.testflightUrl && (
-              <a href={changelog.data.testflightUrl} target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">iPhone · TestFlight</a>
-            )}
-            <Link to="/tasks" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">25 tasks</Link>
-          </div>
-        </div>
-      </div>
-      )}
-
       {/* ══════════════════════════════════════════════════════════════════════
           1 / HERO — Cold open
           ══════════════════════════════════════════════════════════════════════ */}
