@@ -3,6 +3,69 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.25",
+      "date": "2026-09-04",
+      "title": "Trade, Stake, Redeem on Enjin",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "The test track now covers the whole game: 25 tasks from the first kilometre to a season payout, each saying what to check"
+        },
+        {
+          "type": "feature",
+          "text": "Previous redemption seasons on the Redemption screen and the website: the pot, what you committed, what you were paid and the ENJ price at settlement"
+        },
+        {
+          "type": "feature",
+          "text": "Stake ENJ in the Galavant Peloton pool straight from the app: enter an amount, approve it in your Enjin Wallet; an open request shows on the screen with a Withdraw button"
+        },
+        {
+          "type": "feature",
+          "text": "Pull down to refresh on Items and on the Market"
+        },
+        {
+          "type": "feature",
+          "text": "Sell an exported NFT for ENJ right from the app or the website: set the price on the item, approve the listing in your Enjin Wallet, and it goes up on the chain"
+        },
+        {
+          "type": "feature",
+          "text": "ENJ listings show in the market feed with their price"
+        },
+        {
+          "type": "feature",
+          "text": "Buy an ENJ listing in the app or on the website: tap Buy, approve it in your Enjin Wallet, and the bike appears in your Items as an NFT ready to import"
+        },
+        {
+          "type": "feature",
+          "text": "Cancelling an ENJ listing is approved in your wallet too, and the item comes back once the chain confirms"
+        },
+        {
+          "type": "fix",
+          "text": "Rides sync again — every ride had shown OFFLINE since 3 September because duplicate GPS points in one batch broke the upload; the ride screen now says SERVER ERROR when the server answered"
+        },
+        {
+          "type": "fix",
+          "text": "Season payouts could not be sent at all (an internal key was longer than its column); caught in the first live settlement and fixed before any real season paid out"
+        },
+        {
+          "type": "fix",
+          "text": "An import request that never showed up in your wallet is now visible on the bike, with a Withdraw button so you can ask again"
+        },
+        {
+          "type": "fix",
+          "text": "Buying for ENJ checks your wallet balance first, shows the request's state on the listing (waiting, failed and why, bought), and cannot be sent twice"
+        },
+        {
+          "type": "improvement",
+          "text": "An NFT is priced in ENJ; to sell one for WATTS, import it into the game first"
+        },
+        {
+          "type": "improvement",
+          "text": "An exported item can be sold the moment the export is done — the two-hour wait after export is gone"
+        }
+      ]
+    },
+    {
       "version": "0.0.24",
       "date": "2026-09-02",
       "title": "One Wallet on Enjin",

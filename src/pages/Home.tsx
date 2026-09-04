@@ -257,6 +257,26 @@ export function Home() {
   return (
     <>
       {/* ══════════════════════════════════════════════════════════════════════
+          0 / TEST MONTH — the one line a September visitor must not miss
+          ══════════════════════════════════════════════════════════════════════ */}
+      <div className="bg-m2e-accent text-m2e-bg border-b-2 border-black/30">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-6 text-sm">
+          <div className="uppercase tracking-[0.2em] text-xs font-bold whitespace-nowrap">Test month September · live on Enjin mainnet</div>
+          <div className="flex-1 leading-snug">
+            Everything resets on 1 October — only your Genesis standing survives it, and the Genesis Drop happens in October.
+            Ride on as many separate days as you can, work through the 25 tasks, and put WATTS into the 200 ENJ September season.
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <a href="https://play.google.com/store/apps/details?id=com.m2e.opnet" target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">Android · open testing</a>
+            {changelog.data?.testflightUrl && (
+              <a href={changelog.data.testflightUrl} target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">iPhone · TestFlight</a>
+            )}
+            <Link to="/tasks" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">25 tasks</Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
           1 / HERO — Cold open
           ══════════════════════════════════════════════════════════════════════ */}
       <div ref={heroRef} className="relative">
