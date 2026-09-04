@@ -208,6 +208,9 @@ function useHeroPlates() {
   return src;
 }
 
+/** Flip to true once the 0.0.25 store review has cleared — the test-month strip stays hidden until then. */
+const TEST_MONTH_ANNOUNCED = false;
+
 export function Home() {
   const [selectedNftId, setSelectedNftId] = useState<string | null>(null);
   const [lbMetric, setLbMetric] = useState<LeaderboardMetric>('distance');
@@ -259,7 +262,10 @@ export function Home() {
       {/* ══════════════════════════════════════════════════════════════════════
           0 / TEST MONTH — the one line a September visitor must not miss
           ══════════════════════════════════════════════════════════════════════ */}
-      {/* The sticky nav (h-16) paints over the top of the page, so the strip starts below it. */}
+      {/* The sticky nav (h-16) paints over the top of the page, so the strip starts below it.
+          Hidden until the store review of 0.0.25 has cleared (owner, 2026-09-04): no gaming can
+          start before the build is downloadable, so the strip must not announce it yet. */}
+      {TEST_MONTH_ANNOUNCED && (
       <div className="bg-m2e-accent text-m2e-bg border-b-2 border-black/30 pt-16">
         <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-6 text-sm">
           <div className="uppercase tracking-[0.2em] text-xs font-bold whitespace-nowrap">Test month September · live on Enjin mainnet</div>
@@ -276,6 +282,7 @@ export function Home() {
           </div>
         </div>
       </div>
+      )}
 
       {/* ══════════════════════════════════════════════════════════════════════
           1 / HERO — Cold open
