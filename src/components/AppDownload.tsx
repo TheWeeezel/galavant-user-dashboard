@@ -6,7 +6,8 @@ import { AndroidPlayStoreButton } from './AndroidPlayStoreButton';
  * Flip this to true to bring the real store links back. The markup below is
  * intact — nothing was deleted, so restoring is this line and nothing else.
  */
-const APP_LIVE = false;
+// Test month September is live (2026-09-05): the buttons are real links now.
+const APP_LIVE = true;
 
 type Variant = 'hero' | 'default' | 'compact';
 
