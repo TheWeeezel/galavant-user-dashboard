@@ -1,6 +1,8 @@
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Shield, Check, Coins, Bug, Clock } from 'pixelarticons/react';
+import { AppDownload } from '../components/AppDownload';
+import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../config/appLinks';
 
 /**
  * GPS-SPOOF BOUNTY — the player-facing half of the rulebook.
@@ -69,6 +71,7 @@ export function Bounty() {
               500 ENJ. One condition, and it is not negotiable: tell us before you start.
             </p>
             <div className="flex flex-wrap items-center gap-4 pt-2">
+              <AppDownload testflightUrl={TESTFLIGHT_URL} playStoreUrl={PLAY_STORE_URL} variant="compact" />
               <Link to="/report" className="pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-base px-6 py-3">
                 <Shield className="w-5 h-5" />
                 Register your attempt

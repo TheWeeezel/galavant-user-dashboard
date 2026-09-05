@@ -3,6 +3,8 @@ import { useParams, Link, Navigate } from 'react-router';
 import { ChevronLeft, ChevronRight } from 'pixelarticons/react';
 import { buildFlatPages, type ContentBlock, type ChartBar } from './gameplay-content';
 import { useGuideParams } from '../../contexts/GuideParamsContext';
+import { AppDownload } from '../../components/AppDownload';
+import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../../config/appLinks';
 
 function BarChart({ title, bars, unit = '' }: { title: string; bars: ChartBar[]; unit?: string }) {
   const max = Math.max(...bars.map((b) => b.value));
@@ -159,9 +161,13 @@ export function GameplayPage() {
       </div>
 
       {/* Title */}
- <h1 className="text-4xl md:text-5xl tracking-wide text-m2e-text mb-8">
+ <h1 className="text-4xl md:text-5xl tracking-wide text-m2e-text mb-4">
         {current.page.title}
       </h1>
+      <div className="mb-8 flex flex-wrap items-center gap-3 text-xs text-m2e-text-muted">
+        <span className="uppercase tracking-[0.2em]">Get the app</span>
+        <AppDownload testflightUrl={TESTFLIGHT_URL} playStoreUrl={PLAY_STORE_URL} variant="compact" />
+      </div>
 
       {/* Content */}
  <div className="space-y-6">

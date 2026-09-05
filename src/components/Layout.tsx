@@ -4,6 +4,7 @@ import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe,
 import { MusicPlayer } from './MusicPlayer';
 import { LoginModal } from './LoginModal';
 import { useAuth } from '../contexts/AuthContext';
+import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../config/appLinks';
 
 export function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -205,7 +206,29 @@ export function Layout() {
       <footer className="bg-m2e-chrome text-white relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none scanlines-light" />
         <div className="mx-auto max-w-7xl px-4 py-10 flex flex-col items-center gap-5 text-center relative">
-          <div className="section-label justify-center w-fit mx-auto">Community</div>
+          <div className="section-label justify-center w-fit mx-auto">Get the app</div>
+          <p className="text-sm text-white/60 max-w-md">
+            Test month September is live. Update to 0.0.25 and ride.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <a
+              href={PLAY_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-white/5 border-2 border-white/20 text-white/80 px-4 py-2 rounded-md hover:border-m2e-accent hover:text-m2e-accent hover:bg-m2e-accent/10 transition-colors text-sm uppercase tracking-wider"
+            >
+              Android · Open testing
+            </a>
+            <a
+              href={TESTFLIGHT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-white/5 border-2 border-white/20 text-white/80 px-4 py-2 rounded-md hover:border-m2e-accent hover:text-m2e-accent hover:bg-m2e-accent/10 transition-colors text-sm uppercase tracking-wider"
+            >
+              iPhone · TestFlight
+            </a>
+          </div>
+          <div className="section-label justify-center w-fit mx-auto mt-4">Community</div>
           <h3
             className="text-m2e-accent text-2xl md:text-3xl uppercase tracking-[0.25em]"
             style={{ textShadow: '2px 2px 0px var(--color-m2e-accent-dark), 4px 4px 0px rgba(0,0,0,0.6)' }}

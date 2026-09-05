@@ -27,6 +27,7 @@ import { AppDownload } from '../components/AppDownload';
 import { formatDistance } from '../utils/format';
 import { config } from '../config';
 import type { ChangelogData } from '../types/changelog';
+import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../config/appLinks';
 
 type LeaderboardMetric = 'distance' | 'earnings';
 type LeaderboardPeriod = 'daily' | 'weekly' | 'all_time';
@@ -269,8 +270,8 @@ export function Home() {
             WATTS into the 200 ENJ September season.
           </div>
           <div className="flex flex-wrap gap-2">
-            <a href="https://play.google.com/store/apps/details?id=com.m2e.opnet" target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">Android · open testing</a>
-            <a href="https://testflight.apple.com/join/8NJ7aZ3h" target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">iPhone · TestFlight</a>
+            <a href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">Android · open testing</a>
+            <a href={TESTFLIGHT_URL} target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">iPhone · TestFlight</a>
             <Link to="/tasks" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">25 tasks</Link>
           </div>
         </div>

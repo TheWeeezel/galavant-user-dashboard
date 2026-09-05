@@ -12,6 +12,8 @@ import { LoginModal } from '../components/LoginModal';
 import { fetchTestingTasks, claimTestingTask, fetchBonusClaimStatus, claimBonusBike } from '../api';
 import type { TestingTask } from '../api';
 import type { ComponentType, SVGProps } from 'react';
+import { AppDownload } from '../components/AppDownload';
+import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../config/appLinks';
 
 const CATEGORY_LABELS: Record<string, string> = {
   getting_started: 'Getting Started',
@@ -120,6 +122,9 @@ export function Tasks() {
           <p className="text-white/70 text-lg md:text-xl max-w-2xl">
             Work through the beta checklist — every task you clear pays out WATTS.
           </p>
+          <div className="pt-2">
+            <AppDownload testflightUrl={TESTFLIGHT_URL} playStoreUrl={PLAY_STORE_URL} variant="compact" />
+          </div>
         </div>
       </div>
 
