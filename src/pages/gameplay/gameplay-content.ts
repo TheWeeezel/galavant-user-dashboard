@@ -760,7 +760,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Parts can be NFTs too, and they follow the same model as bikes. A part is either an ordinary in-game part or its own on-chain NFT, never both, and a part is never sold inside a bike.' },
           { type: 'heading', text: 'Exporting a part' },
           { type: 'list', items: [
-            'On the website: Profile, then your parts inventory, then the part, then Export as NFT. It is minted into your linked Enjin Wallet.',
+            'In the app: Items, Parts, tap the part, then Export as NFT. On the website: Profile, your parts, the part, Export as NFT. Either way it is minted into your linked Enjin Wallet.',
             'It must be unsocketed and not listed — take it out of its bike first.',
             'It must be at or above a minimum level. Dust-level parts stay off the chain.',
             'No WATTS fee. Galavant pays for the chain write.',
