@@ -84,11 +84,17 @@ export function PartNftModal({ part, onClose }: { part: PartNftRow; onClose: () 
     onClose();
   }
 
+  // The server refuses an export below its level floor (`/blockchain/fees` carries it); say so
+  // here instead of letting the button fail — a tester with level-1 parts saw no way to export
+  // and reported the feature as missing (2026-09-06).
+  const minLevel = (fees as { partExportMinLevel?: number } | undefined)?.partExportMinLevel ?? 3;
   const blockReason = part.isListed
     ? 'Cancel the marketplace listing first'
     : !isOnChain && part.socketedInBike
       ? 'Unsocket this part first'
-      : null;
+      : !isOnChain && part.level < minLevel
+        ? `Parts export from level ${minLevel} — this one is level ${part.level}. Combine parts to level it up first.`
+        : null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={safeClose}>
