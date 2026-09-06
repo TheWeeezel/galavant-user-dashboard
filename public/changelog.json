@@ -3,6 +3,29 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.26",
+      "date": "2026-09-06",
+      "title": "Parts on Enjin, Updates in Place",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Export a part as an NFT and import it back right from the part card in Items; the level floor for exporting is shown on the card"
+        },
+        {
+          "type": "feature",
+          "text": "The app can now receive small updates without a store release"
+        },
+        {
+          "type": "fix",
+          "text": "iOS: Link wallet now opens the Enjin Wallet directly instead of a browser page that ended in the App Store"
+        },
+        {
+          "type": "fix",
+          "text": "On the website, a part below the export level floor says so instead of failing"
+        }
+      ]
+    },
+    {
       "version": "0.0.25",
       "date": "2026-09-04",
       "title": "Trade, Stake, Redeem on Enjin",
