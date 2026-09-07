@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { config } from '../config';
 import type { StoreProduct, StoreStock } from '../api';
 
@@ -117,23 +118,29 @@ export function StoreBikeCard({
   const enj = enjPrice(product);
   const material = MATERIAL_NAMES[product.quality] ?? product.quality;
   const badge = QUALITY_BADGE[product.quality] ?? QUALITY_BADGE.common;
+  const [artMissing, setArtMissing] = useState(false);
   const fit = TYPE_FIT[product.type];
   const disabled = !offer.buyable || locked;
 
   return (
     <div className="pixel-card overflow-hidden flex flex-col">
       <div className="relative aspect-[16/9] bg-white border-b-2 border-m2e-border flex items-center justify-center">
-        <span className="absolute text-2xl text-m2e-text-muted uppercase tracking-widest">
-          {product.displayName}
-        </span>
-        {/* Sits on top of the label, so a missing PNG uncovers the name instead of a hole. */}
-        <img
-          src={`${config.apiUrl}/art/bases/bike-${product.type}.png`}
-          alt={`${material} ${product.displayName} bike`}
-          className="relative w-full h-full object-contain pixel-render"
-          loading="lazy"
-          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-        />
+        {/* Only on failure. Sitting it permanently behind the art meant it showed
+            through the transparent parts of every bike, duplicating the name
+            printed below the card. */}
+        {artMissing ? (
+          <span className="absolute text-2xl text-m2e-text-muted uppercase tracking-widest">
+            {product.displayName}
+          </span>
+        ) : (
+          <img
+            src={`${config.apiUrl}/art/bases/bike-${product.type}.png`}
+            alt={`${material} ${product.displayName} bike`}
+            className="relative w-full h-full object-contain pixel-render"
+            loading="lazy"
+            onError={() => setArtMissing(true)}
+          />
+        )}
         <span className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide ${badge}`}>
           {material}
         </span>
