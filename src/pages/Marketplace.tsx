@@ -145,8 +145,12 @@ export function Marketplace() {
   const cancel = useMutation({
     mutationFn: (id: string) => marketCancel(id),
     onSuccess: (res) => {
-      qc.invalidateQueries({ queryKey: ['market'] });
-      qc.invalidateQueries({ queryKey: ['my-market-listings'] });
+      // Same keys MarketSellPanel's invalidate() covers: userBikes/userParts/walletNfts carry
+      // `isListed`, and PartNftModal/Profile read it to gate Export — a near-miss here once
+      // left a just-cancelled item looking listed for the rest of the 30s query staleTime.
+      for (const key of ['market', 'my-market-listings', 'userBikes', 'userParts', 'walletNfts']) {
+        qc.invalidateQueries({ queryKey: [key] });
+      }
       setCancelNotice(res.pending
         ? (policy.data ? `${policy.data.enj.cancelSubmittedTitle} — ${policy.data.enj.cancelSubmittedNote}` : 'Approve the cancellation in your Enjin Wallet.')
         : 'Listing cancelled.');
