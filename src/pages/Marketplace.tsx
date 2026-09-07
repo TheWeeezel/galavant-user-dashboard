@@ -6,7 +6,7 @@ import {
   ShoppingCart, ChevronLeft, Cancel, Coins,
   Settings2, SortVertical, Check, Search,
 } from 'pixelarticons/react';
-import { fetchMarket, fetchStats, marketBuy, fetchMarketPurchase, type MarketListing } from '../api';
+import { fetchMarket, fetchStats, marketBuy, marketCancel, fetchMarketPurchase, fetchMarketPolicy, type MarketListing, type MarketPolicy } from '../api';
 import { ListingCard } from '../components/ListingCard';
 import { MarketSellPanel } from '../components/MarketSellPanel';
 import { NftDetailModal } from '../components/NftDetailModal';
@@ -66,7 +66,7 @@ function Chip({ label, active, onClick }: { label: string; active: boolean; onCl
 }
 
 export function Marketplace() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   // ONE market (task 7dc61fc3): browsing and listing live on the same page, and the browse
   // feed carries ordinary in-game items and NFTs side by side.
   const [tab, setTab] = useState<'browse' | 'sell'>('browse');
@@ -116,6 +116,8 @@ export function Marketplace() {
 
   const qc = useQueryClient();
   const stats = useQuery({ queryKey: ['stats'], queryFn: fetchStats });
+  // Same policy MarketSellPanel reads, so its Enj Cancel copy is one source, not two.
+  const policy = useQuery({ queryKey: ['market-policy'], queryFn: fetchMarketPolicy });
 
   // Buying: an off-chain item settles here. An ENJ listing answers `pending` — the purchase is
   // a request the buyer approves in their Enjin Wallet (2026-09-03), so the page says so.
@@ -132,6 +134,24 @@ export function Marketplace() {
       }
     },
     onError: (e) => setBuyNotice((e as Error).message),
+  });
+
+  // The feed shows every listing, including the viewer's own (task 7dc61fc3 merged the two
+  // shops into one browse page) — so a seller's own bike can turn up here with no way back off
+  // the market except the Sell tab. Cancelling from the card itself is the same call the Sell
+  // tab makes. Its own notice slot: a buy notice (and the purchase poll behind it) is still
+  // relevant to the reader and must not be clobbered by an unrelated cancel on another card.
+  const [cancelNotice, setCancelNotice] = useState<string | null>(null);
+  const cancel = useMutation({
+    mutationFn: (id: string) => marketCancel(id),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ['market'] });
+      qc.invalidateQueries({ queryKey: ['my-market-listings'] });
+      setCancelNotice(res.pending
+        ? (policy.data ? `${policy.data.enj.cancelSubmittedTitle} — ${policy.data.enj.cancelSubmittedNote}` : 'Approve the cancellation in your Enjin Wallet.')
+        : 'Listing cancelled.');
+    },
+    onError: (e) => setCancelNotice((e as Error).message),
   });
   useEffect(() => {
     if (!watchedPurchase) return;
@@ -268,6 +288,9 @@ export function Marketplace() {
 
           {buyNotice && (
             <div className="pixel-card p-4 border-amber-500/60 text-sm text-m2e-text-secondary">{buyNotice}</div>
+          )}
+          {cancelNotice && (
+            <div className="pixel-card p-4 border-amber-500/60 text-sm text-m2e-text-secondary">{cancelNotice}</div>
           )}
 
           {tab === 'sell' ? (
@@ -428,7 +451,17 @@ export function Marketplace() {
                     <ListingCard
                       listing={listing}
                       onClick={listing.itemType === 'bike' ? () => setSelectedNftId(listing.itemId) : undefined}
-                      footer={<BuyFooter listing={listing} isAuthenticated={isAuthenticated} onNeedLogin={() => setShowLogin(true)} onBuy={() => buy.mutate(listing.id)} pending={buy.isPending && buy.variables === listing.id} />}
+                      footer={<BuyFooter
+                        listing={listing}
+                        isAuthenticated={isAuthenticated}
+                        isOwn={!!user && listing.sellerId === user.id}
+                        onNeedLogin={() => setShowLogin(true)}
+                        onBuy={() => buy.mutate(listing.id)}
+                        pending={buy.isPending && buy.variables === listing.id}
+                        onCancel={() => cancel.mutate(listing.id)}
+                        cancelling={cancel.isPending && cancel.variables === listing.id}
+                        policyData={policy.data}
+                      />}
                     />
                   </motion.div>
                 ))}
@@ -503,16 +536,43 @@ export function Marketplace() {
 function BuyFooter({
   listing,
   isAuthenticated,
+  isOwn,
   onNeedLogin,
   onBuy,
   pending,
+  onCancel,
+  cancelling,
+  policyData,
 }: {
   listing: MarketListing;
   isAuthenticated: boolean;
+  isOwn: boolean;
   onNeedLogin: () => void;
   onBuy: () => void;
   pending: boolean;
+  onCancel: () => void;
+  cancelling: boolean;
+  policyData?: MarketPolicy;
 }) {
+  // The owner's own listing, met while browsing: a Buy button would only bounce off the
+  // server's "Cannot buy own listing" refusal. Cancelling is the one thing they can do with it
+  // here, and it must not hide behind the Sell tab.
+  if (isOwn) {
+    return (
+      <div className="space-y-1 pt-1">
+        {listing.chainPending && policyData && (
+          <div className="text-[11px] text-amber-600">{policyData.enj.listingSubmittedTitle} — {policyData.enj.listingSubmittedNote}</div>
+        )}
+        <button
+          disabled={cancelling || listing.status !== 'active'}
+          onClick={(e) => { e.stopPropagation(); onCancel(); }}
+          className="px-3 py-2 border border-m2e-danger text-m2e-danger uppercase tracking-wide text-xs disabled:opacity-50"
+        >
+          {cancelling ? 'Cancelling…' : 'Your Listing · Cancel'}
+        </button>
+      </div>
+    );
+  }
   if (!listing.canBuyHere) {
     return (
       <div className="space-y-1 pt-1">
