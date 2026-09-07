@@ -140,7 +140,11 @@ function CountUp({
   format?: (n: number) => string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  // Vertical margin only. With '-60px' on all four sides the observed span had to sit 60px
+  // inside the viewport horizontally too — and on a phone the left-column stats start as a
+  // narrow "0" about 40-50px from the left edge, entirely inside that dead zone, so their
+  // count-up never fired and Walkers / WATTS / Items Sold stayed at 0 (seen 2026-09-07).
+  const inView = useInView(ref, { once: true, margin: '-60px 0px' });
   const mv = useMotionValue(0);
   const [display, setDisplay] = useState(format(0));
   const reducedMotion = useReducedMotion();

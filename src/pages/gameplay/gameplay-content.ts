@@ -381,6 +381,7 @@ export const gameplaySections: GameplaySection[] = [
             'Indoor activities like treadmills do not count.',
             'Poor GPS signal (tunnels, dense buildings) will reduce your earnings.',
             'The game verifies genuine movement patterns — spoofing or faking won\'t work.',
+            'Mock-location apps are detected by the phone itself. A ride recorded with one earns nothing, the app tells you during the ride, and repeated attempts lead to penalties.',
             'Leaving your phone stationary (e.g. on a table) will not earn rewards — the app detects both GPS drift and lack of body motion.',
             'Only movement at a human pace counts toward your distance. Stretches that would need a vehicle are left out of your totals, and the same fix is never counted twice.',
           ]},
