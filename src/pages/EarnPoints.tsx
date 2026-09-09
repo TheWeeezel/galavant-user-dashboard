@@ -71,7 +71,9 @@ export function EarnPoints() {
     if (x === 'linked') setLinkNotice({ kind: 'ok', text: `Connected as @${q.get('handle') ?? 'your account'}` });
     else if (x === 'denied') setLinkNotice({ kind: 'fail', text: 'You declined the X permission request.' });
     else setLinkNotice({ kind: 'fail', text: q.get('reason') ?? 'Could not link your X account.' });
-    queryClient.invalidateQueries({ queryKey: ['social-status'] });
+    // Same key the status query uses below — 'social-status' matched nothing, so a fresh link
+    // kept showing the "Connect X" button until a reload.
+    queryClient.invalidateQueries({ queryKey: ['socialStatus'] });
     window.history.replaceState({}, '', window.location.pathname);
   }, [queryClient]);
 
