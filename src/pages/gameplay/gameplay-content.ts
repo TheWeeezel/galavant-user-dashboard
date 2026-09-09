@@ -722,7 +722,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'list', items: [
             'On the website, open Profile and find the item — exported bikes and exported parts each sit in their own on-chain group. Tap it and choose Import to Game. In the app, open the bike and use Import.',
             'Galavant asks the chain that the token is in your linked wallet, then sends a burn request to your Enjin Wallet.',
-            'Open the Enjin Wallet on your phone — Settings, then Connected Apps — and approve the request. The burn is signed by you, and your wallet pays the small network fee for it — a fraction of a cent in ENJ, so keep a little ENJ in the wallet.',
+            'Open the Enjin Wallet on your phone — Settings, then Connected Apps — and approve the request. The burn is signed by you, and your wallet pays the network fee for it. The fee itself is a fraction of a cent, but the wallet has to hold at least 0.02 ENJ before the request can be created at all — below that, Galavant tells you to top up instead of sending you a request that cannot go through.',
             'The token is burned — destroyed on-chain, permanently — and the item comes back exactly as it was minted: same level, same stats, full condition. The screen updates on its own once the chain confirms; you can close it and come back.',
             'It is fully playable again. Equip it, socket parts, level it, start walking. A bike puts your maximum energy back up too.',
           ]},
@@ -742,6 +742,19 @@ export const gameplaySections: GameplaySection[] = [
           ]},
           { type: 'heading', text: 'Selling an NFT for ENJ' },
           { type: 'paragraph', text: 'An exported item is in your Enjin Wallet, and you list it from the game: open the item, choose Sell, and set a price in ENJ. The listing request then appears in your Enjin Wallet — approve it there, and the chain puts the listing up a short while later. Your wallet pays a small network fee and holds a refundable deposit while the listing is live, so keep a little ENJ in it. Galavant never touches the token. The buyer pays you directly, on the chain, and the token moves to their wallet — frozen, exactly as it was minted, until they import it into their own game.' },
+          { type: 'heading', text: 'What your wallet needs before you list' },
+          // The amounts are CHAIN constants, not game levers — the marketplace pallet's listing
+          // deposit (ENJ_LISTING_DEPOSIT in the server's shared package) and the Platform's floor
+          // for any wallet it builds a request for. Naming them is the whole point: a seller who
+          // is 0.3 ENJ short can only act on a number. If either changes on chain, it changes here.
+          { type: 'list', items: [
+            'About 0.53 ENJ, free and unlocked. The chain holds a refundable 0.5075 ENJ deposit for as long as the listing stands, and the network fee comes on top of it.',
+            'The deposit is not a fee. It comes back to your wallet in full the moment the listing sells or you cancel it.',
+            'It has to be your ENJ. You sign the listing from your own wallet, so the chain takes the deposit from there — Galavant cannot put it up for you.',
+            'If your wallet cannot cover it, the Sell screen says so and the List button stays off. Nothing is listed, and your item stays exactly as it was.',
+          ]},
+          { type: 'paragraph', text: 'Each listing holds its own deposit, so three listings at once hold three of them. They are all released as the listings end.' },
+          { type: 'heading', text: 'Cancelling' },
           { type: 'paragraph', text: 'Cancelling works the same way: ask for it in the game, approve it in your wallet, and the item is back in your inventory once the chain confirms. A listing you cancel straight from your wallet or an Enjin marketplace comes back the same way — the game checks the chain, not the button you pressed.' },
           { type: 'paragraph', text: 'Every Galavant NFT carries a small royalty for the game on each sale, applied by the chain itself. It is the same on any marketplace, and it is what funds the season pot alongside the game\'s other revenue.' },
           { type: 'heading', text: 'Selling an NFT for WATTS' },
@@ -810,6 +823,39 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Staking is not one of those requests. You do it in the pool yourself, and there is nothing waiting in Connected Apps for it.' },
           { type: 'paragraph', text: 'One wallet per account and one account per wallet. You can unlink whenever you like: your ENJ, your stake and everything else in the wallet stay exactly where they are — only the connection goes, and your staking bonus stops until you link again.' },
           { type: 'tip', text: 'Treat the linking code like a one-time password. Anyone who photographs it — over your shoulder, on a shared screen — can attach their own wallet to your account and take the one link slot. Reveal it only when you are ready to scan.' },
+        ],
+      },
+      /**
+       * The questions players actually ask, in their words, with the answer they can act on.
+       *
+       * Seeded from a real case (2026-09-09): a player exported a bike, listed it for ENJ, and
+       * the chain refused the listing because his own wallet could not cover the deposit — while
+       * the app still showed the listing as ACTIVE. Both halves are fixed now, but the QUESTION
+       * survives the fix, because the requirement itself is real and belongs somewhere a player
+       * can find it before they hit it.
+       *
+       * Heading = the question as a player would type it. Keep answers to what they should DO.
+       */
+      {
+        slug: 'nft-faq',
+        title: 'FAQ: ENJ & Listings',
+        content: [
+          { type: 'paragraph', text: 'Everything on the chain is signed from your own Enjin Wallet, and the chain charges that wallet — not Galavant — for the privilege. Most questions on this page come back to that one sentence.' },
+          { type: 'heading', text: 'Why can\'t I list my NFT for ENJ?' },
+          { type: 'paragraph', text: 'Almost always because the wallet you linked does not hold enough ENJ. Listing puts up a refundable 0.5075 ENJ deposit plus a network fee — about 0.53 ENJ in all — and that comes out of your wallet, because you are the one signing. The Sell screen tells you what the wallet holds and what a listing needs, and keeps the List button off until it adds up. Top the wallet up and the button comes back.' },
+          { type: 'heading', text: 'Do I get the deposit back?' },
+          { type: 'paragraph', text: 'Yes, in full. The chain holds it while the listing stands and releases it to your wallet the moment the listing sells or you cancel it. It is not a fee and Galavant never receives it. Only the small network fee is actually spent.' },
+          { type: 'heading', text: 'My listing says NOT ON CHAIN. What happened?' },
+          { type: 'paragraph', text: 'The listing was created here but never made it onto the chain — the request was declined in your wallet, expired unsigned, or could not be paid for. Nobody can see or buy it, wherever they look. Cancel it: the item comes straight back to your inventory, with no chain step and no fee. Then list it again.' },
+          { type: 'heading', text: 'Why can\'t I import my NFT back into the game?' },
+          { type: 'paragraph', text: 'Importing burns the token, and you sign that burn yourself, so the wallet has to be able to pay the fee. Below 0.02 ENJ the request cannot even be created, and Galavant will say so instead of sending you one that fails. Your NFT is safe the whole time — it stays in your wallet, and it is still yours. Put a little ENJ in the wallet and import again.' },
+          { type: 'heading', text: 'Where do I get ENJ?' },
+          { type: 'paragraph', text: 'Wherever you like — the Enjin Wallet has its own buy and swap, and Enjin Coin trades on the usual exchanges. Send it to the address you linked. Galavant does not sell you ENJ and never holds it for you: we are a game, not an exchange.' },
+          { type: 'heading', text: 'How much should I keep in the wallet?' },
+          { type: 'paragraph', text: 'Around 1 ENJ covers a listing deposit and a long tail of imports and cancels without you having to think about it. Each listing you run at the same time holds its own deposit, so if you sell a lot at once, keep a little more.' },
+          { type: 'heading', text: 'Does any of this affect playing?' },
+          { type: 'paragraph', text: 'No. Walking, earning, levelling, repairs, breeding, toolboxes and the WATTS market never touch your wallet and never cost a chain fee. Only the chain half — export, import, list, cancel, buy, stake, redeem — needs ENJ in it.' },
+          { type: 'tip', text: 'The one rule behind every answer here: if it happens on the chain, your wallet signs it and your wallet pays for it. If it happens in the game, it is WATTS and it is free.' },
         ],
       },
     ],
