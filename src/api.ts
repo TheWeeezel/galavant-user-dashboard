@@ -877,6 +877,8 @@ export interface MarketListing {
   blockedNote: string | null;
   /** An ENJ listing sent to the chain — or waiting for the seller's signature — but not standing yet. */
   chainPending: boolean;
+  /** The createListing is KNOWN to have died: this row stands nowhere but in our database. */
+  chainFailed: boolean;
   status: string;
   sellerId: string;
   sellerName: string | null;
@@ -934,6 +936,21 @@ export function fetchMarketPolicy() {
 
 export function fetchMyMarketListings() {
   return fetchAuthJson<{ listings: MarketListing[] }>('/market/mine');
+}
+
+/**
+ * Whether the caller's own Enjin Wallet can carry an ENJ listing: the refundable deposit plus
+ * the network fee both leave that wallet when they sign, so a seller who cannot pay must not be
+ * offered the button at all. The server refuses the same case with the same wording.
+ */
+export function fetchListingFunds() {
+  return fetchAuthJson<{
+    linked: boolean;
+    walletEnj: string | null;
+    requiredEnj: string;
+    canList: boolean;
+    reason: string | null;
+  }>('/market/listing-funds');
 }
 
 export function marketList(body: {

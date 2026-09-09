@@ -5,6 +5,7 @@ import {
   fetchUserParts,
   fetchMyMarketListings,
   fetchMarketPolicy,
+  fetchListingFunds,
   marketList,
   marketCancel,
   type MarketListing,
@@ -114,6 +115,10 @@ export function MarketSellPanel() {
   const parts = useQuery({ queryKey: ['userParts', 'include-listed'], queryFn: () => fetchUserParts(true) });
   const listings = useQuery({ queryKey: ['my-market-listings'], queryFn: fetchMyMarketListings, refetchInterval: 15_000 });
   const policy = useQuery({ queryKey: ['market-policy'], queryFn: fetchMarketPolicy });
+  // Can this seller's own wallet carry an ENJ listing? Asked before the button is offered: the
+  // deposit and fee leave their wallet when they sign, and a listing the chain then refuses
+  // leaves the item flagged as listed with nothing on chain behind it (seen 2026-09-09).
+  const funds = useQuery({ queryKey: ['listing-funds'], queryFn: fetchListingFunds });
 
   const invalidate = () => {
     // The keys the rest of the dashboard already uses ('userBikes' / 'userParts' / 'walletNfts'
@@ -149,11 +154,15 @@ export function MarketSellPanel() {
     <div className="space-y-6">
       {/* Said BEFORE a currency is picked: a seller who chooses ENJ with an empty wallet hits a
           failure they cannot diagnose. */}
-      {hasNft && policy.data && (
+      {hasNft && funds.data?.canList === false && funds.data.reason ? (
+        <div className="pixel-card p-4 border-m2e-danger/60 text-sm text-m2e-text-secondary">
+          {funds.data.reason}
+        </div>
+      ) : hasNft && policy.data ? (
         <div className="pixel-card p-4 border-amber-500/60 text-sm text-m2e-text-secondary">
           {policy.data.enj.listingDepositWarning}
         </div>
-      )}
+      ) : null}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {items.map((item) => (
@@ -162,6 +171,7 @@ export function MarketSellPanel() {
             item={item}
             listing={listingByItemId.get(item.id)}
             policy={policy.data}
+            canListForEnj={funds.data?.canList !== false}
             onChanged={invalidate}
           />
         ))}
@@ -174,11 +184,14 @@ function SellCard({
   item,
   listing,
   policy,
+  canListForEnj,
   onChanged,
 }: {
   item: SellableItem;
   listing?: MarketListing;
   policy?: MarketPolicy;
+  /** False only when the seller's wallet was READ and cannot cover the deposit plus the fee. */
+  canListForEnj: boolean;
   onChanged: () => void;
 }) {
   // The item decides the currency: an in-game item is a WATTS sale, an NFT an ENJ one.
@@ -273,6 +286,12 @@ function SellCard({
           {listing.chainPending && policy && (
             <div className="text-[11px] text-amber-600">{policy.enj.listingSubmittedTitle} — {policy.enj.listingSubmittedNote}</div>
           )}
+          {/* The row is 'active' for us and nowhere for the chain: nobody can see or fill it, and
+              cancelling is the only way to get the item back. Saying nothing left a seller
+              waiting for a sale that could not come (2026-09-09). */}
+          {listing.chainFailed && listing.blockedNote && (
+            <div className="text-[11px] text-m2e-danger">{listing.blockedLabel} — {listing.blockedNote}</div>
+          )}
           <button
             disabled={cancel.isPending || listing.status !== 'active'}
             onClick={() => run(() => cancel.mutateAsync().then((r) => {
@@ -319,7 +338,7 @@ function SellCard({
               className="flex-1 min-w-0 pixel-border bg-m2e-bg-alt px-3 py-2 text-sm"
             />
             <button
-              disabled={list.isPending || !priceValid}
+              disabled={list.isPending || !priceValid || (currency === 'enj' && !canListForEnj)}
               onClick={() => run(() => list.mutateAsync().then(() => {
                 if (currency === 'enj' && policy) setNotice({ title: policy.enj.listingSubmittedTitle, text: policy.enj.listingSubmittedNote });
               }))}
