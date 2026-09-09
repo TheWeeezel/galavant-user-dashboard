@@ -642,7 +642,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'table', headers: ['', 'In the game', 'On the chain'], rows: [
             ['Priced in', 'WATTS', 'ENJ'],
             ['Who signs', 'Nobody — you tap a button', 'You do, in your own Enjin Wallet'],
-            ['Chain fees', 'There are none', 'Galavant pays for minting; importing costs your wallet a tiny network fee; listing for ENJ costs a fee plus a refundable deposit, held while the listing is live'],
+            ['Chain fees', 'There are none', 'Galavant pays for minting; importing costs your wallet a tiny network fee; listing for ENJ costs a fee plus a refundable deposit, held while the listing is live. All of it is paid in ENJ on the Enjin Matrixchain — ENJ withdrawn from an exchange lands on the Relaychain, so teleport some across in the Enjin Wallet before you import, list or buy'],
             ['Where you do it', 'App and website', 'App or website to export, import, list and buy for ENJ; your Enjin Wallet approves each of those'],
           ]},
           { type: 'heading', text: 'What an NFT is here' },
@@ -722,7 +722,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'list', items: [
             'On the website, open Profile and find the item — exported bikes and exported parts each sit in their own on-chain group. Tap it and choose Import to Game. In the app, open the bike and use Import.',
             'Galavant asks the chain that the token is in your linked wallet, then sends a burn request to your Enjin Wallet.',
-            'Open the Enjin Wallet on your phone — Settings, then Connected Apps — and approve the request. The burn is signed by you, and your wallet pays the small network fee for it — a fraction of a cent in ENJ, so keep a little ENJ in the wallet.',
+            'Open the Enjin Wallet on your phone — Settings, then Connected Apps — and approve the request. The burn is signed by you, and your wallet pays the small network fee for it — a fraction of a cent in ENJ, so keep a little ENJ in the wallet, on the Matrixchain. If Import tells you the wallet cannot pay, your ENJ is usually sitting on the Relaychain: teleport some across in the Enjin Wallet and try again.',
             'The token is burned — destroyed on-chain, permanently — and the item comes back exactly as it was minted: same level, same stats, full condition. The screen updates on its own once the chain confirms; you can close it and come back.',
             'It is fully playable again. Equip it, socket parts, level it, start walking. A bike puts your maximum energy back up too.',
           ]},
@@ -859,6 +859,7 @@ export const gameplaySections: GameplaySection[] = [
             'The rate floats. It is never fixed in advance, because it depends on the budget that season and how much WATTS the whole player base redeems.',
             'Timing counts. WATTS committed early in a window weigh more than the same WATTS committed just before it closes, so there is no reward for waiting to see what everyone else does.',
             'WATTS you burn is gone for good. That burn is what keeps the currency from inflating away.',
+            'Your payout goes to your linked Enjin Wallet, on the Matrixchain. A very small share can only be paid once that wallet exists on the Matrixchain — any ENJ arriving there does it, a bike sale or a teleport from the Relaychain — and the season history tells you under the payout when that is what it is waiting for.',
           ]},
           { type: 'tip', text: 'You are never forced to redeem. WATTS keeps its full value inside the game, and plenty of players will simply keep spending it on better bikes and parts.' },
           { type: 'heading', text: 'Why Not Just Mint a Token?' },

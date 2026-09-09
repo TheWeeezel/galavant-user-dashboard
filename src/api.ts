@@ -622,7 +622,7 @@ export interface RedemptionHistorySeason {
   id: string; name: string; status: string; budgetEnj: number; totalWatts: number;
   closesAt: string; settledAt: string | null; paidEnj: number | null;
   enjPriceUsdAtOpen: number | null; enjPriceUsdAtSettle: number | null;
-  entry: { watts: number; sharePct: number; enjPaid: number | null; status: string } | null;
+  entry: { watts: number; sharePct: number; enjPaid: number | null; status: string; holdReason: 'no_wallet' | 'below_minimum' | 'retrying' | null } | null;
 }
 
 /** Past seasons with your own entry and payout. */

@@ -116,6 +116,14 @@ export function EnjRedemptionSection() {
 }
 
 /** Previous seasons — the record every player keeps: pot, their commit, their payout. */
+/** Why a settled season still owes a payout — and the one thing the player can do about it. */
+const HOLD_REASON_TEXT = {
+  no_wallet: 'Held: no Enjin Wallet is linked. Link one and the payout goes out on the next daily run.',
+  below_minimum:
+    'Held: this share is below the chain\'s minimum transfer (0.1 ENJ), which can only reach a wallet that already exists on the Matrixchain. Any ENJ arriving there creates it — a bike sale, or a teleport from the Relaychain in the Enjin Wallet — and the payout goes out on the next daily run after that.',
+  retrying: 'Held: the payout did not go through on the chain. It is retried daily — nothing to do on your side.',
+} as const;
+
 function SeasonHistory({ seasons }: { seasons: RedemptionHistorySeason[] }) {
   if (seasons.length === 0) return null;
   return (
@@ -144,6 +152,7 @@ function SeasonHistory({ seasons }: { seasons: RedemptionHistorySeason[] }) {
                   {h.entry ? (h.entry.enjPaid != null
                     ? `${h.entry.enjPaid} ENJ${h.enjPriceUsdAtSettle != null ? ` (≈ $${(h.entry.enjPaid * h.enjPriceUsdAtSettle).toFixed(2)})` : ''}`
                     : 'pending') : '—'}
+                  {h.entry?.holdReason && <div className="text-xs text-m2e-text-muted mt-1">{HOLD_REASON_TEXT[h.entry.holdReason]}</div>}
                 </td>
                 <td className="py-2 text-m2e-text-secondary">{h.enjPriceUsdAtSettle != null ? `$${h.enjPriceUsdAtSettle.toFixed(4)}` : '—'}</td>
               </tr>
