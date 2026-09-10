@@ -92,10 +92,13 @@ export function EarnPoints() {
     },
   });
 
+  // Beide Claims fassen auch den Status an: dort haengt der WATTS-Zaehler, und ohne die
+  // zweite Invalidierung stuende er bis zum naechsten Seitenaufruf auf dem alten Stand.
   const claimLikeMutation = useMutation({
     mutationFn: (twitterTweetId: string) => claimLike(twitterTweetId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['socialTweets'] });
+      queryClient.invalidateQueries({ queryKey: ['socialStatus'] });
     },
   });
 
@@ -103,6 +106,7 @@ export function EarnPoints() {
     mutationFn: (twitterTweetId: string) => claimRetweet(twitterTweetId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['socialTweets'] });
+      queryClient.invalidateQueries({ queryKey: ['socialStatus'] });
     },
   });
 
@@ -129,8 +133,30 @@ export function EarnPoints() {
   const socialTweets = socialTweetsData?.tweets ?? [];
   const TWEETS_PER_PAGE = 16;
   const [tweetPage, setTweetPage] = useState(0);
-  const totalTweetPages = Math.max(1, Math.ceil(socialTweets.length / TWEETS_PER_PAGE));
-  const visibleTweets = socialTweets.slice(tweetPage * TWEETS_PER_PAGE, (tweetPage + 1) * TWEETS_PER_PAGE);
+
+  // "Offen" heisst: an diesem Post ist noch WATTS zu holen — Like ODER Retweet fehlt. Erst
+  // wenn beides geclaimt ist, ist er erledigt. Die Voreinstellung ist "Offen", weil das die
+  // Frage ist, mit der man auf diese Seite kommt.
+  const [tweetFilter, setTweetFilter] = useState<'all' | 'open' | 'done'>('open');
+  const openTweets = socialTweets.filter((t) => !t.likeClaimed || !t.retweetClaimed);
+  const doneTweets = socialTweets.filter((t) => t.likeClaimed && t.retweetClaimed);
+  const filteredTweets =
+    tweetFilter === 'open' ? openTweets : tweetFilter === 'done' ? doneTweets : socialTweets;
+
+  const totalTweetPages = Math.max(1, Math.ceil(filteredTweets.length / TWEETS_PER_PAGE));
+  // Ein Claim kann die letzte Seite leeren: dann steht tweetPage hinter dem Ende und die
+  // Liste waere leer, obwohl es Posts gibt.
+  const currentTweetPage = Math.min(tweetPage, totalTweetPages - 1);
+  const visibleTweets = filteredTweets.slice(
+    currentTweetPage * TWEETS_PER_PAGE,
+    (currentTweetPage + 1) * TWEETS_PER_PAGE,
+  );
+
+  const TWEET_FILTERS: Array<{ key: 'all' | 'open' | 'done'; label: string; count: number }> = [
+    { key: 'open', label: 'Open', count: openTweets.length },
+    { key: 'done', label: 'Done', count: doneTweets.length },
+    { key: 'all', label: 'All', count: socialTweets.length },
+  ];
 
   return (
     <>
@@ -276,6 +302,26 @@ export function EarnPoints() {
             Follow <span className="text-m2e-accent">@galavanteer</span>. Like and retweet our posts. Each action earns you <span className="text-m2e-accent">10 WATTS</span>.
           </p>
 
+          {isAuthenticated && socialStatus && (
+            <div className="pixel-card p-4 flex items-center justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-3">
+                <Zap className="w-5 h-5 text-m2e-accent shrink-0" />
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.3em] text-m2e-text-muted">
+                    Earned here so far
+                  </div>
+                  <div className="text-2xl font-mono text-m2e-accent leading-none mt-1">
+                    {(socialStatus.earnedWatts ?? 0).toLocaleString()}{' '}
+                    <span className="text-sm text-m2e-text-secondary">WATTS</span>
+                  </div>
+                </div>
+              </div>
+              <div className="text-xs text-m2e-text-muted font-mono">
+                {socialStatus.claimCount ?? 0} action{(socialStatus.claimCount ?? 0) === 1 ? '' : 's'} claimed
+              </div>
+            </div>
+          )}
+
           {isAuthenticated && socialStatus?.twitterLinked && (
             <div className="space-y-5">
               {/* Follow Task */}
@@ -325,9 +371,32 @@ export function EarnPoints() {
               )}
               {socialTweets.length > 0 && (
                 <div className="space-y-3">
-                  <div className="text-[10px] uppercase tracking-[0.3em] text-m2e-text-muted">
-                    Like & Retweet
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div className="text-[10px] uppercase tracking-[0.3em] text-m2e-text-muted">
+                      Like & Retweet
+                    </div>
+                    <div className="flex gap-2">
+                      {TWEET_FILTERS.map(({ key, label, count }) => (
+                        <button
+                          key={key}
+                          onClick={() => { setTweetFilter(key); setTweetPage(0); }}
+                          className={`pixel-btn px-3 py-1 text-xs ${
+                            tweetFilter === key ? 'pixel-btn-primary' : 'pixel-btn-secondary'
+                          }`}
+                        >
+                          {label} <span className="font-mono">{count}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
+
+                  {filteredTweets.length === 0 && (
+                    <p className="text-sm text-m2e-text-muted">
+                      {tweetFilter === 'open'
+                        ? "All caught up — you've liked and retweeted every post here."
+                        : 'Nothing claimed yet. Switch to Open to start earning.'}
+                    </p>
+                  )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     {visibleTweets.map((tweet) => {
@@ -406,21 +475,21 @@ export function EarnPoints() {
                   {totalTweetPages > 1 && (
                     <div className="flex items-center justify-center gap-3 pt-2">
                       <button
-                        onClick={() => setTweetPage((p) => Math.max(0, p - 1))}
-                        disabled={tweetPage === 0}
+                        onClick={() => setTweetPage(Math.max(0, currentTweetPage - 1))}
+                        disabled={currentTweetPage === 0}
                         className="pixel-btn pixel-btn-secondary px-4 py-2 text-xs disabled:opacity-40"
                       >
                         <ChevronLeft className="w-3 h-3 inline mr-1" />
                         Prev
                       </button>
                       <div className="px-3 py-1.5 pixel-border bg-m2e-card-alt border-m2e-border text-xs uppercase tracking-widest text-m2e-text-secondary">
-                        <span className="text-m2e-accent">{tweetPage + 1}</span>
+                        <span className="text-m2e-accent">{currentTweetPage + 1}</span>
                         <span className="text-m2e-border mx-1">/</span>
                         {totalTweetPages}
                       </div>
                       <button
-                        onClick={() => setTweetPage((p) => Math.min(totalTweetPages - 1, p + 1))}
-                        disabled={tweetPage >= totalTweetPages - 1}
+                        onClick={() => setTweetPage(Math.min(totalTweetPages - 1, currentTweetPage + 1))}
+                        disabled={currentTweetPage >= totalTweetPages - 1}
                         className="pixel-btn pixel-btn-secondary px-4 py-2 text-xs disabled:opacity-40"
                       >
                         Next

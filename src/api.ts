@@ -401,6 +401,10 @@ export interface SocialRewardStatus {
   twitterLinked: boolean;
   twitterUsername?: string;
   followClaimed: boolean;
+  /** WATTS, die fuer Social-Aktionen schon gutgeschrieben wurden (aus dem Transaktionsbuch). */
+  earnedWatts: number;
+  /** Anzahl geclaimter Aktionen: Follow, Likes und Retweets zusammen. */
+  claimCount: number;
 }
 
 export interface SocialTweet {
