@@ -3,6 +3,69 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.27",
+      "date": "2026-09-10",
+      "title": "Fair Play & Crash Reports",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Mock-location apps no longer work: a ride recorded with one earns nothing, closes as flagged, and the app says so during the ride and on the summary"
+        },
+        {
+          "type": "feature",
+          "text": "Crash reporting in the app, so a crash on your phone reaches us with the stack trace instead of only a report"
+        },
+        {
+          "type": "feature",
+          "text": "Announcements from the team show at start-up; \"Got it\" remembers them on your phone"
+        },
+        {
+          "type": "fix",
+          "text": "A ride without location access now stops with a message instead of running with the timer counting and nothing recorded"
+        },
+        {
+          "type": "fix",
+          "text": "A pause that reached the server but whose answer got lost no longer leaves the phone riding with frozen WATTS; pause state is re-read from the server"
+        },
+        {
+          "type": "fix",
+          "text": "Finishing a ride no longer drops you back without a summary when something after the stop fails"
+        },
+        {
+          "type": "fix",
+          "text": "The energy bar shows the minutes you can actually ride; the leftover that printed as \"0.3 min left\" forever is gone"
+        },
+        {
+          "type": "fix",
+          "text": "Entering a friend's referral code no longer fails with an error for players whose connection reached us through a proxy"
+        },
+        {
+          "type": "fix",
+          "text": "Live stats on the website count up on phones too"
+        },
+        {
+          "type": "fix",
+          "text": "Freshly minted NFTs without an image are fetched again instead of staying blank"
+        },
+        {
+          "type": "improvement",
+          "text": "The \"Ride your first kilometre\" task is now \"Ride 1 km in one go\", since a single ride is what counts"
+        },
+        {
+          "type": "improvement",
+          "text": "The WATTS counter during a ride is easier to read"
+        },
+        {
+          "type": "improvement",
+          "text": "An ENJ listing that cannot go through is refused up front instead of failing on the chain later"
+        },
+        {
+          "type": "improvement",
+          "text": "The account page labels your wallet address as Matrixchain"
+        }
+      ]
+    },
+    {
       "version": "0.0.26",
       "date": "2026-09-06",
       "title": "Parts on Enjin, Updates in Place",
