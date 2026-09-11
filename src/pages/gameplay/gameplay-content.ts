@@ -191,6 +191,26 @@ export const gameplaySections: GameplaySection[] = [
         ],
       },
       {
+        slug: 'genesis-drop',
+        title: 'The Genesis Drop',
+        content: [
+          { type: 'paragraph', text: 'September 2026 was the test month. On 1 October everything reset — balances, bikes, parts, levels — and the real launch began. The one thing that crossed the reset is your Genesis standing: how often you showed up in September.' },
+          { type: 'heading', text: 'How your standing was measured' },
+          { type: 'list', items: [
+            'What counts is separate days. A day counts when you finished at least one ride that earned and was long enough for the anti-cheat to judge it.',
+            'Distance, total WATTS and marketplace activity do not count. They reward the best bike or the best script, not showing up.',
+            'Rides the anti-cheat rejected cost standing. A month with a rejected ride lands one tier lower; an account under a ban does not count at all.',
+            'The standing was frozen once, at the end of September, before the reset. It cannot change afterwards.',
+          ]},
+          { type: 'heading', text: 'Who receives what' },
+          { type: 'paragraph', text: 'The team looks at the whole month — days, rides, the tester tasks you completed, distance, and a clean anti-cheat record — and awards the players who stood out. The few at the very top receive a Genesis bike; others receive two Genesis parts. There is no formula to game and nothing to claim: it is a decision, made once, after the month closed.' },
+          { type: 'heading', text: 'How it reaches you' },
+          { type: 'paragraph', text: 'Sign in after the reset with the same Google account you used in September. If you were awarded, the item is already in your garage. A Genesis bike is a real, playable bike; Genesis parts are real parts. All carry a GENESIS mark on their card, and when you export one, the NFT in your Enjin wallet carries a Genesis trait and one of the first token numbers of its collection — the Genesis set is numbered 1 and up.' },
+          { type: 'paragraph', text: 'Unlike other items, a Genesis bike or part can be exported right away, without levelling first. The usual export conditions still apply: a bike must be healed, serviced, not listed and not mid-ride; a part must be unsocketed and not listed.' },
+          { type: 'tip', text: 'The Genesis mark never comes off and cannot be earned later. It says one thing: this player was there in September.' },
+        ],
+      },
+      {
         slug: 'your-first-walk',
         title: 'Your First Walk',
         content: [
