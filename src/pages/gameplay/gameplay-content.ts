@@ -991,7 +991,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'central-banking',
         title: 'The Central Banking System',
         content: [
-          { type: 'paragraph', text: 'Galavant runs an AI-driven central banking system over its economy. In most move-to-earn games nobody is minding the shop: rewards are printed, value leaks out, and the loop collapses. Galavant treats the economy as something to be actively budgeted and managed.' },
+          { type: 'paragraph', text: 'Galavant runs its economy like a central bank. In most move-to-earn games nobody is minding the shop: rewards are printed, value leaks out, and the loop collapses. Galavant treats the economy as something to be actively budgeted and managed.' },
           { type: 'heading', text: 'A Budget, Not a Printing Press' },
           { type: 'paragraph', text: 'Galavant does not mint its own token, so there is no supply to inflate or defend. Instead the system is fiscal: a share of the platform\'s real revenue — NFT sales, marketplace commission, shop purchases, staking commission — is set aside each season as an ENJ budget. That budget is what funds player payouts.' },
           { type: 'heading', text: 'Where the Season Budget Goes' },
@@ -1001,14 +1001,14 @@ export const gameplaySections: GameplaySection[] = [
             'A minimum budget gate — if a season does not clear the threshold, the budget rolls forward rather than paying out something meaningless.',
           ]},
           { type: 'tip', text: 'The important consequence: Galavant can only ever pay out what it has actually earned. Payouts scale with the health of the business, not with how fast a token can be minted.' },
-          { type: 'heading', text: 'What the Economy Agent Does' },
+          { type: 'heading', text: 'How the Economy Is Watched' },
           { type: 'list', items: [
-            'Reviews economy health daily and produces a risk assessment.',
-            'Proposes adjustments to earning rates, costs, and sinks when metrics drift out of range.',
-            'Runs a fiscal review at the end of every season, before the budget is set and the redemption window opens.',
-            'Watches the WATTS flow ratio — how much WATTS enters the game versus how much is spent or burned — as its core inflation signal.',
+            'The team reads a fixed set of economy instruments: how much WATTS enters the game versus how much is spent or burned, across player groups from casual to fully upgraded.',
+            'How concentrated a season\'s redemption pot is — whether a few players would take most of it.',
+            'Whether parts are accumulating faster than they are used up, and what running the game on the chain actually costs.',
+            'Each instrument has a healthy range and names the one setting it is tied to, so a reading outside its range maps to a considered adjustment rather than a guess.',
           ]},
-          { type: 'tip', text: 'Every proposal is reviewed by the team and requires explicit admin approval before it takes effect. The AI proposes; humans decide. Nothing changes automatically.' },
+          { type: 'tip', text: 'Adjustments are made by people, in small steps, with a cooling-off period before the same setting can be touched again. Nothing changes automatically.' },
         ],
       },
       {
@@ -1016,7 +1016,7 @@ export const gameplaySections: GameplaySection[] = [
         title: 'What Can Change',
         content: [
           { type: 'paragraph', text: 'Galavant\'s economy is a living system. To keep it healthy and fair, the team can adjust a wide range of economic parameters over time. This is by design — a static economy can\'t respond to real-world conditions like player growth, market shifts, or emerging imbalances.' },
-          { type: 'tip', text: 'Changes are always made carefully, proposed by the AI economy agent, and approved by the team. The goal is never to disadvantage players — it\'s to keep the economy sustainable so your earnings and assets hold value long-term.' },
+          { type: 'tip', text: 'Changes are always made carefully by the team, on the strength of the economy instruments described above. The goal is never to disadvantage players — it\'s to keep the economy sustainable so your earnings and assets hold value long-term.' },
           { type: 'heading', text: 'Adjustable Economic Levers' },
           { type: 'paragraph', text: 'The following table shows the categories of parameters the team can tune. No exact values are listed — just what each lever controls and why it might be adjusted.' },
           { type: 'table', headers: ['Area', 'What Can Be Adjusted', 'Why It Might Change'], rows: [
