@@ -3,6 +3,29 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.28",
+      "date": "2026-09-11",
+      "title": "Device Trust & Fair Motion",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Your phone now vouches for itself when a ride starts (Google Play Integrity on Android, Apple App Attest on iOS). There is nothing to do on your side and a ride is never blocked by it — it simply helps tell real walks from faked ones, and it is the first check a spoofing app cannot fake from the inside"
+        },
+        {
+          "type": "fix",
+          "text": "A phone in your pocket no longer looks like a phone left on a table: motion readings that stopped updating are ignored instead of being counted as \"no movement\", which used to push some honest walks close to the fair-play line"
+        },
+        {
+          "type": "fix",
+          "text": "The WATTS counter on the ride screen is easier to read — the heavy shadow that smeared the digits is gone"
+        },
+        {
+          "type": "improvement",
+          "text": "Walking a little faster than your bike's optimal zone no longer cuts your earnings off a cliff. Commuter now earns up to 8 km/h (was 6) and Touring up to 12 km/h (was 10), tapering off gradually instead. A brisk walk on a Commuter used to sit right on the edge; two of you told us the tolerance was too tight. The optimal zones themselves are unchanged. One thing worth knowing: a minute just outside the optimal zone now earns, which also means it now spends a minute of energy where before it spent none. If your energy is the thing you run out of, the optimal zone is still where it goes furthest."
+        }
+      ]
+    },
+    {
       "version": "0.0.27",
       "date": "2026-09-10",
       "title": "Fair Play & Crash Reports",
