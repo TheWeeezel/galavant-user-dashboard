@@ -360,8 +360,8 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Each bike type has an optimal speed zone. Walking within this zone earns you full WATTS. Walking outside of it reduces your rewards.' },
           { type: 'heading', text: 'Speed Zones by Bike Type' },
           { type: 'table', headers: ['Bike Type', 'Full Range', 'Optimal Range', 'Best For'], rows: [
-            ['Commuter', '2 – 6 km/h', '2 – 5 km/h', 'Slow to normal walking'],
-            ['Touring', '4 – 10 km/h', '5 – 9 km/h', 'Brisk walking to light jogging'],
+            ['Commuter', '2 – 8 km/h', '2 – 5 km/h', 'Slow to normal walking'],
+            ['Touring', '4 – 12 km/h', '5 – 9 km/h', 'Brisk walking to light jogging'],
             ['Racing', '8 – 20 km/h', '10 – 18 km/h', 'Jogging to running'],
             ['Electric', '2 – 20 km/h', '2 – 18 km/h', 'Any pace'],
           ]},
@@ -384,6 +384,7 @@ export const gameplaySections: GameplaySection[] = [
             'Mock-location apps are detected by the phone itself. A ride recorded with one earns nothing, the app tells you during the ride, and repeated attempts lead to penalties.',
             'Leaving your phone stationary (e.g. on a table) will not earn rewards — the app detects both GPS drift and lack of body motion.',
             'Only movement at a human pace counts toward your distance. Stretches that would need a vehicle are left out of your totals, and the same fix is never counted twice.',
+            'Galavant also asks your phone\'s platform to confirm it is a genuine device running the genuine app. You do not need to do anything for this, and a ride is never blocked by it — it simply helps tell real walks from faked ones.',
           ]},
           { type: 'tip', text: 'For the best experience, walk in open areas with good sky visibility. Parks, sidewalks, and trails work great. Keep your phone on your body while walking — it needs to sense your movement.' },
           { type: 'heading', text: 'Signal Quality' },
