@@ -79,6 +79,12 @@ export function EnjRedemptionSection() {
           </p>
         )}
         <div className="border-t border-m2e-border pt-4 space-y-2">
+          {/* The app shows the close date on its season ticket; the website never did, and a player
+              asked where their ENJ had "been sent" minutes after committing (report 97b7eb57). */}
+          <Row
+            label="Window closes"
+            value={s.season.closesAt ? new Date(s.season.closesAt).toLocaleDateString() : 'when the team ends the season'}
+          />
           <Row label="Season pot" value={`${s.season.budgetEnj.toLocaleString()} ENJ`} />
           <Row label="Committed by all players" value={`${s.season.totalWatts.toLocaleString()} WATTS`} />
           <Row label="Your commitment" value={`${(s.entry?.watts ?? 0).toLocaleString()} WATTS`} />
@@ -108,6 +114,14 @@ export function EnjRedemptionSection() {
           Minimum {min.toLocaleString()} WATTS. Committed WATTS are spent and can't be refunded. Your estimate
           shifts as other players join.
         </p>
+        {submit.isSuccess && (
+          <p className="text-sm text-m2e-success">
+            Committed. Your estimated payout above updates as others join. Nothing is sent yet — the ENJ is
+            paid to your linked Enjin Wallet after the window closes
+            {s.season.closesAt ? ` on ${new Date(s.season.closesAt).toLocaleDateString()}` : ''}, and it can
+            take until the next day to arrive.
+          </p>
+        )}
         {submit.isError && <p className="text-sm text-m2e-danger">{(submit.error as Error).message}</p>}
       </div>
       <SeasonHistory seasons={history.data?.seasons ?? []} />
