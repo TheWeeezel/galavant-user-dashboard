@@ -428,6 +428,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Repairs Take Time' },
           { type: 'paragraph', text: 'When you start a repair, your bike is locked from activities while it\'s being fixed. The amount of wall-clock time required depends on how much wear there is to undo — small top-up repairs are quick, full overhauls take longer.' },
           { type: 'paragraph', text: 'If you\'re in a hurry, you can spend extra WATTS to instantly skip the remaining wait, in the same way you can boost a level-up. The cost decays as the repair progresses, so a near-finished repair is much cheaper to skip than a freshly-started one.' },
+          { type: 'paragraph', text: 'When the timer runs out, the repair finishes on its own within a few minutes — you do not need to open the bike for it to complete, and a daily mission that asks for a repair is credited as soon as it does.' },
           { type: 'heading', text: 'Keeping Your Bike in Peak Condition' },
           { type: 'list', items: [
             'Higher Durability stat means slower wear per minute of walking.',
