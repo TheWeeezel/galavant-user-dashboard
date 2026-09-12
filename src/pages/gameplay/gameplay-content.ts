@@ -989,16 +989,14 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'how-decisions-are-made',
         title: 'How Economic Decisions Are Made',
         content: [
-          { type: 'paragraph', text: 'Galavant\'s economy isn\'t left to chance. Behind the scenes, an AI-powered economy agent continuously monitors the health of the entire game economy and proposes adjustments to keep things balanced and sustainable.' },
-          { type: 'heading', text: 'The Economy Agent' },
-          { type: 'paragraph', text: 'Every day, the economy agent analyzes real-time data from across the game — player activity, how WATTS flows in and out, marketplace trends, staking momentum, and more. Based on this analysis, it identifies potential risks like inflation, deflation, or market imbalances and proposes corrective actions.' },
+          { type: 'paragraph', text: 'Galavant\'s economy isn\'t left to chance. The team reads a fixed set of economy instruments every day and adjusts settings by hand, in small steps.' },
+          { type: 'heading', text: 'Who Decides' },
           { type: 'list', items: [
-            'The agent reviews economy health metrics daily.',
-            'It produces a risk assessment (low, medium, high, or critical) based on current conditions.',
-            'It can propose changes to economic parameters — like earning rates, costs, or how a season\'s budget is set.',
-            'Every proposal requires human admin approval before taking effect. The agent cannot act unilaterally.',
+            'The team reviews the economy instruments daily: how WATTS enters the game versus how it is spent, player activity, marketplace trends and staking momentum.',
+            'Adjustments to earning rates, costs or a season\'s budget are made by people, with a cooling-off period before the same setting is touched again.',
+            'One thing is automatic: when the economy health score leaves its healthy range, upgrade costs and repair-timer boosts become gradually more expensive, within a fixed cap, and ease off again as the score recovers. Base earnings and standard repairs are never touched by this.',
           ]},
-          { type: 'tip', text: 'No economic change happens automatically. The AI proposes, humans approve. This ensures accountability while benefiting from data-driven analysis.' },
+          { type: 'tip', text: 'Levers are pulled by humans. The only automatic response is a capped surcharge on upgrades and boosts while the health score is low, and the score is always visible on the homepage.' },
           { type: 'heading', text: 'Economy Health Score' },
           { type: 'paragraph', text: 'The game maintains a real-time economy health score visible on the dashboard homepage. This score reflects the overall balance between earning, spending, staking, and redemption across the ecosystem.' },
           { type: 'list', items: [
@@ -1030,7 +1028,7 @@ export const gameplaySections: GameplaySection[] = [
             'Whether parts are accumulating faster than they are used up, and what running the game on the chain actually costs.',
             'Each instrument has a healthy range and names the one setting it is tied to, so a reading outside its range maps to a considered adjustment rather than a guess.',
           ]},
-          { type: 'tip', text: 'Adjustments are made by people, in small steps, with a cooling-off period before the same setting can be touched again. Nothing changes automatically.' },
+          { type: 'tip', text: 'Adjustments are made by people, in small steps, with a cooling-off period before the same setting can be touched again. Nothing else changes automatically — the one exception is the capped surcharge on upgrades and repair-timer boosts while the health score is low.' },
         ],
       },
       {

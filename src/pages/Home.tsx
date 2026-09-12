@@ -33,10 +33,12 @@ type LeaderboardMetric = 'distance' | 'earnings';
 type LeaderboardPeriod = 'daily' | 'weekly' | 'all_time';
 type MarketplaceSort = 'newest' | 'price_asc' | 'price_desc';
 
+// Keys are the server's EconomyState enum values (lowercase). Until 2026-09-12 they were
+// capitalised, so no state ever matched and the badge was permanently green.
 const economyStateColors: Record<string, { bg: string; text: string; label: string }> = {
-  Healthy: { bg: 'bg-m2e-success/15', text: 'text-m2e-success', label: 'Healthy' },
-  Cautious: { bg: 'bg-m2e-warning/15', text: 'text-m2e-warning', label: 'Cautious' },
-  Stressed: { bg: 'bg-m2e-danger/15', text: 'text-m2e-danger', label: 'Stressed' },
+  healthy: { bg: 'bg-m2e-success/15', text: 'text-m2e-success', label: 'Healthy' },
+  cautious: { bg: 'bg-m2e-warning/15', text: 'text-m2e-warning', label: 'Cautious' },
+  stressed: { bg: 'bg-m2e-danger/15', text: 'text-m2e-danger', label: 'Stressed' },
 };
 
 function formatSat(n: number): string {
@@ -256,8 +258,8 @@ export function Home() {
   const tickerTwice = useMemo(() => [...TICKER_ITEMS, ...TICKER_ITEMS], []);
   const heroSrc = useHeroPlates();
 
-  const economyState = stats.data?.economyState ?? 'Healthy';
-  const stateStyle = economyStateColors[economyState] ?? economyStateColors.Healthy;
+  const economyState = stats.data?.economyState ?? 'healthy';
+  const stateStyle = economyStateColors[economyState] ?? economyStateColors.healthy;
 
   return (
     <>
@@ -841,7 +843,7 @@ export function Home() {
             </p>
           </div>
 
-          {stats.data && stats.data.economyHealthScore != null ? (
+          {stats.data && stats.data.economyHealthScore != null && stats.data.economyHealthScore >= 0 ? (
             <motion.div
               className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"
               variants={stagger}
@@ -1250,8 +1252,8 @@ function HealthGauge({ score, state }: { score: number; state: string }) {
   const circumference = 2 * Math.PI * 54;
   const offset = circumference - (pct / 100) * circumference;
   const color =
-    state === 'Healthy' ? 'var(--color-m2e-success)' :
-    state === 'Stressed' ? 'var(--color-m2e-danger)' :
+    state === 'healthy' ? 'var(--color-m2e-success)' :
+    state === 'stressed' ? 'var(--color-m2e-danger)' :
     'var(--color-m2e-warning)';
 
   return (
