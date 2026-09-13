@@ -243,6 +243,13 @@ export function Home() {
     }),
   });
   const stats = useQuery({ queryKey: ['stats'], queryFn: fetchStats });
+  // The live season, straight off /explorer/stats — one source for the banner and the season card,
+  // so a budget change on the box reaches both within the endpoint's minute of cache.
+  const season = stats.data?.season ?? null;
+  const seasonPot = season ? season.budgetEnj.toLocaleString() : null;
+  const seasonDaysLeft = season
+    ? Math.max(0, Math.ceil((new Date(season.closesAt).getTime() - Date.now()) / 86_400_000))
+    : 0;
   const leaderboard = useQuery({
     queryKey: ['leaderboard', lbMetric, lbPeriod],
     queryFn: () => fetchLeaderboard(lbMetric, lbPeriod),
@@ -271,9 +278,9 @@ export function Home() {
         <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-6 text-sm">
           <div className="uppercase tracking-[0.2em] text-xs font-bold whitespace-nowrap">Test month September · live on Enjin mainnet</div>
           <div className="flex-1 leading-snug">
-            Update to 0.0.26 and ride. Everything resets on 1 October — only your Genesis standing survives it, and the
-            Genesis Drop happens in October. Ride on as many separate days as you can, work through the 25 tasks, and put
-            WATTS into the 1,000 ENJ September season.
+            Update to the latest version and ride. Everything resets on 1 October — only your Genesis standing survives
+            it, and the Genesis Drop happens in October. Ride on as many separate days as you can, work through the 25
+            tasks, and put WATTS into the {seasonPot ?? '1,000'} ENJ September season.
           </div>
           <div className="flex flex-wrap gap-2">
             <a href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">Android · open testing</a>
@@ -584,11 +591,22 @@ export function Home() {
 
           <div className="pixel-card p-5 space-y-3 max-w-2xl mx-auto w-full">
             <div className="flex items-center justify-between">
-              <span className="text-xs tracking-[0.25em] uppercase text-m2e-text-muted">Season ENJ Pool</span>
-              <span className="text-m2e-accent uppercase tracking-wider">Top riders share</span>
+              <span className="text-xs tracking-[0.25em] uppercase text-m2e-text-muted">
+                {season ? season.name : 'Season ENJ Pool'}
+              </span>
+              <span className="text-m2e-accent uppercase tracking-wider">
+                {season ? (seasonDaysLeft === 0 ? 'Closes today' : `${seasonDaysLeft}d left`) : 'Between seasons'}
+              </span>
             </div>
-            <div className="h-3 rounded-full bg-m2e-bg-alt border border-m2e-border overflow-hidden">
-              <span className="block h-full w-[84%] bg-m2e-accent" />
+            {/* The real pot, the real entrants — the decorative 84 % bar that used to sit here claimed
+                a fill nobody could check. Weights and committed WATTS stay out: they are the rule, not the prize. */}
+            <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
+              <div className="text-3xl md:text-4xl uppercase tracking-wide text-m2e-text leading-none">
+                {season ? `${season.budgetEnj.toLocaleString()} ENJ` : '—'}
+              </div>
+              <div className="text-sm text-m2e-text-secondary">
+                {season ? `${season.entrants} rider${season.entrants === 1 ? '' : 's'} in` : 'The next season opens after the reset'}
+              </div>
             </div>
             <p className="text-sm text-m2e-text-secondary">
               The budget is set aside up front — payouts never exceed it, and never come from the next player.

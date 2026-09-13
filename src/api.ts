@@ -45,6 +45,8 @@ export interface Stats {
   // Economy
   economyHealthScore: number;
   economyState: string;
+  /** The open redemption season, or null between seasons. */
+  season: { name: string; budgetEnj: number; closesAt: string; entrants: number } | null;
 }
 
 export interface PartSocket {
