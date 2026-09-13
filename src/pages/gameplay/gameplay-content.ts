@@ -385,7 +385,7 @@ export const gameplaySections: GameplaySection[] = [
             ['Racing', '8 – 20 km/h', '10 – 18 km/h', 'Jogging to running'],
             ['Electric', '2 – 20 km/h', '2 – 18 km/h', 'Any pace'],
           ]},
-          { type: 'paragraph', text: 'Inside the optimal range you earn 100%. Above the optimal range, earnings taper off linearly toward zero at the full range cap. Below the optimal minimum, earnings are zero.' },
+          { type: 'paragraph', text: 'Inside the optimal range you earn 100%. Between the optimal range and the edge of the full range, earnings taper off linearly toward zero — that buffer sits above the optimal range on every bike, and below it as well on the bikes whose full range starts lower than their optimal range. Outside the full range you earn nothing.' },
           { type: 'paragraph', text: 'When your speed is outside the earning range, your energy is preserved — only minutes where you actually earn will consume energy. So if you stop to rest or slow down, you won\'t waste your energy minutes.' },
           { type: 'tip', text: 'For reference: a casual walk is about 3 km/h, a brisk walk ~6 km/h, a jog ~8 km/h, and a run ~12–16 km/h. Pick the bike that fits your natural pace.' },
         ],
@@ -410,6 +410,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Signal Quality' },
           { type: 'paragraph', text: 'Your GPS signal quality is reflected in your earnings. Strong, consistent signals mean full rewards. If the signal is weak or intermittent, your earnings for those minutes will be reduced. The app will let you know if signal quality is too poor to earn.' },
           { type: 'paragraph', text: 'When you stop a ride, the app syncs any final GPS points and the server finalizes your result from a validated stop moment. That means brief upload delays should not cost you legitimate earnings, while obviously inconsistent stop times are ignored to keep results fair for everyone.' },
+          { type: 'paragraph', text: 'Your ride summary also shows how the ride was scored: how many scoring windows were in your bike\'s speed zone, in the buffer beside it, too fast, too slow, not moving, without a usable GPS signal, out of energy, or paused. If a ride paid less than you expected, that list is the first place to look.' },
         ],
       },
       {
