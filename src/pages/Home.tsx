@@ -273,7 +273,7 @@ export function Home() {
           <div className="flex-1 leading-snug">
             Update to 0.0.26 and ride. Everything resets on 1 October — only your Genesis standing survives it, and the
             Genesis Drop happens in October. Ride on as many separate days as you can, work through the 25 tasks, and put
-            WATTS into the 500 ENJ September season.
+            WATTS into the 1,000 ENJ September season.
           </div>
           <div className="flex flex-wrap gap-2">
             <a href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">Android · open testing</a>
