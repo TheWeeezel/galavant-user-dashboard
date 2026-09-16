@@ -171,13 +171,15 @@ export function PartNftModal({ part, onClose }: { part: PartNftRow; onClose: () 
             </>
           ) : (
             <>
-              {!isOnChain && (
+              {/* Only when a fee actually exists. The WATTS export fee was dropped in the Enjin
+                  migration — revenue comes from royalties now, and the level floor is the gate —
+                  so the server answers 0 and a row reading "EXPORT FEE · 0 WATTS" only invented a
+                  cost the game does not charge. Kept conditional so a future fee still shows. */}
+              {!isOnChain && partFee != null && partFee > 0 && (
                 <ul className="text-xs text-m2e-text-secondary pixel-border bg-m2e-bg-alt p-3">
                   <li className="flex items-center justify-between">
                     <span className="uppercase tracking-wider text-m2e-text-muted">Export fee</span>
-                    <span className="text-m2e-text">
-                      {feesLoading ? '…' : partFee != null ? `${partFee.toLocaleString()} WATTS` : '—'}
-                    </span>
+                    <span className="text-m2e-text">{partFee.toLocaleString()} WATTS</span>
                   </li>
                 </ul>
               )}
