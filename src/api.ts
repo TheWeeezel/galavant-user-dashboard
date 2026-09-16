@@ -29,12 +29,20 @@ type FetchOptions = RequestInit & { timeoutMs?: number };
  * and a TypeError thrown before fetch would take EVERY request on those browsers with it — the
  * previous code merely hung; this must not turn "can hang" into "nothing works".
  */
-async function fetchWithDeadline(url: string, options: FetchOptions): Promise<Response> {
+async function requestWithDeadline(
+  url: string,
+  options: FetchOptions,
+  onResponse: (res: Response) => Promise<unknown>,
+): Promise<unknown> {
   const { timeoutMs = DEFAULT_TIMEOUT_MS, ...init } = options;
   const controller = new AbortController();
+  // The timer is cleared only once the BODY has been read, so a server that sends headers and
+  // then stalls the body is still aborted — the deadline covers the whole exchange, not just
+  // the time to first byte.
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, { ...init, signal: controller.signal });
+    const res = await fetch(url, { ...init, signal: controller.signal });
+    return await onResponse(res);
   } catch (err) {
     throw timeoutMessage(err, timeoutMs);
   } finally {
@@ -42,14 +50,6 @@ async function fetchWithDeadline(url: string, options: FetchOptions): Promise<Re
   }
 }
 
-/** The body can stall or arrive truncated too; the same deadline message applies. */
-async function readJson<T>(res: Response, timeoutMs: number): Promise<T> {
-  try {
-    return (await res.json()) as T;
-  } catch (err) {
-    throw timeoutMessage(err, timeoutMs);
-  }
-}
 
 function timeoutMessage(err: unknown, timeoutMs: number): Error {
   const name = (err as { name?: string } | null)?.name;
@@ -64,10 +64,10 @@ function timeoutMessage(err: unknown, timeoutMs: number): Error {
 }
 
 async function fetchJson<T>(path: string, options: FetchOptions = {}): Promise<T> {
-  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-  const res = await fetchWithDeadline(`${config.apiUrl}${path}`, options);
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return readJson<T>(res, timeoutMs);
+  return requestWithDeadline(`${config.apiUrl}${path}`, options, async (res) => {
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    return res.json();
+  }) as Promise<T>;
 }
 
 async function fetchAuthJson<T>(path: string, options: FetchOptions = {}): Promise<T> {
@@ -78,13 +78,13 @@ async function fetchAuthJson<T>(path: string, options: FetchOptions = {}): Promi
   if (_authToken) {
     headers['Authorization'] = `Bearer ${_authToken}`;
   }
-  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-  const res = await fetchWithDeadline(`${config.apiUrl}${path}`, { ...options, headers });
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.message ?? body?.error ?? `API error: ${res.status}`);
-  }
-  return readJson<T>(res, timeoutMs);
+  return requestWithDeadline(`${config.apiUrl}${path}`, { ...options, headers }, async (res) => {
+    if (!res.ok) {
+      const body = await res.json().catch(() => null);
+      throw new Error(body?.message ?? body?.error ?? `API error: ${res.status}`);
+    }
+    return res.json();
+  }) as Promise<T>;
 }
 
 export interface Stats {
@@ -610,7 +610,7 @@ export function enjinLinkStatus() {
 export function enjinBond(amountEnj: number) {
   return fetchAuthJson<{ journalId: string; uuid: string | null; poolId: number; alreadyOpen: boolean }>(
     '/enjin/staking/bond',
-    { method: 'POST', body: JSON.stringify({ amountEnj , timeoutMs: CHAIN_TIMEOUT_MS }) },
+    { method: 'POST', body: JSON.stringify({ amountEnj }), timeoutMs: CHAIN_TIMEOUT_MS },
   );
 }
 

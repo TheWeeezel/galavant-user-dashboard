@@ -135,8 +135,9 @@ export function EnjStakingSection() {
     (link.error != null && !link.data);
 
   // One decimal below 1 %: a small stake is a small boost, not "+0%" (the app does the same).
+  // Matches the app's boostPercentText: a sub-0.1 % stake is "<0.1", never a flat "+0%".
   const boostPercent = staking.data?.earningBoost
-    ? (() => { const pct = (staking.data!.earningBoost - 1) * 100; return pct <= 0 ? 0 : pct < 1 ? Number(pct.toFixed(1)) : Math.round(pct); })()
+    ? (() => { const pct = (staking.data!.earningBoost - 1) * 100; return pct <= 0 ? '0' : pct < 0.05 ? '<0.1' : pct < 1 ? pct.toFixed(1) : String(Math.round(pct)); })()
     : 0;
 
 
