@@ -34,7 +34,15 @@ export async function importNft(kind: ImportKind, tokenId: number, onPending?: (
   const deadline = Date.now() + WAIT_MS;
   while (Date.now() < deadline) {
     await new Promise((r) => setTimeout(r, POLL_MS));
-    const status = await fetchImportStatus(started.journalId);
+    // A single poll that stalls (a backgrounded tab while the player approves in the wallet app)
+    // is not a failed import. Keep polling until the loop's own deadline; only a chain verdict
+    // below may end it early.
+    let status: Awaited<ReturnType<typeof fetchImportStatus>>;
+    try {
+      status = await fetchImportStatus(started.journalId);
+    } catch {
+      continue;
+    }
     if (status.imported) return { status: 'done' };
     // FINALIZED with a failed extrinsic, or a request the wallet refused: the token is still the
     // player's, nothing changed — say so with the chain's reason.

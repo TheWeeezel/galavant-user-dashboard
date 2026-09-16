@@ -7,13 +7,70 @@ export function setAuthToken(token: string | null) {
   _authToken = token;
 }
 
-async function fetchJson<T>(path: string): Promise<T> {
-  const res = await fetch(`${config.apiUrl}${path}`);
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
+/**
+ * Every request gets a deadline. Without one a stalled connection leaves the promise pending
+ * for good, and a screen that disables its own close button while a mutation is in flight then
+ * cannot be left at all — reported 2026-09-16 as "it hangs... when I close that screen and go
+ * back to the inventory, the app freezes. Have to manually close it."
+ */
+const DEFAULT_TIMEOUT_MS = 30_000;
+/**
+ * Chain actions are the legitimate slow ones: the server waits for finalization (its own ceiling
+ * is 4 minutes) and an import additionally waits on a human approving in their wallet. Five
+ * minutes is the app's figure for the same calls; anything past it is a stall, not patience.
+ */
+export const CHAIN_TIMEOUT_MS = 5 * 60_000;
+
+type FetchOptions = RequestInit & { timeoutMs?: number };
+
+/**
+ * A deadline the caller can read, instead of "Failed to fetch". AbortController + setTimeout,
+ * not AbortSignal.timeout(): that helper is missing on Safari 15, Firefox < 100 and Chrome < 103,
+ * and a TypeError thrown before fetch would take EVERY request on those browsers with it — the
+ * previous code merely hung; this must not turn "can hang" into "nothing works".
+ */
+async function fetchWithDeadline(url: string, options: FetchOptions): Promise<Response> {
+  const { timeoutMs = DEFAULT_TIMEOUT_MS, ...init } = options;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } catch (err) {
+    throw timeoutMessage(err, timeoutMs);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
-async function fetchAuthJson<T>(path: string, options: RequestInit = {}): Promise<T> {
+/** The body can stall or arrive truncated too; the same deadline message applies. */
+async function readJson<T>(res: Response, timeoutMs: number): Promise<T> {
+  try {
+    return (await res.json()) as T;
+  } catch (err) {
+    throw timeoutMessage(err, timeoutMs);
+  }
+}
+
+function timeoutMessage(err: unknown, timeoutMs: number): Error {
+  const name = (err as { name?: string } | null)?.name;
+  if (name === 'TimeoutError' || name === 'AbortError') {
+    return new Error(
+      timeoutMs >= CHAIN_TIMEOUT_MS
+        ? 'The chain did not answer in time. If the request reached your wallet it may still go through — check your wallet and your items before trying again.'
+        : 'The server did not answer in time. Check your connection and try again.',
+    );
+  }
+  return err instanceof Error ? err : new Error('Request failed');
+}
+
+async function fetchJson<T>(path: string, options: FetchOptions = {}): Promise<T> {
+  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const res = await fetchWithDeadline(`${config.apiUrl}${path}`, options);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return readJson<T>(res, timeoutMs);
+}
+
+async function fetchAuthJson<T>(path: string, options: FetchOptions = {}): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...((options.headers as Record<string, string>) ?? {}),
@@ -21,12 +78,13 @@ async function fetchAuthJson<T>(path: string, options: RequestInit = {}): Promis
   if (_authToken) {
     headers['Authorization'] = `Bearer ${_authToken}`;
   }
-  const res = await fetch(`${config.apiUrl}${path}`, { ...options, headers });
+  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const res = await fetchWithDeadline(`${config.apiUrl}${path}`, { ...options, headers });
   if (!res.ok) {
     const body = await res.json().catch(() => null);
     throw new Error(body?.message ?? body?.error ?? `API error: ${res.status}`);
   }
-  return res.json();
+  return readJson<T>(res, timeoutMs);
 }
 
 export interface Stats {
@@ -524,7 +582,7 @@ export function fetchWalletTransactions() {
 export function enjinLinkStart() {
   return fetchAuthJson<{ url: string; qr: string; code: string; expires: string }>(
     '/enjin/link/start',
-    { method: 'POST', body: JSON.stringify({}) },
+    { method: 'POST', body: JSON.stringify({}), timeoutMs: CHAIN_TIMEOUT_MS },
   );
 }
 
@@ -552,7 +610,7 @@ export function enjinLinkStatus() {
 export function enjinBond(amountEnj: number) {
   return fetchAuthJson<{ journalId: string; uuid: string | null; poolId: number; alreadyOpen: boolean }>(
     '/enjin/staking/bond',
-    { method: 'POST', body: JSON.stringify({ amountEnj }) },
+    { method: 'POST', body: JSON.stringify({ amountEnj , timeoutMs: CHAIN_TIMEOUT_MS }) },
   );
 }
 
@@ -767,6 +825,7 @@ export function mintBikeNft(bikeId: string) {
   return fetchAuthJson<{ tokenId: string; txHash: string; imageUrl: string }>('/blockchain/mint-bike', {
     method: 'POST',
     body: JSON.stringify({ bikeId }),
+    timeoutMs: CHAIN_TIMEOUT_MS,
   });
 }
 
@@ -819,6 +878,7 @@ export interface ImportStatus {
 export function importBikeNft(tokenId: number) {
   return fetchAuthJson<ImportStart>('/blockchain/import-bike', {
     method: 'POST',
+    timeoutMs: CHAIN_TIMEOUT_MS,
     body: JSON.stringify({ tokenId }),
   });
 }
@@ -968,7 +1028,7 @@ export function marketList(body: {
 }) {
   return fetchAuthJson<{ success: boolean; id: string; netProceedsWatts?: number; netProceedsEnj?: string }>(
     '/market/list',
-    { method: 'POST', body: JSON.stringify(body) },
+    { method: 'POST', body: JSON.stringify(body) , timeoutMs: CHAIN_TIMEOUT_MS },
   );
 }
 
@@ -979,25 +1039,25 @@ export function fetchMarketPurchase(id: string) {
 
 export function marketBuy(id: string) {
   // `pending`: an ENJ purchase the buyer still has to approve in their Enjin Wallet.
-  return fetchAuthJson<{ success: boolean; status?: string; pending?: boolean }>(`/market/${id}/buy`, { method: 'POST' });
+  return fetchAuthJson<{ success: boolean; status?: string; pending?: boolean }>(`/market/${id}/buy`, { method: 'POST' , timeoutMs: CHAIN_TIMEOUT_MS });
 }
 
 export function marketCancel(id: string) {
   // `pending`: an ENJ cancel the seller still has to approve in their Enjin Wallet.
-  return fetchAuthJson<{ success: boolean; pending?: boolean }>(`/market/${id}/cancel`, { method: 'POST' });
+  return fetchAuthJson<{ success: boolean; pending?: boolean }>(`/market/${id}/cancel`, { method: 'POST' , timeoutMs: CHAIN_TIMEOUT_MS });
 }
 
 // --- Part NFTs: export a part as its own token, or burn it back into the game ---
 export function mintPartNft(partId: string) {
   return fetchAuthJson<{ success: boolean; tokenId: number; txHash: string | null }>(
     '/blockchain/mint-part',
-    { method: 'POST', body: JSON.stringify({ partId }) },
+    { method: 'POST', body: JSON.stringify({ partId }), timeoutMs: CHAIN_TIMEOUT_MS },
   );
 }
 
 export function importPartNft(tokenId: number) {
   return fetchAuthJson<ImportStart>(
     '/blockchain/import-part',
-    { method: 'POST', body: JSON.stringify({ tokenId }) },
+    { method: 'POST', body: JSON.stringify({ tokenId }), timeoutMs: CHAIN_TIMEOUT_MS },
   );
 }

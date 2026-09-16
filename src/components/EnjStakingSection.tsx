@@ -134,8 +134,9 @@ export function EnjStakingSection() {
     (link.error as { message?: string } | undefined)?.message?.includes('not enabled') ||
     (link.error != null && !link.data);
 
+  // One decimal below 1 %: a small stake is a small boost, not "+0%" (the app does the same).
   const boostPercent = staking.data?.earningBoost
-    ? Math.round((staking.data.earningBoost - 1) * 100)
+    ? (() => { const pct = (staking.data!.earningBoost - 1) * 100; return pct <= 0 ? 0 : pct < 1 ? Number(pct.toFixed(1)) : Math.round(pct); })()
     : 0;
 
 

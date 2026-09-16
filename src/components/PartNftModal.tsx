@@ -49,13 +49,15 @@ export function PartNftModal({ part, onClose }: { part: PartNftRow; onClose: () 
       invalidateAfterChainAction();
     },
     onError: (err: Error) => setActionError(err.message),
+    // Whatever the outcome, the server has answered: refresh, even if the screen is gone.
+    onSettled: invalidateAfterChainAction,
   });
 
   // Signed by the player in their own Enjin Wallet (2026-09-02); see NftDetailModal.
   const [awaitingWallet, setAwaitingWallet] = useState(false);
   const importMutation = useMutation({
     mutationFn: (tokenId: number) => importNft('part', tokenId, () => setAwaitingWallet(true)),
-    onSettled: () => setAwaitingWallet(false),
+    onSettled: () => { setAwaitingWallet(false); invalidateAfterChainAction(); },
     onSuccess: (outcome) => {
       if (outcome.status === 'still-pending') {
         setActionError('Still waiting for your approval in the Enjin Wallet. The part comes back on its own once you approve — you can close this.');
@@ -73,14 +75,18 @@ export function PartNftModal({ part, onClose }: { part: PartNftRow; onClose: () 
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape' && !pending) onClose();
+      if (e.key === 'Escape') onClose();
     }
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [onClose, pending]);
+  }, [onClose]);
 
+  // Closing is ALWAYS allowed. Blocking it while a request is in flight meant a stalled
+  // request left this full-screen overlay mounted with no way out — the page looked frozen and
+  // the only remedy was killing the tab (reported 2026-09-16). The work does not depend on the
+  // screen staying open: the server finishes what it started, and the queries are invalidated
+  // when it answers, so the item is correct on the next view either way.
   function safeClose() {
-    if (pending) return;
     onClose();
   }
 
@@ -105,7 +111,6 @@ export function PartNftModal({ part, onClose }: { part: PartNftRow; onClose: () 
       >
         <button
           onClick={safeClose}
-          disabled={pending}
           className="absolute top-3 right-3 p-1 text-m2e-text-muted hover:text-m2e-text transition-colors disabled:opacity-40"
         >
           <Cancel className="w-6 h-6" />
@@ -196,7 +201,6 @@ export function PartNftModal({ part, onClose }: { part: PartNftRow; onClose: () 
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={safeClose}
-                  disabled={pending}
                   className="pixel-btn px-4 py-2 text-xs uppercase tracking-wider disabled:opacity-40"
                 >
                   Cancel

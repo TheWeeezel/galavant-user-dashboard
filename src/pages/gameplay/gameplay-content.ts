@@ -378,6 +378,7 @@ export const gameplaySections: GameplaySection[] = [
         title: 'Speed Matching',
         content: [
           { type: 'paragraph', text: 'Each bike type has an optimal speed zone. Walking within this zone earns you full WATTS. Walking outside of it reduces your rewards.' },
+          { type: 'paragraph', text: 'The zones below are in km/h. If you prefer miles, the app can show every distance and speed in miles and mph under Profile → Units — the zones themselves do not change.' },
           { type: 'heading', text: 'Speed Zones by Bike Type' },
           { type: 'table', headers: ['Bike Type', 'Full Range', 'Optimal Range', 'Best For'], rows: [
             ['Commuter', '2 – 8 km/h', '2 – 5 km/h', 'Slow to normal walking'],
@@ -1126,7 +1127,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Setting it up' },
           { type: 'list', items: [
             'Link your Enjin Wallet under Staking → Stake ENJ, in the app or in your account on the website. Linking only reads your public address — it never moves funds.',
-            'On that screen, enter how much ENJ to stake and approve the request in your Enjin Wallet — the ENJ has to be on the Relaychain side of your wallet. Or open the Galavant Peloton pool page and stake there. You choose the amount and you sign it either way.',
+            'On that screen, enter how much ENJ to stake — in the app, the screen shows what your total stake will be worth once your two-week average has caught up with it, so you know before you sign — and approve the request in your Enjin Wallet — the ENJ has to be on the Relaychain side of your wallet. Or open the Galavant Peloton pool page and stake there. You choose the amount and you sign it either way.',
             'Your bonus appears on its own within an hour or so and then keeps building. There is nothing to claim and nothing to confirm — we read the pool from the chain and find your stake there.',
           ]},
           { type: 'heading', text: 'Why it takes a while to build' },
