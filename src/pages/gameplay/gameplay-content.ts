@@ -208,6 +208,16 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Sign in after the reset with the same Google account you used in September. If you were awarded, the item is already in your garage. A Genesis bike is a real, playable bike; Genesis parts are real parts. All carry a GENESIS mark on their card, and when you export one, the NFT in your Enjin wallet carries a Genesis trait and its Genesis number. Apart from that mark it behaves like any other NFT: exporting mints it, importing burns it and hands the item back to the game.' },
           { type: 'paragraph', text: 'Unlike other items, a Genesis bike or part can be exported right away, without levelling first. The usual export conditions still apply: a bike must be healed, serviced, not listed and not mid-ride; a part must be unsocketed and not listed.' },
           { type: 'tip', text: 'The Genesis mark never comes off and cannot be earned later. It says one thing: this player was there in September.' },
+          { type: 'heading', text: 'The Genesis Lounge' },
+          { type: 'paragraph', text: 'From 1 October, holding a Genesis bike or part in your garage opens a room of its own. A gilt GENESIS band appears on your Home screen; tap it and you are in the Lounge. Nobody else ever sees the band.' },
+          { type: 'paragraph', text: 'Inside is the Genesis Reel: three pixel reels that pay out parts and WATTS. Every day you get a couple of free pulls just for being a holder. When those are used up you can keep pulling for a small WATTS fee, or trade in a loose Level 1 part for a pull.' },
+          { type: 'list', items: [
+            'Rarer symbols pay more: three of a kind wins, and three GENESIS faces is the top line.',
+            'Prizes are parts (up to a high level on the rarest line) and WATTS. There is no cash prize and no jackpot in WATTS.',
+            'Free pulls reset at midnight UTC. Paid pulls are always available while you hold a Genesis item.',
+            'The item has to be in your garage. Export it to your wallet and the Lounge closes until you import it back.',
+          ] },
+          { type: 'tip', text: 'Genesis parts themselves can never be traded into the Reel. The award stays the award.' },
         ],
       },
       {

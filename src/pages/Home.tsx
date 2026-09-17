@@ -61,6 +61,7 @@ const ROADMAP_ITEMS: { title: string; icon: React.ComponentType<any>; status: 'd
   { title: 'Daily Missions', icon: Check, status: 'done' },
   { title: 'Sound Design', icon: Music, status: 'done' },
   { title: 'Mainnet Launch', icon: Flag, status: 'current' },
+  { title: 'Genesis Lounge', icon: Gift, status: 'current' },
   { title: 'Achievements', icon: Trophy, status: 'upcoming' },
   { title: 'Bike Legacy', icon: Heart, status: 'upcoming' },
   { title: 'Guilds / Crews', icon: Users, status: 'upcoming' },
@@ -279,8 +280,8 @@ export function Home() {
           <div className="uppercase tracking-[0.2em] text-xs font-bold whitespace-nowrap">Test month September · live on Enjin mainnet</div>
           <div className="flex-1 leading-snug">
             Update to the latest version and ride. Everything resets on 1 October — only your Genesis standing survives
-            it, and the Genesis Drop happens in October. Ride on as many separate days as you can, work through the 25
-            tasks, and put WATTS into the {seasonPot ?? '1,000'} ENJ September season.
+            it, and the Genesis Drop happens in October — with the Genesis Lounge, a room only holders can enter. Ride on as
+            many separate days as you can, work through the 25 tasks, and put WATTS into the {seasonPot ?? '1,000'} ENJ September season.
           </div>
           <div className="flex flex-wrap gap-2">
             <a href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">Android · open testing</a>

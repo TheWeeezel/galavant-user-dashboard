@@ -72,6 +72,12 @@ const PHASES: RoadmapPhase[] = [
         icon: Flag,
         status: 'current',
       },
+      {
+        title: 'Genesis Lounge',
+        description: 'A room only Genesis holders can enter, behind a gilt band on the Home screen. Inside: the Genesis Reel, three pixel reels that pay out parts and WATTS, with free pulls every day for holding your Genesis item in the garage. Opens with the 1 October launch.',
+        icon: Gift,
+        status: 'current',
+      },
     ],
   },
   {
