@@ -3,6 +3,85 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.29",
+      "date": "2026-09-18",
+      "title": "Clearer Rides, Steadier NFTs",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Miles and mph. Open Profile, then Units, and every distance and speed the app shows switches between metric and imperial. The setting stays on your phone, and scoring is unchanged."
+        },
+        {
+          "type": "feature",
+          "text": "Your ride summary now shows how the ride was scored: how many scoring windows were in your bike's speed zone, in the buffer beside it, too fast, too slow, not moving, on weak GPS, out of energy, or paused. A payout explains itself."
+        },
+        {
+          "type": "feature",
+          "text": "The stake screen shows what an amount will be worth before you sign: the boost, energy bonus and tier it reaches once your two-week average has caught up."
+        },
+        {
+          "type": "feature",
+          "text": "The Genesis Drop. Players who stood out in the September test month are awarded a Genesis bike or two Genesis parts. It appears in your garage when you sign in after the 1 October reset with the same Google account, marked GENESIS, ready to export to your linked wallet."
+        },
+        {
+          "type": "fix",
+          "text": "NFT export and import are steadier. Exporting no longer reports a timeout while the mint is still finalizing, and re-importing a re-exported item now actually burns the NFT instead of leaving it live in your wallet."
+        },
+        {
+          "type": "fix",
+          "text": "Importing an NFT while its export is still settling is refused with a clear message, instead of handing the item back while the mint then lands."
+        },
+        {
+          "type": "fix",
+          "text": "On the website, exporting or importing an NFT can no longer freeze the page. Requests time out with a clear message, and the screen can always be closed."
+        },
+        {
+          "type": "fix",
+          "text": "Listing an item that is already on sale is refused up front, with a message that tells you where to cancel it. A listing the chain refuses now explains itself in plain words."
+        },
+        {
+          "type": "fix",
+          "text": "Buying for ENJ no longer claims the request is already waiting in your wallet. It says the request is on its way, that it can take a few minutes, and that you can pull down to refresh."
+        },
+        {
+          "type": "fix",
+          "text": "Ending a ride can no longer leave a blank screen that ignores every tap. Leaving the ride screen always goes somewhere now, and a second STOP after the CONTINUE countdown no longer looks like a dead button."
+        },
+        {
+          "type": "fix",
+          "text": "A dialog can no longer come up invisible while still swallowing every tap, the effect that looked like the app freezing with nothing on screen."
+        },
+        {
+          "type": "fix",
+          "text": "Swapping a daily mission now asks first and says how many swaps you have left, so a stray tap cannot spend your swap of the day."
+        },
+        {
+          "type": "fix",
+          "text": "A repair finishes on its own when its timer runs out, so repair missions credit right away instead of waiting until you next open the bike."
+        },
+        {
+          "type": "fix",
+          "text": "Ride summaries open faster. A paused or force-closed ride no longer piles up an empty scoring window every 30 seconds, and average speed no longer counts paused stretches or impossible bursts, so it matches the distance and duration beside it."
+        },
+        {
+          "type": "fix",
+          "text": "The Vault's on-chain ENJ shows a clear state instead of vanishing when it cannot be read. It is labelled Relaychain, the side staking and season payouts use."
+        },
+        {
+          "type": "fix",
+          "text": "When you are short on WATTS, every screen now says WATTS."
+        },
+        {
+          "type": "improvement",
+          "text": "The WATTS counter on the ride screen renders crisp instead of blurred."
+        },
+        {
+          "type": "improvement",
+          "text": "The Bike Store screen is gone from the app. Your bikes, parts and the market are all still here."
+        }
+      ]
+    },
+    {
       "version": "0.0.28",
       "date": "2026-09-11",
       "title": "Device Trust & Fair Motion",
