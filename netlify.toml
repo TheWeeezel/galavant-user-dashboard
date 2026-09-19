@@ -24,3 +24,10 @@
   for = "/*"
   [headers.values]
     Cross-Origin-Opener-Policy = "unsafe-none"
+
+# The admin dashboard (separate origin) reads this to generate per-release tweets.
+# It is public data anyway, so any origin may GET it.
+[[headers]]
+  for = "/changelog.json"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
