@@ -416,7 +416,7 @@ export const gameplaySections: GameplaySection[] = [
             'Leaving your phone stationary (e.g. on a table) will not earn rewards — the app detects both GPS drift and lack of body motion.',
             'Only movement at a human pace counts toward your distance. Stretches that would need a vehicle are left out of your totals, and the same fix is never counted twice.',
             'Galavant also asks your phone\'s platform to confirm it is a genuine device running the genuine app. You do not need to do anything for this, and a ride is never blocked by it — it simply helps tell real walks from faked ones.',
-            'Rewards from a ride may show as pending for a short verification period before they can be spent. Rides from a verified device that pass every check are available right away; the rest become available once the check completes. While a ride is under review, cashing out and exporting are paused.',
+            'Rewards from a ride may be held for a verification period before they can be spent. Rides from a verified device that pass every check are available right away; the rest are held for about a day. You will see them the whole time under PENDING in your wallet, and your ride summary tells you roughly when they land. While a ride is under review, cashing out and exporting are paused.',
           ]},
           { type: 'tip', text: 'For the best experience, walk in open areas with good sky visibility. Parks, sidewalks, and trails work great. Keep your phone on your body while walking — it needs to sense your movement.' },
           { type: 'heading', text: 'Signal Quality' },
