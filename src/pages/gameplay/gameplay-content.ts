@@ -230,7 +230,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'list', items: [
             'Open the Galavant app and create your account.',
             'Get your first balance bike — claim your free starter bike, buy one in the web shop, or pick one up on the player marketplace.',
-            'The web shop takes card or ENJ, and purchases go straight into your in-game inventory, so you can equip the bike immediately.',
+            'The web shop takes card — paying in ENJ opens with the 1 October relaunch — and purchases go straight into your in-game inventory, so you can equip the bike immediately.',
             'Equip your bike from the inventory screen.',
             'Tap the "Walk" button to start a session.',
             'Head outside and walk at a pace that matches your bike type.',
