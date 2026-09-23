@@ -7,6 +7,11 @@ import { StoreBikeCard, type PayMethod } from '../components/StoreBikeCard';
 import { EnjPaymentPanel } from '../components/EnjPaymentPanel';
 import { fetchStoreProducts, fetchStoreStock, storeCheckout, storeCheckoutEnj, type EnjPayment, type StoreProduct } from '../api';
 
+/** The opening day, read in UTC — the same calendar day the server means, in every timezone. */
+function formatOpensAt(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', timeZone: 'UTC' });
+}
+
 export default function Store() {
   const { isAuthenticated } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
@@ -51,6 +56,10 @@ export default function Store() {
 
   const products = catalog.data?.products ?? [];
   const shopOpen = catalog.data?.enabled === true;
+  // Set while the server refuses ENJ on purpose. The prices stay on the shelf and the ENJ buttons
+  // are already gone (no `priceEnj`), so all that is missing is the reason — and a date is a
+  // better reason than a silence.
+  const enjOpensAt = catalog.data?.enjOpensAt ?? null;
   // One order at a time, and it stays "running" across the redirect rather than until the request
   // returns — the click is not finished while the browser is still on its way to the till.
   const running = (checkout.isPending || leaving) ? checkout.variables ?? null : null;
@@ -113,12 +122,25 @@ export default function Store() {
             {/* The bikes stay on the shelf even while the till is shut. A closed checkout is a
                 reason to explain the wait, not a reason to hide what the shop sells and what it
                 costs — hiding it was the old behaviour, and it made the shop look empty. */}
-            {!shopOpen && (
+            {enjOpensAt ? (
+              <div className="pixel-card p-4 text-m2e-text-secondary space-y-1">
+                <div className="section-label text-m2e-accent">Paying in ENJ opens {formatOpensAt(enjOpensAt)}</div>
+                <p>
+                  The prices below are the real ones. Everything the shop sells before the relaunch
+                  is wiped on that day, so the ENJ till stays shut until it counts — no bike here is
+                  worth real ENJ yet. Meanwhile you can earn bikes in-game and from breeding.
+                </p>
+                <p className="text-xs">
+                  This is the shop only. NFTs you buy from other players on the marketplace are
+                  bought wallet to wallet on the chain, and they survive the wipe.
+                </p>
+              </div>
+            ) : !shopOpen ? (
               <div className="pixel-card p-4 text-m2e-text-secondary">
                 Checkout is being switched on — the prices below are the real ones, the buy buttons
                 open shortly. Meanwhile you can earn bikes in-game and from breeding.
               </div>
-            )}
+            ) : null}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {products.map((p) => (

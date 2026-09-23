@@ -729,7 +729,17 @@ export interface StoreProduct {
    */
   cardAvailable?: boolean;
 }
-export interface StoreCatalog { enabled: boolean; currency: string; products: StoreProduct[] }
+export interface StoreCatalog {
+  enabled: boolean;
+  currency: string;
+  products: StoreProduct[];
+  /**
+   * When the ENJ till opens, as an ISO date, and null once it is open. Set while the shop
+   * deliberately refuses ENJ — the prices stay on the shelf, the ENJ button does not, and the
+   * page can name the day instead of leaving the absence unexplained. Absent on an older server.
+   */
+  enjOpensAt?: string | null;
+}
 
 /**
  * Stock side of the shop. It carries no usable price — the satoshi lever behind `priceSats` died
