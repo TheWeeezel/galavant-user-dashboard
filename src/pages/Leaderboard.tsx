@@ -118,8 +118,8 @@ export function Leaderboard() {
               )}
 
               <p className="text-sm text-m2e-text-secondary">
-                Your share is your committed WATTS weighted by your ENJ stake, against everyone else's.
-                It moves every time another player commits, so the figure above is an estimate until the
+                Your share is your committed WATTS weighted by when you committed them — WATTS put in
+                early in the window count for more than WATTS put in near the close. It moves every time another player commits, so the figure above is an estimate until the
                 window closes.
               </p>
             </>
@@ -133,12 +133,16 @@ export function Leaderboard() {
         {isAuthenticated && season && (alloc.data?.top?.length ?? 0) > 0 && (
           <section className="space-y-4">
             <div className="section-label">Committed this season</div>
+            <p className="text-sm text-m2e-text-secondary">
+              Ranked by share, not by raw WATTS. Earlier WATTS count for more, so a smaller commit made
+              early can sit above a bigger one made later.
+            </p>
             <div className="pixel-card p-0 overflow-hidden">
               <div className="hidden md:grid grid-cols-[3rem_1fr_9rem_6rem_8rem] gap-3 px-5 py-3 bg-m2e-bg-alt text-[10px] uppercase tracking-[0.25em] text-m2e-text-muted">
                 <span>#</span>
                 <span>Player</span>
                 <span className="text-right">Committed</span>
-                <span className="text-right">Share</span>
+                <span className="text-right">Share ↓</span>
                 <span className="text-right">Est. payout</span>
               </div>
               {alloc.data!.top!.map((row) => (
@@ -147,7 +151,7 @@ export function Leaderboard() {
             </div>
             {me?.rank != null && me.rank > (alloc.data?.top?.length ?? 0) && (
               <p className="text-sm text-m2e-text-secondary">
-                You are ranked #{me.rank} with {me.watts.toLocaleString()} WATTS committed.
+                You are ranked #{me.rank} with {me.watts.toLocaleString()} WATTS committed ({me.sharePct}% share).
               </p>
             )}
           </section>
@@ -248,7 +252,7 @@ function ShareBar({ mine }: { mine: number }) {
 function StandingRow({ row }: { row: RedemptionStanding }) {
   return (
     <div
-      className={`grid grid-cols-[2.5rem_1fr_auto] md:grid-cols-[3rem_1fr_9rem_6rem_8rem] gap-3 items-center px-5 py-3 border-b border-m2e-border/40 last:border-0 ${
+      className={`grid grid-cols-[2.5rem_1fr_auto_auto] md:grid-cols-[3rem_1fr_9rem_6rem_8rem] gap-3 items-center px-5 py-3 border-b border-m2e-border/40 last:border-0 ${
         row.isMe ? 'bg-m2e-accent-soft' : ''
       }`}
     >
@@ -263,7 +267,9 @@ function StandingRow({ row }: { row: RedemptionStanding }) {
         {row.watts.toLocaleString()}
         <span className="hidden md:inline"> WATTS</span>
       </span>
-      <span className="hidden md:block text-right tabular-nums text-m2e-text">{row.sharePct}%</span>
+      {/* Share is the ranked column, so it stays visible on phones too — without it the
+          order looks wrong next to raw WATTS (early WATTS weigh more). */}
+      <span className="text-right tabular-nums text-m2e-text">{row.sharePct}%</span>
       <span className="hidden md:block text-right tabular-nums text-m2e-accent-dark">
         ≈ {row.estimatedEnj.toLocaleString()} ENJ
       </span>
