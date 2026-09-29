@@ -149,8 +149,9 @@ export function PartNftModal({ part, onClose }: { part: PartNftRow; onClose: () 
 
         <div className="mt-5 pt-4 border-t-2 border-m2e-border space-y-3">
           <p className="text-xs text-m2e-text-secondary leading-relaxed">
-            An exported part can still be socketed into a bike, but it cannot be upgraded, used for HP repair,
-            or sold in the in-game marketplace until you import it back.
+            An exported part lives in your Enjin Wallet as its own NFT, which freezes it: it can't be socketed,
+            forged, or used for HP repairs until you import it back. Selling it is the exception — you can list it
+            in the marketplace, for WATTS or for ENJ.
           </p>
 
           {done ? (
