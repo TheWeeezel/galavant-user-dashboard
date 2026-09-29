@@ -3,6 +3,65 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.31",
+      "date": "2026-09-29",
+      "title": "Forge, Names & Fair Energy",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Choose your own rider name: new accounts, and anyone still called \"Player_…\", pick a name before playing. It is how other riders see you on the leaderboard and the market, and you can change it later in your profile"
+        },
+        {
+          "type": "feature",
+          "text": "Gilded and prismatic toolboxes now look different from plain ones — a gold foil or a rainbow sheen with its own label, separate from the box level"
+        },
+        {
+          "type": "feature",
+          "text": "Opening a toolbox is now a pixel-art show instead of a plain dialog"
+        },
+        {
+          "type": "improvement",
+          "text": "The Forge is rebuilt in pixel art: a recipe card shows exactly what goes in, and upgrading plays a real forging animation"
+        },
+        {
+          "type": "improvement",
+          "text": "Riding just outside your bike's ideal pace now costs less energy and wear, in step with the reduced earnings there — drifting out of your pace no longer burns energy you could have used at full rate"
+        },
+        {
+          "type": "improvement",
+          "text": "Numbers are shown in one consistent format across the app"
+        },
+        {
+          "type": "improvement",
+          "text": "On the home screen the sections are numbered in the order they appear"
+        },
+        {
+          "type": "improvement",
+          "text": "The Genesis Reel shows the WATTS token on a WATTS prize"
+        },
+        {
+          "type": "fix",
+          "text": "Listing, selling or importing an item no longer freezes the app on iPhone after a dialog was closed"
+        },
+        {
+          "type": "fix",
+          "text": "The \"export an NFT\" quests count an export you made earlier, even if the NFT has since been imported back or sold"
+        },
+        {
+          "type": "fix",
+          "text": "A purchase on the ENJ market is no longer marked as cancelled when the chain confirms it a little late"
+        },
+        {
+          "type": "fix",
+          "text": "Importing an NFT that is still settling on the chain now asks you to wait instead of risking a duplicate item"
+        },
+        {
+          "type": "fix",
+          "text": "Motion sensing keeps working while the screen is locked or the app is in the background during a ride"
+        }
+      ]
+    },
+    {
       "version": "0.0.30",
       "date": "2026-09-23",
       "title": "Housekeeping Release",
