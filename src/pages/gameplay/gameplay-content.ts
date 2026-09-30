@@ -1244,7 +1244,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'list', items: [
             'Engagement — walking goals like "Ride for 15 minutes" or "Walk 2 km".',
             'Sink — spending goals like "Repair a bike" or "Open a toolbox".',
-            'Marketplace — trading goals like "List an item" or "Buy something".',
+            'Marketplace — trading goals like "List an item" or "Buy something". An NFT you list for ENJ counts too, once it has been up for a few hours or has sold; buying an NFT for ENJ in the app counts as a purchase.',
             'Progression — investment goals like "Socket a part" or "Start a level-up".',
           ]},
           { type: 'paragraph', text: 'Mission targets are scaled to your current capacity. If you have 10 energy, you might get "Ride for 5 minutes." If you have 80 energy, you might get "Ride for 30 minutes." The system also checks your inventory, bike milestones, socket availability, toolbox state, and live market conditions, so missions only appear when you have a real action to take right now, like an item you can list, a listing you can afford, or a toolbox you can actually open or speed-open. Bikes and loose parts that are already listed for sale do not count as ready-to-use mission resources until the listing ends.' },
