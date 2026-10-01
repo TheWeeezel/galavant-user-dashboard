@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router';
 import { motion, type Variants } from 'framer-motion';
 import {
-  Globe, Check, Clock, Lock, Zap, Music, Trophy, Heart, Users, Cloud, Flag, Gift,
+  Globe, Check, Clock, Lock, Zap, Music, Trophy, Crown, Heart, Users, Cloud, Flag, Gift,
   ChevronLeft,
 } from 'pixelarticons/react';
 
@@ -68,15 +68,21 @@ const PHASES: RoadmapPhase[] = [
       },
       {
         title: 'Mainnet Launch',
-        description: 'Full mainnet deployment on Enjin. On-chain NFT bikes, ENJ staking, player trading, and the first seasonal WATTS redemption.',
+        description: 'Live on Enjin mainnet since 1 October 2026. On-chain NFT bikes, ENJ staking, player trading, and a seasonal WATTS redemption pot that opened at 1,000 ENJ.',
         icon: Flag,
-        status: 'current',
+        status: 'done',
+      },
+      {
+        title: 'Genesis Drop',
+        description: 'The September test month is frozen in a record that outlived the reset. Genesis bikes went to the testers who did the most measured work, numbered and never minted again, and everyone who rode got a part.',
+        icon: Crown,
+        status: 'done',
       },
       {
         title: 'Genesis Lounge',
-        description: 'A room only Genesis holders can enter, behind a gilt band on the Home screen. Inside: the Genesis Reel, three pixel reels that pay out parts and WATTS, with free pulls every day for holding your Genesis item in the garage. Opens with the 1 October launch.',
+        description: 'A room only Genesis holders can enter, behind a gilt band on the Home screen. Inside: the Genesis Reel, three pixel reels that pay out parts and WATTS, with free pulls every day for holding your Genesis item in the garage.',
         icon: Gift,
-        status: 'current',
+        status: 'done',
       },
     ],
   },
@@ -88,7 +94,7 @@ const PHASES: RoadmapPhase[] = [
         title: 'Achievements & Personal Bests',
         description: 'Track your longest ride, biggest earning session, and highest streak. Unlock achievement badges displayed on your profile for all to see.',
         icon: Trophy,
-        status: 'upcoming',
+        status: 'current',
       },
     ],
   },

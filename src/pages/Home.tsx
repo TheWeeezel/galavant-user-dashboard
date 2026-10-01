@@ -13,7 +13,7 @@ import {
 } from 'framer-motion';
 import {
   Users, MapPin, Coins, Image, Zap,
-  Store, ShoppingCart, Trophy, SpeedFast,
+  Store, ShoppingCart, Trophy, Crown, SpeedFast,
   Heart, Scale, Fire,
   Download, Login, Gift, Human,
   Check, Globe, Flag, Shield,
@@ -60,9 +60,10 @@ const ROADMAP_ITEMS: { title: string; icon: React.ComponentType<any>; status: 'd
   { title: 'Testnet', icon: Zap, status: 'done' },
   { title: 'Daily Missions', icon: Check, status: 'done' },
   { title: 'Sound Design', icon: Music, status: 'done' },
-  { title: 'Mainnet Launch', icon: Flag, status: 'current' },
-  { title: 'Genesis Lounge', icon: Gift, status: 'current' },
-  { title: 'Achievements', icon: Trophy, status: 'upcoming' },
+  { title: 'Mainnet Launch', icon: Flag, status: 'done' },
+  { title: 'Genesis Drop', icon: Crown, status: 'done' },
+  { title: 'Genesis Lounge', icon: Gift, status: 'done' },
+  { title: 'Achievements', icon: Trophy, status: 'current' },
   { title: 'Bike Legacy', icon: Heart, status: 'upcoming' },
   { title: 'Guilds / Crews', icon: Users, status: 'upcoming' },
   { title: 'Weather', icon: Cloud, status: 'upcoming' },

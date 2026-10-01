@@ -52,14 +52,12 @@ function buildShareMessage(entry: VersionEntry): string {
   }
 
   lines.push('');
-  lines.push('\u{1F9EA} Help Us Test the Platform');
+  lines.push('\u{1F6B2} Live on Enjin mainnet');
   lines.push('');
-  lines.push('We are currently testing the ecosystem before Mainnet launch and are tracking which users complete which tasks.');
+  lines.push('The test month ended on 1 October 2026. Bikes are real NFTs you own, and the season pot pays out in ENJ.');
   lines.push('');
-  lines.push('\u{1F449} Use the wallet and complete tasks here:');
-  lines.push('https://galavant.run/tasks');
-  lines.push('');
-  lines.push('\u{1F381} All completed tasks will be rewarded with Bike Parts once we go live on Mainnet.');
+  lines.push('\u{1F449} Get a bike and start earning:');
+  lines.push('https://galavant.run/store');
   lines.push('');
   lines.push('\u{1F426} Follow us on X: https://x.com/galavanteer');
   lines.push('\u{1F4AC} Join our Telegram: https://t.me/galavanteer');
