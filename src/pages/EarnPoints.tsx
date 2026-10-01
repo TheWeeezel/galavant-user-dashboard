@@ -285,6 +285,10 @@ export function EarnPoints() {
           <p className="text-base md:text-lg text-m2e-text-secondary">
             Follow <span className="text-m2e-accent">@galavanteer</span>. Like and retweet our posts. Each action earns you <span className="text-m2e-accent">10 WATTS</span>.
           </p>
+          <p className="text-sm text-m2e-text-muted">
+            Counting starts <span className="text-m2e-text-secondary">1 October 2026</span>. Posts from the beta are
+            closed — they were already paid out once and cannot be earned on again. The follow is open to everyone.
+          </p>
 
           {isAuthenticated && socialStatus && (
             <div className="pixel-card p-4 flex items-center justify-between gap-4 flex-wrap">
@@ -350,7 +354,7 @@ export function EarnPoints() {
               {/* Tweet Interactions */}
               {socialTweets.length === 0 && socialStatus?.twitterLinked && (
                 <p className="text-sm text-m2e-text-muted">
-                  No posts to engage right now — new ones land here as soon as @galavanteer posts.
+                  No open posts right now — new ones land here as soon as @galavanteer posts.
                 </p>
               )}
               {socialTweets.length > 0 && (

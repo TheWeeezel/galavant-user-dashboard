@@ -1200,7 +1200,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'list', items: [
             'Each like and retweet on a Galavant tweet earns you WATTS.',
             'You can only earn once per action per tweet — no double-dipping.',
-            'Likes and retweets are verified through the Twitter API before rewards are credited.',
+            'Only posts from 1 October 2026 on count. Posts from the beta were paid out once and are closed for good.',
             'The follow reward is a one-time bonus for following our account — once per X account, even if you unlink it or link it to a different Galavant account.',
           ]},
           { type: 'tip', text: 'Visit the Earn More page regularly — new tweets appear as they\'re posted, and each one is a fresh opportunity to earn WATTS!' },
