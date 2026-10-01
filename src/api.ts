@@ -682,6 +682,13 @@ export interface StoreProduct {
    */
   priceEnj?: string | null;
   /**
+   * The listed price before the scarcity curve, and what this frame costs in the NEXT band of
+   * fifty — null in the final band, and absent on an older server. The card prints the next price
+   * so a rise is announced before it happens rather than discovered afterwards.
+   */
+  basePriceUsdCents?: number;
+  nextPriceUsdCents?: number | null;
+  /**
    * Whether the CARD button may be pressed. Separate from `available` because the shop now has two
    * tills and they open independently: with no Stripe key but a live ENJ rate the bike is on sale,
    * `available` is true, and a card button that leads to a 503 would be the only thing the buyer
@@ -693,6 +700,19 @@ export interface StoreCatalog {
   enabled: boolean;
   currency: string;
   products: StoreProduct[];
+  /**
+   * How far the shop is into the current band of fifty, or null when the curve is off (lever
+   * `store_price_curve_k` = 0) or the shop is uncapped. `remainingAtThisPrice` is the one number
+   * the buyer acts on.
+   */
+  priceBand?: {
+    index: number;
+    bands: number;
+    size: number;
+    soldInBand: number;
+    remainingAtThisPrice: number;
+    isLast: boolean;
+  } | null;
   /**
    * When the ENJ till opens, as an ISO date, and null once it is open. Set while the shop
    * deliberately refuses ENJ — the prices stay on the shelf, the ENJ button does not, and the

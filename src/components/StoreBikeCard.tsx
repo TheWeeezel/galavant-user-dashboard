@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { config } from '../config';
-import type { StoreProduct, StoreStock } from '../api';
+import type { StoreCatalog, StoreProduct, StoreStock } from '../api';
 import { bikeTypeInfo, BIKE_BAND_MAX } from '../config/bikeTypes';
 
 /** Quality tiers wear material names everywhere else in the game, so the shop says Steel, not "common". */
@@ -95,6 +95,8 @@ interface StoreBikeCardProps {
   locked: boolean;
   /** The last checkout failure for this card. Null once another attempt starts. */
   error: string | null;
+  /** How many bikes are left at this price, from the catalog. Null when the curve is off. */
+  priceBand: StoreCatalog['priceBand'];
   onBuy: (method: PayMethod) => void;
 }
 
@@ -106,6 +108,7 @@ export function StoreBikeCard({
   busy,
   locked,
   error,
+  priceBand,
   onBuy,
 }: StoreBikeCardProps) {
   const offer = describeOffer(product, catalogEnabled, stock);
@@ -189,6 +192,18 @@ export function StoreBikeCard({
                 ENJ amount is fixed when you start
               </div>
             </>
+          )}
+          {/* The price climbs as the run sells out, so the shop says so before the step, not after.
+              A rise nobody announced reads as a bait-and-switch; the same rise with the number of
+              bikes left beside it is a reason to buy today. */}
+          {priceBand && product.nextPriceUsdCents != null && offer.buyable && (
+            <div className="mt-1 text-[11px] text-m2e-warning-deep">
+              {priceBand.remainingAtThisPrice} left at this price — then{' '}
+              {formatUsd(product.nextPriceUsdCents)}
+            </div>
+          )}
+          {priceBand?.isLast && offer.buyable && (
+            <div className="mt-1 text-[11px] text-m2e-warning-deep">Final {priceBand.size} — the last of the run.</div>
           )}
         </div>
 

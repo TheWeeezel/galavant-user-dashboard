@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
 import { StoreBikeCard, type PayMethod } from '../components/StoreBikeCard';
@@ -16,14 +16,24 @@ function formatOpensAt(iso: string): string {
 export default function Store() {
   const { isAuthenticated } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
+  const queryClient = useQueryClient();
   const [params] = useSearchParams();
   const status = params.get('status'); // success | cancel (from the payment redirect)
 
-  const catalog = useQuery({ queryKey: ['store-products'], queryFn: fetchStoreProducts, retry: false });
+  // Refetched on a timer because the price MOVES: it steps every fifty bikes sold, and a page left
+  // open across a step would send the buyer to a till asking more than the card under their finger
+  // says. Thirty seconds is well inside the quote's own fifteen-minute window.
+  const catalog = useQuery({
+    queryKey: ['store-products'],
+    queryFn: fetchStoreProducts,
+    retry: false,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
+  });
   // Second, softer source: it carries the caps, which is the only way to tell "sold out" apart
   // from "checkout not switched on yet". The shop stays fully usable when this one fails, so a
   // failure here must never surface as an error — it only costs the card a precise sentence.
-  const stock = useQuery({ queryKey: ['store-stock'], queryFn: fetchStoreStock, retry: false });
+  const stock = useQuery({ queryKey: ['store-stock'], queryFn: fetchStoreStock, retry: false, refetchInterval: 30_000 });
 
   // The browser needs a moment to follow the redirect. Without this the button would snap back to
   // "Buy with card" while the checkout page is already loading, which reads as a click that failed.
@@ -33,12 +43,37 @@ export default function Store() {
   // because the buyer pays from their own wallet and there is nowhere to send them.
   const [enjPayment, setEnjPayment] = useState<EnjPayment | null>(null);
 
+  /**
+   * The till opens ABOVE the shelf, and on a phone the shelf is one column — the Electric card sits
+   * two or three screens down, so pressing "Pay with ENJ" there rendered the payment off-screen and
+   * the tap read as a button that does nothing (owner, 2026-10-01: "tried to buy it and it didnt do
+   * anything"). The panel is not moved: it belongs at the top, where it stays visible while the
+   * buyer pays. The view follows it instead.
+   */
+  const tillRef = useRef<HTMLDivElement>(null);
+  // FROM AN EFFECT, not from the mutation callback: the panel — and with it the ref — exists only
+  // after React has committed the state update, and a rAF scheduled in the same tick can run
+  // BEFORE that commit. The ref would be null, the early return would swallow it, and the bug
+  // would be back on exactly the phones it was written for, intermittently. Same pattern the
+  // music player already uses for its scroll.
+  useEffect(() => {
+    const el = tillRef.current;
+    if (!enjPayment || !el) return;
+    const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+  }, [enjPayment?.quoteId]);
+
   const checkout = useMutation({
     mutationFn: async ({ type, method }: { type: string; method: PayMethod }) => {
       if (method === 'enj') return { method, payment: await storeCheckoutEnj(type) } as const;
       const session = await storeCheckout(type);
       if (!session.url) throw new Error('Checkout could not be opened — you have not been charged.');
       return { method, url: session.url } as const;
+    },
+    onSettled: () => {
+      // A sale — ours or anyone's — moves the shop toward the next band. Re-read the shelf rather
+      // than leave a stale price under a bike somebody is about to buy again.
+      for (const key of ['store-products', 'store-stock']) queryClient.invalidateQueries({ queryKey: [key] });
     },
     onSuccess: (result) => {
       if (result.method === 'enj') {
@@ -97,11 +132,13 @@ export default function Store() {
         )}
 
         {enjPayment && (
-          <EnjPaymentPanel
-            payment={enjPayment}
-            displayName={products.find((p) => p.type === enjPayment.product)?.displayName ?? enjPayment.product}
-            onClose={() => setEnjPayment(null)}
-          />
+          <div ref={tillRef} style={{ scrollMarginTop: '12px' }}>
+            <EnjPaymentPanel
+              payment={enjPayment}
+              displayName={products.find((p) => p.type === enjPayment.product)?.displayName ?? enjPayment.product}
+              onClose={() => setEnjPayment(null)}
+            />
+          </div>
         )}
 
         {catalog.isPending ? (
@@ -157,6 +194,7 @@ export default function Store() {
                   busy={running?.type === p.type ? running.method : null}
                   locked={running !== null}
                   error={checkout.isError && checkout.variables?.type === p.type ? (checkout.error as Error).message : null}
+                  priceBand={catalog.data?.priceBand ?? null}
                   onBuy={(method) => buy(p, method)}
                 />
               ))}
