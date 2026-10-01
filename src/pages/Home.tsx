@@ -27,7 +27,6 @@ import { AppDownload } from '../components/AppDownload';
 import { formatDistance } from '../utils/format';
 import { config } from '../config';
 import type { ChangelogData } from '../types/changelog';
-import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../config/appLinks';
 
 type LeaderboardMetric = 'distance' | 'earnings';
 type LeaderboardPeriod = 'daily' | 'weekly' | 'all_time';
@@ -247,7 +246,6 @@ export function Home() {
   // The live season, straight off /explorer/stats — one source for the banner and the season card,
   // so a budget change on the box reaches both within the endpoint's minute of cache.
   const season = stats.data?.season ?? null;
-  const seasonPot = season ? season.budgetEnj.toLocaleString() : null;
   const seasonDaysLeft = season
     ? Math.max(0, Math.ceil((new Date(season.closesAt).getTime() - Date.now()) / 86_400_000))
     : 0;
@@ -271,25 +269,6 @@ export function Home() {
 
   return (
     <>
-      {/* ══════════════════════════════════════════════════════════════════════
-          0 / LIVE — the test month ended with the 1 October reset. The sticky nav (h-16) paints
-          over the top of the page, so the strip starts below it.
-          ══════════════════════════════════════════════════════════════════════ */}
-      <div className="bg-m2e-accent text-m2e-bg border-b-2 border-black/30 pt-16">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-6 text-sm">
-          <div className="uppercase tracking-[0.2em] text-xs font-bold whitespace-nowrap">Live on Enjin mainnet</div>
-          <div className="flex-1 leading-snug">
-            Pick up a bike, walk, earn WATTS. Commit them to the {seasonPot ?? '1,000'} ENJ season pot before it closes, or
-            take your bike on-chain as an NFT in your own Enjin wallet.
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <a href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">Android</a>
-            <a href={TESTFLIGHT_URL} target="_blank" rel="noopener noreferrer" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">iPhone · TestFlight</a>
-            <Link to="/store" className="pixel-btn text-xs px-3 py-1.5 bg-m2e-bg text-m2e-text">Get a bike</Link>
-          </div>
-        </div>
-      </div>
-
       {/* ══════════════════════════════════════════════════════════════════════
           1 / HERO — Cold open
           ══════════════════════════════════════════════════════════════════════ */}
