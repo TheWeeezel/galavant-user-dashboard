@@ -26,6 +26,7 @@ import { ListingCard } from '../components/ListingCard';
 import { AppDownload } from '../components/AppDownload';
 import { formatDistance } from '../utils/format';
 import { config } from '../config';
+import { BIKE_TYPES, BIKE_BAND_MAX } from '../config/bikeTypes';
 import type { ChangelogData } from '../types/changelog';
 
 type LeaderboardMetric = 'distance' | 'earnings';
@@ -69,14 +70,6 @@ const ROADMAP_ITEMS: { title: string; icon: React.ComponentType<any>; status: 'd
   { title: 'Lucky Events', icon: Gift, status: 'upcoming' },
 ];
 
-// The four bike types are speed bands — walk, jog, or power-walk; the town
-// pays for real motion. Ranges are the UI-visible optimal bands.
-const BIKE_TYPES = [
-  { type: 'Commuter', best: 'Leisurely walkers', lo: 2, hi: 5 },
-  { type: 'Touring', best: 'Brisk walkers', lo: 5, hi: 9 },
-  { type: 'Racing', best: 'Power walkers', lo: 10, hi: 18 },
-  { type: 'Electric', best: 'Any walker · full band', lo: 2, hi: 18, accent: true },
-] as const;
 
 const MATERIALS = [
   ['Steel', 'var(--color-m2e-common)'],
@@ -498,10 +491,10 @@ export function Home() {
                 key={b.type}
                 variants={staggerItem}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className={`pixel-card p-4 flex flex-col gap-3 ${'accent' in b && b.accent ? 'border-m2e-accent' : ''}`}
+                className={`pixel-card p-4 flex flex-col gap-3 ${b.accent ? 'border-m2e-accent' : ''}`}
               >
                 <img
-                  src={`${config.apiUrl}/art/bases/bike-${b.type.toLowerCase()}.png`}
+                  src={`${config.apiUrl}/art/bases/bike-${b.key}.png`}
                   alt={`${b.type} bike`}
                   className="w-full h-28 object-contain pixel-render"
                   loading="lazy"
@@ -516,10 +509,10 @@ export function Home() {
                 <div className="relative h-2.5 rounded-full bg-m2e-bg-alt border border-m2e-border overflow-hidden">
                   <span
                     className="absolute top-0 bottom-0 bg-m2e-accent"
-                    style={{ left: `${(b.lo / 18) * 100}%`, width: `${((b.hi - b.lo) / 18) * 100}%` }}
+                    style={{ left: `${(b.lo / BIKE_BAND_MAX) * 100}%`, width: `${((b.hi - b.lo) / BIKE_BAND_MAX) * 100}%` }}
                   />
                 </div>
-                <div className="flex justify-between text-[10px] text-m2e-text-muted"><span>0</span><span>18 km/h</span></div>
+                <div className="flex justify-between text-[10px] text-m2e-text-muted"><span>0</span><span>{BIKE_BAND_MAX} km/h</span></div>
               </motion.div>
             ))}
           </motion.div>

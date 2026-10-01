@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { config } from '../config';
 import type { StoreProduct, StoreStock } from '../api';
+import { bikeTypeInfo, BIKE_BAND_MAX } from '../config/bikeTypes';
 
 /** Quality tiers wear material names everywhere else in the game, so the shop says Steel, not "common". */
 const MATERIAL_NAMES: Record<string, string> = {
@@ -19,13 +20,6 @@ const QUALITY_BADGE: Record<string, string> = {
   legendary: 'pixel-badge-legendary',
 };
 
-/** Who each frame suits, in the same words the landing page uses. No speed numbers. */
-const TYPE_FIT: Record<string, string> = {
-  commuter: 'Leisurely walkers',
-  touring: 'Brisk walkers',
-  racing: 'Power walkers',
-  electric: 'Any walker',
-};
 
 export type PayMethod = 'card' | 'enj';
 
@@ -119,7 +113,10 @@ export function StoreBikeCard({
   const material = MATERIAL_NAMES[product.quality] ?? product.quality;
   const badge = QUALITY_BADGE[product.quality] ?? QUALITY_BADGE.common;
   const [artMissing, setArtMissing] = useState(false);
-  const fit = TYPE_FIT[product.type];
+  // Who the frame suits and the speed band it earns in — the same two facts, from the same
+  // table, the landing page's garage prints. A buyer picks a bike by its pace, so the pace belongs
+  // on the price tag and not one page away.
+  const info = bikeTypeInfo(product.type);
   const disabled = !offer.buyable || locked;
 
   return (
@@ -147,9 +144,34 @@ export function StoreBikeCard({
       </div>
 
       <div className="p-4 flex flex-col gap-3 flex-1">
-        <div>
-          <div className="text-xl uppercase tracking-wide">{product.displayName}</div>
-          {fit && <div className="text-xs uppercase tracking-wider text-m2e-text-secondary">{fit}</div>}
+        <div className="space-y-2">
+          <div className="flex items-end justify-between gap-2">
+            <span className="text-xl uppercase tracking-wide leading-none">{product.displayName}</span>
+            {info && (
+              <span className="text-m2e-accent text-base leading-none whitespace-nowrap">
+                {info.lo}–{info.hi} <span className="text-[10px] text-m2e-text-muted">km/h</span>
+              </span>
+            )}
+          </div>
+          {info && (
+            <div className="text-[11px] uppercase tracking-wider text-m2e-text-secondary">{info.best}</div>
+          )}
+          {info && (
+            <>
+              <div className="relative h-2 rounded-full bg-m2e-bg-alt border border-m2e-border overflow-hidden">
+                <span
+                  className="absolute top-0 bottom-0 bg-m2e-accent"
+                  style={{
+                    left: `${(info.lo / BIKE_BAND_MAX) * 100}%`,
+                    width: `${((info.hi - info.lo) / BIKE_BAND_MAX) * 100}%`,
+                  }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-m2e-text-muted">
+                <span>0</span><span>{BIKE_BAND_MAX} km/h</span>
+              </div>
+            </>
+          )}
         </div>
 
         <div>

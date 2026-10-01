@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
 import {
-  ExternalLink, Copy, Check, Human, Gift, Repeat, Heart, ChevronLeft,
+  ExternalLink, Copy, Check, Human, Repeat, Heart, ChevronLeft,
   Zap, Users,
 } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
@@ -183,7 +183,7 @@ export function EarnPoints() {
                 <span className="text-m2e-accent">WATTS.</span>
               </h1>
               <p className="text-white/70 text-lg md:text-xl max-w-2xl">
-                Four ways to stack WATTS. Walk, engage, refer, complete tasks. Your WATTS counts toward the mainnet airdrop.
+                Three ways to stack WATTS. Walk, engage, refer. Your WATTS counts toward the mainnet airdrop.
               </p>
             </motion.div>
 
@@ -200,7 +200,7 @@ export function EarnPoints() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 md:px-8 py-10 md:py-14 space-y-12">
-        {/* Top Tier — Testing Tasks & Walk to Earn */}
+        {/* Top Tier — Walk to Earn */}
         <motion.section
           className="space-y-5"
           initial={{ opacity: 0, y: 30 }}
@@ -209,26 +209,10 @@ export function EarnPoints() {
           transition={{ duration: 0.5 }}
         >
           <div className="section-label">Primary Missions</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* Testing Tasks */}
-            <MissionCard
-              kicker="Mission 01"
-              reward="Up to 2,200 WATTS"
-              icon={Gift}
-              iconTint="accent"
-              title="Testing Tasks"
-              description={
-                <>Complete 15 testnet tasks. Your points count toward the <span className="text-m2e-accent">mainnet airdrop allocation</span>.</>
-              }
-            >
-              <Link to="/tasks" className="pixel-btn pixel-btn-primary px-5 py-2.5 text-sm">
-                View Tasks
-              </Link>
-            </MissionCard>
-
+          <div className="grid grid-cols-1 gap-5">
             {/* Walk to Earn */}
             <MissionCard
-              kicker="Mission 02"
+              kicker="Mission 01"
               reward="WATTS / minute"
               icon={Zap}
               iconTint="accent"
@@ -258,7 +242,7 @@ export function EarnPoints() {
         >
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="space-y-2">
-              <div className="section-label">Mission 03 · Social</div>
+              <div className="section-label">Mission 02 · Social</div>
               <h2 className="text-3xl md:text-4xl uppercase tracking-wide text-m2e-text leading-none">
                 Engage<span className="text-m2e-accent">.</span>
               </h2>
@@ -518,7 +502,7 @@ export function EarnPoints() {
         >
           <div className="flex items-end justify-between gap-3 flex-wrap">
             <div className="space-y-2">
-              <div className="section-label">Mission 04 · Referral</div>
+              <div className="section-label">Mission 03 · Referral</div>
               <h2 className="text-3xl md:text-4xl uppercase tracking-wide text-m2e-text leading-none">
                 Bring<br className="md:hidden" /> <span className="text-m2e-accent">Friends.</span>
               </h2>

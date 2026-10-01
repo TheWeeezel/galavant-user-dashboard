@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
 import { StoreBikeCard, type PayMethod } from '../components/StoreBikeCard';
 import { EnjPaymentPanel } from '../components/EnjPaymentPanel';
+import { byBikeTypeOrder } from '../config/bikeTypes';
 import { fetchStoreProducts, fetchStoreStock, storeCheckout, storeCheckoutEnj, type EnjPayment, type StoreProduct } from '../api';
 
 /** The opening day, read in UTC — the same calendar day the server means, in every timezone. */
@@ -54,7 +55,10 @@ export default function Store() {
     checkout.mutate({ type: product.type, method });
   };
 
-  const products = catalog.data?.products ?? [];
+  // The shelf reads slowest band first, Electric last — the same order the landing page's garage
+  // uses. The catalog sends whatever order the database happens to return, so the sequence is
+  // imposed here rather than hoped for.
+  const products = byBikeTypeOrder(catalog.data?.products ?? []);
   const shopOpen = catalog.data?.enabled === true;
   // Set while the server refuses ENJ on purpose. The prices stay on the shelf and the ENJ buttons
   // are already gone (no `priceEnj`), so all that is missing is the reason — and a date is a
