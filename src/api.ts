@@ -401,28 +401,6 @@ export function fetchReferralStats() {
 
 // --- Testing Tasks ---
 
-export interface TestingTask {
-  id: string;
-  title: string;
-  description: string;
-  reward: number;
-  category: string;
-  sortOrder: number;
-  status: 'locked' | 'completed' | 'claimed';
-}
-
-export interface TestingTasksResponse {
-  tasks: TestingTask[];
-}
-
-export function fetchTestingTasks() {
-  return fetchAuthJson<TestingTasksResponse>('/tasks');
-}
-
-export function claimTestingTask(taskId: string) {
-  return fetchAuthJson<{ reward: number }>(`/tasks/${taskId}/claim`, { method: 'POST' });
-}
-
 // --- Problem Reports ---
 
 /**
@@ -436,24 +414,6 @@ export function submitReport(description: string) {
   });
 }
 
-// --- Bonus Claims ---
-
-export interface BonusClaimStatus {
-  eligible: boolean;
-  claimed: boolean;
-  bikeId?: string;
-}
-
-export function fetchBonusClaimStatus() {
-  return fetchAuthJson<BonusClaimStatus>('/tasks/bonus-claim/status');
-}
-
-export function claimBonusBike(bikeType: string) {
-  return fetchAuthJson<UserBike>('/tasks/bonus-claim', {
-    method: 'POST',
-    body: JSON.stringify({ bikeType }),
-  });
-}
 
 // --- Social Rewards ---
 

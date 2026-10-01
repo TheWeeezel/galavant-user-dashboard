@@ -252,7 +252,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'report-a-problem',
         title: 'Report a Problem',
         content: [
-          { type: 'paragraph', text: 'Something broken, stuck or just wrong? Tell us. Reports go straight to the developers, and during the test month they are the whole point — a month of riding with nobody saying what broke teaches us nothing.' },
+          { type: 'paragraph', text: 'Something broken, stuck or just wrong? Tell us. Reports go straight to the developers — riding with nobody saying what broke teaches us nothing.' },
           { type: 'heading', text: 'Where to Find It' },
           { type: 'list', items: [
             'In the app: Player tab → Report a Problem.',

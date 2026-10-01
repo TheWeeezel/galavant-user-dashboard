@@ -208,7 +208,7 @@ export function Layout() {
         <div className="mx-auto max-w-7xl px-4 py-10 flex flex-col items-center gap-5 text-center relative">
           <div className="section-label justify-center w-fit mx-auto">Get the app</div>
           <p className="text-sm text-white/60 max-w-md">
-            Test month September is live. Update to 0.0.25 and ride.
+            Walk, earn WATTS, take your bike on-chain. Free to start riding.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <a

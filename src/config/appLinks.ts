@@ -1,5 +1,5 @@
 /**
- * The two ways to get the app during the test month (2026-09). One definition: the landing
+ * The two ways to get the app. One definition: the landing
  * strip, the footer, the tasks page, the bounty page and the guide all point here, so a changed
  * store link is changed once.
  */

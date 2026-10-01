@@ -6,7 +6,7 @@ import { LoginModal } from '../components/LoginModal';
 import { submitReport } from '../api';
 
 /**
- * REPORT A PROBLEM — the browser half of the test month's return path.
+ * REPORT A PROBLEM — the browser half of the player's return path.
  *
  * A text box and a button on purpose: categories only get picked wrong. Signed in on purpose
  * too — a report nobody can answer cannot be followed up.
@@ -34,7 +34,7 @@ export function Report() {
       {/* Hero strip */}
       <div className="border-b-2 border-m2e-border bg-m2e-chrome text-white relative overflow-hidden scanlines-light">
         <div className="mx-auto max-w-3xl px-4 md:px-8 py-10 md:py-14 relative z-10 space-y-4">
-          <div className="section-label">Test Month</div>
+          <div className="section-label">Support</div>
           <h1 className="text-5xl md:text-7xl uppercase tracking-wide text-chroma-hero leading-[0.9]">
             Something<br />
             <span className="text-m2e-accent">Broke.</span>

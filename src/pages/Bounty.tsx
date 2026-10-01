@@ -38,13 +38,23 @@ const INVALID = [
 
 const PAYOUT = [
   'In ENJ or a Genesis item, never in WATTS. Paying you in the currency you have just proved you can print would be absurd.',
-  'After the wipe — the reset that closes the test month. ENJ payouts and Genesis items only exist on the far side of it, so the claim is frozen the way your test-month standing is, and survives with it.',
+  'Reports sent before the programme closed are still honoured — the claim was frozen with the test month and survives it, and ENJ and Genesis items only exist on this side of the 1 October reset.',
   'Quickly, and in the open, with your name on it if you want it there.',
 ];
 
 export function Bounty() {
   return (
     <>
+      {/* The programme ran for the test month and closed with the 1 October reset. The page stays
+          reachable rather than deleted: reports were sent against a promise of payment, and a
+          promise does not stop existing because the page did. New submissions are not accepted. */}
+      <div className="bg-m2e-warning/15 border-b-2 border-m2e-warning/40">
+        <div className="mx-auto max-w-4xl px-4 md:px-8 py-3 text-sm text-m2e-text">
+          <strong className="uppercase tracking-wider text-xs">Closed</strong> — the spoof bounty ran for the
+          September test month and ended with the 1 October reset. Reports already sent are still being settled;
+          new submissions are not accepted.
+        </div>
+      </div>
       <div className="border-b-2 border-m2e-border bg-m2e-chrome text-white relative overflow-hidden scanlines-light">
         <div className="mx-auto max-w-4xl px-4 md:px-8 py-10 md:py-14 relative z-10">
           <motion.div

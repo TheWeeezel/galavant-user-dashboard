@@ -6,7 +6,6 @@ import { Marketplace } from './pages/Marketplace';
 import { Changelog } from './pages/Changelog';
 import { Profile } from './pages/Profile';
 import { EarnPoints } from './pages/EarnPoints';
-import { Tasks } from './pages/Tasks';
 import { Report } from './pages/Report';
 import { Bounty } from './pages/Bounty';
 import { Roadmap } from './pages/Roadmap';
@@ -37,7 +36,9 @@ export function App() {
           <Route path="changelog" element={<Changelog />} />
           <Route path="profile" element={<Profile />} />
           <Route path="earn" element={<EarnPoints />} />
-          <Route path="tasks" element={<Tasks />} />
+          {/* The tester task track closed with the test month (server lever testing_tasks_enabled=0).
+              Old links and bookmarks land on the home page rather than an empty checklist. */}
+          <Route path="tasks" element={<Navigate to="/" replace />} />
           <Route path="report" element={<Report />} />
           {/* Short on purpose — the bounty rules are meant to be pasted into a post. */}
           <Route path="bounty" element={<Bounty />} />
