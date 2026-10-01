@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { LoginModal } from '../components/LoginModal';
 import { StoreBikeCard, type PayMethod } from '../components/StoreBikeCard';
 import { EnjPaymentPanel } from '../components/EnjPaymentPanel';
+import { StoreBatchStrip } from '../components/StoreBatchStrip';
 import { byBikeTypeOrder } from '../config/bikeTypes';
 import { fetchStoreProducts, fetchStoreStock, storeCheckout, storeCheckoutEnj, type EnjPayment, type StoreProduct } from '../api';
 
@@ -163,6 +164,10 @@ export default function Store() {
             {/* The bikes stay on the shelf even while the till is shut. A closed checkout is a
                 reason to explain the wait, not a reason to hide what the shop sells and what it
                 costs — hiding it was the old behaviour, and it made the shop look empty. */}
+            {catalog.data?.priceBand && (
+              <StoreBatchStrip band={catalog.data.priceBand} products={products} />
+            )}
+
             {enjOpensAt ? (
               <div className="pixel-card p-4 text-m2e-text-secondary space-y-1">
                 <div className="section-label text-m2e-accent">Paying in ENJ opens {formatOpensAt(enjOpensAt)}</div>
