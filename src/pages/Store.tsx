@@ -165,7 +165,12 @@ export default function Store() {
                 reason to explain the wait, not a reason to hide what the shop sells and what it
                 costs — hiding it was the old behaviour, and it made the shop look empty. */}
             {catalog.data?.priceBand && (
-              <StoreBatchStrip band={catalog.data.priceBand} products={products} />
+              <StoreBatchStrip
+                band={catalog.data.priceBand}
+                ladder={catalog.data.priceLadder ?? null}
+                products={products}
+                stock={stock.data}
+              />
             )}
 
             {enjOpensAt ? (

@@ -714,6 +714,16 @@ export interface StoreCatalog {
     isLast: boolean;
   } | null;
   /**
+   * Every batch of the run with the prices it will ask, computed by the server so the page can
+   * never advertise a price the till would not charge. Null when the curve is off.
+   */
+  priceLadder?: Array<{
+    index: number;
+    from: number;
+    to: number;
+    prices: Record<string, number>;
+  }> | null;
+  /**
    * When the ENJ till opens, as an ISO date, and null once it is open. Set while the shop
    * deliberately refuses ENJ — the prices stay on the shelf, the ENJ button does not, and the
    * page can name the day instead of leaving the absence unexplained. Absent on an older server.
