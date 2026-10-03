@@ -92,7 +92,7 @@ const PHASES: RoadmapPhase[] = [
     items: [
       {
         title: 'Achievements & Personal Bests',
-        description: 'Track your longest ride, biggest earning session, and highest streak. Unlock achievement badges displayed on your profile for all to see.',
+        description: '28 pixel badges for your longest rides, your total distance, your streaks and your firsts, most of them paying toolboxes, parts or minting tools, plus your personal bests. Live for Genesis holders first; everyone and public player pages come next.',
         icon: Trophy,
         status: 'current',
       },

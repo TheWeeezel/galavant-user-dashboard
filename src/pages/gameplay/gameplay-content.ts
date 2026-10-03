@@ -1227,6 +1227,32 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'tip', text: 'Check the leaderboard from the home page to see where you rank. Daily leaderboards give everyone a fresh start each day!' },
         ],
       },
+      {
+        slug: 'achievements',
+        title: 'Achievements & Personal Bests',
+        content: [
+          { type: 'paragraph', text: 'Earn pixel badges for the riding you do, and keep track of your personal bests: your longest ride, your best WATTS in a single ride and your longest riding streak. Achievements open for Genesis holders first — find them in the Genesis Lounge and on the Stats tab of your profile. Everyone else is next.' },
+          { type: 'heading', text: 'Badge Families' },
+          { type: 'table', headers: ['Family', 'What It Asks'], rows: [
+            ['In One Ride', 'A single ride of 5 km, 10 km, a half marathon or a marathon. Only that one ride counts — your total does not.'],
+            ['In Total', 'Distance across all your rides, from 10 km up to 5,000 km.'],
+            ['Ride Streak', 'Riding day after day. Short hops do not count toward a streak.'],
+            ['Quest Streak', 'Clearing all three daily missions day after day.'],
+            ['Missions', 'Daily missions completed in total.'],
+            ['Firsts', 'Your first breed, first forge, first sale and first toolbox.'],
+            ['Legacy', 'Genesis Holder, September Tester and Season One Rider.'],
+          ]},
+          { type: 'heading', text: 'How It Works' },
+          { type: 'list', items: [
+            'A ride counts once its WATTS are final. A ride whose WATTS are still being held shows as VERIFYING and counts as soon as it clears.',
+            'When you reach a badge, tap Claim. Most badges pay items — toolboxes, parts or minting tools — and bigger milestones pay more. Badges never pay WATTS.',
+            'Badge rewards open after a little verified riding. Any badge you reach before that waits for you; nothing is lost.',
+            'Each badge can be earned once per account.',
+            'The badge rim shows its tier: bronze, silver, gold, diamond and prismatic.',
+          ]},
+          { type: 'tip', text: 'The ride summary tells you when a ride set a new personal best or reached a badge.' },
+        ],
+      },
     ],
   },
 
