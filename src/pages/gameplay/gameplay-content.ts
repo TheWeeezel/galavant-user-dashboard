@@ -234,10 +234,11 @@ export const gameplaySections: GameplaySection[] = [
             'Equip your bike from the inventory screen.',
             'Tap the "Walk" button to start a session.',
             'Head outside and walk at a pace that matches your bike type.',
-            'Need a break? Tap Pause to freeze your session — no energy is consumed while paused. Tap Resume when you\'re ready to continue.',
+            'Need a break? Tap Pause to freeze your session — no energy is consumed while paused, and distance covered while paused does not count toward the ride. Tap Resume when you\'re ready to continue.',
             'When you\'re done, stop the session and collect your WATTS earnings!',
           ]},
           { type: 'tip', text: 'Make sure you have good GPS signal before starting. Indoor movement and treadmills won\'t count.' },
+          { type: 'tip', text: 'Give Galavant precise location and let it run in the background without battery restrictions. If your phone stops sending locations during a ride, the ride summary tells you and shows which settings to change.' },
           { type: 'tip', text: 'Forgot to stop? After a long stretch without any movement — a couple of hours — the app ends the session for you and settles your earnings. It saves your battery, and a parked session was never earning anything. There is no limit on how long a session can run while you are actually moving.' },
           { type: 'heading', text: 'What You Need' },
           { type: 'list', items: [
