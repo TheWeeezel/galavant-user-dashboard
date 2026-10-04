@@ -52,7 +52,7 @@ function formatSat(n: number): string {
 const ONBOARDING_STEPS = [
   { icon: Download, title: 'Download', description: 'iOS or Android' },
   { icon: Login, title: 'Sign In', description: 'Google account' },
-  { icon: Gift, title: 'Free NFT', description: 'Starter bike' },
+  { icon: ShoppingCart, title: 'Get a Bike', description: 'Shop or market' },
   { icon: Human, title: 'Walk', description: 'Earn WATTS' },
 ];
 
