@@ -56,14 +56,20 @@ const ONBOARDING_STEPS = [
   { icon: Human, title: 'Walk', description: 'Earn WATTS' },
 ];
 
-const ROADMAP_ITEMS: { title: string; icon: React.ComponentType<any>; status: 'done' | 'current' | 'upcoming' }[] = [
+const ROADMAP_ITEMS: {
+  title: string;
+  icon: React.ComponentType<any>;
+  status: 'done' | 'current' | 'upcoming';
+  /** Replaces the status word on the badge when "Now" would say too little. */
+  badge?: { label: string; icon: React.ComponentType<any> };
+}[] = [
   { title: 'Testnet', icon: Zap, status: 'done' },
   { title: 'Daily Missions', icon: Check, status: 'done' },
   { title: 'Sound Design', icon: Music, status: 'done' },
   { title: 'Mainnet Launch', icon: Flag, status: 'done' },
   { title: 'Genesis Drop', icon: Crown, status: 'done' },
   { title: 'Genesis Lounge', icon: Gift, status: 'done' },
-  { title: 'Achievements', icon: Trophy, status: 'current' },
+  { title: 'Achievements', icon: Trophy, status: 'current', badge: { label: 'Live for Genesis owners', icon: Crown } },
   { title: 'Bike Legacy', icon: Heart, status: 'upcoming' },
   { title: 'Guilds / Crews', icon: Users, status: 'upcoming' },
   { title: 'Weather', icon: Cloud, status: 'upcoming' },
@@ -953,8 +959,8 @@ export function Home() {
                         ? 'bg-m2e-accent/15 text-m2e-accent border-current'
                         : 'bg-m2e-bg-alt text-m2e-text-muted border-m2e-border'
                   }`}>
-                    {isDone ? <Check className="w-2.5 h-2.5" /> : isCurrent ? <Clock className="w-2.5 h-2.5" /> : <Lock className="w-2.5 h-2.5" />}
-                    {isDone ? 'Done' : isCurrent ? 'Now' : 'Soon'}
+                    {item.badge ? <item.badge.icon className="w-2.5 h-2.5" /> : isDone ? <Check className="w-2.5 h-2.5" /> : isCurrent ? <Clock className="w-2.5 h-2.5" /> : <Lock className="w-2.5 h-2.5" />}
+                    {item.badge?.label ?? (isDone ? 'Done' : isCurrent ? 'Now' : 'Soon')}
                   </span>
                 </motion.div>
               );
