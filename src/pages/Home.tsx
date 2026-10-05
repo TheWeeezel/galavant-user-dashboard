@@ -1035,6 +1035,27 @@ export function Home() {
                     <div className="text-xs text-m2e-text-muted uppercase tracking-widest">Step {i + 1}</div>
                     <div className="text-lg sm:text-2xl text-m2e-text uppercase">{step.title}</div>
                     <p className="text-sm sm:text-base text-m2e-text-secondary leading-snug">{step.description}</p>
+                    {/* Step 4's payoff, live: the pot this walking feeds, off the same /explorer/stats
+                        season as the season card. Between seasons there is no pot, so nothing shows. */}
+                    {i === ONBOARDING_STEPS.length - 1 && season && (
+                      <Link
+                        to="/leaderboard"
+                        className="pixel-card mt-1 px-3 py-2 flex flex-col items-center gap-1 hover:-translate-y-0.5 transition-transform"
+                      >
+                        <span className="text-[10px] sm:text-xs tracking-[0.25em] uppercase text-m2e-text-muted flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-m2e-success animate-pulse-ring [--pulse-ring:var(--color-m2e-success)]" />
+                          Season pot
+                        </span>
+                        <span className="text-xl sm:text-2xl uppercase tracking-wide text-m2e-accent leading-none">
+                          {season.budgetEnj.toLocaleString()} ENJ
+                        </span>
+                        <span className="text-xs text-m2e-text-secondary flex flex-col sm:flex-row items-center sm:gap-1">
+                          <span className="whitespace-nowrap">{seasonDaysLeft === 0 ? 'Closes today' : `${seasonDaysLeft}d left`}</span>
+                          <span className="hidden sm:inline">·</span>
+                          <span className="whitespace-nowrap">{season.entrants} rider{season.entrants === 1 ? '' : 's'} in</span>
+                        </span>
+                      </Link>
+                    )}
                   </motion.div>
                 ))}
               </motion.div>
