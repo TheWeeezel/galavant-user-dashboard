@@ -217,7 +217,7 @@ export function Layout() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-white/5 border-2 border-white/20 text-white/80 px-4 py-2 rounded-md hover:border-m2e-accent hover:text-m2e-accent hover:bg-m2e-accent/10 transition-colors text-sm uppercase tracking-wider"
             >
-              Android · Open testing
+              Android · Google Play
             </a>
             <a
               href={TESTFLIGHT_URL}

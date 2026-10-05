@@ -50,7 +50,7 @@ function formatSat(n: number): string {
 // ── Data ────────────────────────────────────────────────────────────────────
 
 const ONBOARDING_STEPS = [
-  { icon: Download, title: 'Download', description: 'iOS or Android' },
+  { icon: Download, title: 'Download', description: 'Google Play or TestFlight' },
   { icon: Login, title: 'Sign In', description: 'Google account' },
   { icon: ShoppingCart, title: 'Get a Bike', description: 'Shop or market' },
   { icon: Human, title: 'Walk', description: 'Earn WATTS' },

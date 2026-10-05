@@ -1,19 +1,18 @@
+import { PLAY_STORE_URL } from '../config/appLinks';
+
 /**
- * Galavant on Android is in open testing on Google Play. The Play Store
- * listing URL works for everyone in supported countries — Play handles the
- * "Become a tester" opt-in implicitly when the user installs.
+ * Galavant on Android is live on Google Play (production track). The listing
+ * URL is the plain store page — anyone in a supported country installs from it.
  *
  * Visual variants:
  *   - default: matches the big "Download on iOS" CTA button
  *   - compact: matches the smaller secondary buttons used on inline cards
  */
 
-const PLAY_STORE_LISTING_URL = 'https://play.google.com/store/apps/details?id=com.m2e.opnet';
-
 interface Props {
   /**
    * Override the Play Store URL (e.g. from changelog.json's `playStoreUrl`
-   * field). Falls back to the open-testing opt-in URL.
+   * field). Falls back to the Play Store listing.
    */
   playStoreUrl?: string;
   variant?: 'default' | 'compact';
@@ -33,11 +32,11 @@ export function AndroidPlayStoreButton({ playStoreUrl, variant = 'default', clas
   const buttonClass = variant === 'compact'
     ? 'pixel-btn inline-flex items-center gap-2 text-sm px-4 py-2 bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50 no-underline whitespace-nowrap'
     : 'pixel-btn inline-flex items-center gap-2 text-base px-6 py-3 bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50 no-underline';
-  const label = variant === 'compact' ? 'Android' : 'Get it on Android';
+  const label = variant === 'compact' ? 'Google Play' : 'Get it on Google Play';
 
   return (
     <a
-      href={playStoreUrl ?? PLAY_STORE_LISTING_URL}
+      href={playStoreUrl ?? PLAY_STORE_URL}
       target="_blank"
       rel="noopener noreferrer"
       className={`${buttonClass}${className ? ` ${className}` : ''}`}
