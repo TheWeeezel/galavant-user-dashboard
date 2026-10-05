@@ -11,6 +11,8 @@ interface RoadmapItem {
   description: string;
   icon: React.ComponentType<any>;
   status: 'done' | 'current' | 'upcoming';
+  /** Replaces the status badge, in gold, when the status word would say too little. */
+  badge?: { label: string; icon: React.ComponentType<any> };
 }
 
 interface RoadmapPhase {
@@ -95,6 +97,7 @@ const PHASES: RoadmapPhase[] = [
         description: '28 pixel badges for your longest rides, your total distance, your streaks and your firsts, most of them paying toolboxes, parts or minting tools, plus your personal bests. Live for Genesis holders first; everyone and public player pages come next.',
         icon: Trophy,
         status: 'current',
+        badge: { label: 'Live for Genesis owners', icon: Crown },
       },
     ],
   },
@@ -371,9 +374,11 @@ export function Roadmap() {
                                 {item.title}
                               </h3>
                             </div>
-                            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase tracking-widest pixel-border ${config.badgeClass}`}>
-                              <StatusIcon status={item.status} />
-                              {config.badge}
+                            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase tracking-widest pixel-border ${
+                              item.badge ? 'bg-m2e-legendary/15 text-m2e-legendary border-current' : config.badgeClass
+                            }`}>
+                              {item.badge ? <item.badge.icon className="w-3.5 h-3.5" /> : <StatusIcon status={item.status} />}
+                              {item.badge?.label ?? config.badge}
                             </span>
                           </div>
 
