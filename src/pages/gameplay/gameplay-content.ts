@@ -461,6 +461,33 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'In Galavant, a bike isn\'t just a vehicle — it\'s a piece of equipment that needs upkeep. Building a high-Durability bike with the right parts means more time at peak earning rate, faster repairs, and better returns over the long run. Multi-bike riders gain an additional edge by rotating between bikes during repair downtime, turning fleet ownership into a real strategic advantage.' },
         ],
       },
+      {
+        slug: 'weather',
+        title: 'Weather',
+        content: [
+          { type: 'paragraph', text: 'The sky in the app follows the clock from dawn to night. For Genesis holders it also shows the real weather where you ride: clouds, fog, drizzle, rain, storms, sleet, snow and summer heat, at every hour of the day. Weather is live for Genesis holders only for now.' },
+          { type: 'heading', text: 'Where the Weather Comes From' },
+          { type: 'list', items: [
+            'During a ride, the sky shows the weather where that ride started.',
+            'Between rides, it shows the weather now at the start of your last ride. The app does not read your location outside a ride.',
+            'Each ride keeps the weather it started in. You will find it on the ride screen, on the ride summary and in your ride history.',
+          ]},
+          { type: 'heading', text: 'What Weather Does to a Ride' },
+          { type: 'table', headers: ['Conditions', 'Effect'], rows: [
+            ['Drizzle or rain', 'Luck up: better toolbox chances on that ride.'],
+            ['Riding after sunset', 'Luck up, and it adds to the rain bonus.'],
+            ['Heat or frost', 'Extra wear: your bike loses condition faster.'],
+            ['Heavy rain, storms, sleet or snow', 'No bonus. Galavant never rewards riding in dangerous weather.'],
+          ]},
+          { type: 'list', items: [
+            'Weather never adds WATTS and never touches your energy or HP. Extra wear works like any wear: a worn bike drops below its full earning rate sooner.',
+            'The luck boost only applies to rides that pass the usual ride checks.',
+            'The ride screen shows LUCK UP or EXTRA WEAR when they apply.',
+          ]},
+          { type: 'tip', text: 'Stay safe. A little drizzle is fine; in a storm the best ride is the one you take tomorrow.' },
+          { type: 'paragraph', text: 'Weather data: MET Norway.' },
+        ],
+      },
     ],
   },
 
