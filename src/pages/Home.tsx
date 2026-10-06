@@ -72,7 +72,7 @@ const ROADMAP_ITEMS: {
   { title: 'Achievements', icon: Trophy, status: 'current', badge: { label: 'Live for Genesis owners', icon: Crown } },
   { title: 'Bike Legacy', icon: Heart, status: 'upcoming' },
   { title: 'Guilds / Crews', icon: Users, status: 'upcoming' },
-  { title: 'Weather', icon: Cloud, status: 'current', badge: { label: 'Live for Genesis owners', icon: Crown } },
+  { title: 'Weather', icon: Cloud, status: 'current', badge: { label: 'Genesis holders only', icon: Crown } },
   { title: 'Zones', icon: Globe, status: 'upcoming' },
   { title: 'Lucky Events', icon: Gift, status: 'upcoming' },
 ];

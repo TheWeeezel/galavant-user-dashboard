@@ -119,10 +119,10 @@ const PHASES: RoadmapPhase[] = [
       },
       {
         title: 'Weather Modifiers',
-        description: 'Real-world weather comes to your rides: rain and night raise your luck, heat and frost wear your bike faster, and the sky in the app shows the weather where you ride. Live for Genesis holders first.',
+        description: 'Real-world weather comes to your rides: rain and night raise your luck, heat and frost wear your bike faster, and the sky in the app shows the weather where you ride. A Genesis holder feature.',
         icon: Cloud,
         status: 'current',
-        badge: { label: 'Live for Genesis owners', icon: Crown },
+        badge: { label: 'Genesis holders only', icon: Crown },
       },
     ],
   },
