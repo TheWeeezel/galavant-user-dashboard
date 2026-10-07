@@ -77,6 +77,13 @@ const ROADMAP_ITEMS: {
   { title: 'Lucky Events', icon: Gift, status: 'upcoming' },
 ];
 
+// The quest log shows what is being played first, then what is cleared, then what is locked.
+const ROADMAP_GROUPS = ([
+  { status: 'current', label: 'In Progress', icon: Clock, color: 'text-m2e-accent' },
+  { status: 'done', label: 'Done', icon: Check, color: 'text-m2e-success-deep' },
+  { status: 'upcoming', label: 'Coming Soon', icon: Lock, color: 'text-m2e-text-muted' },
+] as const).map((group) => ({ ...group, items: ROADMAP_ITEMS.filter((item) => item.status === group.status) }));
+
 
 const MATERIALS = [
   ['Steel', 'var(--color-m2e-common)'],
@@ -245,16 +252,6 @@ export function Home() {
   const stats = useQuery({ queryKey: ['stats'], queryFn: fetchStats });
   // The live season, straight off /explorer/stats — one source for the banner and the season card,
   // so a budget change on the box reaches both within the endpoint's minute of cache.
-  // The quest log opens on what is being played now: scroll its window (not the page) so the
-  // current quest sits in the middle, cleared quests above, locked ones below.
-  const questLogRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const box = questLogRef.current;
-    const current = box?.querySelector<HTMLElement>('[data-current]');
-    if (!box || !current) return;
-    const offset = current.getBoundingClientRect().top - box.getBoundingClientRect().top;
-    box.scrollTop += offset - (box.clientHeight - current.offsetHeight) / 2;
-  }, []);
   const season = stats.data?.season ?? null;
   const seasonDaysLeft = season
     ? Math.max(0, Math.ceil((new Date(season.closesAt).getTime() - Date.now()) / 86_400_000))
@@ -938,59 +935,82 @@ export function Home() {
             </p>
           </div>
 
-          {/* A quest log you scroll through, not a wall of tiles: one row per quest on a timeline,
-              in a window that opens on what is being played now — cleared above, locked below. */}
-          <div className="pixel-card p-0 relative max-w-3xl mx-auto w-full overflow-hidden">
-            <div ref={questLogRef} className="max-h-[20rem] overflow-y-auto overscroll-contain px-4 md:px-6 py-3">
+          {/* The quest log, grouped: in progress, done, coming soon. On a phone it is plain rows in
+              one framed window; from md up the frame and window drop out (display: contents) and
+              every quest is a card, two columns on a tablet, one band per group from lg up. */}
+          <div className="pixel-card p-0 relative max-w-3xl mx-auto w-full overflow-hidden md:contents">
+            <div className="max-h-[20rem] overflow-y-auto overscroll-contain px-4 py-3 md:contents">
               <motion.div
-                className="relative"
+                className="space-y-4 md:space-y-8 md:mb-10"
                 variants={stagger}
                 initial="hidden"
                 whileInView="visible"
                 viewport={vp}
               >
-                <div className="absolute left-[19px] top-4 bottom-4 w-[2px] bg-gradient-to-b from-m2e-success via-m2e-accent to-m2e-border" />
-                {ROADMAP_ITEMS.map((item) => {
-                  const isDone = item.status === 'done';
-                  const isCurrent = item.status === 'current';
+                {ROADMAP_GROUPS.filter((group) => group.items.length > 0).map((group) => {
+                  const wide = group.status === 'current';
                   return (
-                    <motion.div
-                      key={item.title}
-                      data-current={isCurrent || undefined}
-                      variants={staggerItem}
-                      className={`relative pl-12 pr-2 py-2.5 my-1 flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 ${
-                        isCurrent ? 'bg-m2e-accent/5 ring-2 ring-m2e-accent/30' : ''
-                      } ${isDone ? 'opacity-70' : ''}`}
-                    >
-                      <span className={`absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 ${
-                        isDone ? 'bg-m2e-success border-m2e-success-deep'
-                          : isCurrent ? 'bg-m2e-accent border-m2e-accent-dark animate-pulse-ring'
-                            : 'bg-m2e-card border-m2e-border'
-                      }`} />
-                      <div className="flex items-center gap-3 min-w-0">
-                        <item.icon className={`w-6 h-6 shrink-0 ${isDone ? 'text-m2e-success' : isCurrent ? 'text-m2e-accent' : 'text-m2e-text-muted'}`} />
-                        <span className="text-sm md:text-base uppercase tracking-wider text-m2e-text leading-tight">{item.title}</span>
+                    <div key={group.status}>
+                      <div className={`flex items-center gap-2 pb-1.5 md:pb-3 ${group.color}`}>
+                        <group.icon className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
+                        <span className="text-[10px] md:text-xs uppercase tracking-[0.3em]">{group.label}</span>
+                        <span className="text-[10px] md:text-xs text-m2e-text-muted">· {group.items.length}</span>
+                        <span className="flex-1 h-px md:h-0.5 bg-m2e-border" />
                       </div>
-                      <span className={`shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] uppercase tracking-widest pixel-border ${
-                        item.badge
-                          ? 'bg-m2e-legendary/15 text-m2e-legendary border-current'
-                          : isDone
-                            ? 'bg-m2e-success/15 text-m2e-success border-current'
-                            : isCurrent
-                              ? 'bg-m2e-accent/15 text-m2e-accent border-current'
-                              : 'bg-m2e-bg-alt text-m2e-text-muted border-m2e-border'
-                      }`}>
-                        {item.badge ? <item.badge.icon className="w-2.5 h-2.5" /> : isDone ? <Check className="w-2.5 h-2.5" /> : isCurrent ? <Clock className="w-2.5 h-2.5" /> : <Lock className="w-2.5 h-2.5" />}
-                        {item.badge?.label ?? (isDone ? 'Done' : isCurrent ? 'Now' : 'Soon')}
-                      </span>
-                    </motion.div>
+                      <div className="flex flex-col gap-1 md:grid md:grid-cols-2 md:gap-4 lg:grid-cols-[repeat(auto-fit,minmax(9rem,1fr))]">
+                        {group.items.map((item) => {
+                          const isDone = item.status === 'done';
+                          const isCurrent = item.status === 'current';
+                          return (
+                            <motion.div
+                              key={item.title}
+                              variants={staggerItem}
+                              className={`pixel-card-md relative overflow-hidden px-2 py-2.5 flex items-center justify-between gap-3 md:transition-transform md:hover:-translate-y-0.5 ${
+                                wide ? 'md:p-5 md:flex-wrap' : 'md:p-4 lg:flex-col lg:items-start lg:justify-start lg:gap-4'
+                              } ${isCurrent ? 'bg-m2e-accent/5 max-md:ring-2 max-md:ring-m2e-accent/30 md:bg-m2e-card md:border-m2e-accent/60' : ''}`}
+                            >
+                              {/* Accent stripe across the top of a card being played now */}
+                              {isCurrent && (
+                                <div className="hidden md:block absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-m2e-accent to-transparent" />
+                              )}
+                              <div className={`flex items-center gap-3 min-w-0 ${wide ? 'md:gap-4' : 'lg:flex-col lg:items-start'}`}>
+                                <div className={`shrink-0 md:w-11 md:h-11 md:rounded-lg md:border md:flex md:items-center md:justify-center ${
+                                  isDone ? 'md:bg-m2e-success-soft md:border-m2e-success/40'
+                                    : isCurrent ? 'md:bg-m2e-accent/15 md:border-m2e-accent/40'
+                                      : 'md:bg-m2e-bg-alt md:border-m2e-border'
+                                }`}>
+                                  <item.icon className={`w-6 h-6 ${isDone ? 'text-m2e-success' : isCurrent ? 'text-m2e-accent' : 'text-m2e-text-muted'}`} />
+                                </div>
+                                <span className={`text-sm md:text-base uppercase tracking-wider text-m2e-text leading-tight ${wide ? 'md:text-lg lg:text-xl' : ''}`}>
+                                  {item.title}
+                                </span>
+                              </div>
+                              <span className={`shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 md:px-2 md:py-1 text-[9px] md:text-[10px] uppercase tracking-widest pixel-border ${
+                                wide ? '' : 'lg:mt-auto'
+                              } ${
+                                item.badge
+                                  ? 'bg-m2e-legendary/15 text-m2e-legendary border-current'
+                                  : isDone
+                                    ? 'bg-m2e-success/15 text-m2e-success border-current'
+                                    : isCurrent
+                                      ? 'bg-m2e-accent/15 text-m2e-accent border-current'
+                                      : 'bg-m2e-bg-alt text-m2e-text-muted border-m2e-border'
+                              }`}>
+                                {item.badge ? <item.badge.icon className="w-2.5 h-2.5 md:w-3 md:h-3" /> : isDone ? <Check className="w-2.5 h-2.5 md:w-3 md:h-3" /> : isCurrent ? <Clock className="w-2.5 h-2.5 md:w-3 md:h-3" /> : <Lock className="w-2.5 h-2.5 md:w-3 md:h-3" />}
+                                {item.badge?.label ?? (isDone ? 'Done' : isCurrent ? 'Now' : 'Soon')}
+                              </span>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   );
                 })}
               </motion.div>
             </div>
-            {/* Fades at both ends say there is more above and below. */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-m2e-card to-transparent" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-m2e-card to-transparent" />
+            {/* Fades at both ends of the phone window say there is more above and below. */}
+            <div className="md:hidden pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-m2e-card to-transparent" />
+            <div className="md:hidden pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-m2e-card to-transparent" />
           </div>
 
           <div className="text-center">

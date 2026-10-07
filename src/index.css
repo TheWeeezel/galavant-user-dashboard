@@ -182,6 +182,21 @@ body {
     box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow);
   }
 
+  /* .pixel-card from md up only: the Home quest log is plain rows in one window on a phone
+     and a card per quest on a desktop. */
+  @media (min-width: 48rem) {
+    .pixel-card-md {
+      background-color: var(--color-m2e-card);
+      border-radius: var(--radius-pixel-md);
+      border-style: solid;
+      border-width: var(--border-width-pixel);
+      border-bottom-width: calc(var(--border-width-pixel) + 2px);
+      border-color: var(--color-m2e-border);
+      border-top-color: var(--color-m2e-border-light);
+      box-shadow: 2px 2px 0px 0px var(--color-m2e-shadow);
+    }
+  }
+
   .pixel-badge-common {
     background-color: color-mix(in srgb, var(--color-m2e-common) 18%, var(--color-m2e-bg));
     color: var(--color-m2e-common);
