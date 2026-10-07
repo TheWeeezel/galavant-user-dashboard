@@ -759,6 +759,18 @@ export function storeCheckout(bikeType: string) {
 }
 
 /**
+ * Asks the server to settle the buyer's own card orders with Stripe directly. The webhook normally
+ * delivers the bike before the buyer is back on the page; this is the backstop for the order whose
+ * webhook was lost or late, so a paid card never sits on "pending" until someone notices by hand.
+ */
+export function reconcileStoreOrders() {
+  return fetchAuthJson<{ orders: Array<{ product: string; status: string; bikeId: string | null }> }>(
+    '/store/orders/reconcile',
+    { method: 'POST' },
+  );
+}
+
+/**
  * What the shop hands a buyer who pays in ENJ: an address, an amount and a deadline.
  *
  * Deliberately NOT a checkout URL, which is what this used to expect. There is no hosted page to

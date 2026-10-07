@@ -7,7 +7,7 @@ import { StoreBikeCard, type PayMethod } from '../components/StoreBikeCard';
 import { EnjPaymentPanel } from '../components/EnjPaymentPanel';
 import { StoreBatchStrip } from '../components/StoreBatchStrip';
 import { byBikeTypeOrder } from '../config/bikeTypes';
-import { fetchStoreProducts, fetchStoreStock, storeCheckout, storeCheckoutEnj, type EnjPayment, type StoreProduct } from '../api';
+import { fetchStoreProducts, fetchStoreStock, reconcileStoreOrders, storeCheckout, storeCheckoutEnj, type EnjPayment, type StoreProduct } from '../api';
 
 /** The opening day, read in UTC — the same calendar day the server means, in every timezone. */
 function formatOpensAt(iso: string): string {
@@ -35,6 +35,17 @@ export default function Store() {
   // from "checkout not switched on yet". The shop stays fully usable when this one fails, so a
   // failure here must never surface as an error — it only costs the card a precise sentence.
   const stock = useQuery({ queryKey: ['store-stock'], queryFn: fetchStoreStock, retry: false, refetchInterval: 30_000 });
+
+  // Back from Stripe: settle this buyer's card orders once. The webhook has almost always delivered
+  // the bike already and this returns nothing new; when it has not, this is what delivers it.
+  useEffect(() => {
+    if (status !== 'success' || !isAuthenticated) return;
+    reconcileStoreOrders()
+      .catch(() => undefined)
+      .finally(() => {
+        for (const key of ['store-products', 'store-stock']) queryClient.invalidateQueries({ queryKey: [key] });
+      });
+  }, [status, isAuthenticated, queryClient]);
 
   // The browser needs a moment to follow the redirect. Without this the button would snap back to
   // "Buy with card" while the checkout page is already loading, which reads as a click that failed.
@@ -125,7 +136,7 @@ export default function Store() {
 
         {status === 'success' && (
           <div className="pixel-card p-4 border-m2e-success text-m2e-success-deep">
-            Payment received — your new bike is being minted and will appear in your Profile shortly. 🚲
+            Payment received — your new bike is in your account. Open the Galavant app and take it for a walk. 🚲
           </div>
         )}
         {status === 'cancel' && (
