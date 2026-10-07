@@ -15,12 +15,15 @@
     <div id="root"></div>
     <script>
       // Sky clock: the site follows the visitor's local time — night from
-      // 20:00 to 05:00. Set before first paint so there is no theme flash.
+      // 20:00 to 05:00 — unless they pinned DAY or NIGHT (src/hooks/useSky.ts,
+      // same storage key). Set before first paint so there is no theme flash.
       (function () {
         var night = false;
         try {
+          var mode = null;
+          try { mode = localStorage.getItem('galavant-sky'); } catch (e) {}
           var h = new Date().getHours();
-          night = h >= 20 || h < 5;
+          night = mode === 'night' || (mode !== 'day' && (h >= 20 || h < 5));
         } catch (e) {}
         document.documentElement.dataset.theme = night ? 'night' : 'day';
       })();

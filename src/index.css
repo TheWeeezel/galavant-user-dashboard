@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
+/* `night:` styles an element under the night sky — the whole page at night, or a band that
+   carries data-theme="night" on its own in daylight. */
+@custom-variant night (&:where([data-theme="night"], [data-theme="night"] *));
+
 @theme {
   --color-m2e-bg: #F0EBE0;
   --color-m2e-bg-alt: #E8E2D4;
+  --color-m2e-band: #E6DDCB;     /* sunk band behind every other Home section */
   --color-m2e-card: #FEFCF7;
   --color-m2e-card-alt: #F5F1E8;
   --color-m2e-surface: #FFFFFF;
@@ -161,7 +166,7 @@ body {
     border-color: var(--color-m2e-accent);
   }
   .pixel-btn-outline:hover {
-    background-color: rgba(120, 102, 213, 0.1);
+    background-color: color-mix(in srgb, var(--color-m2e-accent) 10%, transparent);
   }
 
   .pixel-btn-danger {
@@ -487,13 +492,17 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   The Sky Clock — night theme (studio-violet). Set by the inline
-   script in index.html (auto by visitor hour) or the nav toggle.
+   The Sky Clock — night theme (studio-violet). Set on <html> by the
+   inline script in index.html (auto by visitor hour) or the SKY switch
+   (src/hooks/useSky.ts). Any element can carry data-theme="night" too:
+   its subtree then takes the night tokens, like the High Scores band.
    @theme compiles to :root, so this later block wins at night.
    ───────────────────────────────────────────────────────────── */
-:root[data-theme="night"] {
+[data-theme="night"] {
+  color-scheme: dark;
   --color-m2e-bg: #171225;
   --color-m2e-bg-alt: #131022;
+  --color-m2e-band: #0F0C1C;
   --color-m2e-card: #221C38;
   --color-m2e-card-alt: #2B2447;
   --color-m2e-border: #3B3261;
@@ -563,4 +572,21 @@ body {
 }
 :root[data-theme="night"] .nightstars {
   opacity: 0.85;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Home section bands. Every other section sits on a sunk band so
+   the page reads in chapters, in either sky. border-image paints the
+   band past the page container to both screen edges; that paint is
+   ink overflow, so it never adds a horizontal scrollbar.
+   ───────────────────────────────────────────────────────────── */
+.band-sunk {
+  color: var(--color-m2e-text);
+  border-image: linear-gradient(
+      to bottom,
+      var(--color-m2e-border) 0 2px,
+      var(--color-m2e-band) 2px calc(100% - 2px),
+      var(--color-m2e-border) calc(100% - 2px)
+    )
+    fill 0 / 0 / 0 100vw;
 }

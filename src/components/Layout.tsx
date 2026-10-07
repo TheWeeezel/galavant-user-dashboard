@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router';
-import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe, Coins, Store, Trophy } from 'pixelarticons/react';
+import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe, Coins, Store, Trophy, Clock, Sun, Moon } from 'pixelarticons/react';
 import { MusicPlayer } from './MusicPlayer';
 import { LoginModal } from './LoginModal';
 import { useAuth } from '../contexts/AuthContext';
+import { SKY_MODES, cycleSkyMode, setSkyMode, useSkyMode, type SkyMode } from '../hooks/useSky';
 import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../config/appLinks';
 
 export function Layout() {
@@ -127,6 +128,7 @@ export function Layout() {
                 Login
               </button>
             )}
+            <SkyCycleButton />
           </nav>
 
           {/* Mobile hamburger */}
@@ -192,6 +194,7 @@ export function Layout() {
                 Login
               </button>
             )}
+            <SkyChips className="justify-between mt-2 pt-3 px-2 border-t border-white/10" />
           </nav>
         )}
       </header>
@@ -276,6 +279,7 @@ export function Layout() {
               </div>
             ))}
           </div>
+          <SkyChips className="justify-center" />
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-4 pt-4 border-t border-white/10 w-full text-xs text-white/50 uppercase tracking-[0.25em]">
             <span>Powered by Enjin</span>
             <span className="hidden sm:inline text-white/20">|</span>
@@ -292,6 +296,58 @@ export function Layout() {
       </footer>
 
       <MusicPlayer />
+    </div>
+  );
+}
+
+const SKY_ICON: Record<SkyMode, React.ComponentType<{ className?: string }>> = { auto: Clock, day: Sun, night: Moon };
+const SKY_HINT: Record<SkyMode, string> = {
+  auto: 'Sky follows your clock, night from 20:00 to 05:00',
+  day: 'Day sky',
+  night: 'Night sky',
+};
+
+/** The desktop nav's SKY switch: one button that steps AUTO → DAY → NIGHT, like the app's sky tap. */
+function SkyCycleButton() {
+  const mode = useSkyMode();
+  const Icon = SKY_ICON[mode];
+  return (
+    <button
+      type="button"
+      onClick={cycleSkyMode}
+      title={`${SKY_HINT[mode]} · click to change`}
+      aria-label={`Sky: ${mode}. Change the sky`}
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-colors uppercase text-white/90 hover:text-white hover:bg-white/5 cursor-pointer [text-shadow:0_1px_2px_rgba(0,0,0,0.75)]"
+    >
+      <Icon className="w-5 h-5" />
+      <span className="hidden lg:inline">{mode}</span>
+    </button>
+  );
+}
+
+/** The SKY setting as the app's Player tab shows it: AUTO / DAY / NIGHT chips. */
+function SkyChips({ className = '' }: { className?: string }) {
+  const mode = useSkyMode();
+  return (
+    <div className={`flex items-center gap-3 ${className}`}>
+      <span className="text-xs text-white/60 uppercase tracking-[0.25em]">Sky</span>
+      <div role="radiogroup" aria-label="Sky" className="flex border-2 border-white/20 rounded-sm overflow-hidden">
+        {SKY_MODES.map((m) => (
+          <button
+            key={m}
+            type="button"
+            role="radio"
+            aria-checked={m === mode}
+            title={SKY_HINT[m]}
+            onClick={() => setSkyMode(m)}
+            className={`px-2.5 py-1 text-xs uppercase tracking-wider transition-colors cursor-pointer ${
+              m === mode ? 'bg-m2e-accent text-m2e-text-on-accent' : 'text-white/60 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            {m}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
