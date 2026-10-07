@@ -13,7 +13,6 @@ import { Leaderboard } from './pages/Leaderboard';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { PressKit } from './pages/PressKit';
 import { Wallet } from './pages/Wallet';
-import Store from './pages/Store';
 import { GameplayLayout } from './pages/gameplay/GameplayLayout';
 import { GameplayPage } from './pages/gameplay/GameplayPage';
 
@@ -23,6 +22,18 @@ function ScrollToTop() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [pathname]);
   return null;
+}
+
+/**
+ * The bike shop used to be its own page. /store stays as the short link — it is in posts, and it is
+ * Stripe's return address (success_url / cancel_url in the server's bike-store.ts) — and lands on the
+ * market's Bike Shop tab with ?status= and ?session_id= carried along.
+ */
+function ToBikeShop() {
+  const { search } = useLocation();
+  const params = new URLSearchParams(search);
+  params.set('tab', 'shop');
+  return <Navigate to={`/market?${params}`} replace />;
 }
 
 export function App() {
@@ -48,11 +59,11 @@ export function App() {
           <Route path="press-kit" element={<PressKit />} />
           <Route path="press" element={<Navigate to="/press-kit" replace />} />
           <Route path="wallet" element={<Wallet />} />
-          <Route path="store" element={<Store />} />
+          <Route path="store" element={<ToBikeShop />} />
           {/* ONE market (task 7dc61fc3): the NFT "Trading Post" merged into /market. Kept so
               old links land on the merged shop rather than 404ing. */}
           <Route path="nft-market" element={<Navigate to="/market" replace />} />
-          <Route path="shop" element={<Navigate to="/store" replace />} />
+          <Route path="shop" element={<ToBikeShop />} />
           {/* ENJ staking is the only staking — /staking kept so old links still land */}
           {/* Staking now lives inside the Wallet (account) page. */}
           <Route path="staking" element={<Navigate to="/wallet" replace />} />

@@ -1195,7 +1195,7 @@ export function Home() {
                 </div>
 
                 <div className="pt-2">
-                  <Link to="/market" className="text-m2e-accent hover:underline text-base uppercase tracking-wider">
+                  <Link to="/market?tab=shop" className="text-m2e-accent hover:underline text-base uppercase tracking-wider">
                     Or buy your first bike on the web &rarr;
                   </Link>
                 </div>

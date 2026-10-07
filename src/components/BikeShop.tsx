@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
-import { LoginModal } from '../components/LoginModal';
-import { StoreBikeCard, type PayMethod } from '../components/StoreBikeCard';
-import { EnjPaymentPanel } from '../components/EnjPaymentPanel';
-import { StoreBatchStrip } from '../components/StoreBatchStrip';
+import { StoreBikeCard, type PayMethod } from './StoreBikeCard';
+import { EnjPaymentPanel } from './EnjPaymentPanel';
+import { StoreBatchStrip } from './StoreBatchStrip';
 import { byBikeTypeOrder } from '../config/bikeTypes';
 import { fetchStoreProducts, fetchStoreStock, reconcileStoreOrders, storeCheckout, storeCheckoutEnj, type EnjPayment, type StoreProduct } from '../api';
 
@@ -14,9 +13,13 @@ function formatOpensAt(iso: string): string {
   return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', timeZone: 'UTC' });
 }
 
-export default function Store() {
+/**
+ * The bike shop: brand-new bikes, paid by card or in ENJ. It used to be its own page (/store) and is
+ * now the Bike Shop tab of the market; /store still redirects here, and Stripe's return lands on it.
+ * The market page owns the sign-in dialog, so a buy from a signed-out visitor asks it to open.
+ */
+export function BikeShop({ onSignIn }: { onSignIn: () => void }) {
   const { isAuthenticated } = useAuth();
-  const [showLogin, setShowLogin] = useState(false);
   const queryClient = useQueryClient();
   const [params] = useSearchParams();
   const status = params.get('status'); // success | cancel (from the payment redirect)
@@ -98,7 +101,7 @@ export default function Store() {
   });
 
   const buy = (product: StoreProduct, method: PayMethod) => {
-    if (!isAuthenticated) { setShowLogin(true); return; }
+    if (!isAuthenticated) { onSignIn(); return; }
     checkout.mutate({ type: product.type, method });
   };
 
@@ -116,119 +119,104 @@ export default function Store() {
   const running = (checkout.isPending || leaving) ? checkout.variables ?? null : null;
 
   return (
-    <>
-      {/* Hero strip */}
-      <div className="border-b-2 border-m2e-border bg-m2e-chrome text-white relative overflow-hidden scanlines-light">
-        <div className="mx-auto max-w-5xl px-4 md:px-8 py-10 md:py-14 relative z-10 space-y-4">
-          <div className="section-label">Fresh Stock</div>
-          <h1 className="text-5xl md:text-7xl uppercase tracking-wide text-chroma-hero leading-[0.9]">
-            The Bike<br />
-            <span className="text-m2e-accent">Shop.</span>
-          </h1>
-          <p className="text-white/70 text-lg md:text-xl max-w-2xl">
-            Brand-new bikes, paid by card or in ENJ from your own wallet — playable immediately,
-            exportable to your Enjin Wallet anytime.
-          </p>
+    <div className="space-y-8">
+      <p className="text-m2e-text-secondary text-lg max-w-3xl">
+        Brand-new bikes from the town's shop, paid by card or in ENJ from your own wallet — playable
+        immediately, exportable to your Enjin Wallet anytime.
+      </p>
+
+      {status === 'success' && (
+        <div className="pixel-card p-4 border-m2e-success text-m2e-success-deep">
+          Payment received — your new bike is in your account. Open the Galavant app and take it for a walk. 🚲
         </div>
-      </div>
+      )}
+      {status === 'cancel' && (
+        <div className="pixel-card p-4 text-m2e-text-secondary">Checkout cancelled — no charge was made.</div>
+      )}
 
-      <div className="mx-auto max-w-5xl px-4 md:px-8 py-12 space-y-8">
+      {enjPayment && (
+        <div ref={tillRef} style={{ scrollMarginTop: '12px' }}>
+          <EnjPaymentPanel
+            payment={enjPayment}
+            displayName={products.find((p) => p.type === enjPayment.product)?.displayName ?? enjPayment.product}
+            onClose={() => setEnjPayment(null)}
+          />
+        </div>
+      )}
 
-        {status === 'success' && (
-          <div className="pixel-card p-4 border-m2e-success text-m2e-success-deep">
-            Payment received — your new bike is in your account. Open the Galavant app and take it for a walk. 🚲
-          </div>
-        )}
-        {status === 'cancel' && (
-          <div className="pixel-card p-4 text-m2e-text-secondary">Checkout cancelled — no charge was made.</div>
-        )}
-
-        {enjPayment && (
-          <div ref={tillRef} style={{ scrollMarginTop: '12px' }}>
-            <EnjPaymentPanel
-              payment={enjPayment}
-              displayName={products.find((p) => p.type === enjPayment.product)?.displayName ?? enjPayment.product}
-              onClose={() => setEnjPayment(null)}
+      {catalog.isPending ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[0, 1, 2, 3].map((i) => <div key={i} className="pixel-card h-80 animate-pulse" />)}
+        </div>
+      ) : catalog.isError ? (
+        <div className="pixel-card p-6 space-y-3">
+          <h2 className="text-2xl uppercase tracking-wide">Shop unreachable</h2>
+          <p className="text-m2e-text-secondary">The bike list could not be loaded — nothing was charged.</p>
+          <button className="pixel-btn pixel-btn-secondary px-4 py-3 text-sm" onClick={() => catalog.refetch()}>
+            Try again
+          </button>
+        </div>
+      ) : products.length === 0 ? (
+        <div className="pixel-card p-6 space-y-2">
+          <h2 className="text-2xl uppercase tracking-wide">No bikes listed</h2>
+          <p className="text-m2e-text-secondary">The shop has nothing on the shelf right now — check back soon.</p>
+        </div>
+      ) : (
+        <>
+          {/* The bikes stay on the shelf even while the till is shut. A closed checkout is a
+              reason to explain the wait, not a reason to hide what the shop sells and what it
+              costs — hiding it was the old behaviour, and it made the shop look empty. */}
+          {catalog.data?.priceBand && (
+            <StoreBatchStrip
+              band={catalog.data.priceBand}
+              ladder={catalog.data.priceLadder ?? null}
+              products={products}
+              stock={stock.data}
             />
-          </div>
-        )}
+          )}
 
-        {catalog.isPending ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[0, 1, 2, 3].map((i) => <div key={i} className="pixel-card h-80 animate-pulse" />)}
-          </div>
-        ) : catalog.isError ? (
-          <div className="pixel-card p-6 space-y-3">
-            <h2 className="text-2xl uppercase tracking-wide">Shop unreachable</h2>
-            <p className="text-m2e-text-secondary">The bike list could not be loaded — nothing was charged.</p>
-            <button className="pixel-btn pixel-btn-secondary px-4 py-3 text-sm" onClick={() => catalog.refetch()}>
-              Try again
-            </button>
-          </div>
-        ) : products.length === 0 ? (
-          <div className="pixel-card p-6 space-y-2">
-            <h2 className="text-2xl uppercase tracking-wide">No bikes listed</h2>
-            <p className="text-m2e-text-secondary">The shop has nothing on the shelf right now — check back soon.</p>
-          </div>
-        ) : (
-          <>
-            {/* The bikes stay on the shelf even while the till is shut. A closed checkout is a
-                reason to explain the wait, not a reason to hide what the shop sells and what it
-                costs — hiding it was the old behaviour, and it made the shop look empty. */}
-            {catalog.data?.priceBand && (
-              <StoreBatchStrip
-                band={catalog.data.priceBand}
-                ladder={catalog.data.priceLadder ?? null}
-                products={products}
-                stock={stock.data}
-              />
-            )}
-
-            {enjOpensAt ? (
-              <div className="pixel-card p-4 text-m2e-text-secondary space-y-1">
-                <div className="section-label text-m2e-accent">Paying in ENJ opens {formatOpensAt(enjOpensAt)}</div>
-                <p>
-                  The prices below are the real ones. Everything the shop sells before the relaunch
-                  is wiped on that day, so the ENJ till stays shut until it counts — no bike here is
-                  worth real ENJ yet. Meanwhile you can earn bikes in-game and from breeding.
-                </p>
-                <p className="text-xs">
-                  This is the shop only. NFTs you buy from other players on the marketplace are
-                  bought wallet to wallet on the chain, and they survive the wipe.
-                </p>
-              </div>
-            ) : !shopOpen ? (
-              <div className="pixel-card p-4 text-m2e-text-secondary">
-                Checkout is being switched on — the prices below are the real ones, the buy buttons
-                open shortly. Meanwhile you can earn bikes in-game and from breeding.
-              </div>
-            ) : null}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {products.map((p) => (
-                <StoreBikeCard
-                  key={p.type}
-                  product={p}
-                  catalogEnabled={shopOpen}
-                  stock={stock.data}
-                  signedIn={isAuthenticated}
-                  busy={running?.type === p.type ? running.method : null}
-                  locked={running !== null}
-                  error={checkout.isError && checkout.variables?.type === p.type ? (checkout.error as Error).message : null}
-                  priceBand={catalog.data?.priceBand ?? null}
-                  onBuy={(method) => buy(p, method)}
-                />
-              ))}
+          {enjOpensAt ? (
+            <div className="pixel-card p-4 text-m2e-text-secondary space-y-1">
+              <div className="section-label text-m2e-accent">Paying in ENJ opens {formatOpensAt(enjOpensAt)}</div>
+              <p>
+                The prices below are the real ones. Everything the shop sells before the relaunch
+                is wiped on that day, so the ENJ till stays shut until it counts — no bike here is
+                worth real ENJ yet. Meanwhile you can earn bikes in-game and from breeding.
+              </p>
+              <p className="text-xs">
+                This is the shop only. NFTs you buy from other players on the marketplace are
+                bought wallet to wallet on the chain, and they survive the wipe.
+              </p>
             </div>
-          </>
-        )}
+          ) : !shopOpen ? (
+            <div className="pixel-card p-4 text-m2e-text-secondary">
+              Checkout is being switched on — the prices below are the real ones, the buy buttons
+              open shortly. Meanwhile you can earn bikes in-game and from breeding.
+            </div>
+          ) : null}
 
-        <p className="text-m2e-text-secondary max-w-2xl">
-          Higher grades come from breeding — the shop sells fresh Steel bikes to get you rolling.
-        </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {products.map((p) => (
+              <StoreBikeCard
+                key={p.type}
+                product={p}
+                catalogEnabled={shopOpen}
+                stock={stock.data}
+                signedIn={isAuthenticated}
+                busy={running?.type === p.type ? running.method : null}
+                locked={running !== null}
+                error={checkout.isError && checkout.variables?.type === p.type ? (checkout.error as Error).message : null}
+                priceBand={catalog.data?.priceBand ?? null}
+                onBuy={(method) => buy(p, method)}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
-        <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
-      </div>
-    </>
+      <p className="text-m2e-text-secondary max-w-2xl">
+        Higher grades come from breeding — the shop sells fresh Steel bikes to get you rolling.
+      </p>
+    </div>
   );
 }

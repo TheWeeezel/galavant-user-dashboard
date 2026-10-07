@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router';
-import { Home, ShoppingCart, BookOpen, Notes, Menu, Cancel, Human, Login, Globe, Coins, Store, Trophy, Clock, Sun, Moon } from 'pixelarticons/react';
+import { Home, ShoppingCart, BookOpen, Menu, Cancel, Human, Login, Globe, Coins, Trophy, Clock, Sun, Moon } from 'pixelarticons/react';
 import { MusicPlayer } from './MusicPlayer';
 import { LoginModal } from './LoginModal';
 import { useAuth } from '../contexts/AuthContext';
@@ -37,9 +37,8 @@ export function Layout() {
   const navLinks = [
     { href: '/', label: 'Home', icon: Home, iconOnly: true },
     { href: '/gameplay', label: 'Guide', icon: BookOpen, iconOnly: true },
+    // One market: the bike shop is its Bike Shop tab. Updates moved to the footer.
     { href: '/market', label: 'Market', icon: ShoppingCart, iconOnly: true },
-    { href: '/store', label: 'Shop', icon: Store, iconOnly: true },
-    { href: '/changelog', label: 'Updates', icon: Notes, iconOnly: false },
     { href: '/roadmap', label: 'Roadmap', icon: Globe, iconOnly: false },
     { href: '/leaderboard', label: 'Scores', icon: Trophy, iconOnly: false },
   ] as const;
@@ -286,6 +285,8 @@ export function Layout() {
             <span>Galavant · Walk. Earn. Conquer.</span>
             <span className="hidden sm:inline text-white/20">|</span>
             {/* On every page, because a stuck player is never on the page you expected. */}
+            <Link to="/changelog" className="hover:text-m2e-accent transition-colors">Updates</Link>
+            <span className="hidden sm:inline text-white/20">|</span>
             <Link to="/report" className="hover:text-m2e-accent transition-colors">Report a Problem</Link>
             <span className="hidden sm:inline text-white/20">|</span>
             <Link to="/press-kit" className="hover:text-m2e-accent transition-colors">Press Kit</Link>
