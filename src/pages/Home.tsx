@@ -18,7 +18,7 @@ import {
   Download, Login, Gift, Human,
   Check, Globe, Flag, Shield,
   Music, Cloud, Lock, Clock,
-  ArrowDown, ChevronRight,
+  ArrowDown, ChevronLeft, ChevronRight,
 } from 'pixelarticons/react';
 import { fetchStats, fetchLeaderboard, fetchMarketplace } from '../api';
 import { NftDetailModal } from '../components/NftDetailModal';
@@ -77,12 +77,70 @@ const ROADMAP_ITEMS: {
   { title: 'Lucky Events', icon: Gift, status: 'upcoming' },
 ];
 
-// The quest log shows what is being played first, then what is cleared, then what is locked.
+// The quest log reads left to right like a timeline: cleared, being played now, locked.
 const ROADMAP_GROUPS = ([
-  { status: 'current', label: 'In Progress', icon: Clock, color: 'text-m2e-accent' },
-  { status: 'done', label: 'Done', icon: Check, color: 'text-m2e-success-deep' },
-  { status: 'upcoming', label: 'Coming Soon', icon: Lock, color: 'text-m2e-text-muted' },
+  { status: 'done', label: 'Done', icon: Check },
+  { status: 'current', label: 'In Progress', icon: Clock },
+  { status: 'upcoming', label: 'Coming Soon', icon: Lock },
 ] as const).map((group) => ({ ...group, items: ROADMAP_ITEMS.filter((item) => item.status === group.status) }));
+
+const ROADMAP_ORDER = ROADMAP_GROUPS.flatMap((group) => group.items);
+
+// The strip opens with this group in the middle of its window.
+const ROADMAP_FOCUS = ROADMAP_GROUPS.some((g) => g.status === 'current' && g.items.length > 0) ? 'current' : 'upcoming';
+
+// A quest in progress that carries a badge is a Genesis quest and takes the badge's brass all over,
+// not the accent purple. Cleared quests are dimmed: the past is there to scroll back to, not to read.
+type QuestTone = 'done' | 'genesis' | 'current' | 'upcoming';
+const QUEST_TONES: Record<QuestTone, {
+  card: string; content: string; iconBox: string; icon: string; badge: string; dot: string; rail: string; label: string;
+}> = {
+  done: {
+    card: '',
+    content: 'opacity-55 group-hover:opacity-100 transition-opacity',
+    iconBox: 'bg-m2e-success-soft border-m2e-success/40',
+    icon: 'text-m2e-success',
+    badge: 'bg-m2e-success/15 text-m2e-success border-current',
+    dot: 'bg-m2e-success border-m2e-success-deep',
+    rail: 'bg-m2e-success',
+    label: 'text-m2e-success-deep',
+  },
+  genesis: {
+    card: 'border-m2e-legendary bg-m2e-legendary/10',
+    content: '',
+    iconBox: 'bg-m2e-legendary/15 border-m2e-legendary/50',
+    icon: 'text-m2e-legendary',
+    badge: 'bg-m2e-legendary/15 text-m2e-legendary border-current',
+    dot: 'bg-m2e-legendary border-m2e-legendary animate-pulse-ring [--pulse-ring:var(--color-m2e-legendary)]',
+    rail: 'bg-m2e-legendary',
+    label: 'text-m2e-legendary',
+  },
+  current: {
+    card: 'border-m2e-accent bg-m2e-accent/5',
+    content: '',
+    iconBox: 'bg-m2e-accent/15 border-m2e-accent/40',
+    icon: 'text-m2e-accent',
+    badge: 'bg-m2e-accent/15 text-m2e-accent border-current',
+    dot: 'bg-m2e-accent border-m2e-accent-dark animate-pulse-ring',
+    rail: 'bg-m2e-accent',
+    label: 'text-m2e-accent',
+  },
+  upcoming: {
+    card: '',
+    content: '',
+    iconBox: 'bg-m2e-bg-alt border-m2e-border',
+    icon: 'text-m2e-text-muted',
+    badge: 'bg-m2e-bg-alt text-m2e-text-muted border-m2e-border',
+    dot: 'bg-m2e-card border-m2e-border',
+    rail: 'bg-m2e-border',
+    label: 'text-m2e-text-muted',
+  },
+};
+
+function questTone(item: (typeof ROADMAP_ITEMS)[number]): QuestTone {
+  if (item.status === 'current') return item.badge ? 'genesis' : 'current';
+  return item.status;
+}
 
 
 const MATERIALS = [
@@ -252,6 +310,33 @@ export function Home() {
   const stats = useQuery({ queryKey: ['stats'], queryFn: fetchStats });
   // The live season, straight off /explorer/stats — one source for the banner and the season card,
   // so a budget change on the box reaches both within the endpoint's minute of cache.
+  // The quest log opens on what is being played now: scroll its strip (not the page) so the
+  // quests in progress sit in the middle, cleared ones off to the left, locked ones to the right.
+  // The edge flags only flip at the ends, so scrolling does not re-render the page every frame.
+  const questLogRef = useRef<HTMLDivElement>(null);
+  const [questEdge, setQuestEdge] = useState({ start: true, end: false });
+  const updateQuestEdge = useCallback(() => {
+    const box = questLogRef.current;
+    if (!box) return;
+    const start = box.scrollLeft <= 4;
+    const end = box.scrollLeft + box.clientWidth >= box.scrollWidth - 4;
+    setQuestEdge((prev) => (prev.start === start && prev.end === end ? prev : { start, end }));
+  }, []);
+  useEffect(() => {
+    const box = questLogRef.current;
+    const focus = box?.querySelector<HTMLElement>('[data-focus]');
+    if (box && focus) {
+      const offset = focus.getBoundingClientRect().left - box.getBoundingClientRect().left;
+      box.scrollLeft += offset - (box.clientWidth - focus.offsetWidth) / 2;
+    }
+    updateQuestEdge();
+  }, [updateQuestEdge]);
+  const scrollQuestLog = (direction: 1 | -1) => {
+    const box = questLogRef.current;
+    box?.scrollBy({ left: direction * box.clientWidth * 0.6, behavior: reducedMotion ? 'auto' : 'smooth' });
+  };
+
+  const questFade = `linear-gradient(to right, ${questEdge.start ? '#000' : 'transparent'}, #000 var(--quest-fade), #000 calc(100% - var(--quest-fade)), ${questEdge.end ? '#000' : 'transparent'})`;
   const season = stats.data?.season ?? null;
   const seasonDaysLeft = season
     ? Math.max(0, Math.ceil((new Date(season.closesAt).getTime() - Date.now()) / 86_400_000))
@@ -935,70 +1020,74 @@ export function Home() {
             </p>
           </div>
 
-          {/* The quest log, grouped: in progress, done, coming soon. On a phone it is plain rows in
-              one framed window; from md up the frame and window drop out (display: contents) and
-              every quest is a card, two columns on a tablet, one band per group from lg up. */}
-          <div className="pixel-card p-0 relative max-w-3xl mx-auto w-full overflow-hidden md:contents">
-            <div className="max-h-[20rem] overflow-y-auto overscroll-contain px-4 py-3 md:contents">
+          {/* The quest log as a timeline strip: cleared quests to the left, the ones being played now
+              in the middle (where it opens), locked ones to the right. Every quest is the same card. */}
+          <div className="relative -mx-4 md:mx-0">
+            <div
+              ref={questLogRef}
+              onScroll={updateQuestEdge}
+              tabIndex={0}
+              aria-label="Roadmap quests, scroll sideways"
+              className="overflow-x-auto overscroll-x-contain scrollbar-hide px-4 md:px-0 [--quest-fade:0.75rem] md:[--quest-fade:3rem]"
+              style={{ maskImage: questFade, WebkitMaskImage: questFade }}
+            >
               <motion.div
-                className="space-y-4 md:space-y-8 md:mb-10"
+                className="flex w-max gap-3 md:gap-4 pt-1 pb-4"
                 variants={stagger}
                 initial="hidden"
                 whileInView="visible"
                 viewport={vp}
               >
                 {ROADMAP_GROUPS.filter((group) => group.items.length > 0).map((group) => {
-                  const wide = group.status === 'current';
+                  const labelTone: QuestTone = group.status === 'current'
+                    ? (group.items.every((item) => item.badge) ? 'genesis' : 'current')
+                    : group.status;
                   return (
-                    <div key={group.status}>
-                      <div className={`flex items-center gap-2 pb-1.5 md:pb-3 ${group.color}`}>
-                        <group.icon className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
-                        <span className="text-[10px] md:text-xs uppercase tracking-[0.3em]">{group.label}</span>
+                    <div key={group.status} className="flex flex-col">
+                      {/* The label rides along the left edge while its group is in view */}
+                      <div className={`sticky left-[var(--quest-fade)] self-start flex items-center gap-2 h-6 px-1 ${QUEST_TONES[labelTone].label}`}>
+                        <group.icon className="w-3.5 h-3.5 shrink-0" />
+                        <span className="text-[10px] md:text-xs uppercase tracking-[0.3em] whitespace-nowrap">{group.label}</span>
                         <span className="text-[10px] md:text-xs text-m2e-text-muted">· {group.items.length}</span>
-                        <span className="flex-1 h-px md:h-0.5 bg-m2e-border" />
                       </div>
-                      <div className="flex flex-col gap-1 md:grid md:grid-cols-2 md:gap-4 lg:grid-cols-[repeat(auto-fit,minmax(9rem,1fr))]">
+                      <div data-focus={group.status === ROADMAP_FOCUS || undefined} className="flex flex-1 gap-3 md:gap-4">
                         {group.items.map((item) => {
-                          const isDone = item.status === 'done';
-                          const isCurrent = item.status === 'current';
+                          const tone = QUEST_TONES[questTone(item)];
+                          const next = ROADMAP_ORDER[ROADMAP_ORDER.indexOf(item) + 1];
                           return (
-                            <motion.div
-                              key={item.title}
-                              variants={staggerItem}
-                              className={`pixel-card-md relative overflow-hidden px-2 py-2.5 flex items-center justify-between gap-3 md:transition-transform md:hover:-translate-y-0.5 ${
-                                wide ? 'md:p-5 md:flex-wrap' : 'md:p-4 lg:flex-col lg:items-start lg:justify-start lg:gap-4'
-                              } ${isCurrent ? 'bg-m2e-accent/5 max-md:ring-2 max-md:ring-m2e-accent/30 md:bg-m2e-card md:border-m2e-accent/60' : ''}`}
-                            >
-                              {/* Accent stripe across the top of a card being played now */}
-                              {isCurrent && (
-                                <div className="hidden md:block absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-m2e-accent to-transparent" />
-                              )}
-                              <div className={`flex items-center gap-3 min-w-0 ${wide ? 'md:gap-4' : 'lg:flex-col lg:items-start'}`}>
-                                <div className={`shrink-0 md:w-11 md:h-11 md:rounded-lg md:border md:flex md:items-center md:justify-center ${
-                                  isDone ? 'md:bg-m2e-success-soft md:border-m2e-success/40'
-                                    : isCurrent ? 'md:bg-m2e-accent/15 md:border-m2e-accent/40'
-                                      : 'md:bg-m2e-bg-alt md:border-m2e-border'
-                                }`}>
-                                  <item.icon className={`w-6 h-6 ${isDone ? 'text-m2e-success' : isCurrent ? 'text-m2e-accent' : 'text-m2e-text-muted'}`} />
-                                </div>
-                                <span className={`text-sm md:text-base uppercase tracking-wider text-m2e-text leading-tight ${wide ? 'md:text-lg lg:text-xl' : ''}`}>
-                                  {item.title}
-                                </span>
+                            <motion.div key={item.title} variants={staggerItem} className="w-32 md:w-52 shrink-0 flex flex-col">
+                              {/* Timeline rail: a dot per quest, the line running on to the next one */}
+                              <div className="relative h-8 flex items-center justify-center">
+                                {next && (
+                                  <span className={`absolute left-1/2 top-1/2 -translate-y-1/2 h-0.5 w-[calc(100%+0.75rem)] md:w-[calc(100%+1rem)] ${
+                                    next.status === 'upcoming' ? QUEST_TONES.upcoming.rail : tone.rail
+                                  }`} />
+                                )}
+                                <span className={`relative w-4 h-4 rounded-full border-2 ${tone.dot}`} />
                               </div>
-                              <span className={`shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 md:px-2 md:py-1 text-[9px] md:text-[10px] uppercase tracking-widest pixel-border ${
-                                wide ? '' : 'lg:mt-auto'
-                              } ${
-                                item.badge
-                                  ? 'bg-m2e-legendary/15 text-m2e-legendary border-current'
-                                  : isDone
-                                    ? 'bg-m2e-success/15 text-m2e-success border-current'
-                                    : isCurrent
-                                      ? 'bg-m2e-accent/15 text-m2e-accent border-current'
-                                      : 'bg-m2e-bg-alt text-m2e-text-muted border-m2e-border'
-                              }`}>
-                                {item.badge ? <item.badge.icon className="w-2.5 h-2.5 md:w-3 md:h-3" /> : isDone ? <Check className="w-2.5 h-2.5 md:w-3 md:h-3" /> : isCurrent ? <Clock className="w-2.5 h-2.5 md:w-3 md:h-3" /> : <Lock className="w-2.5 h-2.5 md:w-3 md:h-3" />}
-                                {item.badge?.label ?? (isDone ? 'Done' : isCurrent ? 'Now' : 'Soon')}
-                              </span>
+                              <div className={`group pixel-card relative overflow-hidden flex-1 p-3 md:p-4 transition-transform hover:-translate-y-0.5 ${tone.card}`}>
+                                {item.status === 'current' && (
+                                  <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent to-transparent ${
+                                    item.badge ? 'via-m2e-legendary' : 'via-m2e-accent'
+                                  }`} />
+                                )}
+                                <div className={`h-full flex flex-col items-start gap-3 ${tone.content}`}>
+                                  <div className={`w-10 h-10 md:w-11 md:h-11 rounded-lg border flex items-center justify-center shrink-0 ${tone.iconBox}`}>
+                                    <item.icon className={`w-5 h-5 md:w-6 md:h-6 ${tone.icon}`} />
+                                  </div>
+                                  <span className="text-sm md:text-base uppercase tracking-wider text-m2e-text leading-tight">
+                                    {item.title}
+                                  </span>
+                                  <span className={`mt-auto inline-flex items-center gap-1 px-1.5 py-0.5 md:px-2 md:py-1 text-[9px] md:text-[10px] uppercase tracking-widest pixel-border ${tone.badge}`}>
+                                    {item.badge
+                                      ? <item.badge.icon className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
+                                      : item.status === 'done' ? <Check className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
+                                        : item.status === 'current' ? <Clock className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
+                                          : <Lock className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />}
+                                    {item.badge?.label ?? (item.status === 'done' ? 'Done' : item.status === 'current' ? 'Now' : 'Soon')}
+                                  </span>
+                                </div>
+                              </div>
                             </motion.div>
                           );
                         })}
@@ -1008,9 +1097,23 @@ export function Home() {
                 })}
               </motion.div>
             </div>
-            {/* Fades at both ends of the phone window say there is more above and below. */}
-            <div className="md:hidden pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-m2e-card to-transparent" />
-            <div className="md:hidden pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-m2e-card to-transparent" />
+            {/* Mouse users get arrows; touch scrolls the strip directly. */}
+            {([-1, 1] as const).map((direction) => {
+              const atEdge = direction === -1 ? questEdge.start : questEdge.end;
+              return (
+                <button
+                  key={direction}
+                  type="button"
+                  onClick={() => scrollQuestLog(direction)}
+                  aria-label={direction === -1 ? 'Earlier quests' : 'Later quests'}
+                  className={`hidden md:flex absolute top-1/2 -translate-y-1/2 ${direction === -1 ? 'left-1' : 'right-1'} z-10 w-10 h-10 p-0 items-center justify-center pixel-btn pixel-btn-secondary transition-opacity ${
+                    atEdge ? 'opacity-0 pointer-events-none' : ''
+                  }`}
+                >
+                  {direction === -1 ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                </button>
+              );
+            })}
           </div>
 
           <div className="text-center">
