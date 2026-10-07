@@ -21,8 +21,8 @@ export interface BikeTypeInfo {
 export const BIKE_TYPES: readonly BikeTypeInfo[] = [
   { key: 'commuter', type: 'Commuter', best: 'Leisurely walkers', lo: 2, hi: 5 },
   { key: 'touring', type: 'Touring', best: 'Brisk walkers', lo: 5, hi: 9 },
-  { key: 'racing', type: 'Racing', best: 'Power walkers', lo: 10, hi: 18 },
-  { key: 'electric', type: 'Electric', best: 'Any walker · full band', lo: 2, hi: 18, accent: true },
+  { key: 'racing', type: 'Racing', best: 'Joggers and runners', lo: 10, hi: 18 },
+  { key: 'electric', type: 'Electric', best: 'Any pace · walk to run', lo: 2, hi: 18, accent: true },
 ] as const;
 
 /** The top of the scale every band is drawn against. */

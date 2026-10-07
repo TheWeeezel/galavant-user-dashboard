@@ -284,12 +284,12 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'bike-types',
         title: 'Bike Types',
         content: [
-          { type: 'paragraph', text: 'There are four types of balance bikes in Galavant, each designed for a different walking pace. Pick the one that matches how you like to move.' },
+          { type: 'paragraph', text: 'There are four types of balance bikes in Galavant, each designed for a different pace, from a stroll to a run. Pick the one that matches how you like to move.' },
           { type: 'table', headers: ['Type', 'Best For', 'Optimal Range'], rows: [
             ['Commuter', 'Leisurely walkers', '2 – 5 km/h'],
             ['Touring', 'Brisk walkers', '5 – 9 km/h'],
-            ['Racing', 'Power walkers', '10 – 18 km/h'],
-            ['Electric', 'Any walker', '2 – 18 km/h'],
+            ['Racing', 'Joggers and runners', '10 – 18 km/h'],
+            ['Electric', 'Any pace', '2 – 18 km/h'],
           ]},
           { type: 'paragraph', text: 'Each bike type has an optimal speed zone. Walking within that zone maximizes your earnings. Walking too slow or too fast for your bike type will reduce or eliminate your rewards.' },
           { type: 'tip', text: 'The Electric bike is the most versatile — it works at any speed. However, it\'s the rarest and hardest to obtain through breeding.' },

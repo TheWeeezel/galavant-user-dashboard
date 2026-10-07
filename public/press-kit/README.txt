@@ -6,7 +6,7 @@ walking with balance bikes, trade parts and NFT bikes with other players, and
 redeem earned WATTS for real ENJ at the end of each season out of a budget
 funded by platform revenue.
 
-Website   https://galavant.io
+Website   https://galavant.run
 X         https://x.com/galavanteer
 Telegram  https://t.me/galavanteer
 
