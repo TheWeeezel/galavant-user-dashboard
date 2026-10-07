@@ -471,6 +471,7 @@ export const gameplaySections: GameplaySection[] = [
             'During a ride, the sky shows the weather where that ride started.',
             'Between rides, it shows the weather now at the start of your last ride. The app does not read your location outside a ride.',
             'Each ride keeps the weather it started in. You will find it on the ride screen, on the ride summary and in your ride history.',
+            'Tap the weather icon next to the Galavant logo on the home screen to see what the weather means for your next ride and how the next few hours look. On the ride screen, tap the weather line.',
           ]},
           { type: 'heading', text: 'What Weather Does to a Ride' },
           { type: 'table', headers: ['Conditions', 'Effect'], rows: [
