@@ -481,7 +481,7 @@ export const gameplaySections: GameplaySection[] = [
             ['Heat or frost', 'Extra wear: your bike loses condition faster.'],
           ]},
           { type: 'list', items: [
-            'Tough weather pays more WATTS where you usually ride. Ride somewhere new a few times and it counts there too.',
+            'Tough weather pays more WATTS where you usually ride.',
             'Luck and WATTS bonuses only apply to rides that pass the usual ride checks.',
             'Weather never touches your energy or HP. Extra wear works like any wear: a worn bike drops below its full earning rate sooner.',
             'The ride screen shows WATTS UP, LUCK UP or EXTRA WEAR when they apply.',
