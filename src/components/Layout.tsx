@@ -292,6 +292,10 @@ export function Layout() {
             <Link to="/press-kit" className="hover:text-m2e-accent transition-colors">Press Kit</Link>
             <span className="hidden sm:inline text-white/20">|</span>
             <Link to="/privacy" className="hover:text-m2e-accent transition-colors">Privacy Policy</Link>
+            <span className="hidden sm:inline text-white/20">|</span>
+            <Link to="/terms" className="hover:text-m2e-accent transition-colors">Terms of Sale</Link>
+            <span className="hidden sm:inline text-white/20">|</span>
+            <Link to="/refunds" className="hover:text-m2e-accent transition-colors">Refunds</Link>
           </div>
         </div>
       </footer>

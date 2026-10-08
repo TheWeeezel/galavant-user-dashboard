@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router';
 import { fetchEnjPayment, type EnjPayment } from '../api';
 
 /**
@@ -202,6 +203,12 @@ export function EnjPaymentPanel({ payment: initial, displayName, onClose }: EnjP
               so always leave a little behind.
             </li>
             <li>Your bike appears in your Profile within about a minute of the transfer landing.</li>
+            {/* The ENJ till has no Stripe checkbox, so the agreement the Terms of Sale rely on is stated here, before the buyer sends. */}
+            <li>
+              By sending, you agree to the <Link to="/terms" className="underline">Terms of Sale</Link>: the
+              bike is delivered right away and your 14-day right to cancel ends once it is in your account.
+              See the <Link to="/refunds" className="underline">Refund Policy</Link>.
+            </li>
           </ul>
 
           {waiting && <p className="text-xs text-m2e-text-secondary">Watching the chain…</p>}
