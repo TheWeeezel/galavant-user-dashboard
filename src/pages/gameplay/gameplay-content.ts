@@ -423,6 +423,7 @@ export const gameplaySections: GameplaySection[] = [
             'Only movement at a human pace counts toward your distance. Stretches that would need a vehicle are left out of your totals, and the same fix is never counted twice.',
             'Galavant also asks your phone\'s platform to confirm it is a genuine device running the genuine app. You do not need to do anything for this, and a ride out on a route still starts and pays without it — it helps tell real walks from faked ones. Laps in a small space are the exception: they count only from a phone the platform vouches for.',
             'Rewards from a ride may be held for a verification period before they can be spent. Rides from a verified device that pass every check are available right away; the rest are held for about a day. You will see them the whole time under PENDING in your wallet, and your ride summary tells you roughly when they land. While a ride is under review, cashing out and exporting are paused.',
+            'A held ride is not a penalty; its WATTS land in full once the check is done.',
           ]},
           { type: 'tip', text: 'For the best experience, walk in open areas with good sky visibility. Parks, sidewalks, and trails work great. Keep your phone on your body while walking — it needs to sense your movement.' },
           { type: 'heading', text: 'Signal Quality' },
