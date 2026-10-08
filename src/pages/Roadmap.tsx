@@ -412,9 +412,17 @@ export function Roadmap() {
               Your vote shapes the roadmap.
             </h3>
             <p className="text-base text-m2e-text-secondary max-w-xl mx-auto">
-              Ideas, feedback, bug reports — drop them in Telegram or X. What you say moves next on this list.
+              Ideas, feedback, bug reports — drop them in Discord, Telegram or X. What you say moves next on this list.
             </p>
-            <div className="flex items-center justify-center gap-3 pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <a
+                href="https://discord.gg/E3Ba89X7w8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pixel-btn pixel-btn-secondary px-5 py-2.5 text-sm"
+              >
+                Discord
+              </a>
               <a
                 href="https://t.me/galavanteer"
                 target="_blank"

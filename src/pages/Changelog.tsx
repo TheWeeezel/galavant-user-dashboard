@@ -60,6 +60,7 @@ function buildShareMessage(entry: VersionEntry): string {
   lines.push('https://galavant.run/store');
   lines.push('');
   lines.push('\u{1F426} Follow us on X: https://x.com/galavanteer');
+  lines.push('\u{1F3AE} Join our Discord: https://discord.gg/E3Ba89X7w8');
   lines.push('\u{1F4AC} Join our Telegram: https://t.me/galavanteer');
 
   return lines.join('\n');

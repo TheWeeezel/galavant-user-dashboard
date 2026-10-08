@@ -172,6 +172,10 @@ export function PressKit() {
           </ul>
           <p className="text-sm text-m2e-text-secondary">
             Anything missing? Ask on{' '}
+            <a href="https://discord.gg/E3Ba89X7w8" target="_blank" rel="noopener noreferrer" className="text-m2e-accent hover:underline">
+              Discord
+            </a>{' '}
+            or{' '}
             <a href="https://t.me/galavanteer" target="_blank" rel="noopener noreferrer" className="text-m2e-accent hover:underline">
               Telegram
             </a>{' '}

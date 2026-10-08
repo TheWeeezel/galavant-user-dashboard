@@ -245,6 +245,9 @@ export function PrivacyPolicy() {
               Email: <a href="mailto:we@galavant.run" className="text-m2e-accent hover:underline">we@galavant.run</a>
             </li>
             <li>
+              Discord: <a href="https://discord.gg/E3Ba89X7w8" target="_blank" rel="noopener noreferrer" className="text-m2e-accent hover:underline">discord.gg/E3Ba89X7w8</a>
+            </li>
+            <li>
               Telegram: <a href="https://t.me/galavanteer" target="_blank" rel="noopener noreferrer" className="text-m2e-accent hover:underline">t.me/galavanteer</a>
             </li>
             <li>

@@ -9,6 +9,7 @@ funded by platform revenue.
 Website   https://galavant.run
 X         https://x.com/galavanteer
 Telegram  https://t.me/galavanteer
+Discord   https://discord.gg/E3Ba89X7w8
 
 
 CONTENTS
@@ -40,4 +41,4 @@ USAGE
 - Do not stretch. All assets are square or 16:9 and should scale proportionally.
 - Galavant is one word, capitalised. The currency is WATTS, in caps.
 
-Questions: reach us on Telegram at https://t.me/galavanteer
+Questions: reach us on Discord at https://discord.gg/E3Ba89X7w8 or on Telegram at https://t.me/galavanteer
