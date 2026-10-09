@@ -1245,7 +1245,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Leaderboard Categories' },
           { type: 'table', headers: ['Category', 'What It Tracks'], rows: [
             ['Distance', 'Total distance covered while walking'],
-            ['Earnings', 'Total WATTS earned from walking'],
+            ['All Earnings', 'Every WATTS you earn — rides plus everything else the game pays out: mission chests, toolboxes, social rewards and, for Genesis holders, the Genesis Reel'],
           ]},
           { type: 'heading', text: 'Time Periods' },
           { type: 'list', items: [
