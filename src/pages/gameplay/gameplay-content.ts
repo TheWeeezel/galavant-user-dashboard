@@ -926,6 +926,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'I gave my NFT away (or sold it elsewhere). Why is it still in my Items?' },
           { type: 'paragraph', text: 'It should not be for long. Galavant checks the chain every few minutes and, once the token is no longer in your linked wallet, the bike or part leaves your Items on its own — it now belongs to whoever holds the token, and they can import it into their own game. Tapping Import on it does the same check right away. If the token comes back to you, or you re-link a different wallet that holds it, open Wallet › NFTs in your wallet in the app and claim it from there.' },
           { type: 'paragraph', text: 'An NFT you have listed for sale outside Galavant stays yours: it is reserved, not gone, and the game says so if you try to import it. Cancel that listing first.' },
+          { type: 'paragraph', text: 'If you start an import and then list the same item for ENJ before approving the import, approving it ends that listing: the token is gone, so nobody can buy it, and the item comes back to your Items ready to ride.' },
           { type: 'heading', text: 'Where do I get ENJ?' },
           { type: 'paragraph', text: 'Wherever you like — the Enjin Wallet has its own buy and swap, and Enjin Coin trades on the usual exchanges. Send it to the address you linked. Galavant does not sell you ENJ and never holds it for you: we are a game, not an exchange.' },
           { type: 'heading', text: 'How much should I keep in the wallet?' },
