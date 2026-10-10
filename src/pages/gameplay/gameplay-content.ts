@@ -1276,7 +1276,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'list', items: [
             'A ride counts once its WATTS are final. A ride whose WATTS are still being held shows as VERIFYING and counts as soon as it clears.',
             'When you reach a badge, tap Claim. Most badges pay items — toolboxes, parts or minting tools — and bigger milestones pay more. Badges never pay WATTS.',
-            'Badge rewards open after a little verified riding. Any badge you reach before that waits for you; nothing is lost.',
+            'Badges that pay items can be claimed after a little verified riding. A badge you reach before that shows a padlock and waits for you: keep riding and nothing is lost.',
             'Each badge can be earned once per account.',
             'The badge rim shows its tier: bronze, silver, gold, diamond and prismatic.',
           ]},
