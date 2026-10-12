@@ -1286,6 +1286,26 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'tip', text: 'The ride summary tells you when a ride set a new personal best or reached a badge.' },
         ],
       },
+      {
+        slug: 'discord-role',
+        title: 'Discord Genesis Role',
+        content: [
+          { type: 'paragraph', text: 'Link your Discord account and the Genesis role on the Galavant Discord follows the game: it is yours while you hold a Genesis bike or part in the game, and it comes off when you don\'t. Linking opens for Genesis holders first.' },
+          { type: 'heading', text: 'How to Link' },
+          { type: 'list', items: [
+            'In the app, open You → Account and tap Link Discord. You get a short code that works for 10 minutes.',
+            'In the Galavant Discord, type /link and paste the code. Only you see the answer.',
+            'The card in the app switches to your Discord name by itself once it worked.',
+          ]},
+          { type: 'heading', text: 'Good to Know' },
+          { type: 'list', items: [
+            'The role checks what you hold every few minutes, so a Genesis item you get, sell or export shows up on Discord shortly after.',
+            'A Genesis bike or part exported as an NFT does not count while it is out of the game. Import it back and the role returns.',
+            'One Discord account links to one Galavant account. Linking it to another account moves it.',
+            'Unlink any time on the same card. The role comes off with it.',
+          ]},
+        ],
+      },
     ],
   },
 
