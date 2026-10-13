@@ -468,7 +468,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'weather',
         title: 'Weather',
         content: [
-          { type: 'paragraph', text: 'The sky in the app follows the clock from dawn to night. For Genesis holders it also shows the real weather where you ride: clouds, fog, drizzle, rain, storms, sleet, snow and summer heat, at every hour of the day. Weather is live for Genesis holders only for now.' },
+          { type: 'paragraph', text: 'The sky in the app follows the clock from dawn to night. It also shows the real weather where you ride: clouds, fog, drizzle, rain, storms, sleet, snow and summer heat, at every hour of the day.' },
           { type: 'heading', text: 'Where the Weather Comes From' },
           { type: 'list', items: [
             'During a ride, the sky shows the weather where that ride started.',
