@@ -577,7 +577,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'How Luck Shapes Your Boxes' },
           { type: 'paragraph', text: 'Luck does more than push you toward higher tiers. The bike you were riding when a toolbox dropped is remembered, and that bike\'s Luck shapes what you find inside the box when you open it later — swapping bikes after the drop won\'t change the contents. Riders with stronger Luck builds tend to see consistently better contents within the same tier, while lower-Luck riders sit closer to the average. Build a "lucky bike" specifically for your earning sessions if you want to chase quality.' },
           { type: 'heading', text: 'Total Score & Overflow' },
-          { type: 'paragraph', text: 'During a walk, the live screen shows a continuous Total Score bar with marker ticks at each toolbox tier. Once you pass the highest tier, the bar enters an overflow zone — the further it fills, the better the contents quality your next box will lean toward. This is how high-Luck players keep getting rewarded after they\'ve already reached the top tier.' },
+          { type: 'paragraph', text: 'Once a walk passes the highest toolbox tier, the extra still counts: the further past it you go, the better the contents quality your next box will lean toward. This is how high-Luck players keep getting rewarded after they\'ve already reached the top tier.' },
           { type: 'heading', text: 'Special Modifiers' },
           { type: 'paragraph', text: 'Some toolboxes drop with a rare special modifier that visibly tints the box and signals an above-average reward. These are uncommon and grow rarer toward the top — they\'re the kind of drop you\'ll remember when you see one.' },
           { type: 'heading', text: 'Cooldown Timers' },
@@ -586,7 +586,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Speed Open' },
           { type: 'paragraph', text: 'Don\'t want to wait? You can spend WATTS to instantly skip the remaining cooldown. The cost scales with how much time is left — the more patient you are, the less it costs. This cost is in addition to the normal opening cost.' },
           { type: 'heading', text: 'Live Drop Progress' },
-          { type: 'paragraph', text: 'During a walk, the live activity screen shows your estimated toolbox drop progress — including your cumulative drop chance so far and the likely toolbox level based on your actual movement. If you stop moving, the estimated level reflects that. This updates in real time as your walk continues.' },
+          { type: 'paragraph', text: 'During a walk, the Toolbox Radar on the live activity screen shows the toolbox level your walk is heading toward and how close you are to the next one, based on your actual movement. It is a forecast, not a promise: if a box drops, its final level is rolled when you stop, so a walk that ends right at the edge of a level can land on either side of it. Going a bit past the point where the radar ticks over makes the higher level more likely. If you stop moving, the forecast reflects that.' },
           { type: 'heading', text: 'Opening Costs' },
           { type: 'paragraph', text: 'Every toolbox has an opening cost. Lower-level toolboxes are easier to open, while higher-level toolboxes may also require ENJ in addition to WATTS.' },
           { type: 'table', headers: ['Level', 'Cost Type'], rows: [
