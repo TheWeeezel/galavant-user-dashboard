@@ -1284,6 +1284,13 @@ export const gameplaySections: GameplaySection[] = [
             'The badge rim shows its tier: bronze, silver, gold, diamond and prismatic.',
           ]},
           { type: 'tip', text: 'The ride summary tells you when a ride set a new personal best or reached a badge.' },
+          { type: 'heading', text: 'Badge Cards (Genesis First)' },
+          { type: 'paragraph', text: 'Every badge you claim becomes a pixel trading card. Genesis holders open their first pack in the Genesis Lounge: a card for every badge they have claimed so far, revealed one by one, plus a gift card. After that, each badge you claim flips straight into a new card.' },
+          { type: 'list', items: [
+            'A card shows its badge, the day you earned it and its number — how many of that card exist, in the order they were earned.',
+            'Cards you earned by your own riding stay with you for good (soulbound). Commemorative cards — September Tester, Season One Rider and the Opening Night gift — are tradeable; trading them opens later.',
+            'Cards live in the game for now. Putting them on chain comes later.',
+          ]},
         ],
       },
       {
