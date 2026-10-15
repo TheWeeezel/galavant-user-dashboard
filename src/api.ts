@@ -956,11 +956,23 @@ export function graveyardBurnTransaction(claimId: string) {
   return fetchAuthJson<{ transaction: string }>(`/graveyard/claims/${claimId}/transaction`, { method: 'POST' });
 }
 
-export function graveyardSubmitBurn(claimId: string, signature: string) {
-  return fetchAuthJson<{ claim: Pick<GraveyardClaim, 'id' | 'status' | 'burnSignature'> }>(`/graveyard/claims/${claimId}/burned`, {
-    method: 'POST',
-    body: JSON.stringify({ signature }),
-  });
+/**
+ * Hand the burn's signature in. After the half hour the server stores a signature only once Solana
+ * knows it (BURN_NOT_FOUND until then), so that answer is retried for about a minute instead of
+ * being shown: the wallet has just sent it, the chain only needs a moment.
+ */
+export async function graveyardSubmitBurn(claimId: string, signature: string) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fetchAuthJson<{ claim: Pick<GraveyardClaim, 'id' | 'status' | 'burnSignature'> }>(`/graveyard/claims/${claimId}/burned`, {
+        method: 'POST',
+        body: JSON.stringify({ signature }),
+      });
+    } catch (err) {
+      if (!(err instanceof ApiError) || err.code !== 'BURN_NOT_FOUND' || attempt >= 10) throw err;
+      await new Promise((resolve) => setTimeout(resolve, 6000));
+    }
+  }
 }
 
 /** Give the soul to a bike the player already owns. Frame and plate only; the voucher stays theirs. */
