@@ -721,7 +721,7 @@ function Farewell({ claim, wallets, notice, onExpired, onNotToday }: {
       <div className="pixel-border border-m2e-chrome bg-m2e-bg px-4 py-3 space-y-1.5">
         <div className="text-xs uppercase tracking-[0.2em] text-m2e-text-secondary">What {wallet?.name ?? 'Phantom'} will show</div>
         <div className="flex justify-between gap-4 text-lg border-t-2 border-dotted border-m2e-border pt-1"><span>Burn 1 NFT</span><span>{name}</span></div>
-        <div className="flex justify-between gap-4 text-lg border-t-2 border-dotted border-m2e-border pt-1"><span>Returned to you</span><span className="tabular-nums">~0.01 SOL (storage deposit)</span></div>
+        <div className="flex justify-between gap-4 text-lg border-t-2 border-dotted border-m2e-border pt-1"><span>Returned to you</span><span className="tabular-nums">a little SOL (storage deposit)</span></div>
         <div className="flex justify-between gap-4 text-lg border-t-2 border-dotted border-m2e-border pt-1"><span>Network fee</span><span>under a cent</span></div>
       </div>
 

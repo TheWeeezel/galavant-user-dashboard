@@ -35,7 +35,7 @@ const SHOWCASE = [
 const FAQ: [string, string][] = [
   ['Why burn it at all?', 'A sneaker can only have one soul. Burning proves the sneaker is gone, so its soul can live in exactly one bike and nobody can retire the same sneaker twice.'],
   ['What happens to my sneaker?', 'It is destroyed on Solana, in your wallet, by you. We never hold it. Before the burn we record its number, type, quality, level and mint count. That record is the soul, and it is cosmetic only.'],
-  ['Do I need SOL?', 'A tiny network fee, under a cent. The sneaker\'s storage deposit, about 0.01 SOL, comes back to your wallet when it burns. Most people end up with slightly more SOL than before.'],
+  ['Do I need SOL?', 'A tiny network fee, under a cent. Most of the sneaker\'s storage deposit, a little under 0.01 SOL, comes back to your wallet when it burns. Most people end up with slightly more SOL than before.'],
   ['What if my spot expires?', 'A spot is held for 30 minutes once you reach the farewell. If it runs out before you burn, nothing happens to your sneaker. Pick it again. If you already burned, the burn is on the chain and we can still verify it; write to us.'],
   ['How many spots are there?', 'A limited number each month. When they are taken, the page says so and your sneakers wait safely in your wallet until the next month.'],
   ['Is this a partnership with STEPN?', 'No. We are not connected to STEPN or its makers. This page is for its players. You burn in your own wallet; we only read the chain.'],
