@@ -15,6 +15,7 @@ import { TermsOfSale } from './pages/TermsOfSale';
 import { RefundPolicy } from './pages/RefundPolicy';
 import { PressKit } from './pages/PressKit';
 import { Wallet } from './pages/Wallet';
+import { Graveyard } from './pages/Graveyard';
 import { GameplayLayout } from './pages/gameplay/GameplayLayout';
 import { GameplayPage } from './pages/gameplay/GameplayPage';
 
@@ -67,6 +68,9 @@ export function App() {
           <Route path="press-kit" element={<PressKit />} />
           <Route path="press" element={<Navigate to="/press-kit" replace />} />
           <Route path="wallet" element={<Wallet />} />
+          {/* The Sneaker Graveyard is web-only on purpose (Apple 3.1.1): the app never links here,
+              so this route and the footer link are its only doors. */}
+          <Route path="graveyard" element={<Graveyard />} />
           <Route path="store" element={<ToBikeShop />} />
           {/* ONE market (task 7dc61fc3): the NFT "Trading Post" merged into /market. Kept so
               old links land on the merged shop rather than 404ing. */}

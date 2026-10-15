@@ -1,4 +1,5 @@
-import type { StoreCatalog, StoreProduct, StoreStock } from '../api';
+import { config } from '../config';
+import type { GraveyardVoucher, StoreCatalog, StoreProduct, StoreStock } from '../api';
 import { bikeTypeInfo, BIKE_BAND_MAX } from '../config/bikeTypes';
 import { StarterBoxArt } from './StarterBoxArt';
 
@@ -10,6 +11,11 @@ const MATERIAL_NAMES: Record<string, string> = {
   epic: 'Orchid',
   legendary: 'Brass',
 };
+
+/** "common" → "Steel": the material name the website gives a quality tier. Unknown tiers pass through. */
+export function materialName(quality: string): string {
+  return MATERIAL_NAMES[quality.toLowerCase()] ?? quality;
+}
 
 
 export type PayMethod = 'card' | 'enj';
@@ -75,6 +81,15 @@ export function formatUsd(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
+/**
+ * The price with a Sneaker Graveyard voucher: whole cents, rounded down — the same arithmetic the
+ * server's till does (services/graveyard.ts discountedCents), so the card never shows a cent the
+ * till would not charge.
+ */
+export function discountedCents(cents: number, percent: number): number {
+  return Math.floor((cents * (100 - percent)) / 100);
+}
+
 interface StarterPackCardProps {
   product: StoreProduct;
   catalogEnabled: boolean;
@@ -88,6 +103,12 @@ interface StarterPackCardProps {
   error: string | null;
   /** How many packs are left at this price, from the catalog. Null when the curve is off. */
   priceBand: StoreCatalog['priceBand'];
+  /**
+   * The buyer's open Sneaker Graveyard voucher, if any: the card then prints the list price
+   * struck through and the reduced one beside it. Card till only — the ENJ till takes no voucher
+   * yet, and the card says so rather than let the buyer find out at the wallet.
+   */
+  voucher?: GraveyardVoucher | null;
   onBuy: (method: PayMethod) => void;
 }
 
@@ -105,11 +126,12 @@ export function StarterPackCard({
   locked,
   error,
   priceBand,
+  voucher = null,
   onBuy,
 }: StarterPackCardProps) {
   const offer = describeOffer(product, catalogEnabled, stock);
   const enj = enjPrice(product);
-  const material = MATERIAL_NAMES[product.quality] ?? product.quality;
+  const material = materialName(product.quality);
   const contents = product.contents ?? { bikes: 1, parts: 3, partLevel: 1, toolboxes: 1, toolboxLevel: 1 };
   // Who the frame suits and the speed band it earns in — the same two facts, from the same
   // table, the landing page's garage prints. A buyer picks a bike by its pace, so the pace belongs
@@ -161,7 +183,19 @@ export function StarterPackCard({
 
         <div>
           {product.priceUsdCents > 0 ? (
-            <div className="text-3xl text-m2e-accent">{formatUsd(product.priceUsdCents)}</div>
+            voucher ? (
+              <>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-xl text-m2e-text-muted line-through">{formatUsd(product.priceUsdCents)}</span>
+                  <span className="text-3xl text-m2e-accent">{formatUsd(discountedCents(product.priceUsdCents, voucher.percent))}</span>
+                </div>
+                <div className="text-[10px] uppercase tracking-wider text-m2e-accent-dark">
+                  Retired Runner voucher · {voucher.percent} % off
+                </div>
+              </>
+            ) : (
+              <div className="text-3xl text-m2e-accent">{formatUsd(product.priceUsdCents)}</div>
+            )
           ) : (
             <div className="text-3xl text-m2e-text-muted">—</div>
           )}
@@ -173,6 +207,11 @@ export function StarterPackCard({
               <div className="text-[10px] uppercase tracking-wider text-m2e-text-secondary">
                 ENJ amount is fixed when you start
               </div>
+              {voucher && (
+                <div className="text-[10px] uppercase tracking-wider text-m2e-text-secondary">
+                  The voucher works at the card till only, for now
+                </div>
+              )}
             </>
           )}
           {/* The price climbs as the run sells out, so the shop says so before the step, not after.

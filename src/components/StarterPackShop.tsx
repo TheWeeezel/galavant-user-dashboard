@@ -6,7 +6,11 @@ import { StarterPackCard, type PayMethod } from './StarterPackCard';
 import { EnjPaymentPanel } from './EnjPaymentPanel';
 import { StoreBatchStrip } from './StoreBatchStrip';
 import { byBikeTypeOrder } from '../config/bikeTypes';
-import { fetchStoreProducts, fetchStoreStock, reconcileStoreOrders, storeCheckout, storeCheckoutEnj, type EnjPayment, type StoreProduct } from '../api';
+import { GRAVEYARD_ME_KEY } from './graveyard/GraveyardFlow';
+import {
+  fetchGraveyardMe, fetchStoreProducts, fetchStoreStock, openVoucher, reconcileStoreOrders, storeCheckout, storeCheckoutEnj,
+  type EnjPayment, type StoreProduct,
+} from '../api';
 
 /** The opening day, read in UTC — the same calendar day the server means, in every timezone. */
 function formatOpensAt(iso: string): string {
@@ -41,6 +45,12 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
   // failure here must never surface as an error — it only costs the card a precise sentence.
   const stock = useQuery({ queryKey: ['store-stock'], queryFn: fetchStoreStock, retry: false, refetchInterval: 30_000 });
 
+  // The Sneaker Graveyard voucher, if this buyer holds one (pages/Graveyard.tsx). Quiet on
+  // purpose: a 404 (gate shut) or a 403 (Genesis pass) only means there is no voucher, and the
+  // shelf must never say "error" over a discount the buyer did not know to expect.
+  const graveyard = useQuery({ queryKey: GRAVEYARD_ME_KEY, queryFn: fetchGraveyardMe, enabled: isAuthenticated, retry: false });
+  const voucher = openVoucher(graveyard.data);
+
   // Back from Stripe: settle this buyer's card orders once. The webhook has almost always delivered
   // the pack already and this returns nothing new; when it has not, this is what delivers it.
   useEffect(() => {
@@ -48,7 +58,7 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
     reconcileStoreOrders()
       .catch(() => undefined)
       .finally(() => {
-        for (const key of ['store-products', 'store-stock']) queryClient.invalidateQueries({ queryKey: [key] });
+        for (const key of ['store-products', 'store-stock', ...GRAVEYARD_ME_KEY]) queryClient.invalidateQueries({ queryKey: [key] });
       });
   }, [status, isAuthenticated, queryClient]);
 
@@ -81,16 +91,17 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
   }, [enjPayment?.quoteId]);
 
   const checkout = useMutation({
-    mutationFn: async ({ type, method }: { type: string; method: PayMethod }) => {
+    mutationFn: async ({ type, method, voucherId }: { type: string; method: PayMethod; voucherId?: string }) => {
       if (method === 'enj') return { method, payment: await storeCheckoutEnj(type) } as const;
-      const session = await storeCheckout(type);
+      const session = await storeCheckout(type, voucherId);
       if (!session.url) throw new Error('Checkout could not be opened — you have not been charged.');
       return { method, url: session.url } as const;
     },
     onSettled: () => {
       // A sale — ours or anyone's — moves the shop toward the next band. Re-read the shelf rather
-      // than leave a stale price under a pack somebody is about to buy again.
-      for (const key of ['store-products', 'store-stock']) queryClient.invalidateQueries({ queryKey: [key] });
+      // than leave a stale price under a pack somebody is about to buy again. The voucher is
+      // re-read too: a checkout holds it until it settles or is cancelled.
+      for (const key of ['store-products', 'store-stock', ...GRAVEYARD_ME_KEY]) queryClient.invalidateQueries({ queryKey: [key] });
     },
     onSuccess: (result) => {
       if (result.method === 'enj') {
@@ -104,7 +115,8 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
 
   const buy = (product: StoreProduct, method: PayMethod) => {
     if (!isAuthenticated) { onSignIn(); return; }
-    checkout.mutate({ type: product.type, method });
+    // The voucher rides along only to the card till; the ENJ till does not take one yet.
+    checkout.mutate({ type: product.type, method, voucherId: method === 'card' ? voucher?.id : undefined });
   };
 
   // The shelf reads slowest band first, Electric last — the same order the landing page's garage
@@ -181,6 +193,15 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
             />
           )}
 
+          {voucher && (
+            <div className="pixel-card p-4 border-m2e-accent flex flex-wrap items-center gap-3">
+              <span className="pixel-border border-m2e-accent text-m2e-accent-dark px-2 py-0.5 text-xs uppercase tracking-wider">Retired Runner</span>
+              <span>
+                Your graveyard voucher: {voucher.percent} % off one bike, valid until {formatOpensAt(voucher.expiresAt)}. It is applied at the card till below.
+              </span>
+            </div>
+          )}
+
           {enjOpensAt ? (
             <div className="pixel-card p-4 text-m2e-text-secondary space-y-1">
               <div className="section-label text-m2e-accent">Paying in ENJ opens {formatOpensAt(enjOpensAt)}</div>
@@ -213,6 +234,7 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
                 locked={running !== null}
                 error={checkout.isError && checkout.variables?.type === p.type ? (checkout.error as Error).message : null}
                 priceBand={catalog.data?.priceBand ?? null}
+                voucher={voucher}
                 onBuy={(method) => buy(p, method)}
               />
             ))}

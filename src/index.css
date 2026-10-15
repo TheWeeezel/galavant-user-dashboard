@@ -75,6 +75,14 @@
   --color-m2e-rare: #46689E;        /* blue hour */
   --color-m2e-epic: #93488E;        /* orchid — deliberately off the brand violet */
   --color-m2e-legendary: #A6791C;   /* brass */
+
+  /* Sneaker Graveyard (pages/Graveyard.tsx): the stones, the ground they stand on and the sky
+     behind them. Parchment-warm by day; the night block below turns them studio-violet. */
+  --color-m2e-stone: #DCD3BF;
+  --color-m2e-stone-dark: #B9AE96;
+  --color-m2e-stone-text: #4A3F35;
+  --color-m2e-ground: #B9AE96;
+  --color-m2e-sky-top: #E3DCCB;
 }
 
 :root {
@@ -539,6 +547,62 @@ body {
   --color-m2e-luck: #66C7B4;
   --color-m2e-recovery: #E58CA0;
   --color-m2e-durability: #9DB2C7;
+  --color-m2e-stone: #2E2748;
+  --color-m2e-stone-dark: #4A4170;
+  --color-m2e-stone-text: #D9D2EA;
+  --color-m2e-ground: #4A4170;
+  --color-m2e-sky-top: #100C1C;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Sneaker Graveyard (pages/Graveyard.tsx)
+   ───────────────────────────────────────────────────────────── */
+
+/* A tombstone: a pixel arch cut with clip-path, the same 2px ink line and 4px hard shadow the
+   pixel cards wear. Three layers because a clipped box cannot carry a border or a box-shadow of
+   its own — ::before is the shadow, ::after the ink, the inner div the stone. */
+.gy-stone {
+  position: relative;
+  align-self: end;
+  --gy-arch: polygon(16px 0, calc(100% - 16px) 0, calc(100% - 16px) 4px, calc(100% - 8px) 4px, calc(100% - 8px) 8px, calc(100% - 4px) 8px, calc(100% - 4px) 16px, 100% 16px, 100% 100%, 0 100%, 0 16px, 4px 16px, 4px 8px, 8px 8px, 8px 4px, 16px 4px);
+}
+.gy-stone::before,
+.gy-stone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: var(--gy-arch);
+}
+.gy-stone::before {
+  transform: translate(4px, 4px);
+  background: var(--color-m2e-shadow);
+}
+.gy-stone::after {
+  background: var(--color-m2e-chrome);
+}
+.gy-stone-in {
+  position: relative;
+  z-index: 1;
+  margin: 2px;
+  background: var(--color-m2e-stone);
+  color: var(--color-m2e-stone-text);
+  clip-path: var(--gy-arch);
+}
+
+/* The wisps that rise off a sneaker while its burn is on its way. */
+@keyframes gy-rise {
+  0% { transform: translateY(0); opacity: 0; }
+  15% { opacity: 0.9; }
+  100% { transform: translateY(-52px); opacity: 0; }
+}
+.gy-wisp {
+  animation: gy-rise 2.6s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gy-wisp {
+    animation: none;
+    opacity: 0.7;
+  }
 }
 
 /* Hero day plate — fades out at night, revealing the dusk art beneath */
