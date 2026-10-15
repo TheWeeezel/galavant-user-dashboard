@@ -8,6 +8,19 @@ export function setAuthToken(token: string | null) {
 }
 
 /**
+ * A refusal the page can act on, not just print. The server answers most mistakes with
+ * `{ error, code }` and a status; a feature gate answers 404 (off) or 403 with code GENESIS_BETA
+ * (Genesis pass), and a page that cannot tell those apart from a crash can only ever say "error".
+ * `message` stays the server's own sentence, shown to the player verbatim.
+ */
+export class ApiError extends Error {
+  constructor(message: string, readonly status: number, readonly code: string | null = null) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+/**
  * Every request gets a deadline. Without one a stalled connection leaves the promise pending
  * for good, and a screen that disables its own close button while a mutation is in flight then
  * cannot be left at all — reported 2026-09-16 as "it hangs... when I close that screen and go
@@ -81,7 +94,7 @@ async function fetchAuthJson<T>(path: string, options: FetchOptions = {}): Promi
   return requestWithDeadline(`${config.apiUrl}${path}`, { ...options, headers }, async (res) => {
     if (!res.ok) {
       const body = await res.json().catch(() => null);
-      throw new Error(body?.message ?? body?.error ?? `API error: ${res.status}`);
+      throw new ApiError(body?.message ?? body?.error ?? `API error: ${res.status}`, res.status, body?.code ?? null);
     }
     return res.json();
   }) as Promise<T>;
@@ -754,8 +767,16 @@ export function fetchStoreStock() {
   return fetchJson<StoreStock>('/store/bikes');
 }
 
-export function storeCheckout(bikeType: string) {
-  return fetchAuthJson<{ url: string }>('/store/checkout', { method: 'POST', body: JSON.stringify({ bikeType }) });
+/**
+ * Open a card checkout. `voucherId` is a Sneaker Graveyard voucher (see the graveyard section
+ * below): the server computes the reduced price itself and holds the voucher until the order
+ * settles or is cancelled, so the page never sends a price — only which voucher to apply.
+ */
+export function storeCheckout(bikeType: string, voucherId?: string) {
+  return fetchAuthJson<{ url: string }>('/store/checkout', {
+    method: 'POST',
+    body: JSON.stringify(voucherId ? { bikeType, voucherId } : { bikeType }),
+  });
 }
 
 /**
@@ -819,6 +840,135 @@ export function storeCheckoutEnj(bikeType: string) {
 /** Poll one payment while the transfer travels. */
 export function fetchEnjPayment(quoteId: string) {
   return fetchAuthJson<EnjPayment>(`/store/checkout/enj/${quoteId}`);
+}
+
+// --- Sneaker Graveyard (pages/Graveyard.tsx; server routes/graveyard.ts) ---
+
+/**
+ * What the server records of a sneaker before it burns: STEPN's public traits, nothing else. The
+ * type and quality arrive capitalised ("Runner", "Common") exactly as STEPN spells them.
+ */
+export interface SneakerSoul {
+  mint: string;
+  /** The number STEPN prints: "Sneaker #922411691" → "922411691". */
+  number: string;
+  type: string;
+  quality: string;
+  level: number;
+  /** "2/7" as STEPN writes it, or null when the trait is missing. */
+  mintCount: string | null;
+  image: string | null;
+}
+
+/** One stone on the public wall. No owner, no mint — the sneaker number is what players know. */
+export interface GraveyardStone {
+  id: string;
+  number: string;
+  type: string;
+  quality: string;
+  level: number;
+  burnedAt: string;
+  /** The bike type the soul went into, or null while it is still waiting. */
+  rebornAs: string | null;
+}
+
+export interface GraveyardVoucher {
+  id: string;
+  percent: number;
+  /** reserved = held by a checkout in progress; the server reports an open one past its date as expired. */
+  status: 'open' | 'reserved' | 'used' | 'expired';
+  expiresAt: string;
+}
+
+export interface GraveyardClaim {
+  id: string;
+  status: 'reserved' | 'burned';
+  soul: SneakerSoul;
+  /** End of the 30-minute hold. A reservation past it without a burn is gone from this list. */
+  reservedUntil: string;
+  /** Set once the wallet sent the burn; cleared again if the chain never confirmed it. */
+  burnSignature: string | null;
+  burnedAt: string | null;
+  voucher: GraveyardVoucher | null;
+  /** The bike the soul lives in, once given. */
+  body: { bikeId: string; type: string } | null;
+}
+
+export interface GraveyardMe {
+  /** Proven Solana wallets, as addresses. */
+  wallets: string[];
+  /** Yes or no, never a number: the monthly spot count is not published. */
+  spotsLeft: boolean;
+  claims: GraveyardClaim[];
+}
+
+export interface GraveyardSneaker {
+  mint: string;
+  wallet: string;
+  tokenAccount: string;
+  soul: SneakerSoul;
+  state: 'available' | 'laid_to_rest' | 'reserved_by_you';
+}
+
+/** The voucher the shop may apply right now: open, and not yet past its date. */
+export function openVoucher(me: GraveyardMe | undefined, now = Date.now()): GraveyardVoucher | null {
+  for (const claim of me?.claims ?? []) {
+    const v = claim.voucher;
+    if (v && v.status === 'open' && Date.parse(v.expiresAt) > now) return v;
+  }
+  return null;
+}
+
+export function fetchGraveyardWall() {
+  return fetchJson<{ wall: GraveyardStone[] }>('/graveyard/wall');
+}
+
+export function fetchGraveyardMe() {
+  return fetchAuthJson<GraveyardMe>('/graveyard/me');
+}
+
+/** The text the wallet signs. Verified byte for byte, so it goes back exactly as it came. */
+export function graveyardChallenge(address: string) {
+  return fetchAuthJson<{ message: string }>('/graveyard/wallet/challenge', { method: 'POST', body: JSON.stringify({ address }) });
+}
+
+export function graveyardVerifyWallet(address: string, message: string, signature: string) {
+  return fetchAuthJson<{ address: string }>('/graveyard/wallet/verify', {
+    method: 'POST',
+    body: JSON.stringify({ address, message, signature }),
+  });
+}
+
+/** Read live off the chain, so it can take a few seconds. */
+export function fetchGraveyardSneakers() {
+  return fetchAuthJson<{ sneakers: GraveyardSneaker[] }>('/graveyard/sneakers');
+}
+
+export function graveyardReserve(mint: string) {
+  return fetchAuthJson<{ claim: Pick<GraveyardClaim, 'id' | 'status' | 'soul' | 'reservedUntil'> }>('/graveyard/reserve', {
+    method: 'POST',
+    body: JSON.stringify({ mint }),
+  });
+}
+
+/** The unsigned burn, base64. Ask right before opening the wallet — its blockhash lives about a minute. */
+export function graveyardBurnTransaction(claimId: string) {
+  return fetchAuthJson<{ transaction: string }>(`/graveyard/claims/${claimId}/transaction`, { method: 'POST' });
+}
+
+export function graveyardSubmitBurn(claimId: string, signature: string) {
+  return fetchAuthJson<{ claim: Pick<GraveyardClaim, 'id' | 'status' | 'burnSignature'> }>(`/graveyard/claims/${claimId}/burned`, {
+    method: 'POST',
+    body: JSON.stringify({ signature }),
+  });
+}
+
+/** Give the soul to a bike the player already owns. Frame and plate only; the voucher stays theirs. */
+export function graveyardBindSoul(claimId: string, bikeId: string) {
+  return fetchAuthJson<{ bike: { id: string; type: string; tokenId: number | null } }>(`/graveyard/claims/${claimId}/bind`, {
+    method: 'POST',
+    body: JSON.stringify({ bikeId }),
+  });
 }
 
 // --- Blockchain / NFT ---
