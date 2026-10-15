@@ -935,10 +935,14 @@ function SoulGiven({ claim, body }: { claim: GraveyardClaim; body: NonNullable<G
           <Eyebrow>Your bike</Eyebrow>
           <H2>{capitalize(body.type)} · Retired Runner</H2>
           <p className="text-lg">
-            The frame follows the sneaker's quality. The plate carries its number. Both go into the NFT image when you export the bike, and both show in the app. The bike art underneath is untouched.
+            {body.origin === 'reborn'
+              ? 'A new bike, born from the soul: it carries the Reborn mark.'
+              : 'A bike you already rode took in the soul: it carries the Inherited mark.'}{' '}
+            The plate carries the sneaker's number. Both show in the app and go onto the bike's NFT card. The bike art underneath is untouched.
           </p>
           <div className="flex flex-wrap gap-2">
             <Chip tone="accent">Retired Runner</Chip>
+            <Chip tone="accent">{body.origin === 'reborn' ? 'Reborn' : 'Inherited'}</Chip>
             <Chip>Soul of {sneaker}</Chip>
             <Chip>Cosmetic only</Chip>
           </div>

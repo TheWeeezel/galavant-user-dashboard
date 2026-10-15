@@ -870,6 +870,8 @@ export interface GraveyardStone {
   burnedAt: string;
   /** The bike type the soul went into, or null while it is still waiting. */
   rebornAs: string | null;
+  /** How it got there: 'reborn' = a new bike, 'inherited' = a bike the player already had. */
+  mark?: 'reborn' | 'inherited' | null;
 }
 
 export interface GraveyardVoucher {
@@ -891,7 +893,7 @@ export interface GraveyardClaim {
   burnedAt: string | null;
   voucher: GraveyardVoucher | null;
   /** The bike the soul lives in, once given. */
-  body: { bikeId: string; type: string } | null;
+  body: { bikeId: string; type: string; origin?: 'reborn' | 'inherited' | null } | null;
 }
 
 export interface GraveyardMe {

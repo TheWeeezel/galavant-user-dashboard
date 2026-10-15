@@ -254,7 +254,7 @@ export function Tombstone({ stone }: { stone: GraveyardStone }) {
           laid to rest {formatDay(stone.burnedAt)}
         </div>
         {stone.rebornAs ? (
-          <div className="text-base text-m2e-accent-dark">reborn as {capitalize(stone.rebornAs)}</div>
+          <div className="text-base text-m2e-accent-dark">{stone.mark === 'inherited' ? 'lives on in a' : 'reborn as'} {capitalize(stone.rebornAs)}</div>
         ) : (
           <div className="text-base opacity-70 border-2 border-dashed border-m2e-stone-dark px-2 mt-0.5">soul waiting</div>
         )}
