@@ -667,7 +667,13 @@ export function redemptionSubmit(watts: number) {
 
 // --- Web shop (card checkout, and ENJ once the server quotes it) ---
 export interface StoreProduct {
+  /** The bike type inside the starter pack. */
   type: string;
+  /** What is sold: `starter_<type>` (since 2026-10-15). Absent on an older server. */
+  product?: string;
+  kind?: 'starter_pack';
+  /** The fixed contents printed on the box. */
+  contents?: { bikes: number; parts: number; partLevel: number; toolboxes: number; toolboxLevel: number };
   displayName: string;
   quality: string;
   priceUsdCents: number;

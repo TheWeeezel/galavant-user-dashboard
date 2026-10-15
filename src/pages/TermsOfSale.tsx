@@ -42,13 +42,18 @@ export function TermsOfSale() {
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">2. What you buy</h2>
           <ul className="list-disc list-inside space-y-2 pl-2">
             <li>
-              Bikes for the Galavant game, sold in the Bike Shop on galavant.run. A bike is a digital item:
-              it lives in your Galavant account and you use it in the game.
+              Starter packs for the Galavant game, sold on the Market on galavant.run. A starter pack is a
+              digital item: it lives in your Galavant account and you open it in the Galavant app.
             </li>
-            <li>Every shop bike is Common quality. Its type decides the pace it rewards, and each bike in the shop shows its speed band.</li>
             <li>
-              A bike is a game item, not money and not an investment. Bikes and WATTS have no cash value,
-              and we do not promise any earnings, resale price or future value.
+              Its contents are fixed and printed on the pack: one Common bike of the pack's type, three
+              level-1 parts and one level-1 toolbox. The bike's type decides the pace it rewards, and each
+              pack shows its speed band. The bike's attributes, its socket types and what the toolbox holds
+              are rolled in the game when you open the pack.
+            </li>
+            <li>
+              A pack and everything in it are game items, not money and not an investment. Bikes, parts and
+              WATTS have no cash value, and we do not promise any earnings, resale price or future value.
             </li>
           </ul>
         </section>
@@ -57,7 +62,7 @@ export function TermsOfSale() {
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">3. Price and payment</h2>
           <ul className="list-disc list-inside space-y-2 pl-2">
             <li>
-              Prices are in US dollars and shown before you pay. Shop prices rise in steps as bikes sell;
+              Prices are in US dollars and shown before you pay. Shop prices rise in steps as packs sell;
               the price shown at checkout is the price you pay.
             </li>
             <li>Card checkout may show the price in your local currency and adds any tax that applies before you pay.</li>
@@ -71,18 +76,18 @@ export function TermsOfSale() {
         <section className="space-y-3">
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">4. Delivery</h2>
           <p>
-            The bike is added to the Galavant account you are signed in with, normally within a minute of
-            payment. If it has not arrived after an hour, write to {mail} with your account email and the
-            payment date.
+            The pack is added to the Galavant account you are signed in with, normally within a minute of
+            payment, and waits under Items in the app until you open it. If it has not arrived after an
+            hour, write to {mail} with your account email and the payment date.
           </p>
         </section>
 
         <section className="space-y-3">
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">5. Your right to cancel</h2>
           <p>
-            Bikes are delivered right away. For card purchases, Link applies the cancellation rules of your
+            Packs are delivered right away. For card purchases, Link applies the cancellation rules of your
             country as part of checkout. For ENJ purchases, you agree before you send that delivery starts
-            immediately and that your 14-day right to cancel ends once the bike is in your account; the ENJ
+            immediately and that your 14-day right to cancel ends once the pack is in your account; the ENJ
             payment screen says so.
           </p>
           <p>
@@ -114,7 +119,7 @@ export function TermsOfSale() {
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">8. Changes to the game</h2>
           <p>
             Galavant is a live game. We change and rebalance it, and that can change how a bike performs.
-            We do not take back a bike you bought, except as described in section 7 and in the {refunds}.
+            We do not take back a pack you bought, or what it held, except as described in section 7 and in the {refunds}.
             If we ever shut Galavant down, we will announce it at least 60 days ahead. Items you exported
             stay in your wallet.
           </p>

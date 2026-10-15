@@ -1,4 +1,4 @@
-import { formatUsd } from './StoreBikeCard';
+import { formatUsd } from './StarterPackCard';
 import type { StoreCatalog, StoreProduct, StoreStock } from '../api';
 
 /**
@@ -62,14 +62,14 @@ export function StoreBatchStrip({
 
       {stock && stock.totalCap > 0 && (
         <div className="text-xs text-m2e-text-secondary tabular-nums">
-          {stock.totalSold} of {stock.totalCap} bikes sold in the whole run
+          {stock.totalSold} of {stock.totalCap} sold in the whole run
           {stock.dailyCap > 0 && <> · {Math.max(0, stock.dailyCap - stock.soldToday)} still available today</>}
         </div>
       )}
 
       {band.isLast ? (
         <p className="text-sm text-m2e-text-secondary">
-          Final batch — {band.remainingAtThisPrice} {band.remainingAtThisPrice === 1 ? 'bike' : 'bikes'} left in the
+          Final batch — {band.remainingAtThisPrice} {band.remainingAtThisPrice === 1 ? 'pack' : 'packs'} left in the
           whole run. There is no next price; when these are gone the shop is done.
         </p>
       ) : next.length > 0 ? (
@@ -92,7 +92,7 @@ export function StoreBatchStrip({
       {ladder && ladder.length > 1 && (
         <details className="group">
           <summary className="cursor-pointer text-xs uppercase tracking-wider text-m2e-accent marker:content-['']">
-            <span className="group-open:hidden">Show every batch to the last bike ▾</span>
+            <span className="group-open:hidden">Show every batch to the last pack ▾</span>
             <span className="hidden group-open:inline">Hide the full run ▴</span>
           </summary>
 
@@ -103,7 +103,7 @@ export function StoreBatchStrip({
               <thead>
                 <tr className="text-m2e-text-secondary uppercase tracking-wider text-[10px]">
                   <th className="text-left py-1 pr-3 font-normal">Batch</th>
-                  <th className="text-left py-1 pr-3 font-normal">Bikes</th>
+                  <th className="text-left py-1 pr-3 font-normal">Sales</th>
                   {names.map((n) => (
                     <th key={n.type} className="text-right py-1 pl-3 font-normal">{n.name}</th>
                   ))}

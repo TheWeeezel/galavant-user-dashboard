@@ -18,7 +18,7 @@ export function RefundPolicy() {
       <div className="pixel-card p-6 md:p-8 space-y-8 text-lg leading-relaxed text-m2e-text-secondary">
         <section className="space-y-3">
           <p>
-            Bikes are digital items, added to your account right after you pay. This page says when we
+            Starter packs are digital items, added to your account right after you pay. This page says when we
             refund. It is part of our <Link to="/terms" className="text-m2e-accent hover:underline">Terms of Sale</Link>.
           </p>
         </section>
@@ -28,16 +28,17 @@ export function RefundPolicy() {
         <section className="space-y-3">
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">We refund in full when</h2>
           <ul className="list-disc list-inside space-y-2 pl-2">
-            <li>you paid and the bike never arrived;</li>
-            <li>you were charged twice for one bike;</li>
-            <li>a fault on our side makes the bike unusable and we cannot fix it;</li>
+            <li>you paid and the pack never arrived;</li>
+            <li>you were charged twice for one pack;</li>
+            <li>a fault on our side makes the pack or what it held unusable and we cannot fix it;</li>
             <li>
-              you ask within 14 days of buying and have not used the bike yet: no walk with it, and not
-              levelled, bred, sold or exported.
+              you ask within 14 days of buying and have not used what the pack held yet: no walk with its
+              bike, and nothing from it levelled, bred, forged, opened, sold or exported. An unopened pack
+              counts as unused.
             </li>
           </ul>
           <p>
-            Otherwise a purchase is final, because the bike is yours from the moment you pay, as you agreed
+            Otherwise a purchase is final, because the pack is yours from the moment you pay, as you agreed
             before paying. This does not limit any right the consumer law of your country gives you.
           </p>
         </section>
@@ -53,7 +54,7 @@ export function RefundPolicy() {
         <section className="space-y-3">
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">What happens next</h2>
           <ul className="list-disc list-inside space-y-2 pl-2">
-            <li>We remove the bike from your account.</li>
+            <li>We remove the pack, or the bike, parts and toolbox it held, from your account.</li>
             <li>A card payment goes back through Link and usually shows on your statement within 5–10 days.</li>
             <li>An ENJ payment goes back to the wallet that paid, as the same amount of ENJ.</li>
           </ul>
@@ -64,7 +65,7 @@ export function RefundPolicy() {
           <p>
             Card purchases are sold through Link, Stripe's merchant of record, so you can also ask Link
             support for a refund at <a href="https://support.link.com" className="text-m2e-accent hover:underline">support.link.com</a>.
-            Link can refund within 60 days of the purchase. Whoever refunds, the bike leaves your account.
+            Link can refund within 60 days of the purchase. Whoever refunds, the pack and what it held leave your account.
           </p>
         </section>
 
@@ -72,7 +73,7 @@ export function RefundPolicy() {
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">Bank disputes</h2>
           <p>
             Please write to us before you dispute a card payment with your bank; it is faster for you. While
-            a dispute is open, we may remove the bike it paid for.
+            a dispute is open, we may remove the pack it paid for and what it held.
           </p>
         </section>
       </div>

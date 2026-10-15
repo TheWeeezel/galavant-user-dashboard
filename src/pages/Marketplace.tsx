@@ -3,13 +3,13 @@ import { Link, useSearchParams } from 'react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
-  ShoppingCart, ChevronLeft, Cancel, Coins, Store,
+  ShoppingCart, ChevronLeft, Cancel, Coins,
   Settings2, SortVertical, Check, Search,
 } from 'pixelarticons/react';
 import { fetchMarket, fetchStats, marketBuy, marketCancel, fetchMarketPurchase, fetchMarketPolicy, type MarketListing, type MarketPolicy } from '../api';
 import { ListingCard } from '../components/ListingCard';
 import { MarketSellPanel } from '../components/MarketSellPanel';
-import { BikeShop } from '../components/BikeShop';
+import { StarterPackShop } from '../components/StarterPackShop';
 import { NftDetailModal } from '../components/NftDetailModal';
 import { LoginModal } from '../components/LoginModal';
 import { useAuth } from '../contexts/AuthContext';
@@ -17,14 +17,14 @@ import { useAuth } from '../contexts/AuthContext';
 type ItemType = '' | 'bike' | 'part' | 'tool';
 
 /**
- * One market, three counters: what players sell each other, the town's own bike shop (formerly the
- * separate /store page), and the seller's desk. The tab lives in the URL (?tab=shop|sell) so the old
- * /store links and Stripe's return land on the shop; the player market needs no parameter.
+ * One market (owner 2026-10-15): the town's packs on top — starter packs now, other packs later —
+ * and below them what players sell each other, with the seller's desk as the second tab. The bike
+ * shop tab is gone; the old /store and /shop links (and Stripe's return) land on this page, and an
+ * old ?tab=shop reads as the player market under the packs.
  */
-type MarketTab = 'browse' | 'shop' | 'sell';
+type MarketTab = 'browse' | 'sell';
 const MARKET_TABS: { value: MarketTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { value: 'browse', label: 'Player Market', icon: ShoppingCart },
-  { value: 'shop', label: 'Bike Shop', icon: Store },
   { value: 'sell', label: 'Sell', icon: Coins },
 ];
 type SortBy = 'newest' | 'price_asc' | 'price_desc' | 'level_desc' | 'level_asc';
@@ -84,7 +84,7 @@ export function Marketplace() {
   // feed carries ordinary in-game items and NFTs side by side.
   const [params, setParams] = useSearchParams();
   const tabParam = params.get('tab');
-  const tab: MarketTab = tabParam === 'shop' || tabParam === 'sell' ? tabParam : 'browse';
+  const tab: MarketTab = tabParam === 'sell' ? 'sell' : 'browse';
   // Switching tabs drops everything else in the URL, including a spent Stripe ?status=.
   const setTab = (next: MarketTab) => setParams(next === 'browse' ? {} : { tab: next }, { replace: true });
   const [showLogin, setShowLogin] = useState(false);
@@ -243,7 +243,7 @@ export function Marketplace() {
                 <span className="text-m2e-accent">Marketplace.</span>
               </h1>
               <p className="text-white/70 text-lg md:text-xl max-w-2xl">
-                One market for everything — brand-new bikes from the town's shop, and whatever
+                One market for everything — starter packs from the town's shop, and whatever
                 players sell each other: bikes, parts, tools and on-chain NFTs, in WATTS or in ENJ.
               </p>
             </motion.div>
@@ -266,6 +266,8 @@ export function Marketplace() {
       )}
 
       <div className="mx-auto max-w-7xl px-4 md:px-8 py-10 md:py-14 space-y-8">
+        <StarterPackShop onSignIn={() => setShowLogin(true)} />
+
         <div role="tablist" aria-label="Market" className="flex flex-wrap gap-2">
           {MARKET_TABS.map(({ value, label, icon: Icon }) => (
             <button
@@ -285,13 +287,8 @@ export function Marketplace() {
           ))}
         </div>
 
-        {tab === 'shop' && <BikeShop onSignIn={() => setShowLogin(true)} />}
-
-        {/* ── Player Marketplace (WATTS · ENJ) ──────────────────────────
-            Hidden rather than unmounted on the shop tab, so filters and the page of results
-            are still there when the buyer comes back. */}
+        {/* ── Player Marketplace (WATTS · ENJ) ────────────────────────── */}
         <motion.section
-          hidden={tab === 'shop'}
           className="space-y-6"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

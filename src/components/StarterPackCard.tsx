@@ -1,7 +1,6 @@
-import { useState } from 'react';
-import { config } from '../config';
 import type { StoreCatalog, StoreProduct, StoreStock } from '../api';
 import { bikeTypeInfo, BIKE_BAND_MAX } from '../config/bikeTypes';
+import { StarterBoxArt } from './StarterBoxArt';
 
 /** Quality tiers wear material names everywhere else in the game, so the shop says Steel, not "common". */
 const MATERIAL_NAMES: Record<string, string> = {
@@ -10,14 +9,6 @@ const MATERIAL_NAMES: Record<string, string> = {
   rare: 'Blue Hour',
   epic: 'Orchid',
   legendary: 'Brass',
-};
-
-const QUALITY_BADGE: Record<string, string> = {
-  common: 'pixel-badge-common',
-  uncommon: 'pixel-badge-uncommon',
-  rare: 'pixel-badge-rare',
-  epic: 'pixel-badge-epic',
-  legendary: 'pixel-badge-legendary',
 };
 
 
@@ -30,7 +21,7 @@ export interface Offer {
 }
 
 /**
- * Why a bike is not buyable.
+ * Why a pack is not buyable.
  *
  * The catalog only ever says `available: false`, and the three reasons behind that flag ask the
  * player for completely different things: wait a day, wait for the shop, or stop waiting. So the
@@ -45,14 +36,14 @@ export function describeOffer(
 ): Offer {
   if (product.available) return { buyable: true, reason: null };
   if (!(product.priceUsdCents > 0)) {
-    return { buyable: false, reason: 'Not for sale right now — this frame has no price yet.' };
+    return { buyable: false, reason: 'Not for sale right now — this pack has no price yet.' };
   }
   if (stock) {
     if (stock.totalCap > 0 && stock.totalSold >= stock.totalCap) {
-      return { buyable: false, reason: 'Sold out — this run of shop bikes is gone.' };
+      return { buyable: false, reason: 'Sold out — this run of starter packs is gone.' };
     }
     if (stock.dailyCap > 0 && stock.soldToday >= stock.dailyCap) {
-      return { buyable: false, reason: "Today's batch is gone — fresh bikes tomorrow." };
+      return { buyable: false, reason: "Today's batch is gone — fresh packs tomorrow." };
     }
   }
   if (!catalogEnabled) {
@@ -84,7 +75,7 @@ export function formatUsd(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
-interface StoreBikeCardProps {
+interface StarterPackCardProps {
   product: StoreProduct;
   catalogEnabled: boolean;
   stock: StoreStock | undefined;
@@ -95,12 +86,17 @@ interface StoreBikeCardProps {
   locked: boolean;
   /** The last checkout failure for this card. Null once another attempt starts. */
   error: string | null;
-  /** How many bikes are left at this price, from the catalog. Null when the curve is off. */
+  /** How many packs are left at this price, from the catalog. Null when the curve is off. */
   priceBand: StoreCatalog['priceBand'];
   onBuy: (method: PayMethod) => void;
 }
 
-export function StoreBikeCard({
+/**
+ * One starter pack on the Market's shelf (owner 2026-10-15: the shop sells starter packs instead
+ * of single bikes, same prices, same ladder): the box, the bike's pace, what is inside, the price,
+ * card and ENJ. The pack opens in the app, so the card says where it goes.
+ */
+export function StarterPackCard({
   product,
   catalogEnabled,
   stock,
@@ -110,12 +106,11 @@ export function StoreBikeCard({
   error,
   priceBand,
   onBuy,
-}: StoreBikeCardProps) {
+}: StarterPackCardProps) {
   const offer = describeOffer(product, catalogEnabled, stock);
   const enj = enjPrice(product);
   const material = MATERIAL_NAMES[product.quality] ?? product.quality;
-  const badge = QUALITY_BADGE[product.quality] ?? QUALITY_BADGE.common;
-  const [artMissing, setArtMissing] = useState(false);
+  const contents = product.contents ?? { bikes: 1, parts: 3, partLevel: 1, toolboxes: 1, toolboxLevel: 1 };
   // Who the frame suits and the speed band it earns in — the same two facts, from the same
   // table, the landing page's garage prints. A buyer picks a bike by its pace, so the pace belongs
   // on the price tag and not one page away.
@@ -124,32 +119,14 @@ export function StoreBikeCard({
 
   return (
     <div className="pixel-card overflow-hidden flex flex-col">
-      <div className="relative aspect-[16/9] bg-white border-b-2 border-m2e-border flex items-center justify-center">
-        {/* Only on failure. Sitting it permanently behind the art meant it showed
-            through the transparent parts of every bike, duplicating the name
-            printed below the card. */}
-        {artMissing ? (
-          <span className="absolute text-2xl text-m2e-text-muted uppercase tracking-widest">
-            {product.displayName}
-          </span>
-        ) : (
-          <img
-            src={`${config.apiUrl}/art/bases/bike-${product.type}.png`}
-            alt={`${material} ${product.displayName} bike`}
-            className="relative w-full h-full object-contain pixel-render"
-            loading="lazy"
-            onError={() => setArtMissing(true)}
-          />
-        )}
-        <span className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] uppercase pixel-border shadow-sm tracking-wide ${badge}`}>
-          {material}
-        </span>
+      <div className="bg-m2e-bg-alt border-b-2 border-m2e-border px-6 pt-5 pb-3">
+        <StarterBoxArt type={product.type} price={product.priceUsdCents > 0 ? formatUsd(product.priceUsdCents) : null} className="w-full h-auto" />
       </div>
 
       <div className="p-4 flex flex-col gap-3 flex-1">
         <div className="space-y-2">
           <div className="flex items-end justify-between gap-2">
-            <span className="text-xl uppercase tracking-wide leading-none">{product.displayName}</span>
+            <span className="text-xl uppercase tracking-wide leading-none">{product.displayName} Starter Pack</span>
             {info && (
               <span className="text-m2e-accent text-base leading-none whitespace-nowrap">
                 {info.lo}–{info.hi} <span className="text-[10px] text-m2e-text-muted">km/h</span>
@@ -159,6 +136,11 @@ export function StoreBikeCard({
           {info && (
             <div className="text-[11px] uppercase tracking-wider text-m2e-text-secondary">{info.best}</div>
           )}
+          <ul className="text-sm text-m2e-text-secondary leading-snug">
+            <li>{contents.bikes} {material} {product.displayName} bike</li>
+            <li>{contents.parts} level-{contents.partLevel} parts, made for its sockets</li>
+            <li>{contents.toolboxes} level-{contents.toolboxLevel} toolbox</li>
+          </ul>
           {info && (
             <>
               <div className="relative h-2 rounded-full bg-m2e-bg-alt border border-m2e-border overflow-hidden">
@@ -195,7 +177,7 @@ export function StoreBikeCard({
           )}
           {/* The price climbs as the run sells out, so the shop says so before the step, not after.
               A rise nobody announced reads as a bait-and-switch; the same rise with the number of
-              bikes left beside it is a reason to buy today. */}
+              packs left beside it is a reason to buy today. */}
           {priceBand && product.nextPriceUsdCents != null && offer.buyable && (
             <div className="mt-1 text-[11px] text-m2e-warning-deep">
               {priceBand.remainingAtThisPrice} left at this price — then{' '}
@@ -222,7 +204,7 @@ export function StoreBikeCard({
           </button>
 
           {/* Second way, and only ever a real one: this button exists only while the server itself
-              quotes ENJ for this bike. */}
+              quotes ENJ for this pack. */}
           {enj !== null && (
             <button
               className="pixel-btn pixel-btn-outline px-4 py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
@@ -234,13 +216,15 @@ export function StoreBikeCard({
           )}
         </div>
 
-        {/* Only when the bike IS on sale and only the card is shut — otherwise `offer.reason` above
+        {/* Only when the pack IS on sale and only the card is shut — otherwise `offer.reason` above
             has already said the thing that matters, and two explanations read as two problems. */}
         {offer.buyable && product.cardAvailable === false && enj !== null && (
           <p className="text-xs text-m2e-text-secondary">Card payment opens soon — ENJ works today.</p>
         )}
 
         {error && <p className="text-xs text-m2e-danger-deep">{error}</p>}
+
+        <p className="text-[11px] uppercase tracking-wider text-m2e-text-muted">Opens in the Galavant app · Items</p>
       </div>
     </div>
   );

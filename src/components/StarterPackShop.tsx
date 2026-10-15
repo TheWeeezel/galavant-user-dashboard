@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
-import { StoreBikeCard, type PayMethod } from './StoreBikeCard';
+import { StarterPackCard, type PayMethod } from './StarterPackCard';
 import { EnjPaymentPanel } from './EnjPaymentPanel';
 import { StoreBatchStrip } from './StoreBatchStrip';
 import { byBikeTypeOrder } from '../config/bikeTypes';
@@ -14,11 +14,13 @@ function formatOpensAt(iso: string): string {
 }
 
 /**
- * The bike shop: brand-new bikes, paid by card or in ENJ. It used to be its own page (/store) and is
- * now the Bike Shop tab of the market; /store still redirects here, and Stripe's return lands on it.
- * The market page owns the sign-in dialog, so a buy from a signed-out visitor asks it to open.
+ * Starter packs on top of the Market (owner 2026-10-15: the market is the players' marketplace, and
+ * the town's packs sit on top of it — starter packs now, other packs later). One pack per bike type,
+ * at the bike's price and on the bike's ladder, paid by card or in ENJ; it opens in the app. /store
+ * and /shop still lead here, and Stripe's return lands here. The market page owns the sign-in
+ * dialog, so a buy from a signed-out visitor asks it to open.
  */
-export function BikeShop({ onSignIn }: { onSignIn: () => void }) {
+export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const [params] = useSearchParams();
@@ -40,7 +42,7 @@ export function BikeShop({ onSignIn }: { onSignIn: () => void }) {
   const stock = useQuery({ queryKey: ['store-stock'], queryFn: fetchStoreStock, retry: false, refetchInterval: 30_000 });
 
   // Back from Stripe: settle this buyer's card orders once. The webhook has almost always delivered
-  // the bike already and this returns nothing new; when it has not, this is what delivers it.
+  // the pack already and this returns nothing new; when it has not, this is what delivers it.
   useEffect(() => {
     if (status !== 'success' || !isAuthenticated) return;
     reconcileStoreOrders()
@@ -87,7 +89,7 @@ export function BikeShop({ onSignIn }: { onSignIn: () => void }) {
     },
     onSettled: () => {
       // A sale — ours or anyone's — moves the shop toward the next band. Re-read the shelf rather
-      // than leave a stale price under a bike somebody is about to buy again.
+      // than leave a stale price under a pack somebody is about to buy again.
       for (const key of ['store-products', 'store-stock']) queryClient.invalidateQueries({ queryKey: [key] });
     },
     onSuccess: (result) => {
@@ -120,14 +122,18 @@ export function BikeShop({ onSignIn }: { onSignIn: () => void }) {
 
   return (
     <div className="space-y-8">
-      <p className="text-m2e-text-secondary text-lg max-w-3xl">
-        Brand-new bikes from the town's shop, paid by card or in ENJ from your own wallet — playable
-        immediately, exportable to your Enjin Wallet anytime.
-      </p>
+      <div className="space-y-2">
+        <div className="section-label">Starter Packs</div>
+        <p className="text-m2e-text-secondary text-lg max-w-3xl">
+          One pack per bike, contents printed on the box: a fresh Steel bike, three level-1 parts made
+          for its sockets and a toolbox. Paid by card or in ENJ from your own wallet — you open it in
+          the Galavant app, under Items.
+        </p>
+      </div>
 
       {status === 'success' && (
         <div className="pixel-card p-4 border-m2e-success text-m2e-success-deep">
-          Payment received — your new bike is in your account. Open the Galavant app and take it for a walk. 🚲
+          Payment received — your starter pack is waiting in the Galavant app. Open Items and tear it open. 📦
         </div>
       )}
       {status === 'cancel' && (
@@ -138,7 +144,7 @@ export function BikeShop({ onSignIn }: { onSignIn: () => void }) {
         <div ref={tillRef} style={{ scrollMarginTop: '12px' }}>
           <EnjPaymentPanel
             payment={enjPayment}
-            displayName={products.find((p) => p.type === enjPayment.product)?.displayName ?? enjPayment.product}
+            displayName={`${products.find((p) => p.product === enjPayment.product || p.type === enjPayment.product)?.displayName ?? enjPayment.product} Starter Pack`}
             onClose={() => setEnjPayment(null)}
           />
         </div>
@@ -150,20 +156,20 @@ export function BikeShop({ onSignIn }: { onSignIn: () => void }) {
         </div>
       ) : catalog.isError ? (
         <div className="pixel-card p-6 space-y-3">
-          <h2 className="text-2xl uppercase tracking-wide">Shop unreachable</h2>
-          <p className="text-m2e-text-secondary">The bike list could not be loaded — nothing was charged.</p>
+          <h2 className="text-2xl uppercase tracking-wide">Packs unreachable</h2>
+          <p className="text-m2e-text-secondary">The pack list could not be loaded — nothing was charged.</p>
           <button className="pixel-btn pixel-btn-secondary px-4 py-3 text-sm" onClick={() => catalog.refetch()}>
             Try again
           </button>
         </div>
       ) : products.length === 0 ? (
         <div className="pixel-card p-6 space-y-2">
-          <h2 className="text-2xl uppercase tracking-wide">No bikes listed</h2>
+          <h2 className="text-2xl uppercase tracking-wide">No packs listed</h2>
           <p className="text-m2e-text-secondary">The shop has nothing on the shelf right now — check back soon.</p>
         </div>
       ) : (
         <>
-          {/* The bikes stay on the shelf even while the till is shut. A closed checkout is a
+          {/* The packs stay on the shelf even while the till is shut. A closed checkout is a
               reason to explain the wait, not a reason to hide what the shop sells and what it
               costs — hiding it was the old behaviour, and it made the shop look empty. */}
           {catalog.data?.priceBand && (
@@ -180,7 +186,7 @@ export function BikeShop({ onSignIn }: { onSignIn: () => void }) {
               <div className="section-label text-m2e-accent">Paying in ENJ opens {formatOpensAt(enjOpensAt)}</div>
               <p>
                 The prices below are the real ones. Everything the shop sells before the relaunch
-                is wiped on that day, so the ENJ till stays shut until it counts — no bike here is
+                is wiped on that day, so the ENJ till stays shut until it counts — no pack here is
                 worth real ENJ yet. Meanwhile you can earn bikes in-game and from breeding.
               </p>
               <p className="text-xs">
@@ -197,7 +203,7 @@ export function BikeShop({ onSignIn }: { onSignIn: () => void }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {products.map((p) => (
-              <StoreBikeCard
+              <StarterPackCard
                 key={p.type}
                 product={p}
                 catalogEnabled={shopOpen}
@@ -215,7 +221,7 @@ export function BikeShop({ onSignIn }: { onSignIn: () => void }) {
       )}
 
       <p className="text-m2e-text-secondary max-w-2xl">
-        Higher grades come from breeding — the shop sells fresh Steel bikes to get you rolling.
+        Higher grades come from breeding — starter packs hold fresh Steel bikes to get you rolling.
       </p>
     </div>
   );

@@ -11,4 +11,4 @@ export const SELLER = {
 } as const;
 
 /** The date both pages show; change it whenever either page changes. */
-export const LEGAL_UPDATED = 'October 8, 2026';
+export const LEGAL_UPDATED = 'October 15, 2026';

@@ -81,7 +81,7 @@ export function EnjPaymentPanel({ payment: initial, displayName, onClose }: EnjP
     queryKey: ['enj-payment', initial.quoteId],
     queryFn: () => fetchEnjPayment(initial.quoteId),
     initialData: initial,
-    // Stops once there is nothing left to wait for — a delivered bike and a held payment are both
+    // Stops once there is nothing left to wait for — a delivered pack and a held payment are both
     // final as far as this panel is concerned.
     refetchInterval: (query) => {
       const s = query.state.data?.status;
@@ -118,7 +118,7 @@ export function EnjPaymentPanel({ payment: initial, displayName, onClose }: EnjP
 
       {payment.status === 'redeemed' ? (
         <p className="text-m2e-success-deep">
-          Payment received — your new bike is in your Profile. 🚲
+          Payment received — your starter pack is waiting in the Galavant app, under Items. 📦
         </p>
       ) : payment.status === 'held' ? (
         <p className="text-m2e-danger-deep">
@@ -127,7 +127,7 @@ export function EnjPaymentPanel({ payment: initial, displayName, onClose }: EnjP
             : 'Your transfer arrived after the price had expired. Nothing has been lost — we have it on record and will be in touch.'}
         </p>
       ) : payment.status === 'paid' ? (
-        <p className="text-m2e-success-deep">Payment spotted — your bike is being built. This takes a moment.</p>
+        <p className="text-m2e-success-deep">Payment spotted — your pack is being sealed. This takes a moment.</p>
       ) : (
         <>
           <div className="space-y-1">
@@ -197,16 +197,16 @@ export function EnjPaymentPanel({ payment: initial, displayName, onClose }: EnjP
           <ul className="text-xs text-m2e-text-secondary space-y-1 list-disc pl-4">
             <li>Send from your own Enjin Wallet — we never take custody of your ENJ and never ask you to sign anything here.</li>
             <li>Use the {payment.chain}. A transfer on another chain cannot be seen or returned.</li>
-            <li>One transfer, the exact amount. Two part-payments do not add up to one bike.</li>
+            <li>One transfer, the exact amount. Two part-payments do not add up to one pack.</li>
             <li>
               Do not send your whole balance: the chain deletes an account that drops below 0.1 ENJ,
               so always leave a little behind.
             </li>
-            <li>Your bike appears in your Profile within about a minute of the transfer landing.</li>
+            <li>Your pack appears in the app, under Items, within about a minute of the transfer landing.</li>
             {/* The ENJ till has no Stripe checkbox, so the agreement the Terms of Sale rely on is stated here, before the buyer sends. */}
             <li>
               By sending, you agree to the <Link to="/terms" className="underline">Terms of Sale</Link>: the
-              bike is delivered right away and your 14-day right to cancel ends once it is in your account.
+              pack is delivered right away and your 14-day right to cancel ends once it is in your account.
               See the <Link to="/refunds" className="underline">Refund Policy</Link>.
             </li>
           </ul>

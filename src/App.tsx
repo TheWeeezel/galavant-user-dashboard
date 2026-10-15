@@ -27,15 +27,18 @@ function ScrollToTop() {
 }
 
 /**
- * The bike shop used to be its own page. /store stays as the short link — it is in posts, and it is
- * Stripe's return address (success_url / cancel_url in the server's bike-store.ts) — and lands on the
- * market's Bike Shop tab with ?status= and ?session_id= carried along.
+ * The bike shop used to be its own page, then a tab of the market; now its starter packs sit on top
+ * of the market. /store stays as the short link — it is in posts, and older Stripe sessions return
+ * to it (new ones return to /market directly, bike-store.ts) — with ?status= and ?session_id=
+ * carried along.
  */
 function ToBikeShop() {
   const { search } = useLocation();
   const params = new URLSearchParams(search);
-  params.set('tab', 'shop');
-  return <Navigate to={`/market?${params}`} replace />;
+  // The shop is no longer a tab: its starter packs sit on top of the market (owner 2026-10-15).
+  params.delete('tab');
+  const query = params.toString();
+  return <Navigate to={query ? `/market?${query}` : '/market'} replace />;
 }
 
 export function App() {
