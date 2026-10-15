@@ -764,6 +764,7 @@ export const gameplaySections: GameplaySection[] = [
         title: 'Exporting: Minting an NFT',
         content: [
           { type: 'paragraph', text: 'Bikes and parts you buy, earn or breed are ordinary in-game items. Exporting one mints it as an NFT on the Enjin chain, straight into your own Enjin Wallet — which is what lets it be traded for real ENJ, and what freezes it.' },
+          { type: 'paragraph', text: 'An exported bike or part shows in your wallet and on marketplaces as its trading card: the same card the game draws, with its art, level, stats, sockets and number printed on it.' },
           { type: 'heading', text: 'Where you do it' },
           { type: 'paragraph', text: 'In the app: open the bike and tap Export. On the website: sign in at galavant.run with the same Google account, open Profile, scroll to your inventory, tap a bike and choose Export to Wallet; tap a part and choose Export as NFT. Parts are exported on the website.' },
           { type: 'heading', text: 'What the item needs first' },
