@@ -14,12 +14,12 @@ export function Layout() {
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState(false);
 
-  // Only the landing page has a full-bleed hero image behind the bar. There the
-  // header is lifted out of flow so the art runs underneath it and the scrim has
-  // something to dissolve into. Everywhere else the page opens on a flat
+  // Only the landing page and the graveyard have a full-bleed hero behind the bar.
+  // There the header is lifted out of flow so the art runs underneath it and the
+  // scrim has something to dissolve into. Everywhere else the page opens on a flat
   // bg-m2e-chrome strip that a solid bar continues seamlessly — fading over those
   // just reveals the cream page behind and reads as a muddy seam.
-  const blendsIntoHero = pathname === '/';
+  const blendsIntoHero = pathname === '/' || pathname === '/graveyard';
 
   // Past the first few pixels the bar stops being part of the artwork and starts
   // being chrome over content, so it swaps from a fading scrim to a blurred pane.

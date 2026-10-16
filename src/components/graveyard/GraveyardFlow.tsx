@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { WalletAccount } from '@wallet-standard/base';
@@ -46,6 +46,7 @@ import {
   soulDetail,
   soulLine,
 } from './Pixels';
+import { Card, Chip, ErrorLine, Eyebrow, H2, errorText } from './Chrome';
 
 /**
  * The sign-in-to-rebirth flow of the Sneaker Graveyard.
@@ -55,6 +56,10 @@ import {
  * farewell, a proven wallet is the sneaker list, nothing is the wallet step. So a reload — or a
  * phone that came back from Phantom with the page evicted — lands exactly where the player left,
  * and the server's answer is the only truth about what happened on the chain.
+ *
+ * On the page the flow sits inside the wizard (Wizard.tsx), which puts two help steps in front
+ * of it and draws one rail for all of them: the flow then reports its step through
+ * `onStepChange` and leaves its own stepper off (`embedded`).
  */
 
 /** Shared with the shop, which reads the same answer for the voucher. */
@@ -72,8 +77,8 @@ const BIKES_KEY = ['userBikes'] as const;
 
 const VOUCHER_PERCENT_TEXT = '15 %';
 
-type Step = 'signin' | 'wallet' | 'sneaker' | 'farewell' | 'rebirth';
-const STEPS: { key: Step; label: string }[] = [
+export type FlowStep = 'signin' | 'wallet' | 'sneaker' | 'farewell' | 'rebirth';
+export const FLOW_STEPS: { key: FlowStep; label: string }[] = [
   { key: 'signin', label: 'Sign in' },
   { key: 'wallet', label: 'Wallet' },
   { key: 'sneaker', label: 'Sneaker' },
@@ -81,8 +86,23 @@ const STEPS: { key: Step; label: string }[] = [
   { key: 'rebirth', label: 'Rebirth' },
 ];
 
-function errorText(err: unknown): string {
-  return err instanceof Error && err.message ? err.message : 'Something went wrong. Try again.';
+export interface FlowFrame {
+  /** True inside the wizard: the rail there replaces the flow's own stepper. */
+  embedded: boolean;
+  /** The eyebrow over a step's card — "Step 3 of 7 · Sign in" inside the wizard. */
+  stepLabel: (step: FlowStep) => string;
+  onStepChange?: (step: FlowStep, done: boolean) => void;
+}
+
+const FrameContext = createContext<FlowFrame>({
+  embedded: false,
+  stepLabel: (step) => `Step ${FLOW_STEPS.findIndex((s) => s.key === step) + 1} of ${FLOW_STEPS.length}`,
+});
+
+/** "Step 3 of 7 · Sign in" — numbered by whoever frames the flow. */
+function StepEyebrow({ step }: { step: FlowStep }) {
+  const { stepLabel } = useContext(FrameContext);
+  return <Eyebrow>{stepLabel(step)}</Eyebrow>;
 }
 
 function pickClaims(me: GraveyardMe, now: number) {
@@ -94,7 +114,16 @@ function pickClaims(me: GraveyardMe, now: number) {
   };
 }
 
-export function GraveyardFlow({ onSignIn }: { onSignIn: () => void }) {
+export function GraveyardFlow({ onSignIn, frame }: { onSignIn: () => void; frame?: Partial<FlowFrame> }) {
+  const base = useContext(FrameContext);
+  return (
+    <FrameContext.Provider value={{ ...base, ...frame }}>
+      <Flow onSignIn={onSignIn} />
+    </FrameContext.Provider>
+  );
+}
+
+function Flow({ onSignIn }: { onSignIn: () => void }) {
   const { isAuthenticated, isRestoring } = useAuth();
   const queryClient = useQueryClient();
   // Bumped when a hold runs out, so the step is derived again from a clock that has moved on.
@@ -229,20 +258,24 @@ export function GraveyardFlow({ onSignIn }: { onSignIn: () => void }) {
 
 // ── Chrome ───────────────────────────────────────────────────────────────────
 
-function Shell({ step, done = false, wide = false, children }: { step: Step; done?: boolean; wide?: boolean; children: ReactNode }) {
+function Shell({ step, done = false, wide = false, children }: { step: FlowStep; done?: boolean; wide?: boolean; children: ReactNode }) {
+  const { embedded, onStepChange } = useContext(FrameContext);
+  // The frame learns the step the way the flow does: from the server's answer, on every render
+  // that changes it.
+  useEffect(() => { onStepChange?.(step, done); }, [step, done, onStepChange]);
   return (
     <div className={`mx-auto ${wide ? 'max-w-6xl' : 'max-w-[680px]'} space-y-5`}>
-      <Stepper current={step} allDone={done} />
+      {!embedded && <Stepper current={step} allDone={done} />}
       {children}
     </div>
   );
 }
 
-function Stepper({ current, allDone }: { current: Step; allDone: boolean }) {
-  const at = STEPS.findIndex((s) => s.key === current);
+function Stepper({ current, allDone }: { current: FlowStep; allDone: boolean }) {
+  const at = FLOW_STEPS.findIndex((s) => s.key === current);
   return (
     <ol className="flex flex-wrap gap-2" aria-label="Steps">
-      {STEPS.map((s, i) => {
+      {FLOW_STEPS.map((s, i) => {
         const state = allDone || i < at ? 'done' : i === at ? 'now' : 'todo';
         const tone = state === 'done'
           ? 'border-m2e-success text-m2e-success-deep bg-m2e-card'
@@ -259,41 +292,12 @@ function Stepper({ current, allDone }: { current: Step; allDone: boolean }) {
   );
 }
 
-function Card({ tone, children }: { tone?: 'accent' | 'danger' | 'soft'; children: ReactNode }) {
-  const border = tone === 'accent' ? 'border-m2e-accent' : tone === 'danger' ? 'border-m2e-danger' : '';
-  return <div className={`pixel-card p-5 md:p-7 space-y-4 ${border}`}>{children}</div>;
-}
-
-function Eyebrow({ children }: { children: ReactNode }) {
-  return <div className="section-label">{children}</div>;
-}
-
-function H2({ children }: { children: ReactNode }) {
-  return <h2 className="text-3xl md:text-4xl uppercase tracking-wide leading-none">{children}</h2>;
-}
-
-function ErrorLine({ error }: { error: unknown }) {
-  if (!error) return null;
-  return <p className="text-sm text-m2e-danger-deep">&gt; {errorText(error)}</p>;
-}
-
-function Chip({ tone = 'plain', children }: { tone?: 'plain' | 'ok' | 'warn' | 'accent'; children: ReactNode }) {
-  const cls = tone === 'ok'
-    ? 'border-m2e-success text-m2e-success-deep'
-    : tone === 'warn'
-      ? 'border-m2e-warning text-m2e-warning-deep'
-      : tone === 'accent'
-        ? 'border-m2e-accent text-m2e-accent-dark'
-        : 'border-m2e-border text-m2e-text-secondary';
-  return <span className={`inline-block border-2 bg-m2e-card px-2 py-0.5 text-xs uppercase tracking-wider whitespace-nowrap ${cls}`}>{children}</span>;
-}
-
 // ── Gate states ──────────────────────────────────────────────────────────────
 
 function SignInCard({ onSignIn }: { onSignIn: () => void }) {
   return (
     <Card>
-      <Eyebrow>Step 1 of 5</Eyebrow>
+      <StepEyebrow step="signin" />
       <H2>Sign in with your Galavant account</H2>
       <p className="text-lg text-m2e-text">
         The same Google account you use in the app. The voucher and the soul are delivered there, so the soul needs somewhere to land.
@@ -401,7 +405,7 @@ function WalletStep({ proven, onProven, onBack }: { proven: string[]; onProven: 
     const origin = typeof window === 'undefined' ? '' : window.location.origin;
     return (
       <Card>
-        <Eyebrow>Step 2 of 5</Eyebrow>
+        <StepEyebrow step="wallet" />
         <H2>Open this page in Phantom</H2>
         <p className="text-lg">
           No Solana wallet is reachable from this browser. On a phone, the easiest way is Phantom's own browser: the button below opens this page there, with your wallet ready.
@@ -418,7 +422,7 @@ function WalletStep({ proven, onProven, onBack }: { proven: string[]; onProven: 
 
   return (
     <Card>
-      <Eyebrow>Step 2 of 5</Eyebrow>
+      <StepEyebrow step="wallet" />
       <H2>Connect {wallet.name} and sign a message</H2>
       <p className="text-lg">Signing proves the wallet is yours. It is not a transaction. Nothing moves and nothing is charged.</p>
 
@@ -492,7 +496,7 @@ function SneakerStep({ me, notice, onDismissNotice, onReserved, onAnotherWallet 
   return (
     <div className="space-y-5">
       <div className="space-y-1.5">
-        <Eyebrow>Step 3 of 5</Eyebrow>
+        <StepEyebrow step="sneaker" />
         <H2>Your sneakers</H2>
         <p className="text-lg text-m2e-text-secondary">
           {list.length > 0
@@ -602,7 +606,7 @@ function SneakerStep({ me, notice, onDismissNotice, onReserved, onAnotherWallet 
                 </div>
                 <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-base">
                   <dt className="text-m2e-text-secondary">You get</dt><dd>{VOUCHER_PERCENT_TEXT} off a Steel starter pack, valid 30 days</dd>
-                  <dt className="text-m2e-text-secondary">And</dt><dd>its soul on that bike's card: the Reborn ribbon with its number</dd>
+                  <dt className="text-m2e-text-secondary">And</dt><dd>its soul on that bike's card: a soul haze and the Reborn mark with its number</dd>
                   <dt className="text-m2e-text-secondary">Stats</dt><dd>unchanged. The soul is cosmetic.</dd>
                 </dl>
                 <button
@@ -689,7 +693,7 @@ function Farewell({ claim, wallets, notice, onExpired, onNotToday }: {
 
   return (
     <Card tone="danger">
-      <Eyebrow>Step 4 of 5</Eyebrow>
+      <StepEyebrow step="farewell" />
       <H2>Say goodbye to {name}</H2>
 
       {notice && <div className="pixel-border border-m2e-danger bg-m2e-danger-soft p-3 text-base">{notice}</div>}
@@ -833,7 +837,7 @@ function Rebirth({ claim, onBound }: { claim: GraveyardClaim; onBound: () => voi
   return (
     <div className="space-y-5">
       <div className="space-y-1.5">
-        <Eyebrow>Step 5 of 5</Eyebrow>
+        <StepEyebrow step="rebirth" />
         <H2>Rest well, {capitalize(claim.soul.type)}. Now ride.</H2>
       </div>
 
@@ -859,7 +863,7 @@ function Rebirth({ claim, onBound }: { claim: GraveyardClaim; onBound: () => voi
         </div>
         <div className="pixel-card p-5 flex flex-col gap-3 items-start">
           <h3 className="text-2xl uppercase tracking-wide leading-none">Give the soul to a bike I already own</h3>
-          <p className="text-base text-m2e-text-secondary flex-1">Its card gets the Inherited ribbon. Steel bikes only — a burn never gets more than Steel. The voucher stays yours.</p>
+          <p className="text-base text-m2e-text-secondary flex-1">Its card carries the soul's mark: Inherited. Steel bikes only — a burn never gets more than Steel. The voucher stays yours.</p>
           <button type="button" className="pixel-btn pixel-btn-secondary px-5 py-3 text-sm" onClick={() => setPicking((p) => !p)} aria-expanded={picking}>
             {picking ? 'Hide my bikes' : 'Pick one of my bikes'}
           </button>
@@ -920,7 +924,7 @@ function bikeImage(bike: Pick<UserBike, 'imageUrl' | 'type'>): string {
   return bikeArtUrl(bike.type);
 }
 
-/** The result: the bike's trading card with the soul's ribbon, drawn by the server (the same card the
+/** The result: the bike's trading card with the soul's mark, drawn by the server (the same card the
  *  app reveals and the NFT shows). */
 function SoulGiven({ claim, body }: { claim: GraveyardClaim; body: NonNullable<GraveyardClaim['body']> }) {
   const reborn = body.origin === 'reborn';
@@ -933,7 +937,7 @@ function SoulGiven({ claim, body }: { claim: GraveyardClaim; body: NonNullable<G
         <MarkedBikeCard
           src={`${config.apiUrl}/graveyard/card/${claim.id}.png`}
           fallback={reborn ? EXAMPLE_CARDS.reborn : EXAMPLE_CARDS.inherited}
-          alt={`Your ${capitalize(body.type)} bike's trading card with the ${reborn ? 'Reborn' : 'Inherited'} ribbon of ${capitalize(claim.soul.type)} #${claim.soul.number}`}
+          alt={`Your ${capitalize(body.type)} bike's trading card with the ${reborn ? 'Reborn' : 'Inherited'} mark of ${capitalize(claim.soul.type)} #${claim.soul.number}`}
           className="max-w-[360px] animate-float-y"
         />
         <div className="space-y-3">
@@ -941,9 +945,9 @@ function SoulGiven({ claim, body }: { claim: GraveyardClaim; body: NonNullable<G
           <H2>{capitalize(body.type)} · {reborn ? 'Reborn' : 'Inherited'}</H2>
           <p className="text-lg">
             {reborn
-              ? 'The bike out of your starter pack was born from the soul: its card carries the Reborn ribbon.'
-              : 'A bike you already rode took in the soul: its card carries the Inherited ribbon.'}{' '}
-            The ribbon names the sneaker's number, and the card's line is the soul's. The same card shows in the app and is the bike's NFT when you export it.
+              ? 'The bike out of your starter pack was born from the soul: its card carries the soul\'s mark, Reborn.'
+              : 'A bike you already rode took in the soul: its card carries the soul\'s mark, Inherited.'}{' '}
+            A soul haze surrounds the bike, the mark sits by its level with the sneaker's number, and the card's line is the soul's. The same card shows in the app and is the bike's NFT when you export it.
           </p>
           <div className="flex flex-wrap gap-2">
             <Chip tone="accent">Retired Runner</Chip>

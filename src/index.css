@@ -79,6 +79,7 @@
   /* Sneaker Graveyard (pages/Graveyard.tsx): the stones, the ground they stand on and the sky
      behind them. Parchment-warm by day; the night block below turns them studio-violet. */
   --color-m2e-stone: #DCD3BF;
+  --color-m2e-stone-light: #EFE9DA;
   --color-m2e-stone-dark: #B9AE96;
   --color-m2e-stone-text: #4A3F35;
   --color-m2e-ground: #B9AE96;
@@ -548,6 +549,7 @@ body {
   --color-m2e-recovery: #E58CA0;
   --color-m2e-durability: #9DB2C7;
   --color-m2e-stone: #2E2748;
+  --color-m2e-stone-light: #3D3560;
   --color-m2e-stone-dark: #4A4170;
   --color-m2e-stone-text: #D9D2EA;
   --color-m2e-ground: #4A4170;
@@ -558,20 +560,155 @@ body {
    Sneaker Graveyard (pages/Graveyard.tsx)
    ───────────────────────────────────────────────────────────── */
 
-/* A tombstone: a pixel arch cut with clip-path, the same 2px ink line and 4px hard shadow the
-   pixel cards wear. Three layers because a clipped box cannot carry a border or a box-shadow of
-   its own — ::before is the shadow, ::after the ink, the inner div the stone. */
+/* The hero scene (components/graveyard/Scene.tsx) paints with these. Day is dusk: a mauve sky
+   going amber at the horizon over violet hills. The night block below makes it moonlit. */
+.gy-hero {
+  --gy-sky-top: #6B5890;
+  --gy-sky-mid: #B58AA3;
+  --gy-sky-low: #ECBF8E;
+  --gy-glow: rgba(255, 200, 130, 0.5);
+  --gy-stars: 0.22;
+  --gy-moon: #FBF3E4;
+  --gy-moon-opacity: 0.55;
+  --gy-moon-crater: #D9CBB4;
+  --gy-craters: 0;
+  --gy-hill-far: #725F8C;
+  --gy-hill-far-stone: #5E4C77;
+  --gy-hill: #4E3F63;
+  --gy-ground: #3A2F4C;
+  --gy-stone: #33294A;
+  --gy-stone-rim: rgba(255, 220, 190, 0.22);
+  --gy-stone-front: #231B33;
+  --gy-tree: #2E2541;
+  --gy-grass: #5D4C72;
+  --gy-fog: #F6E1CC;
+  --gy-wisp: #D9CCFF;
+  --gy-fireflies: 0.3;
+  --gy-firefly: #FFE7A3;
+  background: linear-gradient(180deg, var(--gy-sky-top) 0%, var(--gy-sky-mid) 48%, var(--gy-sky-low) 72%, var(--gy-sky-low) 100%);
+  transition: background 0.5s ease;
+}
+[data-theme="night"] .gy-hero {
+  --gy-sky-top: #07060F;
+  --gy-sky-mid: #171233;
+  --gy-sky-low: #312859;
+  --gy-glow: rgba(140, 126, 245, 0.16);
+  --gy-stars: 1;
+  --gy-moon: #F0EBE0;
+  --gy-moon-opacity: 1;
+  --gy-moon-crater: #C9C0B0;
+  --gy-craters: 0.9;
+  --gy-hill-far: #262046;
+  --gy-hill-far-stone: #1C1737;
+  --gy-hill: #1A1535;
+  --gy-ground: #100D1F;
+  --gy-stone: #0D0B19;
+  --gy-stone-rim: rgba(174, 163, 235, 0.32);
+  --gy-stone-front: #07060F;
+  --gy-tree: #0B0914;
+  --gy-grass: #2A2254;
+  --gy-fog: #8C7EF5;
+  --gy-wisp: #BDB3F2;
+  --gy-fireflies: 1;
+  --gy-firefly: #F2CD8B;
+}
+/* A warm glow low on the horizon by day (the sun just gone), a faint violet one by night. */
+.gy-hero-glow {
+  background: radial-gradient(ellipse 70% 38% at 28% 68%, var(--gy-glow), transparent 70%);
+  transition: background 0.5s ease;
+}
+.gy-scene .gy-layer {
+  transition: fill 0.5s ease;
+}
+
+/* The memorial field under the wall's stones: the far hill fades into the field's ground. */
+.gy-field {
+  --gy-hill-far: #C9BEA9;
+  --gy-tree: #A89880;
+  --gy-stone: #B2A68F;
+  --gy-fog: #FFFDF7;
+  background: linear-gradient(180deg, var(--color-m2e-sky-top) 0%, var(--color-m2e-bg-alt) 55%, var(--color-m2e-bg) 100%);
+}
+[data-theme="night"] .gy-field {
+  --gy-hill-far: #221C3E;
+  --gy-tree: #140F28;
+  --gy-stone: #171232;
+  --gy-fog: #8C7EF5;
+}
+.gy-field-fade {
+  background: linear-gradient(to bottom, transparent, var(--color-m2e-bg-alt));
+}
+.gy-field-ground {
+  background:
+    repeating-linear-gradient(to right, var(--color-m2e-ground) 0 6px, transparent 6px 14px) top / 100% 3px no-repeat,
+    var(--color-m2e-ground);
+  border-bottom: 2px solid var(--color-m2e-border);
+}
+
+/* Fog drifts across the whole scene, back and forth, each layer at its own pace. */
+@keyframes gy-drift {
+  from { transform: translateX(-28px); }
+  to { transform: translateX(28px); }
+}
+.gy-fog-a { animation: gy-drift 46s ease-in-out infinite alternate; }
+.gy-fog-b { animation: gy-drift 64s ease-in-out infinite alternate-reverse; }
+.gy-fog-c { animation: gy-drift 82s ease-in-out infinite alternate; }
+
+/* Souls rising off the stones in the scene (the cell is one scene unit, so the travel is in units). */
+@keyframes gy-soul-rise {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 0.95; }
+  70% { opacity: 0.6; }
+  100% { transform: translateY(-46px); opacity: 0; }
+}
+.gy-soul { animation: gy-soul-rise 6.5s ease-out infinite; }
+
+@keyframes gy-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+.gy-twinkle { animation: gy-twinkle 3.2s ease-in-out infinite; }
+
+@keyframes gy-blink {
+  0%, 100% { opacity: 0; }
+  45%, 55% { opacity: 1; }
+}
+.gy-firefly { animation: gy-blink 3.6s ease-in-out infinite; }
+
+/* A gravestone (components/graveyard/Gravestone.tsx): a pixel cut made with clip-path, the same
+   2px ink line and 4px hard shadow the pixel cards wear. Three layers because a clipped box cannot
+   carry a border or a box-shadow of its own — ::before is the shadow, ::after the ink, the inner
+   div the stone. Four cuts: an arch, a cross, an obelisk's stepped cap, a chamfered slab. */
 .gy-stone {
   position: relative;
+  display: grid; /* the face stretches to the stone's full height, cut and all */
   align-self: end;
-  --gy-arch: polygon(16px 0, calc(100% - 16px) 0, calc(100% - 16px) 4px, calc(100% - 8px) 4px, calc(100% - 8px) 8px, calc(100% - 4px) 8px, calc(100% - 4px) 16px, 100% 16px, 100% 100%, 0 100%, 0 16px, 4px 16px, 4px 8px, 8px 8px, 8px 4px, 16px 4px);
+  --gy-shape: polygon(16px 0, calc(100% - 16px) 0, calc(100% - 16px) 4px, calc(100% - 8px) 4px, calc(100% - 8px) 8px, calc(100% - 4px) 8px, calc(100% - 4px) 16px, 100% 16px, 100% 100%, 0 100%, 0 16px, 4px 16px, 4px 8px, 8px 8px, 8px 4px, 16px 4px);
+}
+.gy-stone--slab {
+  --gy-shape: polygon(8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% 100%, 0 100%, 0 8px, 4px 8px, 4px 4px, 8px 4px);
+}
+.gy-stone--cross {
+  --gy-shape: polygon(
+    calc(50% - 8px) 0, calc(50% + 8px) 0, calc(50% + 8px) 10px, calc(50% + 20px) 10px, calc(50% + 20px) 20px, calc(50% + 8px) 20px,
+    calc(50% + 8px) 34px, calc(100% - 8px) 34px, calc(100% - 8px) 38px, calc(100% - 4px) 38px, calc(100% - 4px) 42px, 100% 42px,
+    100% 100%, 0 100%, 0 42px, 4px 42px, 4px 38px, 8px 38px, 8px 34px, calc(50% - 8px) 34px,
+    calc(50% - 8px) 20px, calc(50% - 20px) 20px, calc(50% - 20px) 10px, calc(50% - 8px) 10px
+  );
+}
+.gy-stone--obelisk {
+  --gy-shape: polygon(
+    calc(50% - 4px) 0, calc(50% + 4px) 0, calc(50% + 4px) 6px, calc(50% + 12px) 6px, calc(50% + 12px) 12px, calc(50% + 20px) 12px,
+    calc(50% + 20px) 18px, calc(50% + 28px) 18px, calc(50% + 28px) 24px, 100% 24px, 100% 100%, 0 100%, 0 24px,
+    calc(50% - 28px) 24px, calc(50% - 28px) 18px, calc(50% - 20px) 18px, calc(50% - 20px) 12px, calc(50% - 12px) 12px, calc(50% - 12px) 6px, calc(50% - 4px) 6px
+  );
 }
 .gy-stone::before,
 .gy-stone::after {
   content: "";
   position: absolute;
   inset: 0;
-  clip-path: var(--gy-arch);
+  clip-path: var(--gy-shape);
 }
 .gy-stone::before {
   transform: translate(4px, 4px);
@@ -584,10 +721,37 @@ body {
   position: relative;
   z-index: 1;
   margin: 2px;
-  background: var(--color-m2e-stone);
+  background: linear-gradient(180deg, var(--color-m2e-stone) 0%, var(--color-m2e-stone) 62%, color-mix(in srgb, var(--color-m2e-stone) 55%, var(--color-m2e-stone-dark)) 100%);
+  /* a lit rim on the top-left, a worn one on the bottom-right */
+  box-shadow: inset 2px 2px 0 var(--color-m2e-stone-light), inset -2px -2px 0 color-mix(in srgb, var(--color-m2e-stone-dark) 70%, transparent);
   color: var(--color-m2e-stone-text);
-  clip-path: var(--gy-arch);
+  clip-path: var(--gy-shape);
 }
+/* Chiselled: a light edge under the number and the sprite by day, a dark one by night. */
+.gy-engraved {
+  text-shadow: 0 1px 0 var(--gy-engrave, rgba(255, 255, 255, 0.5));
+}
+.gy-engraved-sprite {
+  filter: drop-shadow(0 1px 0 var(--gy-engrave, rgba(255, 255, 255, 0.5)));
+}
+[data-theme="night"] .gy-engraved,
+[data-theme="night"] .gy-engraved-sprite {
+  --gy-engrave: rgba(0, 0, 0, 0.6);
+}
+
+/* The soul mark on a stone whose soul lives on: a slow glow. */
+@keyframes gy-soul-glow {
+  0%, 100% { filter: drop-shadow(0 0 2px var(--color-m2e-accent)); opacity: 0.85; }
+  50% { filter: drop-shadow(0 0 6px var(--color-m2e-accent)); opacity: 1; }
+}
+.gy-soul-mark { animation: gy-soul-glow 2.8s ease-in-out infinite; }
+
+/* A wisp hovering over a stone whose soul still waits. */
+@keyframes gy-hover {
+  0%, 100% { transform: translateY(0); opacity: 0.45; }
+  50% { transform: translateY(-4px); opacity: 0.85; }
+}
+.gy-hover { animation: gy-hover 2.4s ease-in-out infinite; }
 
 /* The wisps that rise off a sneaker while its burn is on its way. */
 @keyframes gy-rise {
@@ -598,10 +762,33 @@ body {
 .gy-wisp {
   animation: gy-rise 2.6s linear infinite;
 }
+
+.gy-lightbox::backdrop {
+  background: rgba(0, 0, 0, 0.8);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .gy-wisp {
+  .gy-wisp,
+  .gy-hover,
+  .gy-soul-mark,
+  .gy-fog-a,
+  .gy-fog-b,
+  .gy-fog-c,
+  .gy-twinkle,
+  .gy-firefly {
     animation: none;
+  }
+  .gy-wisp,
+  .gy-hover {
     opacity: 0.7;
+  }
+  .gy-firefly {
+    opacity: 0.7;
+  }
+  .gy-soul {
+    animation: none;
+    opacity: 0.6;
+    transform: translateY(-14px);
   }
 }
 

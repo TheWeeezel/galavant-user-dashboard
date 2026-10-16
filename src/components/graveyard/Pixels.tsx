@@ -1,12 +1,35 @@
 import { useState, type CSSProperties } from 'react';
 import { config } from '../../config';
-import type { GraveyardStone } from '../../api';
 
 /**
- * The graveyard's pixel pieces: our own sneaker sprites (never STEPN's art), a few glyphs, the
- * bike's trading card with its soul ribbon, and a tombstone. Everything is rects on a grid with
- * crispEdges, so it stays sharp at any size and matches the app and the NFT image cell for cell.
+ * The graveyard's pixel pieces: our own sneaker sprites (never STEPN's art), a few glyphs and the
+ * bike's trading card with its soul mark. Everything is rects on a grid with crispEdges, so it
+ * stays sharp at any size and matches the app and the NFT image cell for cell. The stones live in
+ * Gravestone.tsx, the hero scene in Scene.tsx; both draw with `rowsToRects` from here.
  */
+
+export interface PixelRect { x: number; y: number; w: number; fill: string }
+
+/**
+ * Rows of characters → horizontal runs of rects, one per colour in `fills`. '.' and any character
+ * mapped to null are left open. Runs keep the rect count small: a 20×10 sprite is ~40 rects.
+ */
+export function rowsToRects(rows: readonly string[], fills: Record<string, string | null | undefined>): PixelRect[] {
+  const rects: PixelRect[] = [];
+  const w = rows[0]?.length ?? 0;
+  for (let y = 0; y < rows.length; y++) {
+    for (let x = 0; x < w; ) {
+      const c = rows[y][x];
+      const fill = c === '.' ? null : fills[c];
+      if (!fill) { x++; continue; }
+      let run = 0;
+      while (x + run < w && rows[y][x + run] === c) run++;
+      rects.push({ x, y, w: run, fill });
+      x += run;
+    }
+  }
+  return rects;
+}
 
 // o outline, u upper (quality tint), a stripe (lighter tint), l lace, s sole
 const SPRITES: Record<string, string[]> = {
@@ -145,18 +168,7 @@ export function SneakerSprite({ type, quality, mono, className = '' }: SpritePro
   const fills: Record<string, string | null> = mono
     ? { o: mono, u: `color-mix(in srgb, ${mono} 42%, transparent)`, a: `color-mix(in srgb, ${mono} 62%, transparent)`, l: null, s: mono }
     : { o: 'var(--color-m2e-chrome)', u: q, a: `color-mix(in srgb, ${q} 55%, #FEFCF7)`, l: '#FEFCF7', s: 'var(--color-m2e-text-secondary)' };
-  const rects: { x: number; y: number; w: number; fill: string }[] = [];
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; ) {
-      const c = rows[y][x];
-      const fill = c === '.' ? null : fills[c];
-      if (!fill) { x++; continue; }
-      let run = 0;
-      while (x + run < w && rows[y][x + run] === c) run++;
-      rects.push({ x, y, w: run, fill });
-      x += run;
-    }
-  }
+  const rects = rowsToRects(rows, fills);
   return (
     <svg viewBox={`0 0 ${w} ${h}`} shapeRendering="crispEdges" aria-hidden className={`block w-full h-auto ${className}`}>
       {rects.map((r) => <rect key={`${r.y}-${r.x}`} x={r.x} y={r.y} width={r.w} height={1} style={{ fill: r.fill }} />)}
@@ -168,6 +180,20 @@ const GLYPHS = {
   check: ['.......#', '......##', '.....##.', '#...##..', '##.##...', '.###....', '..#.....'],
   arrow: ['....#...', '.....#..', '......#.', '########', '......#.', '.....#..', '....#...'],
   wisp: ['..##..', '.####.', '######', '######', '.####.', '..##..'],
+  /** A soul: the wisp with a tail, as the card's soul icon draws it. */
+  soul: ['...##...', '..####..', '.######.', '.######.', '..####..', '...##...', '..#..#..', '.#....#.'],
+  /** Two laurel branches, engraved on a slab stone. */
+  laurel: [
+    '#......#......#',
+    '.#..#..#..#..#.',
+    '.#.#.#.#.#.#.#.',
+    '..#.##.#.##.#..',
+    '..#..#.#.#..#..',
+    '...#.#.#.#.#...',
+    '....##.#.##....',
+    '.....#.#.#.....',
+    '......###......',
+  ],
 } as const;
 
 /** A tiny pixel glyph in currentColor, so no icon font has to carry a seven-pixel arrow. */
@@ -198,7 +224,8 @@ interface MarkedBikeCardProps {
 
 /**
  * A soul's bike as its trading card — the same card the app reveals and the NFT shows: the bike's
- * Steel card with the soul's ribbon («Reborn» or «Inherited» + the sneaker number) across the art.
+ * Steel card with the soul's mark («Reborn» or «Inherited» + the sneaker number) and a soul haze
+ * around the bike.
  */
 export function MarkedBikeCard({ src, fallback, alt, className = '' }: MarkedBikeCardProps) {
   const [failed, setFailed] = useState(false);
@@ -212,49 +239,5 @@ export function MarkedBikeCard({ src, fallback, alt, className = '' }: MarkedBik
       onError={() => setFailed(true)}
       className={`block w-full h-auto drop-shadow-[4px_4px_0_rgba(44,36,32,0.85)] ${className}`}
     />
-  );
-}
-
-/**
- * One stone on the wall. The sneaker is engraved in the stone's own colour, like a ghost; a soul
- * still waiting for its bike sends a wisp up now and then, staggered by the sneaker number so the
- * wall never breathes in step.
- */
-export function Tombstone({ stone }: { stone: GraveyardStone }) {
-  const waiting = !stone.rebornAs;
-  return (
-    <div className="gy-stone transition-transform motion-safe:hover:-translate-y-1">
-      <div className="gy-stone-in px-3 pt-4 pb-3 grid gap-1 justify-items-center text-center">
-        <div className="relative w-[52px] opacity-80 mb-1">
-          <SneakerSprite type={stone.type} quality={stone.quality} mono="var(--color-m2e-stone-text)" />
-          {waiting && (
-            <PixelGlyph
-              name="wisp"
-              className="gy-wisp absolute left-[42%] -top-2 w-2.5 text-m2e-accent"
-              style={{ animationDelay: `${(Number(stone.number.slice(-1)) || 0) * 0.3}s` }}
-            />
-          )}
-        </div>
-        <div className="text-2xl leading-none tabular-nums">#{stone.number}</div>
-        <div className="text-base whitespace-nowrap">
-          {capitalize(stone.type)} · <span className={qualityTextClass(stone.quality)}>{capitalize(stone.quality)}</span>
-        </div>
-        <div className="text-sm opacity-80">Level {stone.level}</div>
-        <div className="text-sm opacity-75 border-t-2 border-dotted border-m2e-stone-dark pt-1.5 mt-1 w-full">
-          laid to rest {formatDay(stone.burnedAt)}
-        </div>
-        {stone.rebornAs ? (
-          stone.card ? (
-            <a href={`${config.apiUrl}${stone.card}`} target="_blank" rel="noopener noreferrer" className="text-base text-m2e-accent-dark underline decoration-dotted underline-offset-2">
-              {stone.mark === 'inherited' ? 'lives on in a' : 'reborn as'} {capitalize(stone.rebornAs)}
-            </a>
-          ) : (
-            <div className="text-base text-m2e-accent-dark">{stone.mark === 'inherited' ? 'lives on in a' : 'reborn as'} {capitalize(stone.rebornAs)}</div>
-          )
-        ) : (
-          <div className="text-base opacity-70 border-2 border-dashed border-m2e-stone-dark px-2 mt-0.5">soul waiting</div>
-        )}
-      </div>
-    </div>
   );
 }
