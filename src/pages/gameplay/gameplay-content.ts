@@ -1296,6 +1296,40 @@ export const gameplaySections: GameplaySection[] = [
         ],
       },
       {
+        slug: 'crews',
+        title: 'Crews',
+        content: [
+          { type: 'paragraph', text: 'Ride with 3 to 10 friends. When half the crew rides on a day, the crew flame stays lit and everyone in the crew gets extra energy. Ride toward a weekly distance goal together and open a crew chest. During the Genesis beta, Genesis holders found crews and anyone they invite can join.' },
+          { type: 'heading', text: 'The Crew Flame' },
+          { type: 'list', items: [
+            'Each day (midnight to midnight UTC) the flame lights once half the crew has ridden. Days in a row build the streak.',
+            'While the flame is lit, today or yesterday, every member gets extra energy.',
+            'A crewmate who has not ridden yet can be nudged: they get a push and a line in the crew feed. Each rider gets at most one nudge a day.',
+            'The flame and the weekly goal start once the crew has 3 riders.',
+          ]},
+          { type: 'heading', text: 'The Weekly Goal and Chest' },
+          { type: 'list', items: [
+            'The goal grows with the crew and resets every Monday (UTC).',
+            'When the crew reaches it, every member who did their own share opens the crew chest. It holds items, never WATTS.',
+            'New riders count toward the goal from the Monday after they join.',
+            'Each rider counts up to a weekly limit, so one rider cannot carry the crew.',
+          ]},
+          { type: 'heading', text: 'Fair Play' },
+          { type: 'list', items: [
+            'Only verified rides count. A ride that is still being verified shows as progress and counts once it clears.',
+            'Several accounts on one phone count as one rider.',
+            'After leaving a crew you wait 7 days before joining or founding another.',
+          ]},
+          { type: 'heading', text: 'Founding and Joining' },
+          { type: 'list', items: [
+            'Found a crew from the Crews row on Home: pick a name, a tag and an emblem. Founding costs WATTS.',
+            'Invite riders with your crew code. They enter it under Crews on Home.',
+            'Your crew tag shows after your name on the high scores, and the CREWS tab on Ranks shows this week\'s crew board.',
+          ]},
+          { type: 'tip', text: 'Check Today on the crew page: it shows who has ridden, and who could use a nudge.' },
+        ],
+      },
+      {
         slug: 'discord-role',
         title: 'Discord Genesis Role',
         content: [

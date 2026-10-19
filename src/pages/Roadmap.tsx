@@ -112,10 +112,11 @@ const PHASES: RoadmapPhase[] = [
         status: 'upcoming',
       },
       {
-        title: 'Guilds / Crews',
-        description: 'Form crews of 3-10 riders. Shared energy bonuses, crew leaderboards, crew chat, and weekly crew challenges. Ride together, earn together.',
+        title: 'Crews',
+        description: 'Ride with 3 to 10 friends: keep the crew flame lit for extra energy, nudge whoever has not ridden yet, reach the weekly crew goal together for a chest, and climb the crew board on Ranks. Genesis holders found crews first, anyone can join.',
         icon: Users,
-        status: 'upcoming',
+        status: 'done',
+        badge: { label: 'Genesis beta', icon: Crown },
       },
       {
         title: 'Weather Modifiers',
