@@ -62,7 +62,7 @@ function buildEnergyPage(p: GuideParams): GameplayPage {
       { type: 'list', items: [
         'Energy is measured in minutes of earning time. Only minutes where you actively earn WATTS consume energy — if your speed is out of range, you stop moving, or you pause your session, your energy is preserved.',
         `It refills ${p.energyRegenPercent}% every ${p.energyRegenIntervalHours} hours — a full refill takes ${p.fullRechargeHours} hours.`,
-        'If a refill lands while you\'re mid-session and out of energy, you start earning again from that moment — the session screen shows a banner when this happens. Minutes you walked with no energy before the refill stay unpaid. The "energy full" notification waits until your session ends.',
+        'A refill that arrives during a session only counts for walking you do after it arrives — minutes you walked with no energy before it stay unpaid. If it lets you earn again, the session screen shows a banner. Your session\'s energy is only settled when you finish, so a refill that arrives during a long session can come up short or not count at all: end your session when you\'re done walking. The "energy full" notification waits until your session ends.',
         'A refill can never take you above your own energy pool, so leaving a session running to collect refills banks nothing: a refill only pays for walking you do after it arrives. Standing still earns nothing either way.',
         'Your total energy pool depends on how many bikes you own and their quality.',
         `The maximum energy cap is ${cap} minutes per day.`,
@@ -561,7 +561,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'toolboxes',
         title: 'Toolboxes',
         content: [
-          { type: 'paragraph', text: 'Toolboxes are reward containers that can drop while you walk and earn. You need to actually move a meaningful distance during your session before any toolbox can drop — standing still or barely moving won\'t earn you a toolbox. Both your drop chance and the level of toolbox you receive depend on your active earning time — once your energy runs out, no further drops can occur.' },
+          { type: 'paragraph', text: 'Toolboxes are reward containers that can drop while you walk and earn. You need to actually move a meaningful distance during your session before any toolbox can drop — standing still or barely moving won\'t earn you a toolbox. Both your drop chance and the level of toolbox you receive depend on your active earning time — while you\'re out of energy, no further drops can occur (a refill during the session lets them start again).' },
           { type: 'heading', text: 'Toolbox Levels' },
           { type: 'paragraph', text: 'Toolboxes range from Level 1 (most common) to Level 5 (rarest). Higher levels contain better parts and a chance at minting tools.' },
           { type: 'table', headers: ['Level', 'Rarity', 'Description'], rows: [
