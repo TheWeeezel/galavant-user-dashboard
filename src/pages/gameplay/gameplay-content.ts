@@ -1001,6 +1001,7 @@ export const gameplaySections: GameplaySection[] = [
             'List any bike, part, or minting tool for a WATTS price you choose.',
             'An NFT can be listed for WATTS or for ENJ — being an NFT never stops you selling it.',
             'Bikes must be at 100% durability to be listed — repair first if needed. NFTs are exempt: their condition is frozen at mint.',
+            'Finish your ride before listing the bike you are riding.',
             'Listed bikes stay visible in your inventory, but bike-management actions stay locked until the listing is sold or cancelled.',
             'Listed parts stay visible too, but missions only count loose, unlisted parts and unlisted bikes as ready-to-use resources.',
             'You can have up to 20 active listings at once.',
