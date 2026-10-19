@@ -1302,7 +1302,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Ride with 3 to 10 friends. When half the crew rides on a day, the crew flame stays lit and everyone in the crew gets extra energy. Ride toward a weekly distance goal together and open a crew chest. During the Genesis beta, Genesis holders found crews and anyone they invite can join.' },
           { type: 'heading', text: 'The Crew Flame' },
           { type: 'list', items: [
-            'Each day (midnight to midnight UTC) the flame lights once half the crew has ridden. Days in a row build the streak.',
+            'Each day (midnight to midnight UTC) the flame lights once half the crew has ridden. A ride counts for the day it started on, even if it ends after midnight. A very short hop does not count. Days in a row build the streak.',
             'While the flame is lit, today or yesterday, every member gets extra energy.',
             'A crewmate who has not ridden yet can be nudged: they get a push and a line in the crew feed. Each rider gets at most one nudge a day.',
             'The flame and the weekly goal start once the crew has 3 riders.',
@@ -1316,9 +1316,9 @@ export const gameplaySections: GameplaySection[] = [
           ]},
           { type: 'heading', text: 'Fair Play' },
           { type: 'list', items: [
-            'Only verified rides count. A ride that is still being verified shows as progress and counts once it clears.',
-            'Several accounts on one phone count as one rider.',
-            'After leaving a crew you wait 7 days before joining or founding another.',
+            'Only verified rides count. A clean ride that is still being verified counts for the flame right away, and for the chest once its WATTS are final.',
+            'Several accounts on one phone count as one rider, and share one chest a week.',
+            'After leaving a crew you wait a while before joining or founding another.',
           ]},
           { type: 'heading', text: 'Founding and Joining' },
           { type: 'list', items: [
