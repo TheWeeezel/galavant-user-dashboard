@@ -62,8 +62,8 @@ function buildEnergyPage(p: GuideParams): GameplayPage {
       { type: 'list', items: [
         'Energy is measured in minutes of earning time. Only minutes where you actively earn WATTS consume energy — if your speed is out of range, you stop moving, or you pause your session, your energy is preserved.',
         `It refills ${p.energyRegenPercent}% every ${p.energyRegenIntervalHours} hours — a full refill takes ${p.fullRechargeHours} hours.`,
-        'If a refill lands while you\'re mid-session and out of energy, it\'s automatically credited to your ride — the session screen shows a banner when this happens. The "energy full" notification waits until your session ends.',
-        'A refill can never take you above your own energy pool, so leaving a session running to collect several refills banks nothing: a long session earns exactly what a fresh one with the same energy earns. Standing still earns nothing either way.',
+        'If a refill lands while you\'re mid-session and out of energy, you start earning again from that moment — the session screen shows a banner when this happens. Minutes you walked with no energy before the refill stay unpaid, just as if you had ended the session. The "energy full" notification waits until your session ends.',
+        'A refill can never take you above your own energy pool, so leaving a session running to collect refills banks nothing: a refill only pays for walking you do after it arrives. Standing still earns nothing either way.',
         'Your total energy pool depends on how many bikes you own and their quality.',
         `The maximum energy cap is ${cap} minutes per day.`,
         'Only bikes with HP remaining contribute to your energy pool.',
