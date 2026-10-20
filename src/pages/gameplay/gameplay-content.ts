@@ -1306,7 +1306,7 @@ export const gameplaySections: GameplaySection[] = [
             'While the flame is lit, today or yesterday, every member gets extra energy.',
             'A crewmate who has not ridden yet can be nudged: they get a push and a line in the crew feed. Each rider gets at most one nudge a day.',
             'The flame and the weekly goal start once the crew has 3 riders on 3 different phones.',
-            'Everyone who was in the crew during a day counts for that day, so a rider who leaves or is removed still counts toward that day.',
+            'A rider who leaves or is removed during a day still counts toward that day, and rides count from the moment you join a crew.',
           ]},
           { type: 'heading', text: 'The Weekly Goal and Chest' },
           { type: 'list', items: [
