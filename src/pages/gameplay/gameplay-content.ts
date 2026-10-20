@@ -1305,7 +1305,8 @@ export const gameplaySections: GameplaySection[] = [
             'Each day (midnight to midnight UTC) the flame lights once half the crew has ridden. A ride counts for the day it started on, even if it ends after midnight. A very short hop does not count. Days in a row build the streak.',
             'While the flame is lit, today or yesterday, every member gets extra energy.',
             'A crewmate who has not ridden yet can be nudged: they get a push and a line in the crew feed. Each rider gets at most one nudge a day.',
-            'The flame and the weekly goal start once the crew has 3 riders.',
+            'The flame and the weekly goal start once the crew has 3 riders on 3 different phones.',
+            'Everyone who was in the crew during a day counts for that day, so a rider who leaves or is removed still counts toward that day.',
           ]},
           { type: 'heading', text: 'The Weekly Goal and Chest' },
           { type: 'list', items: [
@@ -1313,6 +1314,7 @@ export const gameplaySections: GameplaySection[] = [
             'When the crew reaches it, every member who did their own share opens the crew chest. It holds items, never WATTS.',
             'New riders count toward the goal from the Monday after they join.',
             'Each rider counts up to a weekly limit, so one rider cannot carry the crew.',
+            'A chest can be opened until the Sunday after its week, also if you left the crew since. It shows at the top of the crew page.',
           ]},
           { type: 'heading', text: 'Fair Play' },
           { type: 'list', items: [
