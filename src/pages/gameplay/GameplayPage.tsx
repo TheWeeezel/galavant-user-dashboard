@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'pixelarticons/react';
 import { buildFlatPages, type ContentBlock, type ChartBar } from './gameplay-content';
 import { useGuideParams } from '../../contexts/GuideParamsContext';
 import { AppDownload } from '../../components/AppDownload';
-import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../../config/appLinks';
+import { APP_STORE_URL, PLAY_STORE_URL } from '../../config/appLinks';
 
 function BarChart({ title, bars, unit = '' }: { title: string; bars: ChartBar[]; unit?: string }) {
   const max = Math.max(...bars.map((b) => b.value));
@@ -166,7 +166,7 @@ export function GameplayPage() {
       </h1>
       <div className="mb-8 flex flex-wrap items-center gap-3 text-xs text-m2e-text-muted">
         <span className="uppercase tracking-[0.2em]">Get the app</span>
-        <AppDownload testflightUrl={TESTFLIGHT_URL} playStoreUrl={PLAY_STORE_URL} variant="compact" />
+        <AppDownload iosUrl={APP_STORE_URL} playStoreUrl={PLAY_STORE_URL} variant="compact" />
       </div>
 
       {/* Content */}

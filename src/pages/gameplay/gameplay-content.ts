@@ -180,7 +180,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Galavant is a walk-to-earn game built on Enjin. Grab a balance bike, head outdoors, and earn WATTS just by walking. Convert them into real value on the blockchain.' },
           { type: 'heading', text: 'How It Works' },
           { type: 'list', items: [
-            'Install the app — Android from Google Play, iPhone through TestFlight.',
+            'Install the app — Android from Google Play, iPhone from the App Store.',
             'Get a balance bike — purchase one from the marketplace or breed a new one.',
             'Walk outdoors — the app tracks your real-world movement via GPS.',
             'Earn WATTS — every minute of walking earns you WATTS based on your bike and stats.',
@@ -230,8 +230,8 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Step by Step' },
           { type: 'list', items: [
             'Open the Galavant app and create your account.',
-            'Get your first balance bike — buy a starter pack on the Market at galavant.run, or pick a bike up from another player on the marketplace.',
-            'A starter pack holds one bike of its type, three level-1 parts made for that bike\'s sockets and a toolbox — the contents are printed on the box. Pay by card or with ENJ from your own wallet. Packs are a limited run and the price climbs as they sell out — each pack on the Market shows how many are left at the current price and what the next one costs, so the earlier you buy, the cheaper it is.',
+            'Get your first balance bike — buy a starter pack on the Market at galavant.run or, on iPhone, in the app under Items → Starter Packs, or pick a bike up from another player on the marketplace.',
+            'A starter pack holds one bike of its type, three level-1 parts made for that bike\'s sockets and a toolbox — the contents are printed on the box. Pay by card or with ENJ from your own wallet. Packs are a limited run and the price climbs as they sell out — each pack on the Market shows how many are left at the current price and what the next one costs, so the earlier you buy, the cheaper it is. On iPhone the app sells the same four packs through the App Store, at the App Store\'s price: a pack bought there holds the bike and a level-1 part for each of its four sockets instead of three parts and a toolbox.',
             'Open the pack in the app: it waits under Items (the tab shows a badge), and a pack that holds your first bike puts it straight on your bike, ready to ride.',
             'Equip your bike from the inventory screen if you already had one.',
             'Tap the "Walk" button to start a session.',
@@ -245,7 +245,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'What You Need' },
           { type: 'list', items: [
             'A smartphone with GPS capability.',
-            'The Galavant app — from Google Play on Android, through TestFlight on iPhone.',
+            'The Galavant app — from Google Play on Android, from the App Store on iPhone.',
             'At least one balance bike in your inventory.',
             'Outdoor space to walk — parks, streets, trails, anywhere with GPS coverage.',
           ]},

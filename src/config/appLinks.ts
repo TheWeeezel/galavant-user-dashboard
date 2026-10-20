@@ -4,5 +4,5 @@
  * store link is changed once.
  */
 export const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.m2e.opnet';
-/** Public TestFlight link of the external tester group — no invitation needed. */
-export const TESTFLIGHT_URL = 'https://testflight.apple.com/join/8NJ7aZ3h';
+/** The App Store page (live since the first App Store release, 0.0.32). TestFlight stays for testers only. */
+export const APP_STORE_URL = 'https://apps.apple.com/app/id6760454181';

@@ -1,3 +1,4 @@
+import { APP_STORE_URL } from '../config/appLinks';
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -50,7 +51,7 @@ function formatSat(n: number): string {
 // ── Data ────────────────────────────────────────────────────────────────────
 
 const ONBOARDING_STEPS = [
-  { icon: Download, title: 'Download', description: 'Google Play or TestFlight' },
+  { icon: Download, title: 'Download', description: 'Google Play or the App Store' },
   { icon: Login, title: 'Sign In', description: 'Google account' },
   { icon: ShoppingCart, title: 'Get a Bike', description: 'Shop or market' },
   { icon: Human, title: 'Walk', description: 'Earn WATTS' },
@@ -1187,7 +1188,7 @@ export function Home() {
 
                 <div className="flex flex-wrap justify-center gap-4">
                   <AppDownload
-                    testflightUrl={changelog.data?.testflightUrl}
+                    iosUrl={APP_STORE_URL}
                     playStoreUrl={changelog.data?.playStoreUrl}
                     variant="hero"
                     iosLabel="Download on iOS"

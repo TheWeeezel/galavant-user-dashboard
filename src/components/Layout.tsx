@@ -5,7 +5,7 @@ import { MusicPlayer } from './MusicPlayer';
 import { LoginModal } from './LoginModal';
 import { useAuth } from '../contexts/AuthContext';
 import { SKY_MODES, cycleSkyMode, setSkyMode, useSkyMode, type SkyMode } from '../hooks/useSky';
-import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../config/appLinks';
+import { APP_STORE_URL, PLAY_STORE_URL } from '../config/appLinks';
 
 export function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -222,12 +222,12 @@ export function Layout() {
               Android · Google Play
             </a>
             <a
-              href={TESTFLIGHT_URL}
+              href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-white/5 border-2 border-white/20 text-white/80 px-4 py-2 rounded-md hover:border-m2e-accent hover:text-m2e-accent hover:bg-m2e-accent/10 transition-colors text-sm uppercase tracking-wider"
             >
-              iPhone · TestFlight
+              iPhone · App Store
             </a>
           </div>
           <div className="section-label justify-center w-fit mx-auto mt-4">Community</div>
