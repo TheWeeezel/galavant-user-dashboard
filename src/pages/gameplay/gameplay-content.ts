@@ -1319,7 +1319,8 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Fair Play' },
           { type: 'list', items: [
             'Only verified rides count. A clean ride that is still being verified counts for the flame right away, and for the chest once its WATTS are final.',
-            'Several accounts on one phone count as one rider, and share one chest a week.',
+            'Several accounts on one phone count as one rider, and share one chest a week. Opening your own chest on a friend\'s phone does not use up theirs.',
+            'A rider under a fair-play ban does not count. If that leaves the crew with fewer than 3 phones on Monday, the weekly goal pauses for that week.',
             'After leaving a crew you wait a while before joining or founding another.',
           ]},
           { type: 'heading', text: 'Founding and Joining' },
