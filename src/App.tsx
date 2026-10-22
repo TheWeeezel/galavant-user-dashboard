@@ -17,6 +17,7 @@ import { PressKit } from './pages/PressKit';
 import { Wallet } from './pages/Wallet';
 import { Graveyard } from './pages/Graveyard';
 import { GenesisLounge } from './pages/GenesisLounge';
+import { Support } from './pages/Support';
 import { GameplayLayout } from './pages/gameplay/GameplayLayout';
 import { GameplayPage } from './pages/gameplay/GameplayPage';
 
@@ -63,6 +64,7 @@ export function App() {
           <Route path="roadmap" element={<Roadmap />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="support" element={<Support />} />
           <Route path="terms" element={<TermsOfSale />} />
           <Route path="refunds" element={<RefundPolicy />} />
           <Route path="refund" element={<Navigate to="/refunds" replace />} />
