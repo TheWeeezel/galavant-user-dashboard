@@ -31,11 +31,14 @@ export function GenesisLounge() {
   const pull = useMutation({
     mutationFn: ({ stake, partId }: { stake: ReelStake; partId?: string }) => pullGenesisReel(stake, partId),
     onMutate: () => { setResult(null); setPicking(false); },
-    onSuccess: (data) => {
-      setResult(data);
-      queryClient.invalidateQueries({ queryKey: ['genesis-lounge'] });
-      queryClient.invalidateQueries({ queryKey: ['spending-wallet'] });
-    },
+    onSuccess: (data) => setResult(data),
+    // Win or lose, balance, free pulls and the loose parts changed: refresh every view that shows them.
+    onSettled: () => Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['genesis-lounge'] }),
+      queryClient.invalidateQueries({ queryKey: ['spending-wallet'] }),
+      queryClient.invalidateQueries({ queryKey: ['spending'] }),
+      queryClient.invalidateQueries({ queryKey: ['userParts'] }),
+    ]),
   });
 
   const data = lounge.data;
@@ -56,7 +59,16 @@ export function GenesisLounge() {
     );
   }
 
-  if (lounge.isLoading) return <div className="max-w-xl mx-auto px-4 py-16 text-center text-m2e-text-secondary">Loading…</div>;
+  if (lounge.isPending) return <div className="max-w-xl mx-auto px-4 py-16 text-center text-m2e-text-secondary">Loading…</div>;
+
+  if (lounge.isError) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-16 text-center flex flex-col items-center gap-4">
+        <p className="text-m2e-danger">{(lounge.error as Error).message}</p>
+        <button className="pixel-btn pixel-btn-primary px-4 py-3 text-sm" onClick={() => lounge.refetch()}>Try again</button>
+      </div>
+    );
+  }
 
   if (!data?.holder) {
     return (
