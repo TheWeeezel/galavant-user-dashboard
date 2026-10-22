@@ -276,6 +276,8 @@ export function fetchMarketplace(filters: MarketplaceFilters = {}) {
 
 export interface UserProfile {
   id: string;
+  /** Genesis holder block of /auth/me. The website sends no platform header, so imported Genesis items count here. */
+  genesis?: { holder: boolean; numbers: number[]; freePullsLeft: number };
   walletAddress: string;
   nickname: string;
   avatarUrl: string | null;
@@ -1244,4 +1246,38 @@ export function importPartNft(tokenId: number) {
     '/blockchain/import-part',
     { method: 'POST', body: JSON.stringify({ tokenId }), timeoutMs: CHAIN_TIMEOUT_MS },
   );
+}
+
+
+// ── Genesis Lounge (holders only; server: routes/genesis.ts) ─────────────────
+// The website sends no X-Galavant-Platform header, so the server applies the web/Android holder rule.
+export type ReelStake = 'free' | 'watts' | 'part';
+export type ReelLine = 'blank' | 'bolt' | 'bolt2' | 'wrench' | 'gear' | 'star' | 'genesis';
+export type ReelFace = 'blank' | 'bolt' | 'wrench' | 'gear' | 'star' | 'genesis';
+export interface GenesisLounge {
+  holder: boolean;
+  held: Array<{ kind: 'bike' | 'part'; number: number }>;
+  enabled: boolean;
+  freePullsLeft: number;
+  pullCostWatts: number;
+  stakePartMaxLevel: number;
+  /** Loose low-level parts the Reel accepts as a stake, lowest level first. */
+  stakeable: Array<{ id: string; type: string; level: number }>;
+  balance: number;
+  recent: Array<{ line: ReelLine; faces: [ReelFace, ReelFace, ReelFace]; stake: ReelStake; prizeWatts: number; prizePartLevel: number | null; at: string }>;
+}
+export interface ReelPullResult {
+  line: ReelLine;
+  faces: [ReelFace, ReelFace, ReelFace];
+  prize: { watts: number; part: { id: string; type: string; level: number } | null };
+  freePullsLeft: number;
+  balance: number;
+}
+
+export function fetchGenesisLounge() {
+  return fetchAuthJson<GenesisLounge>('/genesis/lounge');
+}
+
+export function pullGenesisReel(stake: ReelStake, partId?: string) {
+  return fetchAuthJson<ReelPullResult>('/genesis/reel/pull', { method: 'POST', body: JSON.stringify({ stake, partId }) });
 }

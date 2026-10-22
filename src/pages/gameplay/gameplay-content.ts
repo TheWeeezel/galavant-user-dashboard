@@ -220,6 +220,7 @@ export const gameplaySections: GameplaySection[] = [
             'The item has to be in your garage. Export it to your wallet and the Lounge closes until you import it back.',
           ] },
           { type: 'tip', text: 'Genesis parts themselves can never be traded into the Reel. The award stays the award.' },
+          { type: 'paragraph', text: 'You can play the Reel in the Android app and on the website: sign in at galavant.run and open Lounge in the menu. Same account, same free pulls, same balance.' },
         ],
       },
       {
