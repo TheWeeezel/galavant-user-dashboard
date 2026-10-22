@@ -220,7 +220,7 @@ export const gameplaySections: GameplaySection[] = [
             'The item has to be in your garage. Export it to your wallet and the Lounge closes until you import it back.',
           ] },
           { type: 'tip', text: 'Genesis parts themselves can never be traded into the Reel. The award stays the award.' },
-          { type: 'paragraph', text: 'The Reel is not part of the iPhone app. On iPhone the Lounge holds your founder pass, your cards and your achievements; the Reel is played in the Android app and on the website.' },
+          { type: 'paragraph', text: 'The Reel is not part of the iPhone app. On iPhone the Lounge holds your founder pass, your cards and your achievements; there is no Reel there.' },
         ],
       },
       {
