@@ -841,3 +841,63 @@ body {
     )
     fill 0 / 0 / 0 100vw;
 }
+
+/* ── Genesis Lounge: the Reel cabinet (components/genesis/ReelMachine.tsx) ──────────────────────
+   Gilt metal, the app's genesis palette (#D9A83C gilt, #FFE9A6 light, #7A5210 dark, #241804 ink). */
+.reel-cabinet {
+  position: relative;
+  padding: 14px 14px 18px;
+  border-radius: var(--radius-pixel-md);
+  border: var(--border-width-pixel) solid #7A5210;
+  border-top-color: #FFE9A6;
+  border-bottom-width: 6px;
+  background: linear-gradient(180deg, #E9BE55 0%, #D9A83C 55%, #B98A26 100%);
+  box-shadow: 3px 3px 0 0 var(--color-m2e-shadow), inset 0 2px 0 rgba(255, 255, 255, 0.35);
+}
+.reel-lamps { display: flex; justify-content: space-between; padding: 0 6px 12px; }
+.reel-lamps span {
+  width: 10px; height: 10px; border-radius: 2px;
+  background: #7A5210; border: 1px solid #241804;
+}
+.reel-cabinet.is-spinning .reel-lamps span { animation: reel-lamp 0.72s steps(2, end) infinite; }
+.reel-cabinet.is-win .reel-lamps span { animation: reel-lamp-win 0.5s steps(2, end) 4; }
+@keyframes reel-lamp { 0%, 100% { background: #7A5210; } 50% { background: #FFF0B8; box-shadow: 0 0 6px #FFF0B8; } }
+@keyframes reel-lamp-win { 0%, 100% { background: #FFF0B8; box-shadow: 0 0 8px #FFF0B8; } 50% { background: #7A5210; box-shadow: none; } }
+
+.reel-windows { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.reel-window {
+  position: relative; aspect-ratio: 1; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--color-m2e-card);
+  border: var(--border-width-pixel) solid #7A5210;
+  border-radius: var(--radius-pixel);
+  box-shadow: inset 0 3px 0 rgba(36, 24, 4, 0.18), inset 0 -3px 0 rgba(36, 24, 4, 0.12);
+  transition: background-color 0.18s ease;
+}
+.reel-window.is-hit { background: #FFF0B8; animation: reel-hit 0.5s ease-out; }
+@keyframes reel-hit { 0% { transform: scale(1); } 40% { transform: scale(1.07); } 100% { transform: scale(1); } }
+.reel-shade { position: absolute; left: 0; right: 0; height: 16%; background: #241804; opacity: 0.1; pointer-events: none; }
+.reel-shade-top { top: 0; }
+.reel-shade-bottom { bottom: 0; }
+.reel-face { display: inline-flex; image-rendering: pixelated; }
+.reel-face.is-flicker { opacity: 0.65; filter: blur(0.6px); transform: translateY(0); animation: reel-roll 0.14s linear infinite; }
+@keyframes reel-roll { 0% { transform: translateY(-9%); } 100% { transform: translateY(9%); } }
+.reel-face.is-settle { animation: reel-settle 0.26s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes reel-settle { 0% { transform: translateY(-14%); } 45% { transform: translateY(9%); } 100% { transform: translateY(0); } }
+.reel-line {
+  position: absolute; left: 6px; right: 6px; top: calc(50% + 4px); height: 0;
+  border-top: 2px dashed rgba(36, 24, 4, 0.22); pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reel-cabinet .reel-lamps span, .reel-window.is-hit, .reel-face.is-flicker, .reel-face.is-settle { animation: none !important; }
+}
+
+/* The foil glint that sweeps across the Genesis pass now and then. */
+.reel-glint {
+  position: absolute; top: -20%; bottom: -20%; left: -30%; width: 22%;
+  background: linear-gradient(90deg, transparent, rgba(255, 240, 184, 0.28), transparent);
+  transform: skewX(-20deg); pointer-events: none;
+  animation: reel-glint 6s ease-in-out 1.2s infinite;
+}
+@keyframes reel-glint { 0%, 70% { left: -30%; } 100% { left: 130%; } }
+@media (prefers-reduced-motion: reduce) { .reel-glint { display: none; } }

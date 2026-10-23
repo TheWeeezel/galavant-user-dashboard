@@ -1257,6 +1257,8 @@ export type ReelFace = 'blank' | 'bolt' | 'wrench' | 'gear' | 'star' | 'genesis'
 export interface GenesisLounge {
   holder: boolean;
   held: Array<{ kind: 'bike' | 'part'; number: number }>;
+  /** Bikes and parts are numbered from 1 each, so a number only means something with its kind. */
+  totalMinted?: { bike: number; part: number };
   enabled: boolean;
   freePullsLeft: number;
   pullCostWatts: number;
