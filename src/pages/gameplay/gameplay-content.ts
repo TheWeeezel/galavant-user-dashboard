@@ -62,8 +62,8 @@ function buildEnergyPage(p: GuideParams): GameplayPage {
       { type: 'list', items: [
         'Energy is measured in minutes of earning time. Only minutes where you actively earn WATTS consume energy — if your speed is out of range, you stop moving, or you pause your session, your energy is preserved.',
         `It refills ${p.energyRegenPercent}% every ${p.energyRegenIntervalHours} hours — a full refill takes ${p.fullRechargeHours} hours.`,
-        'If a refill lands while you\'re mid-session and out of energy, it\'s automatically credited to your ride — the session screen shows a banner when this happens. The "energy full" notification waits until your session ends.',
-        'A refill can never take you above your own energy pool, so leaving a session running to collect several refills banks nothing: a long session earns exactly what a fresh one with the same energy earns. Standing still earns nothing either way.',
+        'A refill that arrives during a session only counts for walking you do after it arrives — minutes you walked with no energy before it stay unpaid. If it lets you earn again, the session screen shows a banner. Your session\'s energy is only settled when you finish, so a refill that arrives during a long session can come up short or not count at all: end your session when you\'re done walking. The "energy full" notification waits until your session ends.',
+        'A refill can never take you above your own energy pool, so leaving a session running to collect refills banks nothing: a refill only pays for walking you do after it arrives. Standing still earns nothing either way.',
         'Your total energy pool depends on how many bikes you own and their quality.',
         `The maximum energy cap is ${cap} minutes per day.`,
         'Only bikes with HP remaining contribute to your energy pool.',
@@ -149,7 +149,7 @@ const bikeAttributesPage: GameplayPage = {
     { type: 'heading', text: 'Luck' },
     { type: 'paragraph', text: 'Improves your chances of receiving a toolbox drop each minute you walk, and increases the likelihood of higher-level toolboxes. The higher your Luck, the more often toolboxes fall and the better they tend to be — but drops stay a roll, never a schedule, and are never guaranteed to be a specific level.' },
     { type: 'heading', text: 'Recovery' },
-    { type: 'paragraph', text: 'Slows down HP drain during walks, so a higher Recovery attribute means a full HP bar carries you through more walking before it needs attention and your repairs sit further apart. Each bike also has a one-time HP safety net that activates when HP gets critically low, fully restoring it — so new players won\'t lose their bike before they can find recovery parts.' },
+    { type: 'paragraph', text: 'Slows down HP drain during walks, so a higher Recovery attribute means a full HP bar carries you through more walking before it needs attention and your repairs sit further apart. Each bike also has a one-time HP safety net that activates when HP gets critically low, fully restoring it — so new players won\'t lose their bike before they can find recovery parts. In the app, a green heart next to a bike\'s HP means its safety net is still there; once it has been used, the heart is gone, and the bike\'s page says LIFELINE USED. The safety net stays with the bike when you sell or trade it, so check the in-app market listing before you buy.' },
     { type: 'heading', text: 'Durability' },
     { type: 'paragraph', text: 'Your bike\'s Durability stat slows down wear and tear. A bike that wears more slowly spends more time in peak condition — and a bike in peak condition earns at full rate. As your bike wears down through use, its Bike Condition drops, and your earnings progressively decrease until you repair it back to peak.' },
     { type: 'paragraph', text: 'Higher Durability also means faster repairs: a well-built bike is quicker to restore between sessions. Durability parts (the helmet-shaped pieces) are the single best way to boost this stat.' },
@@ -561,7 +561,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'toolboxes',
         title: 'Toolboxes',
         content: [
-          { type: 'paragraph', text: 'Toolboxes are reward containers that can drop while you walk and earn. You need to actually move a meaningful distance during your session before any toolbox can drop — standing still or barely moving won\'t earn you a toolbox. Both your drop chance and the level of toolbox you receive depend on your active earning time — once your energy runs out, no further drops can occur.' },
+          { type: 'paragraph', text: 'Toolboxes are reward containers that can drop while you walk and earn. You need to actually move a meaningful distance during your session before any toolbox can drop — standing still or barely moving won\'t earn you a toolbox. Both your drop chance and the level of toolbox you receive depend on your active earning time — while you\'re out of energy, no further drops can occur (a refill during the session lets them start again).' },
           { type: 'heading', text: 'Toolbox Levels' },
           { type: 'paragraph', text: 'Toolboxes range from Level 1 (most common) to Level 5 (rarest). Higher levels contain better parts and a chance at minting tools.' },
           { type: 'table', headers: ['Level', 'Rarity', 'Description'], rows: [
@@ -587,7 +587,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Speed Open' },
           { type: 'paragraph', text: 'Don\'t want to wait? You can spend WATTS to instantly skip the remaining cooldown. The cost scales with how much time is left — the more patient you are, the less it costs. This cost is in addition to the normal opening cost.' },
           { type: 'heading', text: 'Live Drop Progress' },
-          { type: 'paragraph', text: 'During a walk, the Toolbox Radar on the live activity screen shows the toolbox level your walk is heading toward and how close you are to the next one, based on your actual movement. It is a forecast, not a promise: if a box drops, its final level is rolled when you stop, so a walk that ends right at the edge of a level can land on either side of it. Going a bit past the point where the radar ticks over makes the higher level more likely. If you stop moving, the forecast reflects that.' },
+          { type: 'paragraph', text: 'During a walk, the Toolbox Radar on the live activity screen shows the toolbox level your walk is heading toward and how close you are to the next one, based on your actual movement and any rain or night luck bonus. It is a forecast, not a promise: if a box drops, its final level is rolled when you stop, so a walk that ends right at the edge of a level can land on either side of it. Going a bit past the point where the radar ticks over makes the higher level more likely. If you stop moving, the forecast reflects that.' },
           { type: 'heading', text: 'Opening Costs' },
           { type: 'paragraph', text: 'Every toolbox has an opening cost. Lower-level toolboxes are easier to open, while higher-level toolboxes may also require ENJ in addition to WATTS.' },
           { type: 'table', headers: ['Level', 'Cost Type'], rows: [
@@ -1001,6 +1001,7 @@ export const gameplaySections: GameplaySection[] = [
             'List any bike, part, or minting tool for a WATTS price you choose.',
             'An NFT can be listed for WATTS or for ENJ — being an NFT never stops you selling it.',
             'Bikes must be at 100% durability to be listed — repair first if needed. NFTs are exempt: their condition is frozen at mint.',
+            'Finish your ride before listing the bike you are riding.',
             'Listed bikes stay visible in your inventory, but bike-management actions stay locked until the listing is sold or cancelled.',
             'Listed parts stay visible too, but missions only count loose, unlisted parts and unlisted bikes as ready-to-use resources.',
             'You can have up to 20 active listings at once.',

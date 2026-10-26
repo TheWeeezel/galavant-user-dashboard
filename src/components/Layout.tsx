@@ -113,6 +113,13 @@ export function Layout() {
               </NavPill>
             )}
 
+            {isAuthenticated && user?.genesis?.holder && (
+              <NavPill to="/genesis" active={isActive('/genesis')}>
+                <Trophy className="w-5 h-5" />
+                Lounge
+              </NavPill>
+            )}
+
             {isAuthenticated ? (
               <NavPill to="/profile" active={isActive('/profile')}>
                 <Human className="w-5 h-5" />
@@ -173,6 +180,16 @@ export function Layout() {
               >
                 <Coins className="w-5 h-5" />
                 Wallet
+              </MobileLink>
+            )}
+            {isAuthenticated && user?.genesis?.holder && (
+              <MobileLink
+                to="/genesis"
+                active={isActive('/genesis')}
+                onClick={() => setMenuOpen(false)}
+              >
+                <Trophy className="w-5 h-5" />
+                Lounge
               </MobileLink>
             )}
             {isAuthenticated ? (

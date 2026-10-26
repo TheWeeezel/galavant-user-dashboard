@@ -90,7 +90,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (result.status === 'authenticated') {
         setAuthToken(result.token);
         localStorage.setItem(STORAGE_TOKEN, result.token);
-        dispatch({ type: 'LOGIN', token: result.token, user: result.user });
+        // The login answer carries no `genesis` block (only /auth/me does), so read the profile once.
+        const user = await fetchMe().catch(() => result.user);
+        dispatch({ type: 'LOGIN', token: result.token, user });
         return result;
       }
       // First-time visitor: the server handed us a short-lived claim token instead of a
@@ -99,7 +101,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const created = await completeGoogleSignup(result.googleClaimToken);
       setAuthToken(created.token);
       localStorage.setItem(STORAGE_TOKEN, created.token);
-      dispatch({ type: 'LOGIN', token: created.token, user: created.user });
+      const createdUser = await fetchMe().catch(() => created.user);
+      dispatch({ type: 'LOGIN', token: created.token, user: createdUser });
       return { status: 'authenticated' as const, token: created.token, user: created.user, walletAddress: created.walletAddress };
     } catch (err) {
       dispatch({ type: 'SET_LOADING', loading: false });
