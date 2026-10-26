@@ -3,6 +3,45 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.33",
+      "date": "2026-10-26",
+      "title": "Smoother Rides & Android 16",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "A heart on a bike shows whether its one-time HP lifeline is still there"
+        },
+        {
+          "type": "feature",
+          "text": "The repair panel has an info icon that explains the service bill"
+        },
+        {
+          "type": "improvement",
+          "text": "The toolbox radar on a ride now counts rain and night luck, so a rainy ride shows the next level at the right time"
+        },
+        {
+          "type": "improvement",
+          "text": "An energy pack that lands mid-ride pays only the minutes after it arrived; the stop takes what is left instead of refusing"
+        },
+        {
+          "type": "improvement",
+          "text": "A bike with a ride still open can no longer be listed or bought"
+        },
+        {
+          "type": "improvement",
+          "text": "On iPhone, the Genesis Reel lives on the website; the app keeps your starter packs and everything else"
+        },
+        {
+          "type": "improvement",
+          "text": "Android: the app now targets Android 16, as Google Play requires"
+        },
+        {
+          "type": "fix",
+          "text": "On iPhone, the live speed gauge no longer sticks at 0 after GPS drops out indoors and comes back"
+        }
+      ]
+    },
+    {
       "version": "0.0.31",
       "date": "2026-09-29",
       "title": "Forge, Names & Fair Energy",
