@@ -907,7 +907,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'sneaker-graveyard',
         title: 'Sneaker Graveyard',
         content: [
-          { type: 'paragraph', text: 'The Sneaker Graveyard is a corner of the website — galavant.run/graveyard — for players of the old move-to-earn game on Solana. If a sneaker from that game is gathering dust in your wallet, you can retire it with honour: you burn it yourself, in your own Phantom wallet, and its soul rides on in a Galavant bike. It lives on the website only; the app never links there.' },
+          { type: 'paragraph', text: 'The Sneaker Graveyard is a corner of the website — galavant.run/graveyard — for players of the old move-to-earn game on Solana. If a sneaker from that game is gathering dust in your wallet, you can retire it with honour: you burn it yourself, in your own Phantom wallet, and its soul rides on in a Steel bike: the one in a starter pack you buy at 15 % off, or one you already own. The burn itself does not give a free bike. It lives on the website only; the app never links there.' },
           { type: 'heading', text: 'What You Get' },
           { type: 'list', items: [
             '15 % off one Steel starter pack. The voucher is applied at the card till while you are signed in, and it is valid for a month after the burn.',

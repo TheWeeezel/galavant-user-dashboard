@@ -40,6 +40,7 @@ const MARKS = [
 ] as const;
 
 const FAQ: [string, string][] = [
+  ['Do I get a free bike?', 'No. The burn gives you 15 % off one Steel starter pack, valid 30 days. The soul goes into the bike inside that pack when you open it (Reborn), or into a Steel bike you already own (Inherited).'],
   ['Why burn it at all?', 'A sneaker can only have one soul. Burning proves the sneaker is gone, so its soul can live in exactly one bike and nobody can retire the same sneaker twice.'],
   ['What happens to my sneaker?', 'It is destroyed on Solana, in your wallet, by you. We never hold it. Before the burn we record its number, type, quality, level and mint count. That record is the soul, and it is cosmetic only.'],
   ['Do I need SOL?', 'A tiny network fee, under a cent. Most of the sneaker\'s storage deposit, a little under 0.01 SOL, comes back to your wallet when it burns. Most people end up with slightly more SOL than before.'],
@@ -128,7 +129,7 @@ export function Graveyard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.6 }}
             >
-              You ran a long way together. Burn it in your own wallet. <span className="text-m2e-accent-light">Its soul rides on</span> in a Galavant bike.
+              You ran a long way together. Burn it in your own wallet. <span className="text-m2e-accent-light">Its soul rides on</span> in a Steel bike: one you buy at 15 % off, or one you already ride.
             </motion.p>
 
             <motion.div
