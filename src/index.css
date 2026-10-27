@@ -821,7 +821,9 @@ body {
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 55%);
   mask-image: linear-gradient(to bottom, #000 0%, transparent 55%);
 }
-:root[data-theme="night"] .nightstars {
+:root[data-theme="night"] .nightstars,
+/* …and under any element pinned to night on its own (the Sneaker Graveyard). */
+[data-theme="night"] .nightstars {
   opacity: 0.85;
 }
 

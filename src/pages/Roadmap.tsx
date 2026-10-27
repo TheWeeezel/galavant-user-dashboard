@@ -115,7 +115,7 @@ const PHASES: RoadmapPhase[] = [
         title: 'Guilds / Crews',
         description: 'Form crews of 3-10 riders. Shared energy bonuses, crew leaderboards, crew chat, and weekly crew challenges. Ride together, earn together.',
         icon: Users,
-        status: 'upcoming',
+        status: 'current',
       },
       {
         title: 'Weather Modifiers',

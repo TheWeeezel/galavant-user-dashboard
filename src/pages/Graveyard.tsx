@@ -71,8 +71,10 @@ export function Graveyard() {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
 
   return (
-    <div>
-      {/* ══ 1 / HERO — the graveyard at dusk, moonlit at night ══ */}
+    // The graveyard is always night, whatever the site's Sky Clock says — scoped here so the
+    // header's clock and the rest of the site still follow the global sky.
+    <div data-theme="night">
+      {/* ══ 1 / HERO — always moonlit ══ */}
       <div ref={heroRef} className="relative">
         <div className="gy-hero relative w-full h-[92vh] min-h-[560px] overflow-hidden scanlines vignette">
           <motion.div
