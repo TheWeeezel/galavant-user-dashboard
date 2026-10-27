@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 /**
  * The graveyard's small chrome — one card, one eyebrow, one heading — shared by the live flow
@@ -39,4 +39,35 @@ export function Chip({ tone = 'plain', children }: { tone?: 'plain' | 'ok' | 'wa
         ? 'border-m2e-accent text-m2e-accent-dark'
         : 'border-m2e-border text-m2e-text-secondary';
   return <span className={`inline-block border-2 bg-m2e-card px-2 py-0.5 text-xs uppercase tracking-wider whitespace-nowrap ${cls}`}>{children}</span>;
+}
+
+/** How long a wallet prompt may stay silent before the page suggests a reload. */
+export const WALLET_SILENT_MS = 20_000;
+
+/**
+ * Shown under a button that waits on the wallet, once the wallet has been silent for a while.
+ * It never cancels the wait: the wallet's window may still be open somewhere, and giving up on it
+ * would lose a signature the player then approves. A reload is the cure for the common case, an
+ * extension that updated itself while the tab was open ("Extension context invalidated"), whose
+ * old connection in this tab no longer reaches the wallet.
+ */
+export function WalletSilentHint({ waiting, walletName, children }: { waiting: boolean; walletName: string; children?: ReactNode }) {
+  const [silent, setSilent] = useState(false);
+  useEffect(() => {
+    setSilent(false);
+    if (!waiting) return;
+    const t = setTimeout(() => setSilent(true), WALLET_SILENT_MS);
+    return () => clearTimeout(t);
+  }, [waiting]);
+  if (!waiting || !silent) return null;
+  return (
+    <div role="status" className="pixel-border border-m2e-warning bg-m2e-bg px-4 py-3 space-y-2 text-base leading-snug">
+      <p>
+        {walletName} has not opened? Look for its window behind the browser, or click its icon in the toolbar.
+        If nothing is waiting there, {walletName} probably updated itself while this tab was open: reload the page and try again.
+      </p>
+      {children && <p className="text-m2e-text-secondary">{children}</p>}
+      <button type="button" className="pixel-btn px-4 py-2 text-sm" onClick={() => window.location.reload()}>Reload the page</button>
+    </div>
+  );
 }

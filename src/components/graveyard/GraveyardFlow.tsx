@@ -46,7 +46,7 @@ import {
   soulDetail,
   soulLine,
 } from './Pixels';
-import { Card, Chip, ErrorLine, Eyebrow, H2, errorText } from './Chrome';
+import { Card, Chip, ErrorLine, Eyebrow, H2, WalletSilentHint, errorText } from './Chrome';
 
 /**
  * The sign-in-to-rebirth flow of the Sneaker Graveyard.
@@ -458,6 +458,7 @@ function WalletStep({ proven, onProven, onBack }: { proven: string[]; onProven: 
         </div>
       )}
 
+      <WalletSilentHint waiting={busy !== null} walletName={wallet.name} />
       <ErrorLine error={error} />
       {onBack && <button type="button" className="text-sm text-m2e-accent-dark underline cursor-pointer" onClick={onBack}>back to my sneakers</button>}
     </Card>
@@ -741,6 +742,9 @@ function Farewell({ claim, wallets, notice, onExpired, onNotToday }: {
         </button>
         <button type="button" className="text-sm text-m2e-accent-dark underline cursor-pointer" onClick={onNotToday}>Not today</button>
       </div>
+      <WalletSilentHint waiting={burn.isPending} walletName={wallet?.name ?? 'Phantom'}>
+        Nothing is burned until you approve it in {wallet?.name ?? 'Phantom'}. If you already approved, the burn is found on Solana and shows up here by itself.
+      </WalletSilentHint>
       <ErrorLine error={burn.error} />
     </Card>
   );
