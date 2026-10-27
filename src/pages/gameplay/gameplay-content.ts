@@ -1375,6 +1375,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Streak Shields' },
           { type: 'paragraph', text: 'At major milestones (Silver II, Gold I, Gold III) you earn Streak Shields. A shield covers one missed day, so your streak can stay protected while you recover it on your next full mission clear. That protection is consumed as soon as it saves a missed day. You can bank up to 3 shields, and you can still claim an already-unlocked chest later without losing that day of streak progress.' },
           { type: 'tip', text: 'If you miss more than one day in a row, the streak is lost and your next full 3-mission clear starts a fresh run. A shield only covers the first missed day in that gap. The app also shows whether your streak is active, protected, or lost so you always know where you stand.' },
+          { type: 'tip', text: 'Forgetting is how most streaks end. If your streak is alive and a mission is still open, the app sends you one reminder a day before the reset, timed to your time zone. Keep notifications on.' },
         ],
       },
     ],
