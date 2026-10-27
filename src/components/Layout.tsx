@@ -317,6 +317,10 @@ export function Layout() {
             <span className="hidden sm:inline text-white/20">|</span>
             <Link to="/press-kit" className="hover:text-m2e-accent transition-colors">Press Kit</Link>
             <span className="hidden sm:inline text-white/20">|</span>
+            {/* A footer door, not a nav pill: the graveyard is for a few people with an old sneaker,
+                not a stop on every visitor's way. */}
+            <Link to="/graveyard" className="hover:text-m2e-accent transition-colors">Sneaker Graveyard</Link>
+            <span className="hidden sm:inline text-white/20">|</span>
             <Link to="/privacy" className="hover:text-m2e-accent transition-colors">Privacy Policy</Link>
             <span className="hidden sm:inline text-white/20">|</span>
             <Link to="/terms" className="hover:text-m2e-accent transition-colors">Terms of Sale</Link>

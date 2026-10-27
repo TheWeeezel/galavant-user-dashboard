@@ -900,6 +900,39 @@ export const gameplaySections: GameplaySection[] = [
         ],
       },
       /**
+       * The Sneaker Graveyard (galavant.run/graveyard). Qualitative on purpose: never the number
+       * of monthly spots (a lever), never anything about the anti-farming limits.
+       */
+      {
+        slug: 'sneaker-graveyard',
+        title: 'Sneaker Graveyard',
+        content: [
+          { type: 'paragraph', text: 'The Sneaker Graveyard is a corner of the website — galavant.run/graveyard — for players of the old move-to-earn game on Solana. If a sneaker from that game is gathering dust in your wallet, you can retire it with honour: you burn it yourself, in your own Phantom wallet, and its soul rides on in a Galavant bike. It lives on the website only; the app never links there.' },
+          { type: 'heading', text: 'What You Get' },
+          { type: 'list', items: [
+            '15 % off one Steel starter pack. The voucher is applied at the card till while you are signed in, and it is valid for a month after the burn.',
+            'The soul in a Steel bike: a haze of violet pixel smoke over the bike and a mark next to its level, a flame for Reborn (the bike out of the voucher\'s starter pack) or a ghost for Inherited (a Steel bike you already ride). Cosmetic only. It shows on the bike screen, on its card in the garage and on the bike\'s NFT card when you export it, with the sneaker\'s number.',
+            'A stone on the public wall. Only the sneaker\'s number is shown, never the owner.',
+          ]},
+          { type: 'heading', text: 'How It Works' },
+          { type: 'list', items: [
+            'Sign in on the website with the Google account you use in the app, then connect Phantom and sign a short message. Signing costs nothing and sends no transaction — it only proves the wallet is yours.',
+            'Pick a sneaker. Its number, type, quality, level and mint count are recorded before the burn. That record is the soul, and it is cosmetic only.',
+            'Burn it in Phantom. The sneaker\'s storage deposit comes back to your wallet; the network fee is tiny. Galavant reads the burn off the chain and seals the soul.',
+            'Then choose: buy a starter pack with the voucher (open it in the app: its bike is Reborn), or give the soul to a Steel bike you already own (Inherited). The voucher stays yours either way.',
+          ]},
+          { type: 'heading', text: 'Good to Know' },
+          { type: 'list', items: [
+            'A burn never gets more than Steel: a starter pack\'s bike is Steel, and a soul only goes into a Steel bike.',
+            'Limited spots each month. When they are taken, the page says so and your sneakers stay safely in your wallet until next month.',
+            'One sneaker per player.',
+            'A spot is held for 30 minutes once you reach the farewell. If it runs out before you burn, nothing happens to your sneaker — pick it again.',
+            'The burn is final. Nobody can bring the sneaker back, not you and not Galavant.',
+          ]},
+          { type: 'tip', text: 'A sneaker can only be retired from a wallet you control in Phantom. Move it there first; sneakers that have just moved can stay locked for up to a day.' },
+        ],
+      },
+      /**
        * The questions players actually ask, in their words, with the answer they can act on.
        *
        * Seeded from a real case (2026-09-09): a player exported a bike, listed it for ENJ, and
