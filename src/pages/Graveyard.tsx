@@ -73,7 +73,7 @@ export function Graveyard() {
   return (
     // The graveyard is always night, whatever the site's Sky Clock says — scoped here so the
     // header's clock and the rest of the site still follow the global sky.
-    <div data-theme="night" className="min-h-screen bg-m2e-bg">
+    <div data-theme="night" className="min-h-screen bg-m2e-bg text-m2e-text">
       {/* ══ 1 / HERO — always moonlit ══ */}
       <div ref={heroRef} className="relative">
         <div className="gy-hero relative w-full h-[92vh] min-h-[560px] overflow-hidden scanlines vignette">
