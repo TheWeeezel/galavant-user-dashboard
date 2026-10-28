@@ -1300,7 +1300,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'achievements',
         title: 'Achievements & Personal Bests',
         content: [
-          { type: 'paragraph', text: 'Earn pixel badges for the riding you do, and keep track of your personal bests: your longest ride, your best WATTS in a single ride and your longest riding streak. Achievements open for Genesis holders first — find them in the Genesis Lounge and on the Stats tab of your profile. Everyone else is next.' },
+          { type: 'paragraph', text: 'Earn pixel badges for the riding you do, and keep track of your personal bests: your longest ride, your best WATTS in a single ride and your longest riding streak. Achievements are open to every rider — find them on the Stats tab of your profile.' },
           { type: 'heading', text: 'Badge Families' },
           { type: 'table', headers: ['Family', 'What It Asks'], rows: [
             ['In One Ride', 'A single ride of 5 km, 10 km, a half marathon or a marathon. Only that one ride counts — your total does not.'],
@@ -1320,8 +1320,8 @@ export const gameplaySections: GameplaySection[] = [
             'The badge rim shows its tier: bronze, silver, gold, diamond and prismatic.',
           ]},
           { type: 'tip', text: 'The ride summary tells you when a ride set a new personal best or reached a badge.' },
-          { type: 'heading', text: 'Badge Cards (Genesis First)' },
-          { type: 'paragraph', text: 'Every badge you claim becomes a pixel trading card. Genesis holders open their first pack in the Genesis Lounge: a card for every badge they have claimed so far, revealed one by one, plus a gift card. After that, each badge you claim flips straight into a new card.' },
+          { type: 'heading', text: 'Badge Cards' },
+          { type: 'paragraph', text: 'Every badge you claim becomes a pixel trading card, for every rider. Genesis holders also open their first pack in the Genesis Lounge: a card for every badge they have claimed so far, revealed one by one, plus a gift card. After that, each badge you claim flips straight into a new card.' },
           { type: 'list', items: [
             'A card shows its badge, the day you earned it and its number — how many of that card exist, in the order they were earned.',
             'Cards you earned by your own riding stay with you for good (soulbound). Commemorative cards — September Tester, Season One Rider and the Opening Night gift — are tradeable; trading them opens later.',
@@ -1330,10 +1330,47 @@ export const gameplaySections: GameplaySection[] = [
         ],
       },
       {
-        slug: 'discord-role',
-        title: 'Discord Genesis Role',
+        slug: 'crews',
+        title: 'Crews',
         content: [
-          { type: 'paragraph', text: 'Link your Discord account and the Genesis role on the Galavant Discord follows the game: it is yours while you hold a Genesis bike or part in the game, and it comes off when you don\'t. Linking opens for Genesis holders first.' },
+          { type: 'paragraph', text: 'Ride with 3 to 10 friends. When half the crew rides on a day, the crew flame stays lit and everyone in the crew gets extra energy. Ride toward a weekly distance goal together and open a crew chest. During the Genesis beta, Genesis holders found crews and anyone with an invite can join. On Discord, a linked crew member gets the Crew role and the crew tag in front of their name here; the captain gets the Captain role.' },
+          { type: 'heading', text: 'The Crew Flame' },
+          { type: 'list', items: [
+            'Each day (midnight to midnight UTC) the flame lights once half the crew has ridden. A ride counts for the day it started on, even if it ends after midnight. A very short hop does not count. Days in a row build the streak.',
+            'While the flame is lit, today or yesterday, every member gets extra energy.',
+            'A crewmate who has not ridden yet can be nudged: they get a push and a line in the crew feed. Each rider gets at most one nudge a day.',
+            'The flame starts once the crew has 3 riders on 3 different phones. The weekly goal starts the Monday after and counts the riders who are in the crew by then.',
+            'A rider who leaves or is removed during a day still counts toward that day, and rides count from the moment you join a crew.',
+          ]},
+          { type: 'heading', text: 'The Weekly Goal and Chest' },
+          { type: 'list', items: [
+            'The goal grows with the crew and resets every Monday (UTC).',
+            'When the crew reaches it, every member who did their own share opens the crew chest. It holds items, never WATTS.',
+            'New riders count toward the goal from the Monday after they join.',
+            'Each rider counts up to a weekly limit, so one rider cannot carry the crew.',
+            'A chest can be opened until the Sunday after its week, also if you left the crew since. It shows at the top of the crew page.',
+          ]},
+          { type: 'heading', text: 'Fair Play' },
+          { type: 'list', items: [
+            'Only verified rides count. A clean ride that is still being verified counts for the flame right away, and for the chest once its WATTS are final.',
+            'Several accounts on one phone count as one rider, and share one chest a week.',
+            'A rider who is under a fair-play ban when a week starts (Monday, 00:00 UTC) does not count toward that week\'s goal. If that leaves the crew with fewer than 3 phones, the weekly goal pauses for that week.',
+            'After leaving a crew you wait a while before joining or founding another.',
+          ]},
+          { type: 'heading', text: 'Founding and Joining' },
+          { type: 'list', items: [
+            'Found a crew from the Crews row on Home: pick a name, a tag and an emblem. Founding costs WATTS.',
+            'Invite riders with your crew code. They enter it under Crews on Home.',
+            'Your crew tag shows after your name on the high scores, and the CREWS tab on Ranks shows this week\'s crew board.',
+          ]},
+          { type: 'tip', text: 'Check Today on the crew page: it shows who has ridden, and who could use a nudge.' },
+        ],
+      },
+      {
+        slug: 'discord-role',
+        title: 'Discord Roles',
+        content: [
+          { type: 'paragraph', text: 'Link your Discord account and the Genesis role on the Galavant Discord follows the game: it is yours while you hold a Genesis bike or part in the game, and it comes off when you don\'t. Linking is open to every rider; the Genesis role is for holders. If you are in a crew, you also get the Crew role (the Captain role for a captain) and your crew tag in front of your name on the server.' },
           { type: 'heading', text: 'How to Link' },
           { type: 'list', items: [
             'In the app, open You → Account and tap Link Discord. You get a short code that works for 10 minutes.',
