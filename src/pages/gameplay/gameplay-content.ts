@@ -66,7 +66,7 @@ function buildEnergyPage(p: GuideParams): GameplayPage {
         'A refill can never take you above your own energy pool, so leaving a session running to collect refills banks nothing: a refill only pays for walking you do after it arrives. Standing still earns nothing either way.',
         'Your total energy pool depends on how many bikes you own and their quality.',
         `The maximum energy cap is ${cap} minutes per day.`,
-        'Only bikes with HP remaining contribute to your energy pool.',
+        'Only bikes above a minimum HP contribute to your energy pool — if a bike\'s HP drops too low it stops counting until you restore it with recovery parts.',
       ]},
       { type: 'heading', text: 'Base Energy by Bike Count' },
       { type: 'paragraph', text: 'Your base energy grows as you collect more bikes. At key thresholds your base energy jumps up, and between thresholds it scales smoothly.' },
