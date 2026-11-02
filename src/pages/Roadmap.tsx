@@ -98,12 +98,6 @@ const PHASES: RoadmapPhase[] = [
         icon: Trophy,
         status: 'done',
       },
-      {
-        title: 'WATTS Season Pot',
-        description: 'Every month a pot of ENJ, funded by the shop, waits at the end of the season. Commit your WATTS any time before the close; at close the pot is split by what each rider put in, weighted by how early they committed, and paid straight to your linked Enjin Wallet. No fixed rate, a real share. The November pot is open.',
-        icon: Coins,
-        status: 'done',
-      },
     ],
   },
   {
@@ -133,6 +127,12 @@ const PHASES: RoadmapPhase[] = [
         title: 'Guild Battles',
         description: 'Crews face each other over a week: distance, days ridden and clean rides count for your side. The winning crew takes the battle chest and a mark on the crew board; the losers keep their WATTS and get a rematch. Season standings crown the top crews.',
         icon: Sword,
+        status: 'upcoming',
+      },
+      {
+        title: 'WATTS Season Pot',
+        description: 'The marketplace tax your crewmates pay comes back to your crew as a season pot, split by riding at season close. Your own tax, riding home.',
+        icon: Coins,
         status: 'upcoming',
       },
       {
