@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router';
 import { motion, type Variants } from 'framer-motion';
 import {
-  Globe, Check, Clock, Lock, Zap, Music, Trophy, Crown, Heart, Users, Cloud, Flag, Gift,
+  Globe, Check, Clock, Lock, Zap, Music, Trophy, Crown, Heart, Users, Cloud, Flag, Gift, Coins, Sword,
   ChevronLeft,
 } from 'pixelarticons/react';
 
@@ -98,6 +98,12 @@ const PHASES: RoadmapPhase[] = [
         icon: Trophy,
         status: 'done',
       },
+      {
+        title: 'WATTS Season Pot',
+        description: 'Every month a pot of ENJ, funded by the shop, waits at the end of the season. Commit your WATTS any time before the close; at close the pot is split by what each rider put in, weighted by how early they committed, and paid straight to your linked Enjin Wallet. No fixed rate, a real share. The November pot is open.',
+        icon: Coins,
+        status: 'done',
+      },
     ],
   },
   {
@@ -116,6 +122,18 @@ const PHASES: RoadmapPhase[] = [
         icon: Users,
         status: 'current',
         badge: { label: 'Genesis beta', icon: Crown },
+      },
+      {
+        title: 'Crew Gifts',
+        description: 'Send a toolbox, a part or a few WATTS to a crew mate from the crew screen. A nudge is good; a gift gets the slow rider back on the bike. Gifts show up on the crew feed, so the crew sees who keeps it rolling.',
+        icon: Gift,
+        status: 'upcoming',
+      },
+      {
+        title: 'Guild Battles',
+        description: 'Crews face each other over a week: distance, days ridden and clean rides count for your side. The winning crew takes the battle chest and a mark on the crew board; the losers keep their WATTS and get a rematch. Season standings crown the top crews.',
+        icon: Sword,
+        status: 'upcoming',
       },
       {
         title: 'Weather Modifiers',
