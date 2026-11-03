@@ -35,6 +35,16 @@ export const AVATAR_PRESETS: AvatarPreset[] = [
   { id: 'flame', art: 'flame', bg: '#671E52' },
   { id: 'skull', art: 'skull', bg: '#671E41' },
   { id: 'joystick', art: 'joystick', bg: '#671E2F' },
+  // Second sheet (2026-11-03): same deep lightness, each hue picked to contrast with its icon.
+  { id: 'bottle', art: 'bottle', bg: '#67391E' },
+  { id: 'pin', art: 'pin', bg: '#1E675B' },
+  { id: 'mountain', art: 'mountain', bg: '#67451E' },
+  { id: 'stopwatch', art: 'stopwatch', bg: '#491E67' },
+  { id: 'sneaker', art: 'sneaker', bg: '#67281E' },
+  { id: 'sun', art: 'sun', bg: '#1E2A67' },
+  { id: 'compass', art: 'compass', bg: '#1E5567' },
+  { id: 'medal', art: 'medal', bg: '#671E3C' },
+  { id: 'coffee', art: 'coffee', bg: '#1E671E' },
 ];
 
 const PREFIX = 'preset:';
