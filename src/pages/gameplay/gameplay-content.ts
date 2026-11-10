@@ -379,7 +379,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Your Bonus' },
           { type: 'paragraph', text: 'A single account-wide multiplier applied to everything you earn. It has two ingredients, and both reward sticking with the game rather than spending anything.' },
           { type: 'list', items: [
-            'Loyalty — walking day after day, and holding what you earn instead of dumping it.',
+            'Loyalty — walking day after day. The longer your streak, the higher your tier.',
             'ENJ staking — keeping ENJ staked in the Galavant pool, from your own wallet.',
           ]},
           { type: 'paragraph', text: 'Your bike rate multiplied by your bonus is your WATTS per minute. That is the whole formula.' },
