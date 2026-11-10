@@ -55,8 +55,8 @@ export function App() {
           <Route path="changelog" element={<Changelog />} />
           <Route path="profile" element={<Profile />} />
           <Route path="earn" element={<EarnPoints />} />
-          {/* The tester task track closed with the test month (server lever testing_tasks_enabled=0).
-              Old links and bookmarks land on the home page rather than an empty checklist. */}
+          {/* The tester task track closed with the test month and is gone from the game.
+              Old links and bookmarks land on the home page. */}
           <Route path="tasks" element={<Navigate to="/" replace />} />
           <Route path="report" element={<Report />} />
           {/* Short on purpose — the bounty rules are meant to be pasted into a post. */}

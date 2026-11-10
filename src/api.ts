@@ -292,11 +292,6 @@ export interface UserProfile {
   createdAt: string;
 }
 
-export interface AuthConnectResult {
-  token: string;
-  user: UserProfile;
-}
-
 export type GoogleAuthResult =
   | { status: 'authenticated'; token: string; user: UserProfile; walletAddress: string }
   | { status: 'needs_wallet'; googleClaimToken: string; googleEmail: string; googleDisplayName: string };
@@ -353,21 +348,6 @@ export interface ReferralStats {
   totalEarned: number;
 }
 
-export function connectWallet(walletAddress: string, publicKey?: string, mldsaPublicKey?: string) {
-  return fetchAuthJson<AuthConnectResult>('/auth/connect', {
-    method: 'POST',
-    body: JSON.stringify({ walletAddress, publicKey, mldsaPublicKey }),
-  });
-}
-
-/** Sync wallet public keys to the server (called when the extension provides keys after login). */
-export function syncWalletKeys(publicKey: string, mldsaPublicKey: string) {
-  return fetchAuthJson<{ synced: boolean }>('/auth/sync-wallet-keys', {
-    method: 'POST',
-    body: JSON.stringify({ publicKey, mldsaPublicKey }),
-  });
-}
-
 export function googleAuth(code: string) {
   return fetchAuthJson<GoogleAuthResult>('/auth/google', {
     method: 'POST',
@@ -413,8 +393,6 @@ export function fetchReferralCode() {
 export function fetchReferralStats() {
   return fetchAuthJson<ReferralStats>('/referrals/stats');
 }
-
-// --- Testing Tasks ---
 
 // --- Problem Reports ---
 

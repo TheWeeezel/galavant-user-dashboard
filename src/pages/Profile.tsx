@@ -225,18 +225,12 @@ export function Profile() {
               </div>
             </div>
             <div className="hidden sm:flex flex-col gap-2 shrink-0">
-              <Link to="/tasks" className="pixel-btn pixel-btn-outline px-4 py-2 text-xs no-underline text-center">
-                Tasks
-              </Link>
               <Link to="/earn" className="pixel-btn pixel-btn-primary px-4 py-2 text-xs no-underline text-center animate-glow-pulse">
                 Earn More
               </Link>
             </div>
           </motion.div>
           <div className="flex gap-2 sm:hidden">
-            <Link to="/tasks" className="flex-1 pixel-btn pixel-btn-outline px-4 py-2 text-xs no-underline text-center">
-              Tasks
-            </Link>
             <Link to="/earn" className="flex-1 pixel-btn pixel-btn-primary px-4 py-2 text-xs no-underline text-center animate-glow-pulse">
               Earn More
             </Link>
