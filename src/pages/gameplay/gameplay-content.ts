@@ -1359,6 +1359,15 @@ export const gameplaySections: GameplaySection[] = [
             'A rider who is under a fair-play ban when a week starts (Monday, 00:00 UTC) does not count toward that week\'s goal. If that leaves the crew with fewer than 3 phones, the weekly goal pauses for that week.',
             'After leaving a crew you wait a while before joining or founding another.',
           ]},
+          { type: 'heading', text: 'Crew Battles' },
+          { type: 'list', items: [
+            'Once three riders of the crew have ridden in the last seven days, the captain can enter the crew into the battles. The entry sticks: the crew is in every week it qualifies until the captain takes it out.',
+            'Every Monday (UTC) entered crews are paired for the week. A crew without an opponent races its own last week instead.',
+            'The score is per rider and per day: each rider counts up to a daily limit, and a day with a real ride counts extra. A crew of three and a crew of eight are a fair fight, and riders who do not ride weigh the crew down.',
+            'The crew page shows two bars, whether your crew is ahead, behind or level, and a day grid for both crews. Rides under fair-play review put that rider on hold until they are cleared.',
+            'The result comes on the Tuesday after the week, once the last rides are verified. The winners open the battle chest; a draw and a beaten ghost open a smaller one, a loss the smallest. The chests hold items, never WATTS or ENJ, and open once per rider and phone a week.',
+            'A losing captain can call a rematch for the next week.',
+          ]},
           { type: 'heading', text: 'Founding and Joining' },
           { type: 'list', items: [
             'Found a crew from the Crews row on Home: pick a name, a tag and an emblem. Founding costs WATTS.',
