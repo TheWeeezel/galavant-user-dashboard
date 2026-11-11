@@ -3,6 +3,65 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.34",
+      "date": "2026-11-11",
+      "title": "Crew Battles & Sharper Pixels",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Crew battles for Genesis holders: a weekly duel for your crew, with its own battle page and a result chest"
+        },
+        {
+          "type": "feature",
+          "text": "Durability now also makes servicing cheaper; the bike screen shows by how much"
+        },
+        {
+          "type": "feature",
+          "text": "Nine more avatars"
+        },
+        {
+          "type": "feature",
+          "text": "A streak reminder at 8 pm local time when a mission is still open"
+        },
+        {
+          "type": "feature",
+          "text": "Filter your own bikes by quality and your parts by type; filter the market by WATTS or ENJ"
+        },
+        {
+          "type": "feature",
+          "text": "The energy bar explains why your maximum ride time changed"
+        },
+        {
+          "type": "improvement",
+          "text": "New pixel art for parts and toolboxes, and crisper pixels across the app"
+        },
+        {
+          "type": "improvement",
+          "text": "Minting tools drop as full-width loot cards and can be listed from the Items tab"
+        },
+        {
+          "type": "improvement",
+          "text": "The profile's loyalty card shows your streak, tier and multiplier, without the old holding rows"
+        },
+        {
+          "type": "improvement",
+          "text": "The wallet tab's website button names what the website offers"
+        },
+        {
+          "type": "improvement",
+          "text": "A leaner Android app: an unused library and an unused permission removed"
+        },
+        {
+          "type": "fix",
+          "text": "Signing out stops the previous account's notifications on this phone"
+        },
+        {
+          "type": "fix",
+          "text": "A loot card no longer gets stuck at the top of the toolbox overlay"
+        }
+      ]
+    },
+    {
       "version": "0.0.33",
       "date": "2026-10-26",
       "title": "Smoother Rides & Android 16",
