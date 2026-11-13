@@ -626,7 +626,7 @@ export const gameplaySections: GameplaySection[] = [
             'Two bikes, each at level 5 or higher.',
             'Each bike can breed up to 7 times in its lifetime.',
             'There\'s a 48-hour cooldown between breeds for each bike.',
-            'Breeding costs ENJ (gas), WATTS, and 1 minting tool.',
+            'Breeding costs WATTS and 1 minting tool.',
             'Costs increase with each subsequent breed for that bike.',
           ]},
           { type: 'tip', text: 'Plan your breeds carefully — each bike has limited breed count, and costs go up each time. Save your best bikes for when you\'re ready.' },
