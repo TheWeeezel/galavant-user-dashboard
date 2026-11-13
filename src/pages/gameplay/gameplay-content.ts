@@ -628,6 +628,7 @@ export const gameplaySections: GameplaySection[] = [
             'There\'s a 48-hour cooldown between breeds for each bike.',
             'Breeding costs WATTS and 1 minting tool.',
             'Costs increase with each subsequent breed for that bike.',
+            'Higher-quality parents cost more to breed — each parent adds to the price according to its quality tier.',
           ]},
           { type: 'tip', text: 'Plan your breeds carefully — each bike has limited breed count, and costs go up each time. Save your best bikes for when you\'re ready.' },
         ],
