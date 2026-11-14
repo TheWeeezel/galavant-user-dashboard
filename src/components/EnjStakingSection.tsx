@@ -233,7 +233,7 @@ export function EnjStakingSection() {
               {/* The Relaychain form: the stake lives there, and this is the address the Enjin Wallet shows beside it. */}
               <Row label="Linked wallet" value={`${(link.data?.relayAddress ?? link.data?.publicKey ?? '').slice(0, 10)}…${(link.data?.relayAddress ?? link.data?.publicKey ?? '').slice(-6)}`} />
               <Row label="Currently staked" value={`${(staking.data?.currentBondedEnj ?? 0).toLocaleString()} ENJ`} />
-              <Row label="Boost basis (14-day avg)" value={`${(staking.data?.timeWeightedBondedEnj ?? 0).toLocaleString()} ENJ`} />
+              <Row label="Counted stake (14-day avg)" value={`${(staking.data?.timeWeightedBondedEnj ?? 0).toLocaleString()} ENJ`} />
             </div>
             <div className="border-t border-m2e-border pt-4">
               {confirmUnlink ? (
@@ -317,7 +317,7 @@ export function EnjStakingSection() {
                 {bond.isError ? (
                   <p className="text-xs text-m2e-danger">{(bond.error as Error).message}</p>
                 ) : req?.state === 'done' ? (
-                  <p className="text-xs text-m2e-success">Your last stake is confirmed on-chain. The boost basis updates within the hour.</p>
+                  <p className="text-xs text-m2e-success">Your last stake is confirmed on-chain. The counted stake updates within the hour.</p>
                 ) : req?.state === 'failed' ? (
                   <p className="text-xs text-m2e-danger">{`The last staking request did not go through${req.error ? `: ${req.error}` : ''}. Nothing was staked — you can try again.`}</p>
                 ) : null}
