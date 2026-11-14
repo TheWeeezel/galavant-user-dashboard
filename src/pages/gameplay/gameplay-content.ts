@@ -186,7 +186,7 @@ export const gameplaySections: GameplaySection[] = [
             'Walk outdoors — the app tracks your real-world movement via GPS.',
             'Earn WATTS — every minute of walking earns you WATTS based on your bike and stats.',
             'Level up — improve your bike, socket parts, and climb the leaderboards.',
-            'Go on-chain — mint bikes as NFTs to trade them, stake ENJ for a boost, and redeem WATTS for ENJ each season.',
+            'Go on-chain — mint bikes as NFTs to trade them, stake ENJ for a bigger Rider bonus, and redeem WATTS for ENJ each season.',
           ]},
           { type: 'tip', text: 'Galavant runs on the Enjin blockchain. Your bikes and tokens are real on-chain assets.' },
           { type: 'heading', text: 'What Makes Galavant Different' },
@@ -376,13 +376,13 @@ export const gameplaySections: GameplaySection[] = [
             'Earning attribute — the biggest lever by far. Level-up points and socketed Earning parts both feed it, and a strong Earning part outweighs everything else in the game.',
             'Condition — a bike in peak condition earns its full rate. A worn bike earns less until you repair it.',
           ]},
-          { type: 'heading', text: 'Your Bonus' },
-          { type: 'paragraph', text: 'A single account-wide multiplier applied to everything you earn. It has two ingredients, and both reward sticking with the game rather than spending anything.' },
+          { type: 'heading', text: 'Your Rider Bonus' },
+          { type: 'paragraph', text: 'Your Rider bonus is a single account-wide multiplier applied to everything you earn. It has two ingredients, and both reward sticking with the game rather than spending anything.' },
           { type: 'list', items: [
-            'Loyalty — walking day after day. The longer your streak, the higher your tier.',
-            'ENJ staking — keeping ENJ staked in the Galavant pool, from your own wallet.',
+            'Ride streak — walking day after day. The longer your streak, the higher your tier.',
+            'ENJ stake — keeping ENJ staked in the Galavant pool, from your own wallet.',
           ]},
-          { type: 'paragraph', text: 'Your bike rate multiplied by your bonus is your WATTS per minute. That is the whole formula.' },
+          { type: 'paragraph', text: 'Your bike rate multiplied by your Rider bonus is your WATTS per minute. That is the whole formula.' },
           { type: 'heading', text: 'Does This Minute Count?' },
           { type: 'paragraph', text: 'Everything else is a yes-or-no check on the minute you just walked, not a number to optimise. A minute counts fully when you are inside your bike\'s speed zone with a clean GPS signal. Outside the speed zone, or with a weak signal, that minute counts for less or not at all — and a minute that does not count does not spend your energy either.' },
           { type: 'tip', text: 'Grow the Earning attribute first, keep your bike repaired, and walk every day. Those three habits beat every other optimisation combined.' },
@@ -982,7 +982,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'watts-and-enj',
         title: 'WATTS & ENJ',
         content: [
-          { type: 'paragraph', text: 'Galavant runs on two currencies. WATTS is what you earn and spend inside the game. ENJ is the Enjin blockchain\'s own token, and it only shows up at the edges — staking for a boost, trading NFTs, and the seasonal redemption.' },
+          { type: 'paragraph', text: 'Galavant runs on two currencies. WATTS is what you earn and spend inside the game. ENJ is the Enjin blockchain\'s own token, and it only shows up at the edges — staking for a bigger Rider bonus, trading NFTs, and the seasonal redemption.' },
           { type: 'heading', text: 'WATTS' },
           { type: 'list', items: [
             'Earned by walking with your balance bike.',
@@ -1005,7 +1005,7 @@ export const gameplaySections: GameplaySection[] = [
             // proceeds of an ENJ sale are paid to the Galavant-run managed wallet
             // (server services/redemption.ts, services/nft-marketplace.ts listForEnj).
             'The native token of the Enjin blockchain. ENJ you stake stays in your own wallet; ENJ the game pays you arrives in the wallet Galavant runs (see NFTs & Wallet → Your Two Wallets).',
-            'Stake it in the Galavant pool for a permanent earning boost (see Progression → ENJ Staking).',
+            'Stake it in the Galavant pool for a bigger Rider bonus (see Progression → ENJ Staking).',
             'Buy and sell NFT bikes with it on Enjin marketplaces.',
             'Receive it when you redeem WATTS at the end of a season.',
           ]},
@@ -1138,8 +1138,8 @@ export const gameplaySections: GameplaySection[] = [
             ['Breeding Costs', 'ENJ and WATTS costs per breed attempt', 'To control the rate of new bike creation'],
             ['Toolbox System', 'Drop rates, cooldowns, opening costs', 'To manage the flow of parts and resources into the game'],
             ['Marketplace Fees', 'Platform fee on trades', 'To adjust the WATTS sink from player-to-player trading'],
-            ['Staking Rewards', 'Earning boost and extra energy from staked ENJ', 'To calibrate how much staking commitment is rewarded'],
-            ['Loyalty Multipliers', 'Daily streak bonus tiers', 'To calibrate how much consistency is rewarded'],
+            ['Staking Rewards', 'The ENJ stake part of the Rider bonus and extra energy from staked ENJ', 'To calibrate how much staking commitment is rewarded'],
+            ['Ride Streak Multipliers', 'Ride streak bonus tiers', 'To calibrate how much consistency is rewarded'],
             ['Season Budget', 'Share of revenue set aside as the seasonal ENJ budget', 'To keep payouts in step with what the platform actually earns'],
             ['Redemption Split', 'How the season budget divides between the redemption pot and leaderboard prizes', 'To balance rewarding everyone against rewarding the top of the board'],
             ['Store WATTS Pricing', 'What a WATT Pack costs in the web shop', 'To keep bought WATTS priced fairly against earned WATTS'],
@@ -1186,17 +1186,17 @@ export const gameplaySections: GameplaySection[] = [
     pages: [
       {
         slug: 'loyalty-rewards',
-        title: 'Loyalty Rewards',
+        title: 'Ride Streak',
         content: [
-          { type: 'paragraph', text: 'Loyalty is the free half of your account bonus. It costs nothing to build — it only asks that you keep showing up.' },
+          { type: 'paragraph', text: 'Your Ride streak is the free half of your Rider bonus. It costs nothing to build — it only asks that you keep showing up.' },
           { type: 'heading', text: 'How You Earn It' },
           { type: 'list', items: [
-            'Walk every day. Consecutive days build your Ride streak, shown on your Profile under Loyalty, and longer streaks move you up through Bronze, Silver and Gold. Miss a couple of days in a row and the streak starts over.',
+            'Walk every day. Consecutive days build your Ride streak, shown on your Profile under Rider Bonus, and longer streaks move you up through Bronze, Silver and Gold. Miss a couple of days in a row and the streak starts over.',
             'It is its own streak. Your mission streak and your crew\'s flame are counted separately and have their own rewards.',
           ]},
-          { type: 'paragraph', text: 'Nothing else touches it. Selling WATTS to other players or redeeming them at the end of a season never costs you loyalty.' },
+          { type: 'paragraph', text: 'Nothing else touches it. Selling WATTS to other players or redeeming them at the end of a season never costs you your Ride streak.' },
           { type: 'heading', text: 'How It Fits With Staking' },
-          { type: 'paragraph', text: 'Loyalty and ENJ staking are the only two things in your account bonus. Loyalty is earned by playing, staking is earned by committing — together they form the single multiplier applied to every walk.' },
+          { type: 'paragraph', text: 'Your Ride streak and your ENJ stake are the only two things in your Rider bonus. The streak is earned by playing, the stake by committing — together they form the single multiplier applied to every walk.' },
           { type: 'tip', text: 'A long daily streak is the cheapest earning upgrade in the game. It costs nothing but turning up.' },
         ],
       },
@@ -1204,7 +1204,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'enj-staking',
         title: 'ENJ Staking',
         content: [
-          { type: 'paragraph', text: 'Staking is the optional half of your account bonus. Stake ENJ in the Galavant Peloton nomination pool from your own Enjin Wallet, and the game rewards you for it. Your ENJ never leaves your wallet and never enters ours — the stake is made in the pool, by you, and we only read the result.' },
+          { type: 'paragraph', text: 'Staking is the optional half of your Rider bonus. Stake ENJ in the Galavant Peloton nomination pool from your own Enjin Wallet, and the game rewards you for it. Your ENJ never leaves your wallet and never enters ours — the stake is made in the pool, by you, and we only read the result.' },
           { type: 'heading', text: 'The short version' },
           { type: 'list', items: [
             'You keep your ENJ, and you keep the normal on-chain staking rewards it already pays you.',
@@ -1221,7 +1221,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Your bonus is based on how much you have had staked over recent weeks, not on what is in the pool at this instant. Staking a large amount and pulling it straight back out does almost nothing. If you have just staked, expect the bonus to keep climbing for a while before it settles — that is the system recognising that you actually stayed.' },
           { type: 'heading', text: 'What it gets you' },
           { type: 'list', items: [
-            'A bigger multiplier on every walk.',
+            'A bigger Rider bonus on every walk.',
             'A little more daily energy, so you can walk longer before running out.',
             'A tier badge that goes up as your stake does.',
           ]},
@@ -1229,7 +1229,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'The extra energy comes first, already at a modest stake. The earning bonus grows slowly with the size of your stake and is built to reward large, long-held stakes, so a small stake moves it only a little. If a bigger number per walk is what you are after, your bike, its parts and your Ride streak do far more.' },
           { type: 'heading', text: 'On iPhone' },
           { type: 'paragraph', text: 'Walks recorded with the iPhone app do not receive the staking bonus or the extra energy. That is a rule of Apple\'s App Store for apps, not a choice of ours. Your stake keeps earning its normal on-chain rewards either way, and walks recorded with the Android app count as usual.' },
-          { type: 'paragraph', text: 'One thing staking does not do: it does not enlarge your slice of the seasonal redemption pot. The boost is already paid to you while you ride — you earn more WATTS per walk — so it is not applied a second time when you cash those WATTS out. Stake for the earning bonus and the energy, not for a better redemption rate.' },
+          { type: 'paragraph', text: 'One thing staking does not do: it does not enlarge your slice of the seasonal redemption pot. The bonus is already paid to you while you ride — you earn more WATTS per walk — so it is not applied a second time when you cash those WATTS out. Stake for the earning bonus and the energy, not for a better redemption rate.' },
           { type: 'tip', text: 'Staking is never required. You can reach the top of the game without it — it rewards players who want to back the pool as well as ride for it. Staking does carry the usual on-chain risks, which are spelled out on the staking screen before you commit.' },
         ],
       },

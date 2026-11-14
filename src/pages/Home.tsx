@@ -536,7 +536,7 @@ export function Home() {
                 <div className="text-xs tracking-[0.3em] uppercase text-m2e-text-muted">Step 2</div>
                 <div className="text-2xl md:text-3xl uppercase tracking-wide text-m2e-text leading-none">Earn Credits</div>
                 <p className="text-sm md:text-base text-m2e-text-secondary leading-snug">
-                  WATTS per earning minute — boosted by loyalty streaks and staked ENJ. Spend it in the workshop or trade it.
+                  WATTS per earning minute — boosted by your Rider bonus: your Ride streak and staked ENJ. Spend it in the workshop or trade it.
                 </p>
                 <div className="inline-flex items-center gap-3 bg-m2e-bg-alt border border-m2e-border rounded-lg px-4 py-2 mt-auto w-fit">
                   <img src="/assets/token-silver.png" alt="WATTS" className="w-7 h-7 pixel-render" />
@@ -734,7 +734,7 @@ export function Home() {
                   The Power<br /> <span className="text-m2e-accent">Station.</span>
                 </h2>
                 <p className="text-base md:text-xl text-m2e-text-secondary leading-snug max-w-md">
-                  Bond ENJ to the town's pool and every walk pays more — the bigger the bond, the bigger the boost, plus bonus daily energy. Real chain, real assets, no token to mint.
+                  Bond ENJ to the town's pool and every walk pays more — the bigger the bond, the bigger your Rider bonus, plus bonus daily energy. Real chain, real assets, no token to mint.
                 </p>
                 <Link to="/wallet" className="pixel-btn pixel-btn-primary text-base px-7 py-3 inline-flex items-center gap-2 animate-glow-pulse">
                   Stake ENJ
@@ -744,7 +744,7 @@ export function Home() {
                 <img src="/assets/vault-enj.png" alt="ENJ vault" className="w-44 md:w-56 h-auto pixel-render" />
                 <div className="text-xl md:text-2xl uppercase tracking-wide text-m2e-text">Bond ENJ · Earn more WATTS</div>
                 <div className="text-[11px] tracking-[0.25em] uppercase text-m2e-text-muted">
-                  Tiers from Iron to Legend · boost + bonus energy
+                  Tiers from Spark to Fusion · boost + bonus energy
                 </div>
               </div>
             </div>

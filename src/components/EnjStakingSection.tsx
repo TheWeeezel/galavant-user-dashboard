@@ -227,7 +227,7 @@ export function EnjStakingSection() {
             <div className="flex items-center gap-3">
               <Zap className="w-8 h-8 text-m2e-accent" />
               <span className="text-4xl text-m2e-accent">+{boostPercent}%</span>
-              <span className="text-m2e-text-secondary">earning boost</span>
+              <span className="text-m2e-text-secondary">Rider bonus</span>
             </div>
             <div className="border-t border-m2e-border pt-4 space-y-2">
               {/* The Relaychain form: the stake lives there, and this is the address the Enjin Wallet shows beside it. */}
@@ -240,8 +240,8 @@ export function EnjStakingSection() {
                 <div className="space-y-3">
                   <p className="text-sm text-m2e-text-secondary">
                     Unlink this wallet? Your ENJ, your bond and anything in the wallet stay exactly where they
-                    are — only the connection to this Galavant account goes. Your boost stops until you link a
-                    wallet again.
+                    are — only the connection to this Galavant account goes. The ENJ stake part of your Rider bonus
+                    stops until you link a wallet again.
                   </p>
                   <div className="flex gap-3">
                     <button
