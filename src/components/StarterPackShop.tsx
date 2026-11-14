@@ -81,8 +81,7 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
   // FROM AN EFFECT, not from the mutation callback: the panel — and with it the ref — exists only
   // after React has committed the state update, and a rAF scheduled in the same tick can run
   // BEFORE that commit. The ref would be null, the early return would swallow it, and the bug
-  // would be back on exactly the phones it was written for, intermittently. Same pattern the
-  // music player already uses for its scroll.
+  // would be back on exactly the phones it was written for, intermittently.
   useEffect(() => {
     const el = tillRef.current;
     if (!enjPayment || !el) return;

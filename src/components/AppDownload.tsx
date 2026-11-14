@@ -12,7 +12,7 @@ const APP_LIVE = true;
 type Variant = 'hero' | 'default' | 'compact';
 
 const IOS_BUTTON_CLASS: Record<Variant, string> = {
-  hero: 'pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-base px-6 py-3 animate-glow-pulse',
+  hero: 'pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-base px-6 py-3',
   default: 'pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-sm px-5 py-3',
   compact: 'pixel-btn pixel-btn-primary inline-flex items-center gap-2 text-sm px-4 py-2.5 no-underline whitespace-nowrap',
 };
@@ -37,12 +37,14 @@ function AppleIcon({ className }: { className?: string }) {
   );
 }
 
-export function AppDownload({ testflightUrl, playStoreUrl, variant = 'default', iosLabel }: {
+export function AppDownload({ testflightUrl, playStoreUrl, variant = 'default', iosLabel, glow }: {
   testflightUrl?: string | null;
   playStoreUrl?: string | null;
   variant?: Variant;
   /** The hero says "Download on iOS"; the tighter spots just say "iOS". */
   iosLabel?: string;
+  /** The glow pulse marks the one primary store button on the site: Home's hero sets it, nothing else. */
+  glow?: boolean;
 }) {
   if (!APP_LIVE) {
     return (
@@ -62,7 +64,7 @@ export function AppDownload({ testflightUrl, playStoreUrl, variant = 'default', 
           href={testflightUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={IOS_BUTTON_CLASS[variant]}
+          className={`${IOS_BUTTON_CLASS[variant]}${glow ? ' animate-glow-pulse' : ''}`}
         >
           <AppleIcon className={ICON_SIZE[variant]} />
           {iosLabel ?? 'iOS'}

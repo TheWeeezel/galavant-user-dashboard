@@ -236,7 +236,7 @@ export function Marketplace() {
                   Home
                 </Link>
                 <span className="text-white/30">/</span>
-                <div className="section-label">05 · Shop Floor</div>
+                <div className="section-label">Shop Floor</div>
               </div>
               <h1 className="text-5xl md:text-7xl lg:text-8xl uppercase tracking-wide text-chroma-hero leading-[0.9]">
                 The<br />
@@ -251,12 +251,12 @@ export function Marketplace() {
         </div>
       </div>
 
-      {/* Live ticker */}
+      {/* Live market figures — a still row, once each (it was a marquee until the 2026-11 clean-up) */}
       {tickerItems && (
-        <div className="bg-m2e-card-alt text-m2e-text border-b-2 border-m2e-border overflow-hidden py-2.5">
-          <div className="flex gap-10 whitespace-nowrap animate-marquee-fast will-change-transform">
-            {[...tickerItems, ...tickerItems, ...tickerItems].map((item, i) => (
-              <span key={i} className="flex items-center gap-10 text-xs md:text-sm uppercase tracking-[0.2em]">
+        <div className="bg-m2e-card-alt text-m2e-text border-b-2 border-m2e-border py-2.5">
+          <div className="mx-auto max-w-7xl px-4 md:px-8 flex flex-wrap items-center gap-x-8 gap-y-1.5">
+            {tickerItems.map((item, i) => (
+              <span key={i} className="flex items-center gap-2.5 text-xs md:text-sm uppercase tracking-[0.2em] whitespace-nowrap">
                 <span className="w-1.5 h-1.5 bg-m2e-accent inline-block" />
                 {item}
               </span>

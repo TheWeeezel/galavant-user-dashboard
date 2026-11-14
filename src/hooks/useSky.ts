@@ -49,10 +49,6 @@ export function setSkyMode(next: SkyMode) {
   notify();
 }
 
-export function cycleSkyMode() {
-  setSkyMode(SKY_MODES[(SKY_MODES.indexOf(mode) + 1) % SKY_MODES.length]);
-}
-
 // AUTO turns at 20:00 and 05:00 without a reload; a choice made in another tab follows here.
 window.setInterval(() => {
   if (mode === 'auto') applySky();

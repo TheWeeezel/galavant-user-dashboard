@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from 'pixelarticons/react';
 import { buildFlatPages, type ContentBlock, type ChartBar } from './gameplay-content';
 import { useGuideParams } from '../../contexts/GuideParamsContext';
 import { AppDownload } from '../../components/AppDownload';
+import { EconomyHealth } from '../../components/EconomyHealth';
 import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../../config/appLinks';
 
 function BarChart({ title, bars, unit = '' }: { title: string; bars: ChartBar[]; unit?: string }) {
@@ -113,6 +114,8 @@ function renderBlock(block: ContentBlock, i: number) {
  return <hr key={i} className="border-t-2 border-m2e-border my-4" />;
     case 'chart':
       return <BarChart key={i} title={block.title} bars={block.bars} unit={block.unit} />;
+    case 'economyHealth':
+      return <EconomyHealth key={i} />;
   }
 }
 

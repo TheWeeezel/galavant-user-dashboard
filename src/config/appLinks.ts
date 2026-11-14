@@ -1,6 +1,6 @@
 /**
  * The two ways to get the app. One definition: the landing
- * strip, the footer, the tasks page, the bounty page and the guide all point here, so a changed
+ * strip, the footer, Home and the guide all point here, so a changed
  * store link is changed once.
  */
 export const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.m2e.opnet';

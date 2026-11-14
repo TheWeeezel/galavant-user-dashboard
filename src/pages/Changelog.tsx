@@ -181,7 +181,7 @@ export function Changelog() {
             animate="visible"
           >
             <div className="section-label">
-              08 · Patch Notes
+              Patch Notes
             </div>
             <h1 className="text-5xl md:text-7xl lg:text-8xl uppercase tracking-wide text-chroma-hero leading-[0.9]">
               Patch<br />

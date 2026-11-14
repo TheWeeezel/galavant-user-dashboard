@@ -127,7 +127,9 @@ const PHASES: RoadmapPhase[] = [
         title: 'Guild Battles',
         description: 'Crews face each other over a week: distance, days ridden and clean rides count for your side. The winning crew takes the battle chest and a mark on the crew board; the losers keep their WATTS and get a rematch. Season standings crown the top crews.',
         icon: Sword,
-        status: 'upcoming',
+        // Live for Genesis holders since 2026-11-11 (crew_battles_audience 1), like Crews.
+        status: 'current',
+        badge: { label: 'Genesis beta', icon: Crown },
       },
       {
         title: 'WATTS Season Pot',
@@ -241,7 +243,7 @@ export function Roadmap() {
                 Home
               </Link>
               <span className="text-white/30">/</span>
-              <div className="section-label">11 · Quest Log</div>
+              <div className="section-label">Quest Log</div>
             </div>
             <h1 className="text-5xl md:text-7xl lg:text-8xl uppercase tracking-wide text-chroma-hero leading-[0.9]">
               The<br />

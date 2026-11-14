@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
+import { YouTabs } from '../components/YouTabs';
 import { Link } from 'react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -116,7 +117,7 @@ export function Profile() {
         <p className="text-lg uppercase tracking-wider text-m2e-text-secondary text-center">
           Login to view your profile
         </p>
-        <button onClick={() => setShowLogin(true)} className="pixel-btn pixel-btn-primary px-6 py-3 text-sm animate-glow-pulse">
+        <button onClick={() => setShowLogin(true)} className="pixel-btn pixel-btn-primary px-6 py-3 text-sm">
           Login
         </button>
         <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
@@ -126,6 +127,7 @@ export function Profile() {
 
   return (
     <>
+      <YouTabs />
       {/* Hero strip — player card */}
       <div className="border-b-2 border-m2e-border bg-m2e-chrome text-white relative overflow-hidden scanlines-light">
         <div className="mx-auto max-w-6xl px-4 md:px-8 py-10 md:py-14 relative z-10">
@@ -141,7 +143,7 @@ export function Profile() {
                 Home
               </Link>
               <span className="text-white/30">/</span>
-              <div className="section-label">13 · Player Card</div>
+              <div className="section-label">Player Card</div>
             </div>
 
             <div className="flex flex-col md:flex-row md:items-end gap-6">
@@ -225,13 +227,13 @@ export function Profile() {
               </div>
             </div>
             <div className="hidden sm:flex flex-col gap-2 shrink-0">
-              <Link to="/earn" className="pixel-btn pixel-btn-primary px-4 py-2 text-xs no-underline text-center animate-glow-pulse">
+              <Link to="/earn" className="pixel-btn pixel-btn-primary px-4 py-2 text-xs no-underline text-center">
                 Earn More
               </Link>
             </div>
           </motion.div>
           <div className="flex gap-2 sm:hidden">
-            <Link to="/earn" className="flex-1 pixel-btn pixel-btn-primary px-4 py-2 text-xs no-underline text-center animate-glow-pulse">
+            <Link to="/earn" className="flex-1 pixel-btn pixel-btn-primary px-4 py-2 text-xs no-underline text-center">
               Earn More
             </Link>
           </div>

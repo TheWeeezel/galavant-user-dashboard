@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router';
-import { Home, ShoppingCart, BookOpen, Menu, Cancel, Human, Login, Globe, Coins, Trophy, Clock, Sun, Moon } from 'pixelarticons/react';
-import { MusicPlayer } from './MusicPlayer';
+import { Home, ShoppingCart, BookOpen, Menu, Cancel, Human, Login, Globe, Trophy } from 'pixelarticons/react';
 import { LoginModal } from './LoginModal';
+import { isYouPath } from './YouTabs';
 import { useAuth } from '../contexts/AuthContext';
-import { SKY_MODES, cycleSkyMode, setSkyMode, useSkyMode, type SkyMode } from '../hooks/useSky';
+import { SKY_MODES, setSkyMode, useSkyMode, type SkyMode } from '../hooks/useSky';
 import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../config/appLinks';
 
 export function Layout() {
@@ -99,20 +99,6 @@ export function Layout() {
               </NavPill>
             ))}
 
-            {isAuthenticated && (
-              <NavPill to="/earn" active={isActive('/earn')} watts glow>
-                <img src="/assets/token-silver.png" alt="WATTS" className="w-5 h-5 pixel-render" />
-                Earn WATTS
-              </NavPill>
-            )}
-
-            {isAuthenticated && (
-              <NavPill to="/wallet" active={isActive('/wallet')}>
-                <Coins className="w-5 h-5" />
-                Wallet
-              </NavPill>
-            )}
-
             {isAuthenticated && user?.genesis?.holder && (
               <NavPill to="/genesis" active={isActive('/genesis')}>
                 <Trophy className="w-5 h-5" />
@@ -120,8 +106,9 @@ export function Layout() {
               </NavPill>
             )}
 
+            {/* One entry for the signed-in area: Profile, Wallet and Earn share a tab bar (YouTabs). */}
             {isAuthenticated ? (
-              <NavPill to="/profile" active={isActive('/profile')}>
+              <NavPill to="/profile" active={isYouPath(pathname)}>
                 <Human className="w-5 h-5" />
                 You
               </NavPill>
@@ -134,7 +121,6 @@ export function Layout() {
                 Login
               </button>
             )}
-            <SkyCycleButton />
           </nav>
 
           {/* Mobile hamburger */}
@@ -161,27 +147,6 @@ export function Layout() {
                 {label}
               </MobileLink>
             ))}
-            {isAuthenticated && (
-              <MobileLink
-                to="/earn"
-                active={isActive('/earn')}
-                watts
-                onClick={() => setMenuOpen(false)}
-              >
-                <img src="/assets/token-silver.png" alt="WATTS" className="w-5 h-5 pixel-render" />
-                Earn WATTS
-              </MobileLink>
-            )}
-            {isAuthenticated && (
-              <MobileLink
-                to="/wallet"
-                active={isActive('/wallet')}
-                onClick={() => setMenuOpen(false)}
-              >
-                <Coins className="w-5 h-5" />
-                Wallet
-              </MobileLink>
-            )}
             {isAuthenticated && user?.genesis?.holder && (
               <MobileLink
                 to="/genesis"
@@ -195,7 +160,7 @@ export function Layout() {
             {isAuthenticated ? (
               <MobileLink
                 to="/profile"
-                active={isActive('/profile')}
+                active={isYouPath(pathname)}
                 onClick={() => setMenuOpen(false)}
               >
                 <Human className="w-5 h-5" />
@@ -210,7 +175,6 @@ export function Layout() {
                 Login
               </button>
             )}
-            <SkyChips className="justify-between mt-2 pt-3 px-2 border-t border-white/10" />
           </nav>
         )}
       </header>
@@ -286,24 +250,7 @@ export function Layout() {
               X / Twitter
             </a>
           </div>
-          {/* The sky clock — the town's five hours */}
-          <div className="flex gap-1.5 w-full max-w-md mx-auto mt-2" aria-hidden>
-            {([
-              ['05', '#9A8FDE', '#CBBCE6'],
-              ['09', '#BFD2E8', '#D2DCE6'],
-              ['16', '#E9B87F', '#EECFA0'],
-              ['18', '#A879B8', '#C39BC4'],
-              ['20', '#241D47', '#1C1735'],
-            ] as const).map(([h, a, b]) => (
-              <div
-                key={h}
-                className="flex-1 h-5 rounded-sm relative overflow-hidden"
-                style={{ background: `linear-gradient(90deg, ${a} 0 50%, ${b} 50% 100%)` }}
-              >
-                <span className="absolute left-1 top-0 text-[10px] text-white/85" style={{ textShadow: '1px 1px 0 rgba(0,0,0,.6)' }}>{h}</span>
-              </div>
-            ))}
-          </div>
+          {/* The one sky switch on the site */}
           <SkyChips className="justify-center" />
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-4 pt-4 border-t border-white/10 w-full text-xs text-white/50 uppercase tracking-[0.25em]">
             <span>Powered by Enjin</span>
@@ -330,35 +277,15 @@ export function Layout() {
         </div>
       </footer>
 
-      <MusicPlayer />
     </div>
   );
 }
 
-const SKY_ICON: Record<SkyMode, React.ComponentType<{ className?: string }>> = { auto: Clock, day: Sun, night: Moon };
 const SKY_HINT: Record<SkyMode, string> = {
   auto: 'Sky follows your clock, night from 20:00 to 05:00',
   day: 'Day sky',
   night: 'Night sky',
 };
-
-/** The desktop nav's SKY switch: one button that steps AUTO → DAY → NIGHT, like the app's sky tap. */
-function SkyCycleButton() {
-  const mode = useSkyMode();
-  const Icon = SKY_ICON[mode];
-  return (
-    <button
-      type="button"
-      onClick={cycleSkyMode}
-      title={`${SKY_HINT[mode]} · click to change`}
-      aria-label={`Sky: ${mode}. Change the sky`}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-colors uppercase text-white/90 hover:text-white hover:bg-white/5 cursor-pointer [text-shadow:0_1px_2px_rgba(0,0,0,0.75)]"
-    >
-      <Icon className="w-5 h-5" />
-      <span className="hidden lg:inline">{mode}</span>
-    </button>
-  );
-}
 
 /** The SKY setting as the app's Player tab shows it: AUTO / DAY / NIGHT chips. */
 function SkyChips({ className = '' }: { className?: string }) {
@@ -389,30 +316,22 @@ function SkyChips({ className = '' }: { className?: string }) {
 
 /**
  * Nav tone ladder — violet is reserved for "you are here", so exactly one item
- * can ever carry it. `watts` marks the currency action in WATTS silver; every
- * other item stays quiet until it becomes the current page.
+ * can ever carry it; every other item stays quiet until it becomes the current page.
  */
-function NavPill({ to, active, watts, glow, title, children }: {
+function NavPill({ to, active, title, children }: {
   to: string;
   active: boolean;
-  watts?: boolean;
-  glow?: boolean;
   title?: string;
   children: React.ReactNode;
 }) {
   const base =
     'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-colors relative ' +
     '[text-shadow:0_1px_2px_rgba(0,0,0,0.75)]';
-  const tone = active
-    ? 'text-m2e-accent-light'
-    : watts
-      ? 'text-m2e-watts hover:text-m2e-watts-light'
-      : 'text-white/90 hover:text-white';
+  const tone = active ? 'text-m2e-accent-light' : 'text-white/90 hover:text-white';
   const bg = active ? 'bg-white/10' : 'hover:bg-white/5';
-  const glowCls = glow ? 'animate-glitch-flicker hover:animate-none' : '';
 
   return (
-    <Link to={to} title={title} className={`${base} ${tone} ${bg} ${glowCls}`}>
+    <Link to={to} title={title} className={`${base} ${tone} ${bg}`}>
       {children}
       {active && (
         <span className="absolute left-2 right-2 -bottom-0.5 h-[2px] bg-m2e-accent-light" />
@@ -421,18 +340,13 @@ function NavPill({ to, active, watts, glow, title, children }: {
   );
 }
 
-function MobileLink({ to, active, watts, onClick, children }: {
+function MobileLink({ to, active, onClick, children }: {
   to: string;
   active: boolean;
-  watts?: boolean;
   onClick?: () => void;
   children: React.ReactNode;
 }) {
-  const tone = active
-    ? 'text-m2e-accent bg-white/10'
-    : watts
-      ? 'text-m2e-watts'
-      : 'text-white/70 hover:text-white hover:bg-white/5';
+  const tone = active ? 'text-m2e-accent bg-white/10' : 'text-white/70 hover:text-white hover:bg-white/5';
   return (
     <Link
       to={to}

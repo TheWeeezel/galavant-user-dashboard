@@ -7,7 +7,6 @@ import { Changelog } from './pages/Changelog';
 import { Profile } from './pages/Profile';
 import { EarnPoints } from './pages/EarnPoints';
 import { Report } from './pages/Report';
-import { Bounty } from './pages/Bounty';
 import { Roadmap } from './pages/Roadmap';
 import { Leaderboard } from './pages/Leaderboard';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
@@ -59,8 +58,9 @@ export function App() {
               Old links and bookmarks land on the home page. */}
           <Route path="tasks" element={<Navigate to="/" replace />} />
           <Route path="report" element={<Report />} />
-          {/* Short on purpose — the bounty rules are meant to be pasted into a post. */}
-          <Route path="bounty" element={<Bounty />} />
+          {/* The test-month bounty closed on 30 September and its page is gone (2026-11 clean-up).
+              The short link was pasted into posts, so it lands on the home page. */}
+          <Route path="bounty" element={<Navigate to="/" replace />} />
           <Route path="roadmap" element={<Roadmap />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="privacy" element={<PrivacyPolicy />} />

@@ -86,12 +86,6 @@
   --color-m2e-sky-top: #E3DCCB;
 }
 
-:root {
-  /* The music player is fixed to the bottom on every page. Anything that should
-     not end up underneath it reserves this. */
-  --player-h: 69px;
-}
-
 html {
   scroll-behavior: smooth;
   font-size: 18px;
@@ -227,24 +221,6 @@ body {
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
   }
-
-  @keyframes glitch-flicker {
-    0%, 100% { color: var(--color-m2e-accent); opacity: 1; }
-    4% { color: var(--color-m2e-text); opacity: 0.4; }
-    8% { color: var(--color-m2e-accent); opacity: 1; }
-    42% { color: var(--color-m2e-accent); opacity: 1; }
-    44% { color: var(--color-m2e-accent-dark); opacity: 0.6; }
-    46% { color: var(--color-m2e-text); opacity: 0.3; }
-    48% { color: var(--color-m2e-accent); opacity: 1; }
-    78% { color: var(--color-m2e-accent); opacity: 1; }
-    80% { color: var(--color-m2e-text); opacity: 0.4; }
-    82% { color: var(--color-m2e-accent-dark); opacity: 0.5; }
-    84% { color: var(--color-m2e-accent); opacity: 1; }
-  }
-
-  .animate-glitch-flicker {
-    animation: glitch-flicker 3s steps(1) infinite;
-  }
 }
 
 /* Scrollbar hide for carousels */
@@ -361,9 +337,6 @@ body {
 }
 .animate-marquee {
   animation: marquee 40s linear infinite;
-}
-.animate-marquee-fast {
-  animation: marquee 22s linear infinite;
 }
 
 /* Pixel dithered background pattern */
@@ -487,11 +460,9 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-glow-pulse,
-  .animate-glitch-flicker,
   .animate-glitch-shift,
   .animate-blink,
   .animate-marquee,
-  .animate-marquee-fast,
   .animate-float-y,
   .animate-rainbow,
   .animate-scan-sweep,

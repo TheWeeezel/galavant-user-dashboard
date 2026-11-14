@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { YouTabs } from '../components/YouTabs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
@@ -160,6 +161,7 @@ export function EarnPoints() {
 
   return (
     <>
+      {isAuthenticated && <YouTabs />}
       {/* Hero strip */}
       <div className="border-b-2 border-m2e-border bg-m2e-chrome text-white relative overflow-hidden scanlines-light">
         <div className="mx-auto max-w-6xl px-4 md:px-8 py-10 md:py-14 relative z-10">
@@ -176,7 +178,7 @@ export function EarnPoints() {
                   Home
                 </Link>
                 <span className="text-white/30">/</span>
-                <div className="section-label">12 · Earn</div>
+                <div className="section-label">Earn</div>
               </div>
               <h1 className="text-5xl md:text-7xl lg:text-8xl uppercase tracking-wide text-chroma-hero leading-[0.9]">
                 Earn More<br />

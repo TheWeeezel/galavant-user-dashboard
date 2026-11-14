@@ -14,7 +14,9 @@ export type ContentBlock =
   | { type: 'tip'; text: string }
   | { type: 'table'; headers: string[]; rows: string[][] }
   | { type: 'divider' }
-  | { type: 'chart'; title: string; bars: ChartBar[]; unit?: string };
+  | { type: 'chart'; title: string; bars: ChartBar[]; unit?: string }
+  /** The live economy health gauge (components/EconomyHealth), fed by /explorer/stats. */
+  | { type: 'economyHealth' };
 
 export type GameplayPage = {
   slug: string;
@@ -1086,9 +1088,10 @@ export const gameplaySections: GameplaySection[] = [
             'Adjustments to earning rates, costs or a season\'s budget are made by people, with a cooling-off period before the same setting is touched again.',
             'One thing is automatic: when the economy health score leaves its healthy range, upgrade costs and repair-timer boosts become gradually more expensive, within a fixed cap, and ease off again as the score recovers. Base earnings and standard repairs are never touched by this.',
           ]},
-          { type: 'tip', text: 'Levers are pulled by humans. The only automatic response is a capped surcharge on upgrades and boosts while the health score is low, and the score is always visible on the homepage.' },
+          { type: 'tip', text: 'Levers are pulled by humans. The only automatic response is a capped surcharge on upgrades and boosts while the health score is low, and the score is always published below.' },
           { type: 'heading', text: 'Economy Health Score' },
-          { type: 'paragraph', text: 'The game maintains a real-time economy health score visible on the dashboard homepage. This score reflects the overall balance between earning, spending, staking, and redemption across the ecosystem.' },
+          { type: 'economyHealth' },
+          { type: 'paragraph', text: 'The game maintains a real-time economy health score, published live on this page. This score reflects the overall balance between earning, spending, staking, and redemption across the ecosystem.' },
           { type: 'list', items: [
             'Healthy — the economy is well-balanced with strong player activity and stable token flows.',
             'Cautious — some metrics are trending outside ideal ranges. The team is monitoring closely.',
@@ -1172,7 +1175,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Designed for Sustainability' },
           { type: 'paragraph', text: 'The central banking system is designed to keep the Galavant economy healthy over months and years, not just weeks. By budgeting payouts against real revenue, monitoring risk indicators, and burning WATTS at every redemption, the platform aims to avoid the boom-and-bust cycles that have plagued other blockchain games.' },
           { type: 'paragraph', text: 'Combined with Galavant\'s many spending sinks (repair, leveling, upgrades, breeding, marketplace fees) and the seasonal redemption burn, the economy has both natural deflationary pressure and active management tools to maintain balance.' },
-          { type: 'tip', text: 'The economy health score on the homepage gives you a real-time view of how things are going. A healthy economy means your earnings and assets hold their value over time.' },
+          { type: 'tip', text: 'The economy health score (Economic Governance → How Economic Decisions Are Made) gives you a real-time view of how things are going. A healthy economy means your earnings and assets hold their value over time.' },
         ],
       },
     ],
