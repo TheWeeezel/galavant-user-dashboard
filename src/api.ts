@@ -320,6 +320,9 @@ export interface UserBike {
   isEquipped: boolean;
   /** True while the bike sits on the market — in either shop; both share `bikes.isListed`. */
   isListed: boolean;
+  /** The last ENJ listing attempt was refused because the token is already on sale outside the
+   *  game (task 4763cbd3). A hint for the Sell panel only — never a reason to disable List. */
+  listedElsewhere?: boolean;
   durability: number;
   hp: number;
   /**
@@ -339,6 +342,8 @@ export interface UserPart {
   /** Non-null = the part is its own NFT, and frozen out of gameplay until imported. */
   tokenId: number | null;
   isListed: boolean;
+  /** Same hint as UserBike.listedElsewhere. */
+  listedElsewhere?: boolean;
 }
 
 export interface ReferralStats {
@@ -1134,6 +1139,8 @@ export interface MarketPolicy {
     buyLabel: string;
     buyNote: string;
     listingDepositWarning: string;
+    /** Shown next to List when the item's `listedElsewhere` is true. Optional: older servers do not send it. */
+    listedElsewhereNotice?: string;
     /** After list / cancel: the request waits in the seller's Enjin Wallet. */
     listingSubmittedTitle: string;
     listingSubmittedNote: string;

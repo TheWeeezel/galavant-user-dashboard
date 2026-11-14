@@ -59,6 +59,8 @@ type SellableItem = {
   hp?: number;
   durability?: number;
   isNft: boolean;
+  /** The server's "already on sale outside the game" hint (task 4763cbd3). Information only. */
+  listedElsewhere: boolean;
   /** Off-chain bikes must be fully repaired first; an NFT's condition is frozen at mint. */
   blockedReason: string | null;
 };
@@ -80,6 +82,7 @@ function bikeToItem(b: UserBike): SellableItem {
     hp: b.hp,
     durability: b.durability,
     isNft,
+    listedElsewhere: b.listedElsewhere === true,
     // An NFT lists for ENJ, signed from the wallet that holds it (2026-09-03); its condition is
     // frozen at mint, so the repair and equip gates are for in-game bikes only.
     blockedReason: isNft
@@ -103,6 +106,7 @@ function partToItem(p: UserPart): SellableItem {
     art: `/parts/part-${p.type.toLowerCase()}-lv${p.level}.png`,
     sublabel: isNft ? `NFT #${p.tokenId} · Lv.${p.level}` : `Lv.${p.level}`,
     isNft,
+    listedElsewhere: p.listedElsewhere === true,
     blockedReason: null,
   };
 }
@@ -204,7 +208,9 @@ function SellCard({
   const run = (fn: () => Promise<unknown>) => {
     setErr(null);
     setNotice(null);
-    fn().then(onChanged).catch((e) => setErr((e as Error).message));
+    // A refusal refetches too: the server may just have learned (or forgotten) that the token is
+    // on sale elsewhere, and the notice by the List button must follow without a reload.
+    fn().then(onChanged).catch((e) => { setErr((e as Error).message); onChanged(); });
   };
 
   const list = useMutation({
@@ -347,6 +353,14 @@ function SellCard({
               {list.isPending ? 'Listing…' : 'List'}
             </button>
           </div>
+
+          {/* Said BEFORE the tap, in the deposit warning's amber. Information only: deliberately not
+              part of the List button's `disabled` — the server's chain read decides on every tap. */}
+          {item.isNft && currency === 'enj' && item.listedElsewhere && policy?.enj.listedElsewhereNotice && (
+            <div className="pixel-card p-3 border-amber-500/60 text-[11px] text-m2e-text-secondary">
+              {policy.enj.listedElsewhereNotice}
+            </div>
+          )}
 
           {cutLabel && <div className="text-[11px] text-m2e-text-secondary">{cutLabel}</div>}
           {policy && (
