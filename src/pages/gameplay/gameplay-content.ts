@@ -559,6 +559,8 @@ export const gameplaySections: GameplaySection[] = [
             'You can spend WATTS to boost the success chance before attempting.',
           ]},
           { type: 'tip', text: 'Boosting the success rate costs WATTS but can save you from losing three valuable parts. Consider boosting for higher level upgrades where the stakes are higher.' },
+          { type: 'heading', text: 'Forge Guard (Genesis beta)' },
+          { type: 'paragraph', text: 'Riding a bike with high Durability slowly builds a forge guard; the more Durability the bike has, the faster it fills. If a forge fails while you hold a guard, the guard is used up and your three parts are kept. The WATTS for the attempt are spent either way, and you can hold only a couple of guards at a time. Your guards and the bar toward the next one show on the forge and on your bike. During the Genesis beta, Genesis holders build and use guards first; everyone else follows soon.' },
         ],
       },
       {
