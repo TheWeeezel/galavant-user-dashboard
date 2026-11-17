@@ -8,7 +8,7 @@ import { StoreBatchStrip } from './StoreBatchStrip';
 import { byBikeTypeOrder } from '../config/bikeTypes';
 import { GRAVEYARD_ME_KEY } from './graveyard/GraveyardFlow';
 import {
-  fetchGraveyardMe, fetchStoreProducts, fetchStoreStock, openVoucher, reconcileStoreOrders, storeCheckout, storeCheckoutEnj,
+  cancelStoreCheckout, fetchGraveyardMe, fetchStoreProducts, fetchStoreStock, openVoucher, reconcileStoreOrders, storeCheckout, storeCheckoutEnj,
   type EnjPayment, type StoreProduct,
 } from '../api';
 
@@ -53,18 +53,42 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
 
   // Back from Stripe: settle this buyer's card orders once. The webhook has almost always delivered
   // the pack already and this returns nothing new; when it has not, this is what delivers it.
+  // What the banner says comes from that answer, not from the URL: `?status=success` only means the
+  // buyer left Stripe's form, and a delayed payment can still be on its way or have failed.
+  const [settled, setSettled] = useState<'checking' | 'fulfilled' | 'pending' | 'failed' | 'unknown'>('checking');
   useEffect(() => {
     if (status !== 'success' || !isAuthenticated) return;
+    setSettled('checking');
     reconcileStoreOrders()
-      .catch(() => undefined)
+      .then(({ orders }) => {
+        const s = orders[0]?.status; // newest first
+        setSettled(s === 'fulfilled' ? 'fulfilled' : s === 'pending' ? 'pending' : s ? 'failed' : 'unknown');
+      })
+      .catch(() => setSettled('unknown'))
       .finally(() => {
         for (const key of ['store-products', 'store-stock', ...GRAVEYARD_ME_KEY]) queryClient.invalidateQueries({ queryKey: [key] });
       });
   }, [status, isAuthenticated, queryClient]);
 
+  // Back from Stripe with "cancel": give the graveyard voucher back now. Stripe would only let go of
+  // it when the session expires half an hour later, and a rebuy in between paid the full price.
+  useEffect(() => {
+    if (status !== 'cancel' || !isAuthenticated) return;
+    cancelStoreCheckout()
+      .catch(() => undefined)
+      .finally(() => queryClient.invalidateQueries({ queryKey: GRAVEYARD_ME_KEY }));
+  }, [status, isAuthenticated, queryClient]);
+
   // The browser needs a moment to follow the redirect. Without this the button would snap back to
   // "Buy with card" while the checkout page is already loading, which reads as a click that failed.
   const [leaving, setLeaving] = useState(false);
+  // Coming back with the browser's Back button can restore this page from the back-forward cache,
+  // state and all — `leaving` still true, every buy button locked. Such a return unlocks them.
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => { if (e.persisted) setLeaving(false); };
+    window.addEventListener('pageshow', onShow);
+    return () => window.removeEventListener('pageshow', onShow);
+  }, []);
 
   // The ENJ payment currently on screen, if any. The card path leaves the site; this one does not,
   // because the buyer pays from their own wallet and there is nowhere to send them.
@@ -142,11 +166,25 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
         </p>
       </div>
 
-      {status === 'success' && (
+      {status === 'success' && (settled === 'fulfilled' ? (
         <div className="pixel-card p-4 border-m2e-success text-m2e-success-deep">
           Payment received — your starter pack is waiting in the Galavant app. Open Items and tear it open. 📦
         </div>
-      )}
+      ) : settled === 'pending' ? (
+        <div className="pixel-card p-4 text-m2e-text-secondary">
+          Your payment is still being confirmed. The starter pack appears in the app, under Items, as soon as it is.
+        </div>
+      ) : settled === 'failed' ? (
+        <div className="pixel-card p-4 text-m2e-danger-deep">
+          This payment did not go through, so no pack was delivered. You can try again below.
+        </div>
+      ) : settled === 'unknown' ? (
+        <div className="pixel-card p-4 text-m2e-text-secondary">
+          We could not check your payment just now. If it went through, the pack appears in the app, under Items, within a few minutes.
+        </div>
+      ) : (
+        <div className="pixel-card p-4 text-m2e-text-secondary">Checking your payment…</div>
+      ))}
       {status === 'cancel' && (
         <div className="pixel-card p-4 text-m2e-text-secondary">Checkout cancelled — no charge was made.</div>
       )}

@@ -38,6 +38,9 @@ import { fetchEnjPayment, type EnjPayment } from '../api';
  */
 const WALLET_LINK = 'https://deeplink.wallet.enjin.io/';
 
+/** How long an expired, unpaid quote is still watched for a transfer sent at the last moment. */
+const LATE_WATCH_MS = 3 * 60_000;
+
 function formatRemaining(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000));
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
@@ -83,15 +86,23 @@ export function EnjPaymentPanel({ payment: initial, displayName, onClose }: EnjP
     initialData: initial,
     // Stops once there is nothing left to wait for — a delivered pack and a held payment are both
     // final as far as this panel is concerned.
+    // An open quote past its price is watched a little longer — a transfer sent in the last
+    // seconds still has to be seen — and then left alone instead of polled for as long as the tab
+    // stays open.
     refetchInterval: (query) => {
-      const s = query.state.data?.status;
-      return s === 'redeemed' || s === 'held' ? false : 10_000;
+      const d = query.state.data;
+      if (!d || d.status === 'redeemed' || d.status === 'held') return false;
+      if (d.status === 'open' && Date.now() > new Date(d.expiresAt).getTime() + LATE_WATCH_MS) return false;
+      return 10_000;
     },
   });
 
   const payment = live.data ?? initial;
   const remaining = useCountdown(payment.expiresAt);
-  const waiting = payment.status === 'open';
+  // Past the price, the amount and address must go: a buyer who sends them now pays a quote that
+  // no longer exists, and that money needs a person to sort out.
+  const expired = payment.status === 'open' && (payment.expired || remaining <= 0);
+  const waiting = payment.status === 'open' && !expired;
 
   // Der Betrag wird zerlegt gezeigt: der Preis, und danach die vier Ziffern, an denen wir diesen
   // Kauf erkennen. Nur der VOLLE String wird kopiert — die Zerlegung ist zum Lesen, nicht zum
@@ -128,6 +139,12 @@ export function EnjPaymentPanel({ payment: initial, displayName, onClose }: EnjP
         </p>
       ) : payment.status === 'paid' ? (
         <p className="text-m2e-success-deep">Payment spotted — your pack is being sealed. This takes a moment.</p>
+      ) : expired ? (
+        <p className="text-m2e-text-secondary">
+          This price has expired, so do not send anything to it now. Close this and start again for a fresh
+          quote. If you already sent the ENJ, it is not lost: it shows here within a minute or two, or we have
+          it on record and will be in touch.
+        </p>
       ) : (
         <>
           <div className="space-y-1">

@@ -783,6 +783,14 @@ export function reconcileStoreOrders() {
 }
 
 /**
+ * Back from Stripe with "cancel": the server ends the buyer's open checkout that holds a graveyard
+ * voucher, so the voucher is usable again right away instead of after Stripe's own expiry.
+ */
+export function cancelStoreCheckout() {
+  return fetchAuthJson<{ released: number }>('/store/checkout/cancel', { method: 'POST' });
+}
+
+/**
  * What the shop hands a buyer who pays in ENJ: an address, an amount and a deadline.
  *
  * Deliberately NOT a checkout URL, which is what this used to expect. There is no hosted page to

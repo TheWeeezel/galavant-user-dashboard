@@ -185,6 +185,13 @@ export function EnjStakingSection() {
                 secret, and anyone who photographs either one can attach their own Enjin Wallet to
                 your account. Reveal it only when you are ready to scan, and don't share your screen.
               </p>
+              {/* iOS Safari blocks the window.open above (it runs after the request, outside the
+                  tap), so on a phone the wallet also gets a link the player taps themselves. */}
+              {linkInfo.url && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && (
+                <a className="pixel-btn-primary inline-block px-4 py-2" href={linkInfo.url} target="_blank" rel="noopener noreferrer">
+                  Open in Enjin Wallet
+                </a>
+              )}
               {codeVisible ? (
                 <>
                   <img

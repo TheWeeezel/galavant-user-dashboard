@@ -5,6 +5,7 @@ import {
   googleAuth,
   completeGoogleSignup,
   fetchMe,
+  ApiError,
   type UserProfile,
   type GoogleAuthResult,
 } from '../api';
@@ -74,13 +75,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     setAuthToken(savedToken);
-    fetchMe()
-      .then((user) => {
-        dispatch({ type: 'LOGIN', token: savedToken, user });
-      })
-      .catch(() => {
-        logout();
-      });
+    // Only the server saying no (401, or 404 for an account that is gone) ends the session. A timeout, an offline phone or a deploy
+    // restart used to sign the player out too; now it is retried, and if the server still cannot
+    // be reached the saved session stays for the next visit instead of being thrown away.
+    let cancelled = false;
+    (async () => {
+      for (const wait of [0, 2_000, 5_000]) {
+        if (wait) await new Promise((r) => setTimeout(r, wait));
+        if (cancelled) return;
+        try {
+          const user = await fetchMe();
+          if (!cancelled) dispatch({ type: 'LOGIN', token: savedToken, user });
+          return;
+        } catch (err) {
+          if (err instanceof ApiError && (err.status === 401 || err.status === 404)) {
+            if (!cancelled) logout();
+            return;
+          }
+        }
+      }
+      if (!cancelled) {
+        setAuthToken(null);
+        dispatch({ type: 'SET_RESTORING', restoring: false });
+      }
+    })();
+    return () => { cancelled = true; };
   }, [logout]);
 
   const loginWithGoogle = useCallback(async (code: string): Promise<GoogleAuthResult> => {
