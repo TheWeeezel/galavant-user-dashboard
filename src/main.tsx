@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import { App } from './App';
+import '@fontsource/jersey-10';
 import './index.css';
 
 const queryClient = new QueryClient({

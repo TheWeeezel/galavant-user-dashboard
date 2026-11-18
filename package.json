@@ -11,6 +11,7 @@
     "test": "node --test \"tests/**/*.test.ts\""
   },
   "dependencies": {
+    "@fontsource/jersey-10": "^5.3.0",
     "@react-oauth/google": "^0.13.4",
     "@tailwindcss/vite": "^4.0.0",
     "@tanstack/react-query": "^5.62.0",
