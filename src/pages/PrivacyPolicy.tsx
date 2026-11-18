@@ -196,6 +196,12 @@ export function PrivacyPolicy() {
                   it quickly and protect it against attacks, and processes your IP address and request data for that.
                 </li>
                 <li>
+                  <strong className="text-m2e-text">Cloudflare Web Analytics (website visits):</strong> For visitors
+                  outside the EU, Cloudflare counts page views on galavant.run, without cookies and without an
+                  identifier that follows you across sites. It sees your IP address, the page, the referring page,
+                  your browser and your country. Run by Cloudflare, Inc. (USA).
+                </li>
+                <li>
                   <strong className="text-m2e-text">Hetzner (servers):</strong> Our game server and database run at Hetzner
                   in Helsinki, Finland; encrypted backups are kept at Hetzner in Germany.
                 </li>
