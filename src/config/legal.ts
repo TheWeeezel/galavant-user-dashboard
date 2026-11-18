@@ -10,5 +10,5 @@ export const SELLER = {
   email: 'we@galavant.run',
 } as const;
 
-/** The date both pages show; change it whenever either page changes. */
-export const LEGAL_UPDATED = 'October 15, 2026';
+/** The date the Terms of Sale, Refund Policy and Privacy Policy show; change it whenever one of them changes. */
+export const LEGAL_UPDATED = 'November 18, 2026';

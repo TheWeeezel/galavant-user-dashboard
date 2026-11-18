@@ -24,6 +24,15 @@ export function TermsOfSale() {
           </p>
         </section>
 
+        <section className="space-y-3">
+          <h2 className="text-2xl text-m2e-text tracking-wide uppercase">Eligibility</h2>
+          <p>
+            Galavant is for adults. You may only create an account, buy a pack or link a wallet if you are
+            at least 18 years old, and by using Galavant you confirm that you are. We do not knowingly let
+            anyone under 18 play, and we close accounts we learn belong to someone younger.
+          </p>
+        </section>
+
         <div className="h-[2px] bg-m2e-border" />
 
         <section className="space-y-3">

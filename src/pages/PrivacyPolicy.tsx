@@ -1,4 +1,5 @@
 import { Shield } from 'pixelarticons/react';
+import { LEGAL_UPDATED } from '../config/legal';
 
 export function PrivacyPolicy() {
   return (
@@ -10,7 +11,7 @@ export function PrivacyPolicy() {
           <h1 className="text-4xl md:text-5xl tracking-wide uppercase">Privacy Policy</h1>
         </div>
         <p className="text-m2e-text-secondary text-xl">
-          Last updated: May 4, 2026
+          Last updated: {LEGAL_UPDATED}
         </p>
       </div>
 
@@ -134,8 +135,80 @@ export function PrivacyPolicy() {
               displayed publicly within the app.
             </li>
             <li>
-              <strong className="text-m2e-text">Service providers:</strong> We may use third-party services (e.g., hosting,
-              analytics) that process data on our behalf under strict confidentiality agreements.
+              <strong className="text-m2e-text">Service providers:</strong> We use the third-party services below. Each
+              one processes data on our behalf, only for the purpose named:
+              <ul className="list-disc list-inside space-y-2 pl-6 mt-2">
+                <li>
+                  <strong className="text-m2e-text">Google (sign-in):</strong> Google Sign-In on the website and in the app.
+                  Google confirms who you are and gives us your name, email address and profile picture. On the
+                  website, Google's sign-in script (accounts.google.com) loads only when you open the login window.
+                  Profile pictures are shown straight from Google's servers (googleusercontent.com), so your browser
+                  or device fetches them from Google.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">Apple (sign-in and in-app purchases):</strong> Sign in with Apple in
+                  the iOS app, which gives us your email address (or Apple's private relay address) and, on first
+                  sign-in, your name. Purchases in the iOS app are processed by Apple; we receive a record of the
+                  purchase, never your payment details.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">Stripe and Link (card payments on the website):</strong> Card
+                  purchases on galavant.run are sold through Link, Stripe's merchant of record. You enter your card
+                  details with Stripe, never with us; we pass your account email and account ID to the checkout
+                  (the account ID also goes on the payment, so a refund or dispute can be matched to you) and
+                  receive the order and its payment status.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">Expo (push notifications and app updates):</strong> Push
+                  notifications go through Expo's push service (exp.host), which receives your device's push
+                  token and the message text and passes them to Apple or Google for delivery. The app downloads
+                  its updates from Expo (u.expo.dev), which processes your IP address and app version for that.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">Google Maps (ride map):</strong> The map of a finished ride is
+                  drawn with Google Maps, so the map area around that route is requested from Google.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">Google Play Integrity (Android, anti-cheat):</strong> The Android
+                  app asks Google Play for an integrity token, and our server has Google check it, to confirm
+                  that the app and device are genuine.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">Enjin Platform (wallets):</strong> Enjin's platform
+                  (platform.enjin.io) keeps the managed wallet that belongs to your account, identified by our
+                  account ID, and carries out its blockchain transactions.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">X (optional):</strong> If you link your X account, X confirms
+                  your X user ID and handle to us through its sign-in.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">Discord (optional):</strong> If you link Discord, we store your
+                  Discord user ID, and our bot sets your roles on the Galavant Discord server and may set your
+                  server nickname to show your crew tag.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">Netlify (website hosting):</strong> Serves the galavant.run website and
+                  processes your IP address and request data to deliver it.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">Cloudflare (network):</strong> Sits in front of galavant.run to deliver
+                  it quickly and protect it against attacks, and processes your IP address and request data for that.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">Hetzner (servers):</strong> Our game server and database run at Hetzner
+                  in Helsinki, Finland; encrypted backups are kept at Hetzner in Germany.
+                </li>
+                <li>
+                  <strong className="text-m2e-text">Sentry (error reports):</strong> When the app or our server hits an
+                  error, a technical report (what failed, app version, device type and operating system) goes to
+                  Sentry, stored in the EU (Germany, de.sentry.io). It is set not to send IP addresses or cookies.
+                </li>
+              </ul>
+              <p className="mt-2">
+                These providers may in turn rely on their own infrastructure subprocessors (for example cloud
+                hosting) to provide their service, under their own privacy terms.
+              </p>
             </li>
             <li>
               <strong className="text-m2e-text">Legal requirements:</strong> We may disclose information if required by law
@@ -174,9 +247,9 @@ export function PrivacyPolicy() {
         <section className="space-y-4">
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">Children's Privacy</h2>
           <p>
-            Galavant is not intended for children under the age of 13. We do not knowingly collect
-            personal information from children under 13. If we become aware that we have collected
-            data from a child under 13, we will take steps to delete it promptly.
+            Galavant is for adults — you must be at least 18 to use it (see our Terms). We do not
+            knowingly collect personal information from anyone under 18, and if we learn that we
+            have, we delete it promptly.
           </p>
         </section>
 
