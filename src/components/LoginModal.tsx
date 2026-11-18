@@ -1,8 +1,26 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router';
 import { Cancel, Mail } from 'pixelarticons/react';
 import { useAuth } from '../contexts/AuthContext';
 import { config } from '../config';
+
+/**
+ * Google's sign-in script, loaded the first time a login window opens instead of on every page,
+ * so a visitor who never signs in never loads it. Once per page: the modal is mounted on
+ * several pages. Loading starts on open, not on the click: requestCode() opens a popup, and a
+ * popup opened after waiting for a script is no longer tied to the click and gets blocked.
+ */
+const GSI_SRC = 'https://accounts.google.com/gsi/client';
+function loadGoogleSignIn() {
+  if (document.querySelector(`script[src="${GSI_SRC}"]`)) return;
+  const script = document.createElement('script');
+  script.src = GSI_SRC;
+  script.async = true;
+  // A failed load leaves no tag behind, so the next opening tries again.
+  script.onerror = () => script.remove();
+  document.head.appendChild(script);
+}
 
 interface LoginModalProps {
   open: boolean;
@@ -13,6 +31,10 @@ export function LoginModal({ open, onClose }: LoginModalProps) {
   const { loginWithGoogle, isLoading } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [needsWalletMsg, setNeedsWalletMsg] = useState(false);
+
+  useEffect(() => {
+    if (open) loadGoogleSignIn();
+  }, [open]);
 
   useEffect(() => {
     if (!open) {
@@ -134,6 +156,12 @@ export function LoginModal({ open, onClose }: LoginModalProps) {
                 </button>
                 <p className="text-[10px] text-m2e-text-muted text-center uppercase tracking-wider">
                   Use the Google account you set up in the Galavant mobile app
+                </p>
+                <p className="text-xs text-m2e-text-muted text-center leading-relaxed">
+                  By continuing you confirm you are at least 18 years old. How we handle your data:{' '}
+                  <Link to="/privacy" onClick={onClose} className="text-m2e-accent underline">Privacy Policy</Link>
+                  {' · '}Purchases:{' '}
+                  <Link to="/terms" onClick={onClose} className="text-m2e-accent underline">Terms of Sale</Link>.
                 </p>
               </div>
 
