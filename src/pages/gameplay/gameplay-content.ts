@@ -1374,6 +1374,14 @@ export const gameplaySections: GameplaySection[] = [
             'The result comes on the Tuesday after the week, once the last rides are verified. The winners open the battle chest; a draw and a beaten ghost open a smaller one, a loss the smallest. The chests hold items, never WATTS or ENJ, and open once per rider and phone a week.',
             'A losing captain can call a rematch for the next week.',
           ]},
+          { type: 'heading', text: 'Crew Chat' },
+          { type: 'list', items: [
+            'Crew members can write short messages to each other. They sit in the crew chat on the crew page, right next to the rides, flames and battle lines, and every message can get a flame.',
+            'Before your first message you agree to the crew chat rules once. Say what you think and swear if you like; slurs against who someone is, and going after a crewmate\'s weak spots to hurt them, get a message deleted and the writer muted. Links can\'t be sent.',
+            'Hold a message to report it or block its writer. We read every report within a day. A blocked rider stays in the crew, is not told, and their messages and pushes no longer reach you. The captain can delete any message in the crew.',
+            'You get a push for new messages, at most one every little while and none at night. Switch them off under the bell in the crew chat.',
+            'Messages are deleted after 30 days, and at once if their writer deletes their account.',
+          ]},
           { type: 'heading', text: 'Founding and Joining' },
           { type: 'list', items: [
             'Found a crew from the Crews row on the Player tab: pick a name, a tag and an emblem. Founding costs WATTS.',
