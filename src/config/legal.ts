@@ -11,4 +11,4 @@ export const SELLER = {
 } as const;
 
 /** The date the Terms of Sale, Refund Policy and Privacy Policy show; change it whenever one of them changes. */
-export const LEGAL_UPDATED = 'November 18, 2026';
+export const LEGAL_UPDATED = 'November 20, 2026';

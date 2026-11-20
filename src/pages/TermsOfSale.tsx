@@ -33,6 +33,16 @@ export function TermsOfSale() {
           </p>
         </section>
 
+        <section className="space-y-3">
+          <h2 className="text-2xl text-m2e-text tracking-wide uppercase">Play safely</h2>
+          <p>
+            You play Galavant while walking, jogging or riding in the real world. Watch your surroundings
+            and follow traffic rules. Don't look at your phone while crossing a road or riding, and don't
+            enter private, closed or dangerous places to play. Stop if you feel unwell. You decide where and
+            how you move, and you do so at your own responsibility.
+          </p>
+        </section>
+
         <div className="h-[2px] bg-m2e-border" />
 
         <section className="space-y-3">
