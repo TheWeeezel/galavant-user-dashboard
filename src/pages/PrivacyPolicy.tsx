@@ -101,6 +101,15 @@ export function PrivacyPolicy() {
               <li>Interaction with the web dashboard</li>
             </ul>
           </div>
+
+          <div className="space-y-3">
+            <h3 className="text-xl text-m2e-accent">Crew Chat Messages</h3>
+            <p>
+              If you write in your crew's chat, we store your messages with your account. Only the current members
+              of that crew can read them. Messages are deleted after 30 days, and at once when you delete your
+              account. If someone reports a message, we keep a copy of it with the report so our team can review it.
+            </p>
+          </div>
         </section>
 
         <div className="h-[2px] bg-m2e-border" />
