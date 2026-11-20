@@ -214,7 +214,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Unlike other items, a Genesis bike or part can be exported right away, without levelling first. The usual export conditions still apply: a bike must be healed, serviced, not listed and not mid-ride; a part must be unsocketed and not listed.' },
           { type: 'tip', text: 'The Genesis mark never comes off and cannot be earned later. It says one thing: this player was there in September.' },
           { type: 'heading', text: 'The Genesis Lounge' },
-          { type: 'paragraph', text: 'From 1 October, holding a Genesis bike or part in your garage opens a room of its own. A gilt GENESIS LOUNGE band appears on your Player tab; tap it and you are in the Lounge. Nobody else ever sees the band.' },
+          { type: 'paragraph', text: 'From 1 October, holding a Genesis bike or part in your garage opens a room of its own. A gilt GENESIS LOUNGE band appears on your Player tab, and the Galavant logo on Home opens the Lounge too. Nobody else ever sees the band.' },
           { type: 'paragraph', text: 'Inside is the Genesis Reel: three pixel reels that pay out parts and WATTS. Every day you get a couple of free pulls just for being a holder. When those are used up you can keep pulling for a small WATTS fee, or trade in a loose Level 1 part for a pull.' },
           { type: 'list', items: [
             'Rarer symbols pay more: three of a kind wins, and three GENESIS faces is the top line.',
@@ -1341,7 +1341,7 @@ export const gameplaySections: GameplaySection[] = [
         slug: 'crews',
         title: 'Crews',
         content: [
-          { type: 'paragraph', text: 'Ride with 3 to 10 friends. When half the crew rides on a day, the crew flame stays lit and everyone in the crew gets extra energy. Ride toward a weekly distance goal together and open a crew chest. During the Genesis beta, Genesis holders found crews and anyone with an invite can join. On Discord, a linked crew member gets the Crew role and the crew tag in front of their name here; the captain gets the Captain role.' },
+          { type: 'paragraph', text: 'Ride with 3 to 10 friends. When half the crew rides on a day, the crew flame stays lit and everyone in the crew gets extra energy. Ride toward a weekly distance goal together and open a crew chest. During the Genesis beta, Genesis holders found crews and anyone with an invite can join. On Discord, a linked crew member gets the Crew role and the crew tag in front of their name here; the captain gets the Captain role. Your crew sits beside your tokens at the top of Home, with the count of new chat messages.' },
           { type: 'heading', text: 'The Crew Flame' },
           { type: 'list', items: [
             'Each day (midnight to midnight UTC) the flame lights once half the crew has ridden. A ride counts for the day it started on, even if it ends after midnight. A very short hop does not count. Days in a row build the streak.',
