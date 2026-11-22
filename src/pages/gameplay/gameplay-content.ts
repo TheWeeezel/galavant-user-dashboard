@@ -233,7 +233,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'Step by Step' },
           { type: 'list', items: [
             'Open the Galavant app and create your account.',
-            'Get your first balance bike — buy a starter pack on the Market at galavant.run, or pick a bike up from another player on the marketplace.',
+            'Get your first balance bike — buy a starter pack in the app (through the App Store or Google Play) or on the Market at galavant.run, or pick a bike up from another player on the marketplace.',
             'A starter pack holds one bike of its type, three level-1 parts made for that bike\'s sockets and a toolbox — the contents are printed on the box. Pay by card or with ENJ from your own wallet. Packs are a limited run and the price climbs as they sell out — each pack on the Market shows how many are left at the current price and what the next one costs, so the earlier you buy, the cheaper it is.',
             'Open the pack in the app: it waits under Collection (the tab shows a badge), and a pack that holds your first bike puts it straight on your bike, ready to ride.',
             'Equip your bike from the inventory screen if you already had one.',
