@@ -3,6 +3,53 @@
   "testflightUrl": "https://testflight.apple.com/join/8NJ7aZ3h",
   "versions": [
     {
+      "version": "0.0.35",
+      "date": "2026-11-22",
+      "title": "Crew Chat & A New Intro",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Crew chat: talk with your crew in the crew feed, report or block a line, captains can remove one"
+        },
+        {
+          "type": "feature",
+          "text": "Forge guard: rides on well-kept bikes fill a guard that saves parts when a forge fails"
+        },
+        {
+          "type": "feature",
+          "text": "Report a nickname or crew name with a long press on Ranks or the crew board"
+        },
+        {
+          "type": "feature",
+          "text": "A new start-up intro with the wings, the shield and the rider"
+        },
+        {
+          "type": "improvement",
+          "text": "Home is built around the ride, with five tabs"
+        },
+        {
+          "type": "improvement",
+          "text": "The cards fan moved to Player › Stats"
+        },
+        {
+          "type": "improvement",
+          "text": "The toolbox list shows which boxes sit in a slot"
+        },
+        {
+          "type": "fix",
+          "text": "STOP keeps GPS points that were not sent yet and says when a stop failed"
+        },
+        {
+          "type": "fix",
+          "text": "Home says the server is unreachable instead of \"No bike equipped\" when you are offline"
+        },
+        {
+          "type": "fix",
+          "text": "A finished ride leaves the live screen, and a paused ride survives a resume"
+        }
+      ]
+    },
+    {
       "version": "0.0.34",
       "date": "2026-11-11",
       "title": "Crew Battles & Sharper Pixels",
@@ -97,6 +144,113 @@
         {
           "type": "fix",
           "text": "On iPhone, the live speed gauge no longer sticks at 0 after GPS drops out indoors and comes back"
+        }
+      ]
+    },
+    {
+      "version": "0.0.32",
+      "date": "2026-10-17",
+      "title": "Cards, Packs & Fair Play",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "Badges & Bests: earn badges for your riding and keep your personal bests. A badge you have reached but cannot claim yet shows a padlock and says why"
+        },
+        {
+          "type": "feature",
+          "text": "Badge cards: every badge you earn becomes a pixel trading card, revealed one by one (Genesis holders first, from a pack in the Genesis Lounge)"
+        },
+        {
+          "type": "feature",
+          "text": "Starter packs in the shop, one per bike type, opened right in the app; your packs wait in the new Boxes tab under Items"
+        },
+        {
+          "type": "feature",
+          "text": "Bikes and parts you export to your Enjin wallet show there as their trading card"
+        },
+        {
+          "type": "feature",
+          "text": "Weather for everyone: a weather chip and card on Home tell you what today's weather means for a ride, and riding in tough weather pays extra WATTS"
+        },
+        {
+          "type": "feature",
+          "text": "A Fair Play card on your profile: penalties heal again with clean riding"
+        },
+        {
+          "type": "feature",
+          "text": "Replies from the team to your reports now show up in the app"
+        },
+        {
+          "type": "feature",
+          "text": "Tap your quest streak on Home to see your days, the next tier, the chest bonus and your shields"
+        },
+        {
+          "type": "feature",
+          "text": "Link your Discord account from the app; your Discord Genesis role follows what you hold in the game"
+        },
+        {
+          "type": "improvement",
+          "text": "The Earnings tab shows all your earnings"
+        },
+        {
+          "type": "improvement",
+          "text": "The energy bar only lights the minutes you can actually ride"
+        },
+        {
+          "type": "improvement",
+          "text": "Bike cards carry a serial plate and socket pips, so twin bikes are easy to tell apart in your inventory and when breeding"
+        },
+        {
+          "type": "improvement",
+          "text": "The toolbox radar shows the likely level and says that the final level is rolled when you stop"
+        },
+        {
+          "type": "improvement",
+          "text": "Ride-minute missions count every earning minute"
+        },
+        {
+          "type": "improvement",
+          "text": "The toolbox card shows what a tap costs, listed bikes and parts name their market, and the season pot explains its order"
+        },
+        {
+          "type": "improvement",
+          "text": "NFT names say what the item is, e.g. \"Commuter · Blue Hour\" or \"Recovery Part · Level 2\""
+        },
+        {
+          "type": "improvement",
+          "text": "Sharper bike and part images"
+        },
+        {
+          "type": "improvement",
+          "text": "Text keeps its size when your phone uses large system fonts, so screens no longer break apart"
+        },
+        {
+          "type": "improvement",
+          "text": "A badge reward toolbox no longer takes one of your toolbox slots"
+        },
+        {
+          "type": "improvement",
+          "text": "The \"item sold\" notification names the item the way the app does"
+        },
+        {
+          "type": "improvement",
+          "text": "On Android, Update Required opens Google Play"
+        },
+        {
+          "type": "fix",
+          "text": "Stopping a paused ride no longer leaves a blank screen on Android"
+        },
+        {
+          "type": "fix",
+          "text": "No distance is counted across a pause, ride durations are exact, and the ride summary tells you when GPS went quiet"
+        },
+        {
+          "type": "fix",
+          "text": "Rides recorded on Android with the screen locked are now measured as completely as rides with the screen on"
+        },
+        {
+          "type": "fix",
+          "text": "On Android, a short hiccup in Google Play services no longer costs a ride its device check"
         }
       ]
     },
