@@ -24,6 +24,10 @@
           "text": "A new start-up intro with the wings, the shield and the rider"
         },
         {
+          "type": "feature",
+          "text": "Starter packs can be bought in the Android app through Google Play"
+        },
+        {
           "type": "improvement",
           "text": "Home is built around the ride, with five tabs"
         },
@@ -46,6 +50,10 @@
         {
           "type": "fix",
           "text": "A finished ride leaves the live screen, and a paused ride survives a resume"
+        },
+        {
+          "type": "fix",
+          "text": "On iPhone the update button opens the App Store page"
         }
       ]
     },
