@@ -183,7 +183,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'paragraph', text: 'Galavant is a walk-to-earn game built on Enjin. Grab a balance bike, head outdoors, and earn WATTS just by walking. Convert them into real value on the blockchain.' },
           { type: 'heading', text: 'How It Works' },
           { type: 'list', items: [
-            'Install the app — Android from Google Play, iPhone through TestFlight.',
+            'Install the app — Android from Google Play, iPhone from the App Store.',
             'Get a balance bike — purchase one from the marketplace or breed a new one.',
             'Walk outdoors — the app tracks your real-world movement via GPS.',
             'Earn WATTS — every minute of walking earns you WATTS based on your bike and stats.',
@@ -248,7 +248,7 @@ export const gameplaySections: GameplaySection[] = [
           { type: 'heading', text: 'What You Need' },
           { type: 'list', items: [
             'A smartphone with GPS capability.',
-            'The Galavant app — from Google Play on Android, through TestFlight on iPhone.',
+            'The Galavant app — from Google Play on Android, from the App Store on iPhone.',
             'At least one balance bike in your inventory.',
             'Outdoor space to walk — parks, streets, trails, anywhere with GPS coverage.',
           ]},

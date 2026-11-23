@@ -16,7 +16,7 @@ import { AppDownload } from '../components/AppDownload';
 import { CountUp } from '../components/CountUp';
 import { config } from '../config';
 import { BIKE_TYPES, BIKE_BAND_MAX } from '../config/bikeTypes';
-import { PLAY_STORE_URL, TESTFLIGHT_URL } from '../config/appLinks';
+import { PLAY_STORE_URL, APP_STORE_URL } from '../config/appLinks';
 import type { ChangelogData } from '../types/changelog';
 
 // The guide page that explains how a season pays out; step 4 of the loop links here.
@@ -35,7 +35,7 @@ function formatEnj(n: number): string {
 
 
 const ONBOARDING_STEPS = [
-  { icon: Download, title: 'Download', description: 'Google Play or TestFlight' },
+  { icon: Download, title: 'Download', description: 'Google Play or the App Store' },
   { icon: Login, title: 'Sign In', description: 'Google account' },
   { icon: ShoppingCart, title: 'Get a Bike', description: 'Shop or market' },
   { icon: Human, title: 'Walk', description: 'Earn WATTS' },
@@ -158,7 +158,7 @@ export function Home() {
       return r.json();
     }),
   });
-  const testflightUrl = changelog.data?.testflightUrl ?? TESTFLIGHT_URL;
+  const iosUrl = APP_STORE_URL;
   const playStoreUrl = changelog.data?.playStoreUrl ?? PLAY_STORE_URL;
 
   const stats = useQuery({ queryKey: ['stats'], queryFn: fetchStats });
@@ -237,7 +237,7 @@ export function Home() {
               transition={{ delay: 1.2, duration: 0.6 }}
             >
               <AppDownload
-                testflightUrl={testflightUrl}
+                iosUrl={iosUrl}
                 playStoreUrl={playStoreUrl}
                 variant="hero"
                 iosLabel="Download on iOS"
@@ -512,7 +512,7 @@ export function Home() {
 
                 <div className="flex flex-wrap justify-center gap-4">
                   <AppDownload
-                    testflightUrl={testflightUrl}
+                    iosUrl={iosUrl}
                     playStoreUrl={playStoreUrl}
                     variant="hero"
                     iosLabel="Download on iOS"

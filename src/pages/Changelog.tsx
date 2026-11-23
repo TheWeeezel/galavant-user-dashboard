@@ -1,3 +1,4 @@
+import { APP_STORE_URL } from '../config/appLinks';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { Zap, Debug, Redo, Download, Link as LinkIcon } from 'pixelarticons/react';
@@ -245,7 +246,7 @@ export function Changelog() {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <AppDownload testflightUrl={data.testflightUrl} playStoreUrl={data.playStoreUrl} />
+                  <AppDownload iosUrl={APP_STORE_URL} playStoreUrl={data.playStoreUrl} />
                 </div>
               </div>
             </motion.div>

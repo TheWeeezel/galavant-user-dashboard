@@ -1,3 +1,4 @@
+import { APP_STORE_URL } from '../config/appLinks';
 import { useState, useEffect } from 'react';
 import { YouTabs } from '../components/YouTabs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -225,7 +226,7 @@ export function EarnPoints() {
             >
               <div className="flex items-center gap-2">
                 <AppDownload
-                  testflightUrl={changelogData?.testflightUrl}
+                  iosUrl={APP_STORE_URL}
                   playStoreUrl={changelogData?.playStoreUrl}
                   variant="compact"
                 />

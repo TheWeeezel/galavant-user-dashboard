@@ -37,8 +37,8 @@ function AppleIcon({ className }: { className?: string }) {
   );
 }
 
-export function AppDownload({ testflightUrl, playStoreUrl, variant = 'default', iosLabel, glow }: {
-  testflightUrl?: string | null;
+export function AppDownload({ iosUrl, playStoreUrl, variant = 'default', iosLabel, glow }: {
+  iosUrl?: string | null;
   playStoreUrl?: string | null;
   variant?: Variant;
   /** The hero says "Download on iOS"; the tighter spots just say "iOS". */
@@ -59,9 +59,9 @@ export function AppDownload({ testflightUrl, playStoreUrl, variant = 'default', 
 
   return (
     <>
-      {testflightUrl && (
+      {iosUrl && (
         <a
-          href={testflightUrl}
+          href={iosUrl}
           target="_blank"
           rel="noopener noreferrer"
           className={`${IOS_BUTTON_CLASS[variant]}${glow ? ' animate-glow-pulse' : ''}`}
