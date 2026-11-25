@@ -135,6 +135,8 @@ export function StarterPackCard({
   walkFirstPct = null,
   onBuy,
 }: StarterPackCardProps) {
+  // The server's card till takes the better of the two, never both (bike-store createCheckout).
+  const voucherWins = !!voucher && voucher.percent > (walkFirstPct ?? 0);
   const offer = describeOffer(product, catalogEnabled, stock);
   const enj = enjPrice(product);
   const material = materialName(product.quality);
@@ -189,7 +191,7 @@ export function StarterPackCard({
 
         <div>
           {product.priceUsdCents > 0 ? (
-            voucher ? (
+            voucher && voucherWins ? (
               <>
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <span className="text-xl text-m2e-text-muted line-through">{formatUsd(product.priceUsdCents)}</span>
@@ -228,7 +230,7 @@ export function StarterPackCard({
                   Walk First is taken off at the ENJ till too
                 </div>
               )}
-              {voucher && (
+              {voucherWins && (
                 <div className="text-[10px] uppercase tracking-wider text-m2e-text-secondary">
                   The voucher works at the card till only, for now
                 </div>

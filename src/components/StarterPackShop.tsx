@@ -53,9 +53,11 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
 
   // Walk First: a rider who walked the preview week earned a discount on the FIRST starter pack, and
   // both tills (card, ENJ) price from the server's rule. The shelf only mirrors it, so a failed read
-  // (404 while the feature is shut, 403) just means no discount line. A voucher wins: the two never stack.
+  // (404 while the feature is shut, 403) just means no discount line. The two never stack: at the
+  // card till the server takes the better of voucher and Walk First (bike-store createCheckout), the
+  // ENJ till takes Walk First only — the card mirrors that.
   const walkFirst = useQuery({ queryKey: ['walk-first-discount'], queryFn: fetchWalkFirst, enabled: isAuthenticated, retry: false });
-  const walkFirstPct = !voucher && walkFirst.data?.discountAvailable && walkFirst.data.discountPct > 0 ? walkFirst.data.discountPct : null;
+  const walkFirstPct = walkFirst.data?.discountAvailable && walkFirst.data.discountPct > 0 ? walkFirst.data.discountPct : null;
 
   // Back from Stripe: settle this buyer's card orders once. The webhook has almost always delivered
   // the pack already and this returns nothing new; when it has not, this is what delivers it.
