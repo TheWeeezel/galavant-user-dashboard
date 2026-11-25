@@ -10,5 +10,16 @@ export const SELLER = {
   email: 'we@galavant.run',
 } as const;
 
+/**
+ * Who runs Galavant (owner, 2026-11-25): a sole proprietorship under the trade name Vedea Ventures,
+ * which also runs Wellz and Adventsaga. Not a registered company, not in the commercial register.
+ * The imprint, the terms and the privacy policy name it; Galavant keeps its own support email.
+ */
+export const OPERATOR = {
+  name: 'Dominik Richner, trading as Vedea Ventures',
+  country: 'Switzerland',
+  url: 'https://vedea.ch',
+} as const;
+
 /** The date the Terms of Sale, Refund Policy and Privacy Policy show; change it whenever one of them changes. */
-export const LEGAL_UPDATED = 'November 20, 2026';
+export const LEGAL_UPDATED = 'November 25, 2026';

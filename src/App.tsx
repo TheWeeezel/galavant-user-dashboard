@@ -11,6 +11,7 @@ import { Roadmap } from './pages/Roadmap';
 import { Leaderboard } from './pages/Leaderboard';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfSale } from './pages/TermsOfSale';
+import { Imprint } from './pages/Imprint';
 import { RefundPolicy } from './pages/RefundPolicy';
 import { PressKit } from './pages/PressKit';
 import { Wallet } from './pages/Wallet';
@@ -66,6 +67,7 @@ export function App() {
           <Route path="privacy" element={<PrivacyPolicy />} />
           <Route path="support" element={<Support />} />
           <Route path="terms" element={<TermsOfSale />} />
+          <Route path="imprint" element={<Imprint />} />
           <Route path="refunds" element={<RefundPolicy />} />
           <Route path="refund" element={<Navigate to="/refunds" replace />} />
           <Route path="press-kit" element={<PressKit />} />

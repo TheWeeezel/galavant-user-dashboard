@@ -1,8 +1,9 @@
 import { Link } from 'react-router';
 import { Receipt } from 'pixelarticons/react';
-import { LEGAL_UPDATED, SELLER } from '../config/legal';
+import { LEGAL_UPDATED, OPERATOR, SELLER } from '../config/legal';
 
 const mail = <a href={`mailto:${SELLER.email}`} className="text-m2e-accent hover:underline">{SELLER.email}</a>;
+const vedea = <a href={OPERATOR.url} target="_blank" rel="noopener noreferrer" className="text-m2e-accent hover:underline">vedea.ch</a>;
 const refunds = <Link to="/refunds" className="text-m2e-accent hover:underline">Refund Policy</Link>;
 
 export function TermsOfSale() {
@@ -48,7 +49,8 @@ export function TermsOfSale() {
         <section className="space-y-3">
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">1. Who sells to you</h2>
           <p>
-            {SELLER.name} is run from {SELLER.country} ("Galavant", "we"). Email: {mail}.
+            Galavant ("Galavant", "we") is run by {OPERATOR.name}, {OPERATOR.country}{' '}
+            ({vedea}). Email: {mail}.
           </p>
           <p>
             Card purchases are sold through Link, Stripe's merchant of record. Link is the seller of the
@@ -172,7 +174,7 @@ export function TermsOfSale() {
 
         <section className="space-y-3">
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">Contact</h2>
-          <p>{SELLER.name}, {SELLER.country}</p>
+          <p>{OPERATOR.name}, {OPERATOR.country} ({vedea})</p>
           <p>Email: {mail}</p>
         </section>
       </div>

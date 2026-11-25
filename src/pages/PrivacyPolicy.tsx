@@ -1,5 +1,5 @@
 import { Shield } from 'pixelarticons/react';
-import { LEGAL_UPDATED } from '../config/legal';
+import { LEGAL_UPDATED, OPERATOR } from '../config/legal';
 
 export function PrivacyPolicy() {
   return (
@@ -20,7 +20,9 @@ export function PrivacyPolicy() {
         <section className="space-y-3">
           <p>
             Galavant ("we", "us", or "our") operates the Galavant mobile application and web dashboard
-            (collectively, the "Service"). This Privacy Policy explains how we collect, use, and protect
+            (collectively, the "Service"). Galavant is run by {OPERATOR.name}, {OPERATOR.country}{' '}
+            (<a href={OPERATOR.url} target="_blank" rel="noopener noreferrer" className="text-m2e-accent hover:underline">vedea.ch</a>),
+            who is responsible for your data under this policy. This Privacy Policy explains how we collect, use, and protect
             your information when you use our Service.
           </p>
           <p>
@@ -327,6 +329,9 @@ export function PrivacyPolicy() {
         {/* Contact */}
         <section className="space-y-4">
           <h2 className="text-2xl text-m2e-text tracking-wide uppercase">Contact Us</h2>
+          <p>
+            Responsible for your data: {OPERATOR.name}, {OPERATOR.country}.
+          </p>
           <p>If you have questions about this Privacy Policy, you can reach us at:</p>
           <ul className="list-disc list-inside space-y-1 pl-2">
             <li>

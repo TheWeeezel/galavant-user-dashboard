@@ -273,6 +273,8 @@ export function Layout() {
             <Link to="/terms" className="hover:text-m2e-accent transition-colors">Terms of Sale</Link>
             <span className="hidden sm:inline text-white/20">|</span>
             <Link to="/refunds" className="hover:text-m2e-accent transition-colors">Refunds</Link>
+            <span className="hidden sm:inline text-white/20">|</span>
+            <Link to="/imprint" className="hover:text-m2e-accent transition-colors">Imprint</Link>
           </div>
         </div>
       </footer>
