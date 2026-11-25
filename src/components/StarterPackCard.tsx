@@ -109,6 +109,11 @@ interface StarterPackCardProps {
    * yet, and the card says so rather than let the buyer find out at the wallet.
    */
   voucher?: GraveyardVoucher | null;
+  /**
+   * The buyer's spendable Walk First discount in percent, if any (never together with a voucher):
+   * the same struck-through price, at the card till and the ENJ till alike.
+   */
+  walkFirstPct?: number | null;
   onBuy: (method: PayMethod) => void;
 }
 
@@ -127,6 +132,7 @@ export function StarterPackCard({
   error,
   priceBand,
   voucher = null,
+  walkFirstPct = null,
   onBuy,
 }: StarterPackCardProps) {
   const offer = describeOffer(product, catalogEnabled, stock);
@@ -193,6 +199,16 @@ export function StarterPackCard({
                   Retired Runner voucher · {voucher.percent} % off
                 </div>
               </>
+            ) : walkFirstPct ? (
+              <>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-xl text-m2e-text-muted line-through">{formatUsd(product.priceUsdCents)}</span>
+                  <span className="text-3xl text-m2e-accent">{formatUsd(discountedCents(product.priceUsdCents, walkFirstPct))}</span>
+                </div>
+                <div className="text-[10px] uppercase tracking-wider text-m2e-accent-dark">
+                  Walk First · {walkFirstPct} % off
+                </div>
+              </>
             ) : (
               <div className="text-3xl text-m2e-accent">{formatUsd(product.priceUsdCents)}</div>
             )
@@ -207,6 +223,11 @@ export function StarterPackCard({
               <div className="text-[10px] uppercase tracking-wider text-m2e-text-secondary">
                 ENJ amount is fixed when you start
               </div>
+              {walkFirstPct && (
+                <div className="text-[10px] uppercase tracking-wider text-m2e-text-secondary">
+                  Walk First is taken off at the ENJ till too
+                </div>
+              )}
               {voucher && (
                 <div className="text-[10px] uppercase tracking-wider text-m2e-text-secondary">
                   The voucher works at the card till only, for now

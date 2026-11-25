@@ -926,6 +926,16 @@ export function fetchGraveyardWall() {
   return fetchJson<{ wall: GraveyardStone[] }>('/graveyard/wall');
 }
 
+/** Walk First (the preview week): only what the shop needs, the spendable starter-pack discount. */
+export interface WalkFirstDiscount {
+  discountAvailable: boolean;
+  discountPct: number;
+}
+
+export function fetchWalkFirst() {
+  return fetchAuthJson<WalkFirstDiscount>('/walk-first');
+}
+
 export function fetchGraveyardMe() {
   return fetchAuthJson<GraveyardMe>('/graveyard/me');
 }

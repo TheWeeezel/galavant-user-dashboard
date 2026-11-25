@@ -8,7 +8,7 @@ import { StoreBatchStrip } from './StoreBatchStrip';
 import { byBikeTypeOrder } from '../config/bikeTypes';
 import { GRAVEYARD_ME_KEY } from './graveyard/GraveyardFlow';
 import {
-  cancelStoreCheckout, fetchGraveyardMe, fetchStoreProducts, fetchStoreStock, openVoucher, reconcileStoreOrders, storeCheckout, storeCheckoutEnj,
+  cancelStoreCheckout, fetchGraveyardMe, fetchStoreProducts, fetchWalkFirst, fetchStoreStock, openVoucher, reconcileStoreOrders, storeCheckout, storeCheckoutEnj,
   type EnjPayment, type StoreProduct,
 } from '../api';
 
@@ -51,6 +51,12 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
   const graveyard = useQuery({ queryKey: GRAVEYARD_ME_KEY, queryFn: fetchGraveyardMe, enabled: isAuthenticated, retry: false });
   const voucher = openVoucher(graveyard.data);
 
+  // Walk First: a rider who walked the preview week earned a discount on the FIRST starter pack, and
+  // both tills (card, ENJ) price from the server's rule. The shelf only mirrors it, so a failed read
+  // (404 while the feature is shut, 403) just means no discount line. A voucher wins: the two never stack.
+  const walkFirst = useQuery({ queryKey: ['walk-first-discount'], queryFn: fetchWalkFirst, enabled: isAuthenticated, retry: false });
+  const walkFirstPct = !voucher && walkFirst.data?.discountAvailable && walkFirst.data.discountPct > 0 ? walkFirst.data.discountPct : null;
+
   // Back from Stripe: settle this buyer's card orders once. The webhook has almost always delivered
   // the pack already and this returns nothing new; when it has not, this is what delivers it.
   // What the banner says comes from that answer, not from the URL: `?status=success` only means the
@@ -66,7 +72,7 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
       })
       .catch(() => setSettled('unknown'))
       .finally(() => {
-        for (const key of ['store-products', 'store-stock', ...GRAVEYARD_ME_KEY]) queryClient.invalidateQueries({ queryKey: [key] });
+        for (const key of ['store-products', 'store-stock', 'walk-first-discount', ...GRAVEYARD_ME_KEY]) queryClient.invalidateQueries({ queryKey: [key] });
       });
   }, [status, isAuthenticated, queryClient]);
 
@@ -124,7 +130,7 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
       // A sale — ours or anyone's — moves the shop toward the next band. Re-read the shelf rather
       // than leave a stale price under a pack somebody is about to buy again. The voucher is
       // re-read too: a checkout holds it until it settles or is cancelled.
-      for (const key of ['store-products', 'store-stock', ...GRAVEYARD_ME_KEY]) queryClient.invalidateQueries({ queryKey: [key] });
+      for (const key of ['store-products', 'store-stock', 'walk-first-discount', ...GRAVEYARD_ME_KEY]) queryClient.invalidateQueries({ queryKey: [key] });
     },
     onSuccess: (result) => {
       if (result.method === 'enj') {
@@ -272,6 +278,7 @@ export function StarterPackShop({ onSignIn }: { onSignIn: () => void }) {
                 error={checkout.isError && checkout.variables?.type === p.type ? (checkout.error as Error).message : null}
                 priceBand={catalog.data?.priceBand ?? null}
                 voucher={voucher}
+                walkFirstPct={walkFirstPct}
                 onBuy={(method) => buy(p, method)}
               />
             ))}
